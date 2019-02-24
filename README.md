@@ -11,7 +11,7 @@ you write "faceless" JUnit tests.
 
 ## Download
 
-__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.4
+__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.5
 
 __Maven:__
 
@@ -19,7 +19,7 @@ __Maven:__
 <dependency>
     <groupId>org.abego.guitesting</groupId>
     <artifactId>guitesting-swing</artifactId>
-    <version>0.9.4</version>
+    <version>0.9.5</version>
 </dependency>
 ```
 

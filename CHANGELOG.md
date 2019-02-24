@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 0.9.5-SNAPSHOT
+## 0.9.5
 
 ### New
 
@@ -9,6 +9,11 @@
 ### Improvements
 
 - Fix typos
+
+### Bug Fixes
+
+- Fix JavaDoc issues
+
 
 ## 0.9.4
 

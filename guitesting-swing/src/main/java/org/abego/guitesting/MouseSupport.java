@@ -44,9 +44,9 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the <code>clickCount</code> parameter instead.
      *
-     * @param x          if < 0 offset is taken from the right of the component
-     * @param y          if < 0 offset is taken from the bottom of the component
-     * @param clickCount [clickCount > 0; default=1] the number of clicks
+     * @param x          if &lt; 0 offset is taken from the right of the component
+     * @param y          if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     void click(int buttonsMask, int x, int y, int clickCount);
 
@@ -114,9 +114,9 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the <code>clickCount</code> parameter instead.
      *
-     * @param x          if < 0 offset is taken from the right of the component
-     * @param y          if < 0 offset is taken from the bottom of the component
-     * @param clickCount [clickCount > 0; default=1] the number of clicks
+     * @param x          if &lt; 0 offset is taken from the right of the component
+     * @param y          if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     void click(int buttonsMask,
                Component component,
@@ -226,10 +226,10 @@ public interface MouseSupport extends BasicMouseSupport {
      * from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
      * <p>
      *
-     * @param x1 if < 0 offset is taken from the right of the screen
-     * @param y1 if < 0 offset is taken from the bottom of the screen
-     * @param x2 if < 0 offset is taken from the right of the screen
-     * @param y2 if < 0 offset is taken from the bottom of the screen
+     * @param x1 if &lt; 0 offset is taken from the right of the screen
+     * @param y1 if &lt; 0 offset is taken from the bottom of the screen
+     * @param x2 if &lt; 0 offset is taken from the right of the screen
+     * @param y2 if &lt; 0 offset is taken from the bottom of the screen
      */
     void drag(int buttonsMask, int x1, int y1, int x2, int y2);
 
@@ -243,10 +243,10 @@ public interface MouseSupport extends BasicMouseSupport {
      * <code>component</code>
      * <p>
      *
-     * @param x1 if < 0 offset is taken from the right of the component
-     * @param y1 if < 0 offset is taken from the bottom of the component
-     * @param x2 if < 0 offset is taken from the right of the component
-     * @param y2 if < 0 offset is taken from the bottom of the component
+     * @param x1 if &lt; 0 offset is taken from the right of the component
+     * @param y1 if &lt; 0 offset is taken from the bottom of the component
+     * @param x2 if &lt; 0 offset is taken from the right of the component
+     * @param y2 if &lt; 0 offset is taken from the bottom of the component
      */
     void drag(int buttonsMask, Component component, int x1, int y1, int x2, int y2);
 
