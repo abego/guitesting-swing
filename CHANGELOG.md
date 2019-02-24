@@ -1,5 +1,5 @@
 # CHANGELOG
 
-## 0.9.4-SNAPSHOT
+## 0.9.4
 
 - Initial Release

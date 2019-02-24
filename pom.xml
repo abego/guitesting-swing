@@ -31,7 +31,7 @@
     <groupId>org.abego.guitesting</groupId>
     <artifactId>guitesting-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.4-SNAPSHOT</version>
+    <version>0.9.4</version>
 
     <name>abego GuiTesting</name>
 
