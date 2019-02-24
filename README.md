@@ -3,7 +3,7 @@
 __Easily write GUI Tests in Java__
 
 abego GuiTesting is a library to make it easy for Java developers 
-to write test involving graphical user interfaces (GUIs), like 
+to write tests involving graphical user interfaces (GUIs), like 
 Swing windows and dialogs.
 
 Use the GuiTesting library to quickly write GUI tests in the same way 
