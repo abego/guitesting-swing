@@ -2,6 +2,10 @@
 
 ## 0.9.5-SNAPSHOT
 
+### New
+
+- Support Sonatype Nexus server
+
 ### Improvements
 
 - Fix typos

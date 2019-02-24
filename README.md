@@ -9,9 +9,24 @@ Swing windows and dialogs.
 Use the GuiTesting library to quickly write GUI tests in the same way 
 you write "faceless" JUnit tests.
 
+## Download
+
+__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.4
+
+__Maven:__
+
+```
+<dependency>
+    <groupId>org.abego.guitesting</groupId>
+    <artifactId>guitesting-swing</artifactId>
+    <version>0.9.4</version>
+</dependency>
+```
+
 ## Development
 
 You may check out the source code from the [GitHub repository](https://github.com/abego/guitesting).
+
 
 ## Links
 
