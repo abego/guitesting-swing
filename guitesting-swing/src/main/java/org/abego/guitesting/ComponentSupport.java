@@ -29,7 +29,7 @@ import org.abego.commons.seq.Seq;
 import java.awt.Component;
 import java.util.function.Predicate;
 
-import static org.abego.commons.seq.Seq.newSeq;
+import static org.abego.commons.seq.SeqUtil.newSeq;
 
 public interface ComponentSupport {
 

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static org.abego.commons.seq.Seq.newSeq;
+import static org.abego.commons.seq.SeqUtil.newSeq;
 
 public final class ComponentSupportImpl implements ComponentSupport {
     private final Supplier<Seq<Window>> allWindowsSupplier;

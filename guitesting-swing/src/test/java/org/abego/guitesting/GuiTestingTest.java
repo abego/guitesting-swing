@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 
 import static java.lang.Integer.min;
 import static org.abego.commons.lang.ThreadUtil.sleep;
-import static org.abego.commons.seq.Seq.newSeq;
+import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.MyGT.allWindows;
 import static org.abego.guitesting.MyGT.assertEqualsRetrying;
 import static org.abego.guitesting.MyGT.assertTrueRetrying;
@@ -1819,7 +1819,7 @@ class GuiTestingTest {
     void allWindows_ok() {
         showFramesForWindowsTests();
 
-        assertEqualsRetrying(3L, () -> gt.allWindows().size());
+        assertEqualsRetrying(3, () -> gt.allWindows().size());
     }
 
     @Test
@@ -1899,13 +1899,13 @@ class GuiTestingTest {
     void allWindowsWith_ok() {
         showFramesForWindowsTests();
 
-        assertEqualsRetrying(3L, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("Title")).size());
+        assertEqualsRetrying(3, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("Title")).size());
 
-        assertEqualsRetrying(2L, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleA")).size());
+        assertEqualsRetrying(2, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleA")).size());
 
-        assertEqualsRetrying(1L, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleAA")).size());
+        assertEqualsRetrying(1, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleAA")).size());
 
-        assertEqualsRetrying(0L, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleC")).size());
+        assertEqualsRetrying(0, () -> gt.allWindowsWith(w -> ((JFrame) w).getTitle().startsWith("TitleC")).size());
 
     }
 

@@ -31,7 +31,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.abego.commons.seq.Seq.newSeq;
+import static org.abego.commons.seq.SeqUtil.newSeq;
 
 
 final class WindowSupportImpl implements WindowSupport {
