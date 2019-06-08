@@ -25,6 +25,7 @@
 package org.abego.guitesting.internal;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.blackboard.BlackboardDefault;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentSupport;
@@ -56,8 +57,8 @@ import java.time.Duration;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static org.abego.commons.blackboard.Blackboard.newBlackboard;
-import static org.abego.commons.lang.exception.UncheckedException.uncheckedException;
+import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
+import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 import static org.abego.guitesting.internal.AssertRetryingSupportImpl.newAssertRetryingSupport;
 import static org.abego.guitesting.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
@@ -75,7 +76,7 @@ public final class GuiTestingImpl implements GuiTesting {
 
     private static final String COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE = "Could not create Robot instance"; //NON-NLS
     private final Robot robot = newRobot();
-    private final Blackboard<Object> blackboard = newBlackboard();
+    private final Blackboard<Object> blackboard = newBlackboardDefault();
     private final TimeoutSupport timeoutSupport = newTimeoutSupport();
     private final PauseUntilFunction pauseUntilFunction = pause();
     private final AssertRetryingSupport assertRetryingSupport = newAssertRetryingSupport(timeoutSupport);
@@ -96,7 +97,7 @@ public final class GuiTestingImpl implements GuiTesting {
         try {
             return new Robot();
         } catch (AWTException e) {
-            throw uncheckedException(COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE, e);
+            throw newUncheckedException(COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE, e);
         }
     }
 

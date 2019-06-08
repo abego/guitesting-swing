@@ -48,7 +48,7 @@ import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static javax.swing.SwingUtilities.invokeAndWait;
 import static javax.swing.SwingUtilities.isEventDispatchThread;
 import static org.abego.commons.lang.ClassUtil.resource;
-import static org.abego.commons.lang.exception.UncheckedException.uncheckedException;
+import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 
 public final class SwingUtil {
 
@@ -184,9 +184,9 @@ public final class SwingUtil {
                 invokeAndWait(runnable);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw uncheckedException("Interrupted in runInEDT", e); // NON-NLS
+                throw newUncheckedException("Interrupted in runInEDT", e); // NON-NLS
             } catch (InvocationTargetException e) {
-                throw uncheckedException("Error in runInEDT", e); // NON-NLS
+                throw newUncheckedException("Error in runInEDT", e); // NON-NLS
             }
         }
     }

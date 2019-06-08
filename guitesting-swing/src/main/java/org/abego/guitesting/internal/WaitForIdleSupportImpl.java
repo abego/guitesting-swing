@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.abego.commons.lang.ObjectUtil.ignore;
-import static org.abego.commons.lang.exception.UncheckedException.uncheckedException;
+import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 
 final class WaitForIdleSupportImpl implements WaitForIdleSupport {
     private static Runnable realSyncRunnable = null;
@@ -77,7 +77,7 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
                     try {
                         m.invoke(toolkit);
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw uncheckedException(e);
+                        throw newUncheckedException(e);
                     }
                 };
             }
