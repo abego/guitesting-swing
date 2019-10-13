@@ -60,8 +60,8 @@
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
-        <abego-commons-base.version>0.9.6-SNAPSHOT</abego-commons-base.version>
-        <abego-commons-test.version>0.9.6-SNAPSHOT</abego-commons-test.version>
+        <abego-commons-base.version>0.9.7-SNAPSHOT</abego-commons-base.version>
+        <abego-commons-test.version>0.9.7-SNAPSHOT</abego-commons-test.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
         <junit-jupiter.version>5.3.2</junit-jupiter.version>
