@@ -95,7 +95,8 @@ public interface GuiTesting extends
      * <ul>
      * <li>Reset timeout to the {@link #initialTimeout()}.</li>
      * <li>Clear the blackboard (see {@link Blackboard#clear()}).</li>
-     * <li>"Release" all not yet released keys.</li>
+     * <li>"Release" all keys (in case a key was pressed and
+     * not yet released).</li>
      * </ul>
      */
     void reset();

@@ -39,7 +39,7 @@ public interface KeyboardSupport extends BasicKeyboardSupport {
     void typeKeycode(int keycode);
 
     /**
-     * Release all keys that are currently pressed.
+     * Release all keys that are currently pressed (and not yet released).
      */
     void releaseAllKeys();
 }
