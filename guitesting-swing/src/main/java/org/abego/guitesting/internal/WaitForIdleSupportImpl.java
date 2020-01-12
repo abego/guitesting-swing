@@ -26,10 +26,12 @@ package org.abego.guitesting.internal;
 
 import org.abego.guitesting.WaitForIdleSupport;
 
+import javax.swing.SwingUtilities;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.abego.commons.lang.ObjectUtil.ignore;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
@@ -89,9 +91,25 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
 
     @Override
     public void waitForIdle() {
-        robot.waitForIdle();
+        // Just using "Robot.waitForIdle" and "realSync" is not always sufficient.
+        // E.g. the Event queue may be empty but the EventThread may still be busy
+        // processing the last Event just grabbed from the queue. To make the
+        // "waitForIdle" more reliable we want to wait until we are fairly sure the
+        // EventThread is not busy. Therefore we add an own event now and wait until
+        // this event is processed. Then all "previous" events are also processed.
+        AtomicBoolean done = new AtomicBoolean(false);
+        SwingUtilities.invokeLater(() -> done.set(true));
 
+        robot.waitForIdle();
         realSync();
+
+        while (!done.get()) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                done.set(true);
+            }
+        }
     }
 
 }

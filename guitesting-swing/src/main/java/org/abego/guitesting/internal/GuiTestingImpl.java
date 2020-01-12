@@ -25,7 +25,6 @@
 package org.abego.guitesting.internal;
 
 import org.abego.commons.blackboard.Blackboard;
-import org.abego.commons.blackboard.BlackboardDefault;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentSupport;
@@ -41,8 +40,8 @@ import org.abego.guitesting.PollingSupport;
 import org.abego.guitesting.TimeoutSupport;
 import org.abego.guitesting.WaitForIdleSupport;
 import org.abego.guitesting.WindowSupport;
+import org.eclipse.jdt.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.swing.JFrame;
 import java.awt.AWTException;
 import java.awt.Color;
@@ -53,6 +52,7 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
+import java.io.PrintStream;
 import java.time.Duration;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -422,6 +422,19 @@ public final class GuiTestingImpl implements GuiTesting {
 
         // wait until all windows are gone.
         pause().whileTrue(() -> !allWindows().isEmpty());
+    }
+
+
+    // ======================================================================
+    // Debug Support
+    // ======================================================================
+
+    public void dumpAllComponents(PrintStream out) {
+        DebugSupport.dumpAllComponents(windowSupport::allWindows, out);
+    }
+
+    public void dumpAllComponents() {
+        dumpAllComponents(System.out);
     }
 
 }

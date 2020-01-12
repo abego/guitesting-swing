@@ -30,6 +30,8 @@ import java.awt.Component;
 import java.awt.Window;
 import java.util.function.Predicate;
 
+import static org.abego.guitesting.ComponentSupport.hasComponentNamePredicate;
+
 public interface WindowSupport {
     /**
      * Return all Windows, including invisible ones, of the given <code>windowClass</code>.
@@ -101,7 +103,7 @@ public interface WindowSupport {
      * exists that has the expected <code>name</code>.
      */
     default <T extends Window> boolean hasWindowNamed(Class<T> windowClass, String name) {
-        return hasWindowWith(windowClass, w -> w.getName().equals(name));
+        return hasWindowWith(windowClass, hasComponentNamePredicate(name));
     }
 
     /**
@@ -141,7 +143,7 @@ public interface WindowSupport {
      * matches the condition.</p>
      */
     default <T extends Window> T windowNamed(Class<T> windowClass, String name) {
-        return windowWith(windowClass, w -> w.getName().equals(name));
+        return windowWith(windowClass, hasComponentNamePredicate(name));
     }
 
     /**
@@ -151,7 +153,7 @@ public interface WindowSupport {
      * matches the condition.</p>
      */
     default Window windowNamed(String name) {
-        return windowWith(w -> w.getName().equals(name));
+        return windowWith(hasComponentNamePredicate(name));
     }
 
     /**

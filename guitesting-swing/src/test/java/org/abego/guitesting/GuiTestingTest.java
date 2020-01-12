@@ -25,6 +25,7 @@
 package org.abego.guitesting;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.io.PrintStreamToBuffer;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.internal.PauseUI;
@@ -55,6 +56,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import static java.lang.Integer.min;
+import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.MyGT.allWindows;
@@ -1935,5 +1937,38 @@ class GuiTestingTest {
 
         assertNotNull(wnd);
     }
+
+    @Test
+    void dumpAllComponents_noComponents_ok() {
+
+        // no components created
+
+        PrintStreamToBuffer out = newPrintStreamToBuffer();
+        gt.dumpAllComponents(out);
+
+        assertEquals("", out.text());
+    }
+
+    @Test
+    void dumpAllComponents_someComponents_ok() {
+
+        // show some components
+        showNameInputFrame();
+
+        PrintStreamToBuffer out = newPrintStreamToBuffer();
+        gt.dumpAllComponents(out);
+
+        assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\n" +
+                "    JRootPane (javax.swing)\tnull\tnull\n" +
+                "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\n" +
+                "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\n" +
+                "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\n" +
+                "                JPanel (javax.swing)\tnull\tnull\n" +
+                "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\n" +
+                "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\n" +
+                "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\n",
+                out.text());
+    }
+
 
 }

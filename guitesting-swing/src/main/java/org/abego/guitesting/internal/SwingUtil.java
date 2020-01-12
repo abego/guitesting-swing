@@ -25,8 +25,8 @@
 package org.abego.guitesting.internal;
 
 import org.abego.commons.lang.exception.MustNotInstantiateException;
+import org.eclipse.jdt.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -150,14 +150,9 @@ public final class SwingUtil {
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
-    private static ImageIcon imageIconFromResource(
-            Class<?> theClass, String name) {
+    @SuppressWarnings("SameParameterValue")
+    static Icon iconFromResource(Class<?> theClass, String name) {
         return new ImageIcon(resource(theClass, name));
-    }
-
-    static Icon iconFromResource(
-            Class<?> theClass, String name) {
-        return imageIconFromResource(theClass, name);
     }
 
     public static boolean isGreenish(Color color) {

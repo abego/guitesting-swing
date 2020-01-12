@@ -27,8 +27,8 @@ package org.abego.guitesting;
 
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.Timeoutable;
+import org.eclipse.jdt.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.function.BooleanSupplier;
 

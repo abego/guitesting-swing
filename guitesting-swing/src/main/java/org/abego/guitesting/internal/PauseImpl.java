@@ -28,7 +28,7 @@ import org.abego.commons.polling.PollingUtil;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.guitesting.Pause;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import java.time.Duration;
 import java.util.function.BooleanSupplier;
 

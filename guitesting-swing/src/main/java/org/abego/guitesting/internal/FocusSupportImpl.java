@@ -29,7 +29,7 @@ import org.abego.guitesting.BasicKeyboardSupport;
 import org.abego.guitesting.FocusSupport;
 import org.abego.guitesting.PauseUntilFunction;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;

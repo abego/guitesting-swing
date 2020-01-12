@@ -28,7 +28,7 @@ package org.abego.guitesting;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.Timeoutable;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 

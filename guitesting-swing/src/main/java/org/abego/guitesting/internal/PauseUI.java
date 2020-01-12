@@ -25,7 +25,7 @@
 package org.abego.guitesting.internal;
 
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -158,7 +158,7 @@ public final class PauseUI {
 
         private Point locationOnScreen() {
             Rectangle bounds = screenBounds();
-            return new Point(bounds.width / 2 - 100, bounds.y);
+            return new Point(0, bounds.height -getHeight());
         }
     }
 }

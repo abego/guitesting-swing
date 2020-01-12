@@ -26,7 +26,7 @@ package org.abego.guitesting.internal;
 
 import org.abego.guitesting.DialogAndFrameSupport;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.awt.Component;

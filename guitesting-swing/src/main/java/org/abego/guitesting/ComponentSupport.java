@@ -27,12 +27,16 @@ package org.abego.guitesting;
 import org.abego.commons.seq.Seq;
 
 import java.awt.Component;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static org.abego.commons.seq.SeqUtil.newSeq;
 
 public interface ComponentSupport {
 
+    static <T extends Component> Predicate<T> hasComponentNamePredicate(String name) {
+        return t -> Objects.equals(t.getName(),name);
+    }
 
     <T extends Component> Seq<T> allComponentsWith(Class<T> componentClass, Seq<Component> roots, Predicate<T> condition);
 
@@ -55,6 +59,10 @@ public interface ComponentSupport {
         return !allComponentsWith(componentClass, condition).isEmpty();
     }
 
+    default <T extends Component> boolean hasComponentNamed(
+            Class<T> componentClass, String name) {
+        return !allComponentsWith(componentClass, hasComponentNamePredicate(name)).isEmpty();
+    }
 
     default <T extends Component> T componentWith(Class<T> componentClass, Seq<Component> roots, Predicate<T> condition) {
         return allComponentsWith(componentClass, roots, condition).singleItem();
@@ -68,6 +76,10 @@ public interface ComponentSupport {
         return allComponentsWith(componentClass, condition).singleItem();
     }
 
+    default <T extends Component> T componentNamed(
+            Class<T> componentClass, String name) {
+        return componentWith(componentClass, hasComponentNamePredicate(name));
+    }
 
     default <T extends Component> T anyComponentWith(Class<T> componentClass, Seq<Component> roots, Predicate<T> condition) {
         return allComponentsWith(componentClass, roots, condition).anyItem();

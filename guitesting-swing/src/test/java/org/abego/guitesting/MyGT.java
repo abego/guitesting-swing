@@ -27,7 +27,7 @@ package org.abego.guitesting;
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -94,6 +94,7 @@ class MyGT {
         gt2.cleanup();
     }
 
+    @SuppressWarnings("SameParameterValue")
     static <T extends Component> T componentWith(Class<T> componentClass, Container container, Predicate<T> condition) {
         return gt2.componentWith(componentClass, container, condition);
     }
@@ -115,6 +116,7 @@ class MyGT {
         return gt2.componentWith(JTextField.class, c -> name.equals(c.getName()));
     }
 
+    @SuppressWarnings("SameParameterValue")
     static boolean hasWindowNamed(String name) {
         return gt2.hasWindowNamed(name);
     }

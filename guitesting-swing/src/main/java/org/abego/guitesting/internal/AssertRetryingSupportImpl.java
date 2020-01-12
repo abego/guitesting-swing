@@ -28,7 +28,7 @@ import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.AssertRetryingSupport;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Supplier;

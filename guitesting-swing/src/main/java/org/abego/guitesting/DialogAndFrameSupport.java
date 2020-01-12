@@ -24,7 +24,7 @@
 
 package org.abego.guitesting;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -51,6 +51,7 @@ public interface DialogAndFrameSupport {
      */
     JFrame showInFrame(Component component, @Nullable Point position, @Nullable Dimension size);
 
+    @SuppressWarnings("UnusedReturnValue")
     default JFrame showInFrame(Component component) {
         return showInFrame(component, null, null);
     }
@@ -62,6 +63,7 @@ public interface DialogAndFrameSupport {
     JFrame showInFrameTitled(String title, @Nullable Component component,
                              @Nullable Point position, @Nullable Dimension size);
 
+    @SuppressWarnings("UnusedReturnValue")
     default JFrame showInFrameTitled(String title, Component component) {
         return showInFrameTitled(title, component, null, null);
     }

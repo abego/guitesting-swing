@@ -29,7 +29,10 @@ import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.Timeoutable;
 import org.abego.guitesting.internal.GuiTestingImpl;
 
+import java.awt.Component;
 import java.awt.Window;
+import java.io.PrintStream;
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
@@ -61,8 +64,19 @@ public interface GuiTesting extends
         return windows.singleItem();
     }
 
+    @Timeoutable
     default Window waitForWindowWith(Predicate<Window> condition) {
         return waitForWindowWith(Window.class, condition);
+    }
+
+    @Timeoutable
+    default <T extends Window> T waitForWindowNamed(Class<T> windowClass, String name) {
+        return waitForWindowWith(windowClass, w -> Objects.equals(w.getName(), name));
+    }
+
+    @Timeoutable
+    default Window waitForWindowNamed(String name) {
+        return waitForWindowNamed(Window.class, name);
     }
 
     // ======================================================================
@@ -106,4 +120,40 @@ public interface GuiTesting extends
      */
     void cleanup();
 
+    // ======================================================================
+    // More Component Support
+    // ======================================================================
+
+    @Timeoutable
+    default <T extends Component> T waitForComponentWith(Class<T> componentClass,
+                                                         Predicate<T> condition) {
+        Seq<T> seq = poll(() -> allComponentsWith(componentClass, condition), a -> !a.isEmpty());
+        return seq.singleItem();
+    }
+
+    @Timeoutable
+    default <T extends Component> T waitForComponentNamed(Class<T> componentClass, String name) {
+        return waitForComponentWith(componentClass, c -> Objects.equals(c.getName(), name));
+    }
+
+    // ======================================================================
+    // Debug Support
+    // ======================================================================
+
+    /**
+     * Dump all components to {@code out}, one per line.
+     *
+     * <p>The actual format of the output is not fixed, but it will typically include the
+     * classname of the component, its name (if defined) and its title/label/text (if defined).</p>
+     *
+     * <p>Beside the components also the window containing the components is dumped.</p>
+     */
+    void dumpAllComponents(PrintStream out);
+
+    /**
+     * Dump all components to {@link System#out}, one per line.
+     *
+     * <p>(For details see {@link GuiTesting#dumpAllComponents(PrintStream)})</p>
+     */
+    void dumpAllComponents();
 }

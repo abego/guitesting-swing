@@ -22,39 +22,16 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting;
+package org.abego.guitesting.swing;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+import org.junit.jupiter.api.Test;
 
-import org.abego.commons.timeout.TimeoutSupplier;
-import org.abego.commons.timeout.Timeoutable;
-import org.eclipse.jdt.annotation.Nullable;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
-import static java.lang.Boolean.TRUE;
-
-public interface AssertRetryingSupport extends TimeoutSupplier {
-    @Timeoutable
-    <T> void assertEqualsRetrying(T expected,
-                                  Supplier<T> actualSupplier,
-                                  @Nullable String message);
-
-    @Timeoutable
-    default <T> void assertEqualsRetrying(T expected, Supplier<T> actualSupplier) {
-        assertEqualsRetrying(expected, actualSupplier, null);
+class PackagePrivateUtilTest {
+    @Test
+    void constructor() {
+        assertThrows(MustNotInstantiateException.class, PackagePrivateUtil::new);
     }
-
-    @Timeoutable
-    default void assertTrueRetrying(BooleanSupplier actualSupplier,
-                                    @Nullable String message) {
-        assertEqualsRetrying(TRUE, actualSupplier::getAsBoolean, message);
-    }
-
-    @Timeoutable
-    default void assertTrueRetrying(BooleanSupplier actualSupplier) {
-        assertTrueRetrying(actualSupplier, null);
-    }
-
-
 }
