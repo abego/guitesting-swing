@@ -34,8 +34,7 @@ import org.abego.guitesting.FocusSupport;
 import org.abego.guitesting.GuiTesting;
 import org.abego.guitesting.KeyboardSupport;
 import org.abego.guitesting.MouseSupport;
-import org.abego.guitesting.Pause;
-import org.abego.guitesting.PauseUntilFunction;
+import org.abego.guitesting.WaitSupport;
 import org.abego.guitesting.PollingSupport;
 import org.abego.guitesting.TimeoutSupport;
 import org.abego.guitesting.WaitForIdleSupport;
@@ -54,6 +53,7 @@ import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.time.Duration;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -66,7 +66,7 @@ import static org.abego.guitesting.internal.EDTSupportImpl.newEDTSupport;
 import static org.abego.guitesting.internal.FocusSupportImpl.newFocusSupport;
 import static org.abego.guitesting.internal.KeyboardSupportImpl.newKeyboardSupport;
 import static org.abego.guitesting.internal.MouseSupportImpl.newMouseSupport;
-import static org.abego.guitesting.internal.PauseImpl.newPause;
+import static org.abego.guitesting.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.internal.PollingSupportImpl.newPollingSupport;
 import static org.abego.guitesting.internal.TimeoutSupportImpl.newTimeoutSupport;
 import static org.abego.guitesting.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
@@ -78,7 +78,7 @@ public final class GuiTestingImpl implements GuiTesting {
     private final Robot robot = newRobot();
     private final Blackboard<Object> blackboard = newBlackboardDefault();
     private final TimeoutSupport timeoutSupport = newTimeoutSupport();
-    private final PauseUntilFunction pauseUntilFunction = pause();
+    private final WaitSupport waitSupport = newWaitSupport(timeoutSupport);
     private final AssertRetryingSupport assertRetryingSupport = newAssertRetryingSupport(timeoutSupport);
     private final DialogAndFrameSupport dialogAndFrameSupport = newDialogAndFrameSupport();
     private final EDTSupport edtSupport = newEDTSupport();
@@ -88,7 +88,7 @@ public final class GuiTestingImpl implements GuiTesting {
     private final PollingSupport pollingSupport = newPollingSupport(timeoutSupport);
     private final WindowSupport windowSupport = newWindowSupport();
     private final ComponentSupport componentSupport = newComponentSupport(windowSupport::allWindows);
-    private final FocusSupport focusSupport = newFocusSupport(timeoutSupport, pauseUntilFunction, keyboardSupport);
+    private final FocusSupport focusSupport = newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
 
     private GuiTestingImpl() {
     }
@@ -179,13 +179,13 @@ public final class GuiTestingImpl implements GuiTesting {
     }
 
     @Override
-    public void pauseUntilAnyFocus() {
-        focusSupport.pauseUntilAnyFocus();
+    public void waitUntilAnyFocus() {
+        focusSupport.waitUntilAnyFocus();
     }
 
     @Override
-    public void pauseUntilInFocus(Component component) {
-        focusSupport.pauseUntilInFocus(component);
+    public void waitUntilInFocus(Component component) {
+        focusSupport.waitUntilInFocus(component);
     }
 
     @Override
@@ -389,17 +389,6 @@ public final class GuiTestingImpl implements GuiTesting {
 
 
     // ======================================================================
-    // Pausing
-    // ======================================================================
-
-
-    @Override
-    public Pause pause() {
-        return newPause(this);
-    }
-
-
-    // ======================================================================
     // Reset / Cleanup
     // ======================================================================
 
@@ -421,7 +410,7 @@ public final class GuiTestingImpl implements GuiTesting {
         allWindowsIncludingInvisibleOnes().forEach(Window::dispose);
 
         // wait until all windows are gone.
-        pause().whileTrue(() -> !allWindows().isEmpty());
+        waitUntil(() -> allWindows().isEmpty());
     }
 
 
@@ -437,4 +426,22 @@ public final class GuiTestingImpl implements GuiTesting {
         dumpAllComponents(System.out);
     }
 
+    // ======================================================================
+    // Wait Support
+    // ======================================================================
+
+    @Override
+    public void waitFor(Duration duration) {
+        waitSupport.waitFor(duration);
+    }
+
+    @Override
+    public void waitForUser(@Nullable String message) {
+waitSupport.waitForUser(message);
+    }
+
+    @Override
+    public void waitUntil(BooleanSupplier condition) {
+waitSupport.waitUntil(condition);
+    }
 }

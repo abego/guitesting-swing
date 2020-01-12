@@ -26,7 +26,7 @@ package org.abego.guitesting.internal;
 
 import org.abego.commons.polling.PollingUtil;
 import org.abego.commons.timeout.TimeoutSupplier;
-import org.abego.guitesting.Pause;
+import org.abego.guitesting.WaitSupport;
 
 import org.eclipse.jdt.annotation.Nullable;
 import java.time.Duration;
@@ -36,17 +36,17 @@ import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.guitesting.internal.PauseUI.pauseUI;
 
 /**
- * Provide a way to pause execution, e.g. until a certain condition is matched,
- * some time passed etc.
+ * Provide a way to wait (i.e. pause execution of the current Thread),
+ * e.g. until a certain condition is matched, some time passed etc.
  *
- * <p>Some methods may throw an Exception when the operation times out.
- * The duration of the timeout is defined by {@link #timeout()}</p>
+ * <p>Some methods may throw a {@link org.abego.commons.timeout.TimeoutUncheckedException}
+ * when the operation times out. The duration of the timeout is defined by {@link #timeout()}</p>
  */
-final class PauseImpl implements Pause {
+final class WaitSupportImpl implements WaitSupport {
 
     private final TimeoutSupplier timeoutProvider;
 
-    private PauseImpl(TimeoutSupplier timeoutProvider) {
+    private WaitSupportImpl(TimeoutSupplier timeoutProvider) {
         this.timeoutProvider = timeoutProvider;
     }
 
@@ -54,8 +54,8 @@ final class PauseImpl implements Pause {
      * Return a Pause object with a timeout defined by the given
      * <code>timeoutSupplier</code>.
      */
-    static Pause newPause(TimeoutSupplier timeoutProvider) {
-        return new PauseImpl(timeoutProvider);
+    static WaitSupport newWaitSupport(TimeoutSupplier timeoutProvider) {
+        return new WaitSupportImpl(timeoutProvider);
     }
 
     @Override
@@ -64,17 +64,17 @@ final class PauseImpl implements Pause {
     }
 
     @Override
-    public void until(BooleanSupplier condition) {
+    public void waitUntil(BooleanSupplier condition) {
         PollingUtil.poll(condition::getAsBoolean, b -> b, timeout());
     }
 
     @Override
-    public void forDuration(Duration duration) {
+    public void waitFor(Duration duration) {
         sleep(duration.toMillis());
     }
 
     @Override
-    public void interactively(@Nullable String message) {
+    public void waitForUser(@Nullable String message) {
         pauseUI().showPauseWindowAndWaitForUser(message);
     }
 

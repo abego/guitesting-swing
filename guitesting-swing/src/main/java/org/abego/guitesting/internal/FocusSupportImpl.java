@@ -27,9 +27,9 @@ package org.abego.guitesting.internal;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.guitesting.BasicKeyboardSupport;
 import org.abego.guitesting.FocusSupport;
-import org.abego.guitesting.PauseUntilFunction;
-
+import org.abego.guitesting.WaitUntilFunction;
 import org.eclipse.jdt.annotation.Nullable;
+
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -39,41 +39,40 @@ import static org.abego.guitesting.internal.SwingUtil.runInEDT;
 
 final class FocusSupportImpl implements FocusSupport {
     private final TimeoutSupplier timeoutProvider;
-    private final PauseUntilFunction pauseUntil;
+    private final WaitUntilFunction waitUntilFunction;
     private final BasicKeyboardSupport basicKeyboardSupport;
 
     private FocusSupportImpl(
             TimeoutSupplier timeoutProvider,
-            PauseUntilFunction pauseUntil,
+            WaitUntilFunction waitUntilFunction,
             BasicKeyboardSupport basicKeyboardSupport) {
         this.timeoutProvider = timeoutProvider;
-        this.pauseUntil = pauseUntil;
+        this.waitUntilFunction = waitUntilFunction;
         this.basicKeyboardSupport = basicKeyboardSupport;
     }
 
     static FocusSupport newFocusSupport(
             TimeoutSupplier timeoutProvider,
-            PauseUntilFunction pauseUntil,
+            WaitUntilFunction waitUntilFunction,
             BasicKeyboardSupport basicKeyboardSupport) {
 
-        return new FocusSupportImpl(timeoutProvider, pauseUntil, basicKeyboardSupport);
+        return new FocusSupportImpl(timeoutProvider, waitUntilFunction, basicKeyboardSupport);
     }
 
     @Override
     @Nullable
     public Component focusOwner() {
-        return KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .getFocusOwner();
+        return KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
     }
 
     @Override
-    public void pauseUntilAnyFocus() {
-        pauseUntil.until(() -> focusOwner() != null);
+    public void waitUntilAnyFocus() {
+        waitUntilFunction.waitUntil(() -> focusOwner() != null);
     }
 
     @Override
-    public void pauseUntilInFocus(Component component) {
-        pauseUntil.until(component::hasFocus);
+    public void waitUntilInFocus(Component component) {
+        waitUntilFunction.waitUntil(component::hasFocus);
     }
 
     @Override
@@ -84,7 +83,7 @@ final class FocusSupportImpl implements FocusSupport {
             // we can ignore the result of requestFocusInWindow as the `false`
             // case is also handled by the following statement ("timeout")
 
-            pauseUntilInFocus(component);
+            waitUntilInFocus(component);
         }
     }
 
@@ -109,7 +108,7 @@ final class FocusSupportImpl implements FocusSupport {
         basicKeyboardSupport.keyPress(KeyEvent.VK_TAB);
         if (withShift) basicKeyboardSupport.keyRelease(KeyEvent.VK_SHIFT);
 
-        pauseUntil.until(() -> {
+        waitUntilFunction.waitUntil(() -> {
             Component newOwner = focusOwner();
             return newOwner != null && !newOwner.equals(oldOwner);
         });

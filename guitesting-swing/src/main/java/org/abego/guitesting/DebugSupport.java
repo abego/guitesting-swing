@@ -24,17 +24,24 @@
 
 package org.abego.guitesting;
 
-import org.abego.commons.timeout.Timeoutable;
+import java.io.PrintStream;
 
-import java.util.function.BooleanSupplier;
-
-@FunctionalInterface
-public interface PauseUntilFunction {
+public interface DebugSupport {
 
     /**
-     * Pause the execution until <code>condition</code> becomes true.
+     * Dump all components to {@code out}, one per line.
+     *
+     * <p>The actual format of the output is not fixed, but it will typically include the
+     * classname of the component, its name (if defined) and its title/label/text (if defined).</p>
+     *
+     * <p>Beside the components also the window containing the components is dumped.</p>
      */
-    @Timeoutable
-    void until(BooleanSupplier condition);
+    void dumpAllComponents(PrintStream out);
 
+    /**
+     * Dump all components to {@link System#out}, one per line.
+     *
+     * <p>(For details see {@link DebugSupport#dumpAllComponents(PrintStream)})</p>
+     */
+    void dumpAllComponents();
 }

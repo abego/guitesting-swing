@@ -44,16 +44,16 @@ public interface FocusSupport extends TimeoutSupplier {
     Component focusOwner();
 
     /**
-     * Pause until any component has the focus.
+     * Wait until any component has the focus.
      */
     @Timeoutable
-    void pauseUntilAnyFocus();
+    void waitUntilAnyFocus();
 
     /**
-     * Pause until {@code component} has the focus.
+     * Wait until {@code component} has the focus.
      */
     @Timeoutable
-    void pauseUntilInFocus(Component component);
+    void waitUntilInFocus(Component component);
 
     /**
      * Make the {@code component} have the focus.

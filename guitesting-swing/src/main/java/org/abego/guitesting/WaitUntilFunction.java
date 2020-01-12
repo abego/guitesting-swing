@@ -24,45 +24,17 @@
 
 package org.abego.guitesting;
 
-
-import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.Timeoutable;
-import org.eclipse.jdt.annotation.Nullable;
 
-import java.time.Duration;
 import java.util.function.BooleanSupplier;
 
-/**
- * Provide various ways to pause the execution of the current thread.
- */
-public interface Pause extends TimeoutSupplier, PauseUntilFunction {
+@FunctionalInterface
+public interface WaitUntilFunction {
+
     /**
-     * Pause the execution while <code>condition</code> is true.
+     * Wait until <code>condition</code> becomes true.
      */
     @Timeoutable
-    default void whileTrue(BooleanSupplier condition) {
-        until(() -> !condition.getAsBoolean());
-    }
+    void waitUntil(BooleanSupplier condition);
 
-    /**
-     * Pause the execution for <code>duration</code>.
-     */
-    void forDuration(Duration duration);
-
-    /**
-     * Give the user an option to signal he likes to "un-pause" and pause until
-     * the user actually signals the "un-pause".
-     *
-     * @param message text to show to the user. When <code>null</code> show no
-     *                text to the user [Default: <code>null</code>]
-     */
-    void interactively(@Nullable String message);
-
-    /**
-     * Give the user an option to signal he likes to "un-pause" and pause until
-     * the user actually signals the "un-pause".
-     */
-    default void interactively() {
-        interactively(null);
-    }
 }

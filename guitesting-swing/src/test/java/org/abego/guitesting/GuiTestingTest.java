@@ -590,12 +590,12 @@ class GuiTestingTest {
     }
 
     @Test
-    void pauseUntilAnyFocus_ok() {
+    void waitUntilAnyFocus_ok() {
         JTextField tf = showFrameWithTextField();
 
         async(() -> {
             blackboard().add("pausing");
-            gt.pauseUntilAnyFocus();
+            gt.waitUntilAnyFocus();
             blackboard().add("pause ended");
         });
 
@@ -608,7 +608,7 @@ class GuiTestingTest {
     }
 
     @Test
-    void pauseUntilInFocus_ok() {
+    void waitUntilInFocus_ok() {
         showNameInputFrame();
 
         JTextField lastName = textFieldNamed("lastname");
@@ -616,7 +616,7 @@ class GuiTestingTest {
         async(() -> {
             blackboard().add("pausing");
 
-            gt.pauseUntilInFocus(lastName);
+            gt.waitUntilInFocus(lastName);
 
             blackboard().add("pause ended");
         });
@@ -1515,34 +1515,37 @@ class GuiTestingTest {
 
 
     @Test
-    void pause_ok() {
-        assertNotNull(gt.pause());
-    }
-
-    @Test
-    void pause_whileTrue_ok() {
+    void waitWhile_ok() {
         long endTicks = System.currentTimeMillis() + 50;
 
-        gt.pause().whileTrue(() -> System.currentTimeMillis() < endTicks);
+        gt.waitWhile(() -> System.currentTimeMillis() < endTicks);
 
         assertTrue(System.currentTimeMillis() >= endTicks);
     }
 
     @Test
-    void pause_forDuration_ok() {
+    void waitFor_ok() {
         long startTicks = System.currentTimeMillis();
-        int pauseMillis = 50;
-        gt.pause().forDuration(Duration.ofMillis(pauseMillis));
-        assertTrue(System.currentTimeMillis() >= startTicks + pauseMillis);
+        int waitMillis = 50;
+        gt.waitFor(Duration.ofMillis(waitMillis));
+        assertTrue(System.currentTimeMillis() >= startTicks + waitMillis);
     }
 
     @Test
-    void pause_interactively_String_ok() {
+    void waitForMillis_ok() {
+        long startTicks = System.currentTimeMillis();
+        int waitMillis = 50;
+        gt.waitForMillis(waitMillis);
+        assertTrue(System.currentTimeMillis() >= startTicks + waitMillis);
+    }
+
+    @Test
+    void waitForUser_String_ok() {
         // NOTE: this test relies on implementation details ("internal") and
         // may need to be updated when the implementation changes.
 
         async(() -> {
-            gt.pause().interactively("Pause Sample");
+            gt.waitForUser("Pause Sample");
             blackboard().add("pause ended");
         });
 
@@ -1560,13 +1563,13 @@ class GuiTestingTest {
     }
 
     @Test
-    void pause_interactively_ok() {
+    void waitForUser_ok() {
         // NOTE: this test relies on implementation details, e.g, it assumes the
         // internal class "PauseUI" is used for pausing. So if the
         // implementation changes the test may need to be updated.
 
         async(() -> {
-            gt.pause().interactively();
+            gt.waitForUser();
             blackboard().add("pause ended");
         });
 

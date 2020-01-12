@@ -31,14 +31,13 @@ import org.abego.guitesting.internal.GuiTestingImpl;
 
 import java.awt.Component;
 import java.awt.Window;
-import java.io.PrintStream;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public interface GuiTesting extends
         AssertRetryingSupport,
         ComponentSupport,
+        DebugSupport,
         DialogAndFrameSupport,
         EDTSupport,
         FocusSupport,
@@ -48,11 +47,18 @@ public interface GuiTesting extends
         RobotAPI,
         TimeoutSupport,
         WaitForIdleSupport,
+        WaitSupport,
         WindowSupport {
 
     static GuiTesting newGuiTesting() {
         return GuiTestingImpl.newGuiTesting();
     }
+
+    // ======================================================================
+    // Blackboard
+    // ======================================================================
+
+    Blackboard<Object> blackboard();
 
     // ======================================================================
     // More Window Support
@@ -80,23 +86,20 @@ public interface GuiTesting extends
     }
 
     // ======================================================================
-    // Blackboard
+    // More Component Support
     // ======================================================================
 
-    Blackboard<Object> blackboard();
+    @Timeoutable
+    default <T extends Component> T waitForComponentWith(Class<T> componentClass,
+                                                         Predicate<T> condition) {
+        Seq<T> seq = poll(() -> allComponentsWith(componentClass, condition), a -> !a.isEmpty());
+        return seq.singleItem();
+    }
 
-
-    // ======================================================================
-    // Pausing
-    // ======================================================================
-
-    /**
-     * Return a {@link Pause} object with <code>timeout()</code> as timeout.
-     *
-     * <p>The actual "pausing" occurs when calling methods like
-     * {@link Pause#until(BooleanSupplier)} etc. See {@link Pause} for details.</p>
-     */
-    Pause pause();
+    @Timeoutable
+    default <T extends Component> T waitForComponentNamed(Class<T> componentClass, String name) {
+        return waitForComponentWith(componentClass, c -> Objects.equals(c.getName(), name));
+    }
 
     // ======================================================================
     // Reset
@@ -120,40 +123,4 @@ public interface GuiTesting extends
      */
     void cleanup();
 
-    // ======================================================================
-    // More Component Support
-    // ======================================================================
-
-    @Timeoutable
-    default <T extends Component> T waitForComponentWith(Class<T> componentClass,
-                                                         Predicate<T> condition) {
-        Seq<T> seq = poll(() -> allComponentsWith(componentClass, condition), a -> !a.isEmpty());
-        return seq.singleItem();
-    }
-
-    @Timeoutable
-    default <T extends Component> T waitForComponentNamed(Class<T> componentClass, String name) {
-        return waitForComponentWith(componentClass, c -> Objects.equals(c.getName(), name));
-    }
-
-    // ======================================================================
-    // Debug Support
-    // ======================================================================
-
-    /**
-     * Dump all components to {@code out}, one per line.
-     *
-     * <p>The actual format of the output is not fixed, but it will typically include the
-     * classname of the component, its name (if defined) and its title/label/text (if defined).</p>
-     *
-     * <p>Beside the components also the window containing the components is dumped.</p>
-     */
-    void dumpAllComponents(PrintStream out);
-
-    /**
-     * Dump all components to {@link System#out}, one per line.
-     *
-     * <p>(For details see {@link GuiTesting#dumpAllComponents(PrintStream)})</p>
-     */
-    void dumpAllComponents();
 }
