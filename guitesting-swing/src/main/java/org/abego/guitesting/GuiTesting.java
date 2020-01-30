@@ -102,6 +102,20 @@ public interface GuiTesting extends
     }
 
     // ======================================================================
+    // More Debug Support
+    // ======================================================================
+
+    default void debug() {
+        System.out.println("=== Begin GuiTesting debug ===");
+        dumpAllComponents();
+        System.out.println("--- waiting for user ---");
+        pause();
+        System.out.println("--- continuing ---");
+        dumpAllComponents();
+        System.out.println("=== End GuiTesting debug ===");
+    }
+
+    // ======================================================================
     // Reset
     // ======================================================================
 
