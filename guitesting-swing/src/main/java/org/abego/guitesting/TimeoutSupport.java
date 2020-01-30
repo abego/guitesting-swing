@@ -36,6 +36,13 @@ public interface TimeoutSupport extends TimeoutSupplier {
     void setTimeout(Duration duration);
 
     /**
+     * As {@link #setTimeout(Duration)}, but the duration is given in milli seconds.
+     */
+    default void setTimeoutMillis(long durationInMillis) {
+        setTimeout(Duration.ofMillis(durationInMillis));
+    }
+
+    /**
      * Return the value used as the initial timeout or after a "reset".
      *
      * <p>See {@link #timeout()}</p>
