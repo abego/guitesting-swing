@@ -27,7 +27,7 @@
  * <p>
  * Stuff inside this package may change any time without prior notice.
  */
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 package org.abego.guitesting.internal;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.eclipse.jdt.annotation.NonNullByDefault;

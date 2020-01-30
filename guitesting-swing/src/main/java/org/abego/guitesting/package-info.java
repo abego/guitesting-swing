@@ -25,7 +25,8 @@
 /**
  * Easily write GUI Tests in Java.
  */
-@ParametersAreNonnullByDefault
+
+@NonNullByDefault
 package org.abego.guitesting;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.eclipse.jdt.annotation.NonNullByDefault;
