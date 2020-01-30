@@ -1,5 +1,6 @@
 package org.abego.guitesting.swing;
 
+import org.abego.commons.lang.StringUtil;
 import org.abego.guitesting.GuiTesting;
 
 import javax.swing.text.BadLocationException;
@@ -7,6 +8,8 @@ import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
 import java.awt.Point;
 import java.awt.Rectangle;
+
+import static org.abego.commons.lang.StringUtil.substringSafe;
 
 public class JTextComponentTestUtil {
 
@@ -32,9 +35,9 @@ public class JTextComponentTestUtil {
         int e = h.getEndOffset();
         String text = textComponent.getText();
         //noinspection StringConcatenation
-        return text.substring(0, s)
-                + startMarker + text.substring(s, e) + endMarker +
-                text.substring(e);
+        return substringSafe(text,0, s)
+                + startMarker + substringSafe(text,s, e) + endMarker +
+                substringSafe(text, e);
 
     }
 
