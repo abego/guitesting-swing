@@ -30,7 +30,7 @@
 
     <parent>
         <groupId>org.abego.guitesting</groupId>
-        <artifactId>guitesting-parent</artifactId>
+        <artifactId>guitesting</artifactId>
         <version>0.9.6-SNAPSHOT</version>
     </parent>
 

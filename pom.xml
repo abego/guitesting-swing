@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.abego.guitesting</groupId>
-    <artifactId>guitesting-parent</artifactId>
+    <artifactId>guitesting</artifactId>
     <packaging>pom</packaging>
     <version>0.9.6-SNAPSHOT</version>
 
