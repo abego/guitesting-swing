@@ -29,7 +29,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JTree;
 import javax.swing.JViewport;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.Rectangle;
 import java.util.EnumSet;
@@ -50,7 +49,6 @@ public class JTreeTestUtil {
 
     public @NonNull
     static String toDebugString(JTree jTree, EnumSet<JTreeDebugStringFlag> flags) {
-        TreeModel model = jTree.getModel();
         StringBuilder result = new StringBuilder();
         int n = jTree.getRowCount();
         for (int i = 0; i < n; i++) {
