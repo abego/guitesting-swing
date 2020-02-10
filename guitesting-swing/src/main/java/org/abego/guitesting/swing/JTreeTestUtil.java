@@ -35,20 +35,17 @@ import java.util.EnumSet;
 
 public class JTreeTestUtil {
 
-    @NonNull
     public static String toDebugString(JTree jTree) {
         return toDebugString(jTree, EnumSet.noneOf(JTreeDebugStringFlag.class));
     }
 
-    @NonNull
     public static String toDebugString(JTree jTree,
                                        JTreeDebugStringFlag firstFlag,
-                                       JTreeDebugStringFlag... moreFlags) {
+                                       @NonNull JTreeDebugStringFlag... moreFlags) {
         return toDebugString(jTree, EnumSet.of(firstFlag, moreFlags));
     }
 
-    public @NonNull
-    static String toDebugString(JTree jTree, EnumSet<JTreeDebugStringFlag> flags) {
+    public static String toDebugString(JTree jTree, EnumSet<JTreeDebugStringFlag> flags) {
         StringBuilder result = new StringBuilder();
         int n = jTree.getRowCount();
         for (int i = 0; i < n; i++) {

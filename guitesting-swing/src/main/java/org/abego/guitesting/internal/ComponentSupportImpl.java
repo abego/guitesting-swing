@@ -26,6 +26,7 @@ package org.abego.guitesting.internal;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.ComponentSupport;
+import org.eclipse.jdt.annotation.NonNull;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -61,8 +62,8 @@ public final class ComponentSupportImpl implements ComponentSupport {
         }
     }
 
-    private static <T extends Component> void addComponentsWith(List<T> result, Class<T> componentClass, Component[] roots, Predicate<T> condition) {
-        for (Component c : roots) {
+    private static <T extends Component> void addComponentsWith(List<T> result, Class<T> componentClass, @NonNull Component[] roots, Predicate<T> condition) {
+        for (@NonNull Component c : roots) {
             addComponentsWith(result, componentClass, c, condition);
         }
     }

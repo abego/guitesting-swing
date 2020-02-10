@@ -25,6 +25,7 @@
 package org.abego.guitesting.internal;
 
 import org.abego.guitesting.WaitForIdleSupport;
+import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.SwingUtilities;
 import java.awt.Robot;
@@ -37,7 +38,7 @@ import static org.abego.commons.lang.ObjectUtil.ignore;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 
 final class WaitForIdleSupportImpl implements WaitForIdleSupport {
-    private static Runnable realSyncRunnable = null;
+    private static @Nullable Runnable realSyncRunnable = null;
     private final Robot robot;
 
     private WaitForIdleSupportImpl(Robot robot) {
@@ -64,9 +65,16 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
             }
         }
 
-        realSyncRunnable.run();
+        runIfNotNull(realSyncRunnable);
     }
 
+	private static void runIfNotNull(@Nullable Runnable runnable) {
+		if (runnable != null) {
+			runnable.run();
+        }
+	}
+
+	@Nullable
     private static Runnable sunToolkitReadSyncAsRunnableOrNull() {
         try {
             Toolkit toolkit = Toolkit.getDefaultToolkit();

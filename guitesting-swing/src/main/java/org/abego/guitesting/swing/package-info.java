@@ -28,6 +28,6 @@
  * Stuff inside this package may change any time without prior notice.
  */
 @NonNullByDefault
-package org.abego.guitesting.internal;
+package org.abego.guitesting.swing;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;

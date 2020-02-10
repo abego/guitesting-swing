@@ -70,7 +70,7 @@ class MyGT {
         return gt2.blackboard();
     }
 
-    static <T> void runInEDT(Runnable runnable) {
+    static void runInEDT(Runnable runnable) {
         gt2.runInEDT(runnable);
     }
 
@@ -82,6 +82,7 @@ class MyGT {
         return gt2.showInFrameTitled(title, null, position, size);
     }
 
+    @Nullable
     static Component focusOwner() {
         return gt2.focusOwner();
     }

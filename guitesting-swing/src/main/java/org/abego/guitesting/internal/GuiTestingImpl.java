@@ -25,6 +25,7 @@
 package org.abego.guitesting.internal;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.lang.ObjectUtil;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentSupport;
@@ -423,7 +424,7 @@ public final class GuiTestingImpl implements GuiTesting {
     }
 
     public void dumpAllComponents() {
-        dumpAllComponents(System.out);
+        dumpAllComponents(ObjectUtil.requireNonNull(System.out));
     }
 
     // ======================================================================
@@ -437,11 +438,11 @@ public final class GuiTestingImpl implements GuiTesting {
 
     @Override
     public void waitForUser(@Nullable String message) {
-waitSupport.waitForUser(message);
+    	waitSupport.waitForUser(message);
     }
 
     @Override
     public void waitUntil(BooleanSupplier condition) {
-waitSupport.waitUntil(condition);
+    	waitSupport.waitUntil(condition);
     }
 }

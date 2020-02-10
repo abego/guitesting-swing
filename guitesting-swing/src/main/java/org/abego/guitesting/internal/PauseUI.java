@@ -51,8 +51,8 @@ public final class PauseUI {
 
     private static final PauseUI instance = new PauseUI();
     private volatile boolean waitingForUser;
-    private PauseUIWindow pauseUIWindow;
-    private String message;
+    private @Nullable PauseUIWindow pauseUIWindow;
+    private @Nullable String message;
 
     private PauseUI() {
     }
@@ -68,7 +68,10 @@ public final class PauseUI {
 
         waitForUser();
 
-        pauseUIWindow.dispose();
+        PauseUIWindow w = pauseUIWindow;
+        if (w != null) {
+        	w.dispose();
+        }
         pauseUIWindow = null;
     }
 
@@ -78,7 +81,7 @@ public final class PauseUI {
         synchronized (pauseUI()) {
             oldWaitingWindow = pauseUIWindow;
             pauseUIWindow = window;
-            pauseUIWindow.setVisible(true);
+            window.setVisible(true);
         }
 
         if (oldWaitingWindow != null) {
@@ -101,7 +104,8 @@ public final class PauseUI {
     }
 
     private class PauseUIWindow extends JWindow {
-        private final JButton button = new JButton();
+		private static final long serialVersionUID = 8142669701885205301L;
+		private final JButton button = new JButton();
         private final JTextField textField = new JTextField();
         private final JPanel panel = new JPanel();
 
@@ -140,7 +144,8 @@ public final class PauseUI {
 
             textField.setName(MESSAGE_FIELD_NAME);
             textField.setEditable(false);
-            textField.setText(MessageFormat.format("      {0}        ", message != null ? message : ""));
+            String msg = message;
+            textField.setText(MessageFormat.format("      {0}        ", msg != null ? msg : ""));
             textField.setBackground(Color.white);
         }
 

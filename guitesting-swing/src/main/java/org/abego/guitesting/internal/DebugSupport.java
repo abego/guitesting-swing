@@ -26,6 +26,7 @@ package org.abego.guitesting.internal;
 
 import org.abego.commons.lang.StringUtil;
 import org.abego.commons.seq.Seq;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Component;
@@ -55,16 +56,18 @@ class DebugSupport {
 
 
     @SuppressWarnings("HardCodedStringLiteral")
+    @Nullable 
     private static String guessTitleOrNull(Object object) {
-        String result = getStringValue(object, "getTitle");
+        String result = callStringGetter(object, "getTitle");
         if (result == null)
-            result = getStringValue(object, "getLabel");
+            result = callStringGetter(object, "getLabel");
         if (result == null)
-            result = getStringValue(object, "getText");
+            result = callStringGetter(object, "getText");
         return result != null ? limitString(result, 40) : null;
     }
 
-    private static String getStringValue(Object object, String methodName) {
+    @Nullable 
+    private static String callStringGetter(Object object, String methodName) {
         try {
             Method m = object.getClass().getMethod(methodName);
             return m.invoke(object).toString();
@@ -73,7 +76,7 @@ class DebugSupport {
         }
     }
 
-    private static <T extends Component> void visit(InnerVisitor innerVisitor, Component root) {
+    private static void visit(InnerVisitor innerVisitor, Component root) {
 
         if (root instanceof Container) {
             innerVisitor.visitingContainer((Container) root);
@@ -84,7 +87,7 @@ class DebugSupport {
         }
     }
 
-    private static void visit(InnerVisitor innerVisitor, Component[] components) {
+    private static void visit(InnerVisitor innerVisitor, @NonNull Component[] components) {
         for (Component c : components) {
             visit(innerVisitor, c);
         }
