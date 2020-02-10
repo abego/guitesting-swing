@@ -1,6 +1,7 @@
 package org.abego.guitesting.swing;
 
 import org.abego.guitesting.GuiTesting;
+import org.abego.guitesting.GuiTestingException;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
@@ -54,7 +55,7 @@ public class JTextComponentTestUtil {
             Point pt = screenLocationOfOffset(textComponent, offset);
             guiTesting.clickLeft(pt);
         } catch (BadLocationException e) {
-            throw new RuntimeException(e);//TODO: avoid RuntimeException
+            throw new GuiTestingException("clickAtOffset with invalid offset", e); //NON-NLS
         }
     }
 
