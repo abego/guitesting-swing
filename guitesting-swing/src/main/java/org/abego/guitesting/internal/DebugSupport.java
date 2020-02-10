@@ -30,8 +30,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -39,8 +37,6 @@ import java.util.function.Supplier;
 
 import static org.abego.commons.lang.StringUtil.limitString;
 import static org.abego.commons.lang.StringUtil.quoted;
-
-//TODO: extract the "InnerVisitor" part and reuse, maybe also for "find..." etc
 
 class DebugSupport {
 
@@ -58,28 +54,20 @@ class DebugSupport {
     }
 
 
-    @Nullable
-    //TODO: to commons
-    private static String getTitleOrNull(@Nullable Window window) {
-        return window instanceof Frame ? ((Frame) window).getTitle() :
-                window instanceof Dialog ? ((Dialog) window).getTitle() :
-                        null;
-    }
-
     @SuppressWarnings("HardCodedStringLiteral")
-    private static String getTitleOrNull(Component component) {
-        String result = getStringValue(component, "getTitle");
+    private static String guessTitleOrNull(Object object) {
+        String result = getStringValue(object, "getTitle");
         if (result == null)
-            result = getStringValue(component, "getLabel");
+            result = getStringValue(object, "getLabel");
         if (result == null)
-            result = getStringValue(component, "getText");
+            result = getStringValue(object, "getText");
         return result != null ? limitString(result, 40) : null;
     }
 
-    private static String getStringValue(Component component, String methodName) {
+    private static String getStringValue(Object object, String methodName) {
         try {
-            Method m = component.getClass().getMethod(methodName);
-            return m.invoke(component).toString();
+            Method m = object.getClass().getMethod(methodName);
+            return m.invoke(object).toString();
         } catch (Exception e) {
             return null;
         }
@@ -141,11 +129,11 @@ class DebugSupport {
         }
 
         public void willVisitWindow(Window window, int level) {
-            println(window.getClass(), window.getName(), getTitleOrNull(window), level);
+            println(window.getClass(), window.getName(), guessTitleOrNull(window), level);
         }
 
         public void didVisitComponent(Component component, int level) {
-            println(component.getClass(), component.getName(), getTitleOrNull(component), level);
+            println(component.getClass(), component.getName(), guessTitleOrNull(component), level);
         }
     }
 
