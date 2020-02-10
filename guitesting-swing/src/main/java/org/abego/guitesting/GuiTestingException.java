@@ -26,6 +26,8 @@ package org.abego.guitesting;
 
 public class GuiTestingException extends RuntimeException {
 
+    private static final long serialVersionUID = -4033881081933736771L;
+
     public GuiTestingException(String message, Throwable cause) {
         super(message, cause);
     }

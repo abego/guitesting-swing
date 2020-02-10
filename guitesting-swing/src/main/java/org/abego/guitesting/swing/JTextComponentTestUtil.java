@@ -13,6 +13,8 @@ import static org.abego.commons.lang.StringUtil.substringSafe;
 
 public class JTextComponentTestUtil {
 
+    static final String CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE = "clickAtOffset with invalid offset"; //NON-NLS
+
     public static String getTextAndHighlights(JTextComponent textComponent) {
         return getTextAndHighlights(textComponent, "«", "»");
     }
@@ -55,7 +57,7 @@ public class JTextComponentTestUtil {
             Point pt = screenLocationOfOffset(textComponent, offset);
             guiTesting.clickLeft(pt);
         } catch (BadLocationException e) {
-            throw new GuiTestingException("clickAtOffset with invalid offset", e); //NON-NLS
+            throw new GuiTestingException(CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE, e); //NON-NLS
         }
     }
 

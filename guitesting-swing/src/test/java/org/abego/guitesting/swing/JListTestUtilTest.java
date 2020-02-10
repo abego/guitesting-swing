@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting;
+package org.abego.guitesting.swing;
 
 import org.abego.guitesting.swing.JListTestUtil;
 import org.junit.jupiter.api.Assertions;

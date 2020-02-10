@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting;
+package org.abego.guitesting.swing;
 
+import org.abego.guitesting.GuiTesting;
 import org.abego.guitesting.swing.JTreeTestUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

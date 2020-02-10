@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting;
+package org.abego.guitesting.swing;
 
+import org.abego.guitesting.GuiTesting;
 import org.abego.guitesting.swing.JTextComponentTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ import javax.swing.text.Highlighter;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import static org.abego.guitesting.swing.JTextComponentTestUtil.CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -68,7 +70,7 @@ class JTextComponentTestUtilTest {
         Exception e = assertThrows(Exception.class,
                 () -> JTextComponentTestUtil.clickAtOffset(textArea, 50, gt));
 
-        assertEquals("clickAtOffset with invalid offset",e.getMessage());
+        assertEquals(CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE,e.getMessage());
     }
 
     @Test
@@ -84,7 +86,7 @@ class JTextComponentTestUtilTest {
     }
 
     @Test
-    void getTextAndHighlights_noHighlights() throws BadLocationException {
+    void getTextAndHighlights_noHighlights() {
         JTextArea textArea = new JTextArea();
         textArea.setText("foo bar \nbaz qux");
         gt.showInFrame(new JScrollPane(textArea), new Point(50, 50), new Dimension(200, 100));
