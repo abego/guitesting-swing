@@ -58,9 +58,9 @@ public class JTextComponentTestUtil {
         }
     }
 
-    public static void clickAtStartOf(JTextComponent textComponent, String subString,
+    public static void clickAtStartOfSubstring(JTextComponent textComponent, String substring,
                                       GuiTesting guiTesting) {
-        int i = textComponent.getText().indexOf(subString);
+        int i = textComponent.getText().indexOf(substring);
         if (i >= 0) {
             clickAtOffset(textComponent, i, guiTesting);
         }
