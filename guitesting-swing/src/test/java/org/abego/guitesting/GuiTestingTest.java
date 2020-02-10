@@ -26,6 +26,7 @@ package org.abego.guitesting;
 
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.io.PrintStreamToBuffer;
+import org.abego.commons.lang.RunOnClose;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.internal.PauseUI;
@@ -56,7 +57,9 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import static java.lang.Integer.min;
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
+import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.MyGT.allWindows;
@@ -365,6 +368,44 @@ class GuiTestingTest {
         JTextField tf = gt.componentWith(JTextField.class, c -> c.getName().equals("firstname"));
 
         assertEquals("firstname", tf.getName());
+    }
+
+    @Test
+    void componentNamed_ok() {
+        showNameInputFrame();
+
+        JTextField tf = gt.componentNamed(JTextField.class, "firstname");
+
+        assertEquals("firstname", tf.getName());
+    }
+
+    @Test
+    void waitForComponentNamed_ok() {
+        invokeLater(MyGT::showNameInputFrame);
+
+        JTextField tf = gt.waitForComponentNamed(JTextField.class, "firstname");
+
+        assertEquals("firstname", tf.getName());
+    }
+
+    @Test
+    void waitForWindowNamed_ok() {
+        invokeLater(() -> {
+            JFrame frame = showNameInputFrame();
+            frame.setName("MyFrame");
+        });
+
+        Window window = gt.waitForWindowNamed("MyFrame");
+
+        assertEquals("MyFrame", window.getName());
+    }
+
+    @Test
+    void hasComponentNamed_ok() {
+        showNameInputFrame();
+
+        assertTrue(gt.hasComponentNamed(JTextField.class, "firstname"));
+        assertFalse(gt.hasComponentNamed(JTextField.class, "missingField"));
     }
 
     @Test
@@ -1563,13 +1604,13 @@ class GuiTestingTest {
     }
 
     @Test
-    void waitForUser_ok() {
+    void waitForUser_pause_ok() {
         // NOTE: this test relies on implementation details, e.g, it assumes the
         // internal class "PauseUI" is used for pausing. So if the
         // implementation changes the test may need to be updated.
 
         async(() -> {
-            gt.waitForUser();
+            gt.pause();
             blackboard().add("pause ended");
         });
 
@@ -1791,6 +1832,12 @@ class GuiTestingTest {
     }
 
     @Test
+    void setTimeoutMillis_ok() {
+        gt.setTimeoutMillis(2);
+        assertEquals(Duration.ofMillis(2), gt.timeout());
+    }
+
+    @Test
     void initialTimout_ok() {
         Duration t = gt.initialTimeout();
         try {
@@ -1811,8 +1858,8 @@ class GuiTestingTest {
     @Test
     void waitForIdle_ok() {
         // put stuff in the event queue
-        SwingUtilities.invokeLater(() -> blackboard().add("foo"));
-        SwingUtilities.invokeLater(() -> blackboard().add("bar"));
+        invokeLater(() -> blackboard().add("foo"));
+        invokeLater(() -> blackboard().add("bar"));
 
         // wait until the event queue is empty, i.e. we are idle
         gt.waitForIdle();
@@ -1962,14 +2009,38 @@ class GuiTestingTest {
         gt.dumpAllComponents(out);
 
         assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\n" +
-                "    JRootPane (javax.swing)\tnull\tnull\n" +
-                "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\n" +
-                "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\n" +
-                "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\n" +
-                "                JPanel (javax.swing)\tnull\tnull\n" +
-                "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\n" +
-                "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\n" +
-                "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\n",
+                        "    JRootPane (javax.swing)\tnull\tnull\n" +
+                        "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\n" +
+                        "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\n" +
+                        "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\n" +
+                        "                JPanel (javax.swing)\tnull\tnull\n" +
+                        "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\n" +
+                        "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\n" +
+                        "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\n",
+                out.text());
+    }
+
+    @Test
+    void dumpAllComponents_SystemOut_someComponents_ok() {
+
+        // show some components
+        showNameInputFrame();
+
+
+        PrintStreamToBuffer out = newPrintStreamToBuffer();
+        try(RunOnClose r = systemOutRedirect(out)) {
+            gt.dumpAllComponents();
+        }
+
+        assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\n" +
+                        "    JRootPane (javax.swing)\tnull\tnull\n" +
+                        "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\n" +
+                        "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\n" +
+                        "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\n" +
+                        "                JPanel (javax.swing)\tnull\tnull\n" +
+                        "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\n" +
+                        "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\n" +
+                        "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\n",
                 out.text());
     }
 
