@@ -1,6 +1,5 @@
 package org.abego.guitesting.swing;
 
-import org.abego.commons.lang.StringUtil;
 import org.abego.guitesting.GuiTesting;
 
 import javax.swing.text.BadLocationException;

@@ -106,13 +106,13 @@ public interface GuiTesting extends
     // ======================================================================
 
     default void debug() {
-        System.out.println("=== Begin GuiTesting debug ===");
+        System.out.println("=== Begin GuiTesting debug ==="); //NON-NLS
         dumpAllComponents();
-        System.out.println("--- waiting for user ---");
+        System.out.println("--- waiting for user ---"); //NON-NLS
         pause();
-        System.out.println("--- continuing ---");
+        System.out.println("--- continuing ---"); //NON-NLS
         dumpAllComponents();
-        System.out.println("=== End GuiTesting debug ===");
+        System.out.println("=== End GuiTesting debug ==="); //NON-NLS
     }
 
     // ======================================================================
