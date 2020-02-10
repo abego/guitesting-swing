@@ -75,7 +75,7 @@ public class JTreeTestUtil {
 
     private static boolean isInViewport(JTree jTree, TreePath path) {
         Rectangle nodeRect = jTree.getPathBounds(path);
-        if (nodeRect == null) {
+        if (nodeRect == null || (!(jTree.getParent() instanceof JViewport))) {
             return false;
         }
 
