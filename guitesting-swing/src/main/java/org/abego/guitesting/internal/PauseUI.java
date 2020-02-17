@@ -103,8 +103,8 @@ public final class PauseUI {
         } while (waitingForUser);
     }
 
+    @SuppressWarnings("serial")
     private class PauseUIWindow extends JWindow {
-		private static final long serialVersionUID = 8142669701885205301L;
 		private final JButton button = new JButton();
         private final JTextField textField = new JTextField();
         private final JPanel panel = new JPanel();
