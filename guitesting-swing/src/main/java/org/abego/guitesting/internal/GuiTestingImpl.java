@@ -25,7 +25,6 @@
 package org.abego.guitesting.internal;
 
 import org.abego.commons.blackboard.Blackboard;
-import org.abego.commons.lang.ObjectUtil;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentSupport;
@@ -58,6 +57,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static java.util.Objects.requireNonNull;
 import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 import static org.abego.guitesting.internal.AssertRetryingSupportImpl.newAssertRetryingSupport;
@@ -424,7 +424,7 @@ public final class GuiTestingImpl implements GuiTesting {
     }
 
     public void dumpAllComponents() {
-        dumpAllComponents(ObjectUtil.requireNonNull(System.out));
+        dumpAllComponents(requireNonNull(System.out));
     }
 
     // ======================================================================
