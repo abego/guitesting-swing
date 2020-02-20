@@ -57,6 +57,8 @@
 
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
 
+        <m2e.jdt.annotationpath>/abego-commons/ide/eclipse/eea</m2e.jdt.annotationpath>
+
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
