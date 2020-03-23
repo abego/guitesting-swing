@@ -24,9 +24,15 @@
 
 package org.abego.guitesting;
 
+import static org.abego.commons.swing.JTextComponentUtil.modelToView;
+import static org.abego.commons.swing.RectangleUtil.center;
+
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+
+import javax.swing.text.JTextComponent;
 
 public interface MouseSupport extends BasicMouseSupport {
 
@@ -175,6 +181,23 @@ public interface MouseSupport extends BasicMouseSupport {
         clickLeft(component, 1);
     }
 
+    /**
+     * Left click before the index-th character of the textComponent.
+     * <p>
+     * When negative index refers to a position from the end of the text,
+     * i.e. -1 behind the last character, -2 behind the second last character etc.
+     */
+    default void clickLeftAtIndex(JTextComponent textComponent, int index) {
+    	// negative index refers to an index from the end.
+    	if (index < 0) {
+    		index = textComponent.getText().length()+index+1;
+    	}
+    	Rectangle r = modelToView(textComponent, index);
+    	if (r == null) 
+    		return;
+    	clickLeft(textComponent, center(r));
+    }
+    
     /**
      * Right click <code>clickCount</code> times at {@code (x,y)}, relative to
      * the given <code>component</code>.
