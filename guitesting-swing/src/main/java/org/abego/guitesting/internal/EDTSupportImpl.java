@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.internal;
 
+import org.abego.commons.swing.SwingUtilitiesUtil;
 import org.abego.guitesting.EDTSupport;
 
 final class EDTSupportImpl implements EDTSupport {
@@ -37,6 +38,6 @@ final class EDTSupportImpl implements EDTSupport {
 
     @Override
     public void runInEDT(Runnable runnable) {
-        SwingUtil.runInEDT(runnable);
+        SwingUtilitiesUtil.runInEDT(runnable);
     }
 }

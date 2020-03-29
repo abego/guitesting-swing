@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.internal;
 
+import org.abego.commons.swing.JDialogUtil;
+import org.abego.commons.swing.JFrameUtil;
 import org.abego.guitesting.DialogAndFrameSupport;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -46,12 +48,12 @@ final class DialogAndFrameSupportImpl implements DialogAndFrameSupport {
 
     @Override
     public void showInDialog(Component component) {
-        SwingUtil.showInDialog(null, component);
+        JDialogUtil.showInDialog(null, component);
     }
 
     @Override
     public void showInDialogTitled(String title, Component component) {
-        SwingUtil.showInDialog(title, component);
+    	JDialogUtil.showInDialog(title, component);
 
     }
 
@@ -61,7 +63,7 @@ final class DialogAndFrameSupportImpl implements DialogAndFrameSupport {
     }
 
     private JFrame showInFrameHelper(@Nullable String title, @Nullable Component component, @Nullable Point position, @Nullable Dimension size) {
-        JFrame frame = SwingUtil.showInFrame(title, component, position, size);
+        JFrame frame = JFrameUtil.showInFrame(title, component, position, size);
 
         SwingUtilities.invokeLater(frame::toFront);
 

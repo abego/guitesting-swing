@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.internal;
 
+import org.abego.commons.swing.SwingUtilitiesUtil;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.guitesting.BasicKeyboardSupport;
 import org.abego.guitesting.FocusSupport;
@@ -34,8 +35,6 @@ import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
-
-import static org.abego.guitesting.internal.SwingUtil.runInEDT;
 
 final class FocusSupportImpl implements FocusSupport {
     private final TimeoutSupplier timeoutProvider;
@@ -79,7 +78,7 @@ final class FocusSupportImpl implements FocusSupport {
     public void setFocusOwner(final Component component) {
         if (focusOwner() != component) {
 
-            runInEDT(component::requestFocusInWindow);
+            SwingUtilitiesUtil.runInEDT(component::requestFocusInWindow);
             // we can ignore the result of requestFocusInWindow as the `false`
             // case is also handled by the following statement ("timeout")
 
