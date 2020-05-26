@@ -31,11 +31,10 @@ import java.awt.Window;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.opentest4j.AssertionFailedError;
-
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.Timeoutable;
+import org.junit.jupiter.api.Assertions;
 
 public interface GT extends
         AssertRetryingSupport,
@@ -106,12 +105,16 @@ public interface GT extends
         try {
             return waitForComponentWith(componentClass, c -> Objects.equals(c.getName(), name));
         } catch (Exception e) {
-            throw new AssertionFailedError(String.format(
-                    "Error when looking for %s named '%s': %s",
+            Assertions.fail(String.format(
+                    "Error when looking for %s named '%s': %s", //NON-NLS
                     componentClass.getName(),
                     name,
                     messageOrClassName(e)),
                     e);
+
+            // never reached.
+            // `fail` will not return, but the compiler does not know that.
+            throw new IllegalStateException();
         }
     }
 
