@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.abego.guitesting</groupId>
-    <artifactId>guitesting</artifactId>
+    <artifactId>abego-guitesting</artifactId>
     <packaging>pom</packaging>
     <version>0.9.6-SNAPSHOT</version>
 
@@ -39,12 +39,12 @@
         <version>7</version>
     </parent>
 
-    <name>abego GuiTesting</name>
+    <name>abego GuiTesting (Parent)</name>
 
     <inceptionYear>2019</inceptionYear>
 
     <modules>
-        <module>guitesting-swing</module>
+        <module>abego-guitesting-swing</module>
     </modules>
 
     <properties>
