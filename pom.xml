@@ -30,8 +30,8 @@
 
     <groupId>org.abego.guitesting</groupId>
     <artifactId>abego-guitesting</artifactId>
+    <version>0.10.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <version>0.9.6-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -62,8 +62,8 @@
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
-        <abego-commons-base.version>0.9.7-SNAPSHOT</abego-commons-base.version>
-        <abego-commons-test.version>0.9.7-SNAPSHOT</abego-commons-test.version>
+        <abego-commons-base.version>0.10.0-SNAPSHOT</abego-commons-base.version>
+        <abego-commons-test.version>0.10.0-SNAPSHOT</abego-commons-test.version>
         <abego-commons-swing.version>0.9.7-SNAPSHOT</abego-commons-swing.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
         <junit-jupiter.version>5.3.2</junit-jupiter.version>

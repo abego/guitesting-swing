@@ -26,8 +26,6 @@ package org.abego.guitesting;
 
 import org.abego.guitesting.internal.GTImpl;
 
-import java.time.Duration;
-
 public class GuiTesting {
 
     public static GT newGT() {

@@ -24,7 +24,45 @@
 
 package org.abego.guitesting.internal;
 
+import static java.util.Objects.requireNonNull;
+import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
+import static org.abego.commons.lang.LongUtil.parseLong;
+import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
+import static org.abego.guitesting.internal.AssertRetryingSupportImpl.newAssertRetryingSupport;
+import static org.abego.guitesting.internal.ComponentSupportImpl.newComponentSupport;
+import static org.abego.guitesting.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
+import static org.abego.guitesting.internal.EDTSupportImpl.newEDTSupport;
+import static org.abego.guitesting.internal.FocusSupportImpl.newFocusSupport;
+import static org.abego.guitesting.internal.KeyboardSupportImpl.newKeyboardSupport;
+import static org.abego.guitesting.internal.MouseSupportImpl.newMouseSupport;
+import static org.abego.guitesting.internal.PollingSupportImpl.newPollingSupport;
+import static org.abego.guitesting.internal.TimeoutSupportImpl.newTimeoutSupport;
+import static org.abego.guitesting.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
+import static org.abego.guitesting.internal.WaitSupportImpl.newWaitSupport;
+import static org.abego.guitesting.internal.WindowSupportImpl.newWindowSupport;
+
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Window;
+import java.awt.image.BufferedImage;
+import java.io.PrintStream;
+import java.time.Duration;
+import java.util.OptionalLong;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import javax.swing.JFrame;
+
+import org.eclipse.jdt.annotation.Nullable;
+
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.lang.LongUtil;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentBaseSupport;
@@ -39,41 +77,6 @@ import org.abego.guitesting.TimeoutSupport;
 import org.abego.guitesting.WaitForIdleSupport;
 import org.abego.guitesting.WaitSupport;
 import org.abego.guitesting.WindowBaseSupport;
-import org.eclipse.jdt.annotation.Nullable;
-
-import javax.swing.JFrame;
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Window;
-import java.awt.image.BufferedImage;
-import java.io.PrintStream;
-import java.time.Duration;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
-import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
-import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
-import static org.abego.guitesting.internal.AssertRetryingSupportImpl.newAssertRetryingSupport;
-import static org.abego.guitesting.internal.ComponentSupportImpl.newComponentSupport;
-import static org.abego.guitesting.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
-import static org.abego.guitesting.internal.EDTSupportImpl.newEDTSupport;
-import static org.abego.guitesting.internal.FocusSupportImpl.newFocusSupport;
-import static org.abego.guitesting.internal.KeyboardSupportImpl.newKeyboardSupport;
-import static org.abego.guitesting.internal.MouseSupportImpl.newMouseSupport;
-import static org.abego.guitesting.internal.PollingSupportImpl.newPollingSupport;
-import static org.abego.guitesting.internal.TimeoutSupportImpl.newTimeoutSupport;
-import static org.abego.guitesting.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
-import static org.abego.guitesting.internal.WaitSupportImpl.newWaitSupport;
-import static org.abego.guitesting.internal.WindowSupportImpl.newWindowSupport;
 
 public final class GTImpl implements GT {
 
@@ -423,25 +426,6 @@ public final class GTImpl implements GT {
         }
     }
 
-    // TODO: move to commons.
-    private static OptionalLong parseLong(String s) {
-        try {
-            return OptionalLong.of(Long.parseLong(s));
-        } catch (Exception e) {
-            return OptionalLong.empty();
-        }
-    }
-
-    // TODO: move to commons.
-    private static OptionalInt parseInt(String s) {
-        try {
-            return OptionalInt.of(Integer.parseInt(s));
-        } catch (Exception e) {
-            return OptionalInt.empty();
-        }
-    }
-
-
     private void disposeAllWindows() {
         allWindowsIncludingInvisibleOnes().forEach(Window::dispose);
 
@@ -454,10 +438,12 @@ public final class GTImpl implements GT {
     // Debug Support
     // ======================================================================
 
+    @Override
     public void dumpAllComponents(PrintStream out) {
         DebugSupport.dumpAllComponents(windowSupport::allWindows, out);
     }
 
+    @Override
     public void dumpAllComponents() {
         dumpAllComponents(requireNonNull(System.out));
     }
