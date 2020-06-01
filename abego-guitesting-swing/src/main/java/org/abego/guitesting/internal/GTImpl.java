@@ -62,7 +62,6 @@ import javax.swing.JFrame;
 import org.eclipse.jdt.annotation.Nullable;
 
 import org.abego.commons.blackboard.Blackboard;
-import org.abego.commons.lang.LongUtil;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.AssertRetryingSupport;
 import org.abego.guitesting.ComponentBaseSupport;
