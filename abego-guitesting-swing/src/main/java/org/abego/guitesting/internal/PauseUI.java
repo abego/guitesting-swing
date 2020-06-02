@@ -68,7 +68,7 @@ public final class PauseUI {
 
         waitForUser();
 
-        PauseUIWindow w = pauseUIWindow;
+        @Nullable PauseUIWindow w = pauseUIWindow;
         if (w != null) {
         	w.dispose();
         }
@@ -76,7 +76,7 @@ public final class PauseUI {
     }
 
     private void setAndShowPauseWindow(PauseUIWindow window) {
-        Window oldWaitingWindow;
+        @Nullable Window oldWaitingWindow;
 
         synchronized (pauseUI()) {
             oldWaitingWindow = pauseUIWindow;
@@ -95,6 +95,7 @@ public final class PauseUI {
         // check the state of the window every 1/10 second.
         do {
             try {
+                //noinspection BusyWait
                 Thread.sleep(100);
             } catch (InterruptedException e1) {
                 Thread.currentThread().interrupt();
@@ -144,7 +145,7 @@ public final class PauseUI {
 
             textField.setName(MESSAGE_FIELD_NAME);
             textField.setEditable(false);
-            String msg = message;
+            @Nullable String msg = message;
             textField.setText(MessageFormat.format("      {0}        ", msg != null ? msg : ""));
             textField.setBackground(Color.white);
         }

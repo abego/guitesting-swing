@@ -31,7 +31,7 @@ You may check out the source code from the [GitHub repository](https://github.co
 ## Links
 
 - Sources: https://github.com/abego/guitesting
-- Twitter: @abego (e.g. for announcement of new releases)
+- Twitter: @abego (e.g. for announcements of new releases)
 
 ## License
 

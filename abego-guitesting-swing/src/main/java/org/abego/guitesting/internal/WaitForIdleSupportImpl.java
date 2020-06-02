@@ -113,6 +113,7 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
 
         while (!done.get()) {
             try {
+                //noinspection BusyWait
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 done.set(true);

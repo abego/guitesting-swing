@@ -31,7 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DumpComponentsOnFailure.class)
 public class GuiTestBase {
-    protected GT gt = GuiTesting.newGT();
+    protected final GT gt = GuiTesting.newGT();
 
     @BeforeEach
     void setup() {

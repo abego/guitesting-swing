@@ -413,7 +413,8 @@ public final class GTImpl implements GT {
 
     @Override
     public void readSystemProperties() {
-        String s = System.getProperties().getProperty("GT.timeoutMillis");
+        String s = System.getProperties().getProperty(
+                SYSTEM_PROPERTY_TIMEOUT_MILLIS);
         if (s != null) {
             OptionalLong millis = parseLong(s);
             millis.ifPresent(i -> {

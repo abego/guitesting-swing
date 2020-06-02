@@ -24,6 +24,8 @@
 
 package org.abego.guitesting;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import static org.abego.commons.swing.JTextComponentUtil.modelToView;
 import static org.abego.commons.swing.RectangleUtil.center;
 
@@ -192,7 +194,7 @@ public interface MouseSupport extends BasicMouseSupport {
     	if (index < 0) {
     		index = textComponent.getText().length()+index+1;
     	}
-    	Rectangle r = modelToView(textComponent, index);
+    	@Nullable Rectangle r = modelToView(textComponent, index);
     	if (r == null) 
     		return;
     	clickLeft(textComponent, center(r));

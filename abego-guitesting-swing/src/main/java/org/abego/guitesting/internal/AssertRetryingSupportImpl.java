@@ -55,7 +55,7 @@ final class AssertRetryingSupportImpl implements AssertRetryingSupport {
                                          Supplier<T> actualSupplier,
                                          @Nullable String message) {
         T actual;
-        String finalMessage = message;
+        @Nullable String finalMessage = message;
 
         try {
             actual = poll(actualSupplier, a -> Objects.equals(expected, a), timeout());

@@ -52,6 +52,11 @@ public interface GT extends
         WaitSupport,
         WindowSupport {
 
+    /**
+     * see {@link #readSystemProperties()}.
+     */
+    static final String SYSTEM_PROPERTY_TIMEOUT_MILLIS = "GT.timeoutMillis"; //NON-NLS
+
     // ======================================================================
     // Blackboard
     // ======================================================================

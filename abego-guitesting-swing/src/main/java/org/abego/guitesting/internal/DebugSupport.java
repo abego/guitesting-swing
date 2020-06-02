@@ -59,7 +59,7 @@ class DebugSupport {
     @SuppressWarnings("HardCodedStringLiteral")
     @Nullable 
     private static String guessTitleOrNull(Object object) {
-        String result = callStringGetter(object, "getTitle");
+        @Nullable String result = callStringGetter(object, "getTitle");
         if (result == null)
             result = callStringGetter(object, "getLabel");
         if (result == null)

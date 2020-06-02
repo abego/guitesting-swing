@@ -1318,7 +1318,7 @@ class GTTest {
 
     @Test
     void clickCharacterAtIndex_ok() {
-        JFrame frame = showNameInputFrame();
+        showNameInputFrame();
 
         JTextComponent textComponent = gt.waitForComponentNamed(
                 JTextComponent.class, "firstname");

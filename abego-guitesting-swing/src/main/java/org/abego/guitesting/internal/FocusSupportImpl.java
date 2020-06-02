@@ -97,7 +97,7 @@ final class FocusSupportImpl implements FocusSupport {
     }
 
     private void moveFocus(Direction direction) {
-        Component oldOwner = focusOwner();
+        @Nullable Component oldOwner = focusOwner();
 
         // Move the focus to the next/previous component by typing
         // "Tab" or "Shift Tab".
@@ -108,7 +108,7 @@ final class FocusSupportImpl implements FocusSupport {
         if (withShift) basicKeyboardSupport.keyRelease(KeyEvent.VK_SHIFT);
 
         waitUntilFunction.waitUntil(() -> {
-            Component newOwner = focusOwner();
+            @Nullable Component newOwner = focusOwner();
             return newOwner != null && !newOwner.equals(oldOwner);
         });
     }

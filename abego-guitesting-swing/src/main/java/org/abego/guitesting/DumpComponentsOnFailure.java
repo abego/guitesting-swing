@@ -30,9 +30,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class DumpComponentsOnFailure implements AfterTestExecutionCallback {
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
-        context.getExecutionException().ifPresent(e-> {
-            GuiTesting.newGT().dumpAllComponents();
-        });
+    public void afterTestExecution(ExtensionContext context) {
+        context.getExecutionException().ifPresent(
+                e -> GuiTesting.newGT().dumpAllComponents());
     }
 }
