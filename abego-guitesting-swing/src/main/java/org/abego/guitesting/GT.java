@@ -142,7 +142,16 @@ public interface GT extends
      */
     void cleanup();
 
-    //TODO: document
+    /**
+     * Reads the system properties and applies them to this GT.
+     *
+     * <p>The following properties are supported:
+     * <ul>
+     *     <li>"GT.timeoutMillis": time duration in milliseconds, used for
+     *     initialTimeout and timeout.</li>
+     * </ul>
+     * </p>
+     */
     void readSystemProperties();
 
     // ======================================================================
