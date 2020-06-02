@@ -58,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -388,6 +389,18 @@ class GTTest {
         JTextField tf = gt.waitForComponentNamed(JTextField.class, "firstname");
 
         assertEquals("firstname", tf.getName());
+    }
+
+    @Test
+    void waitForComponentNamed_fail() {
+        invokeLater(MyGT::showNameInputFrame);
+
+        gt.waitForWindowNamed("nameInput");
+        gt.setTimeoutMillis(1); // don't wait too long, the field will never appear...
+        AssertionError e = assertThrows(AssertionError.class,
+                () -> gt.waitForComponentNamed(JTextField.class, "unknown"));
+
+        assertEquals("Error when looking for javax.swing.JTextField named 'unknown': org.abego.commons.timeout.TimeoutUncheckedException", e.getMessage());
     }
 
     @Test
@@ -1304,6 +1317,27 @@ class GTTest {
     }
 
     @Test
+    void clickCharacterAtIndex_ok() {
+        JFrame frame = showNameInputFrame();
+
+        JTextComponent textComponent = gt.waitForComponentNamed(
+                JTextComponent.class, "firstname");
+        gt._focus().setFocusOwner(textComponent);
+        gt.type("foobar");
+
+        // click before the "b" and insert "baz"
+        gt.clickCharacterAtIndex(textComponent, 3);
+        gt.type("baz");
+
+        // click at the end of the text and append "qux"
+        gt.clickCharacterAtIndex(textComponent, -1);
+        gt.type("qux");
+
+        assertEqualsRetrying("foobazbarqux",textComponent::getText);
+    }
+
+
+    @Test
     void clickRight_Component_withClickCount_ok() {
         JFrame frame = showFrameForMouseTests();
 
@@ -2046,5 +2080,22 @@ class GTTest {
                 out.text());
     }
 
-
+    @Test
+    void featureGroupAccess() {
+        assertSame(gt,gt._assert());
+        assertSame(gt,gt._component());
+        assertSame(gt,gt._debug());
+        assertSame(gt,gt._dialog());
+        assertSame(gt,gt._edt());
+        assertSame(gt,gt._focus());
+        assertSame(gt,gt._frame());
+        assertSame(gt,gt._idle());
+        assertSame(gt,gt._keyboard());
+        assertSame(gt,gt._mouse());
+        assertSame(gt,gt._poll());
+        assertSame(gt,gt._robotAPI());
+        assertSame(gt,gt._timeout());
+        assertSame(gt,gt._wait());
+        assertSame(gt,gt._window());
+    }
 }

@@ -184,10 +184,10 @@ public interface MouseSupport extends BasicMouseSupport {
     /**
      * Left click before the index-th character of the textComponent.
      * <p>
-     * When negative index refers to a position from the end of the text,
+     * A negative index refers to a position from the end of the text,
      * i.e. -1 behind the last character, -2 behind the second last character etc.
      */
-    default void clickLeftAtIndex(JTextComponent textComponent, int index) {
+    default void clickCharacterAtIndex(JTextComponent textComponent, int index) {
     	// negative index refers to an index from the end.
     	if (index < 0) {
     		index = textComponent.getText().length()+index+1;

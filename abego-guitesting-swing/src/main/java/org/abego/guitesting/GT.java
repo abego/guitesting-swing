@@ -114,6 +114,8 @@ public interface GT extends
 
             // never reached.
             // `fail` will not return, but the compiler does not know that.
+            // (We don't throw an 'AssertionException' as we would then
+            // introduce a dependency to the 'hidden' exception class)
             throw new IllegalStateException();
         }
     }
