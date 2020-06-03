@@ -35,29 +35,29 @@ import java.util.function.Supplier;
 public interface PollingSupport extends TimeoutSupplier {
 
     /**
-     * Return the first value polled from <code>functionToPoll</code> that makes
-     * <code>isResult(value)</code> evaluate to <code>true</code>.
+     * Return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}.
      *
-     * <p>Throw a {@link TimeoutUncheckedException} when <code>isResult</code> did not
-     * return <code>true</code> within <code>timeout</code>.</p>
+     * <p>Throw a {@link TimeoutUncheckedException} when {@code isResult} did not
+     * return {@code true} within {@code timeout}.</p>
      *
      * <p><em>Polling</em> refers to the process of waiting for a certain state and
      * periodically checking if the state is reached.</p>
      *
      * @param functionToPoll the function used to poll for the value
-     * @param isResult       function that returns <code>true</code> when the
+     * @param isResult       function that returns {@code true} when the
      *                       passed value is a possible result value,
-     *                       <code>false</code> otherwise.
+     *                       {@code false} otherwise.
      * @param timeout        the duration the method will poll the value
      *                       before throwing a {@link TimeoutUncheckedException}.
-     *                       [Default: <code>timeout()</code>]
+     *                       [Default: {@code timeout()}]
      */
     @Timeoutable
     <T> T poll(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout);
 
     /**
-     * Return the first value polled from <code>functionToPoll</code> that makes
-     * <code>isResult(value)</code> evaluate to <code>true</code>.
+     * Return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}.
      * <p>
      * For details see {@link #poll(Supplier, Predicate, Duration)}
      */
@@ -68,27 +68,27 @@ public interface PollingSupport extends TimeoutSupplier {
     }
 
     /**
-     * Return the first value polled from <code>functionToPoll</code> that makes
-     * <code>isResult(value)</code> evaluate to <code>true</code>, or the last
+     * Return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}, or the last
      * polled value after the timeout occurred.
      *
      * <p><em>Polling</em> refers to the process of waiting for a certain state and
      * periodically checking if the state is reached.</p>
      *
      * @param functionToPoll the function used to poll for the value
-     * @param isResult       function that returns <code>true</code> when the
+     * @param isResult       function that returns {@code true} when the
      *                       passed value is a possible result value,
-     *                       <code>false</code> otherwise.
+     *                       {@code false} otherwise.
      * @param timeout        the duration the method will poll for the value.
      *                       After that duration return the last polled value.
-     *                       [Default: <code>timeout()</code>]
+     *                       [Default: {@code timeout()}]
      */
     @Timeoutable
     <T> T pollNoFail(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout);
 
     /**
-     * Return the first value polled from <code>functionToPoll</code> that makes
-     * <code>isResult(value)</code> evaluate to <code>true</code>, or the last
+     * Return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}, or the last
      * polled value after the timeout occurred.
      * <p>
      * For details see {@link #pollNoFail(Supplier, Predicate, Duration)}

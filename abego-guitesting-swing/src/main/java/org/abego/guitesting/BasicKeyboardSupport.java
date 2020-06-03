@@ -27,15 +27,15 @@ package org.abego.guitesting;
 public interface BasicKeyboardSupport {
     /**
      * Press the key with the given {@code keycode}.
-     * <p>
-     * See {@link java.awt.event.KeyEvent} for details on keycodes.
+     *
+     * @param keycode See {@link java.awt.event.KeyEvent} for details on keycodes
      */
     void keyPress(int keycode);
 
     /**
      * Release the key with the given {@code keycode}.
      * <p>
-     * See {@link java.awt.event.KeyEvent} for details on keycodes.
+     * @param keycode See {@link java.awt.event.KeyEvent} for details on keycodes
      */
     void keyRelease(int keycode);
 

@@ -35,6 +35,8 @@ public interface DebugSupport {
      * classname of the component, its name (if defined) and its title/label/text (if defined).</p>
      *
      * <p>Beside the components also the window containing the components is dumped.</p>
+     *
+     * @param out the {@link PrintStream} to dump to.
      */
     void dumpAllComponents(PrintStream out);
 

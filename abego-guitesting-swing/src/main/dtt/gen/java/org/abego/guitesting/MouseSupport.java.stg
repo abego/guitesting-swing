@@ -1,0 +1,225 @@
+// ====== common helper ========================
+
+// separated(List list, String separator)
+//
+// Outputs the items of the list, with the items separated
+// using the separator, ignoring items with empty string values.
+//
+// source: https://stackoverflow.com/a/45679564 "Filter out empty strings in ST4"
+
+DropEmpty ::= ["": [], default: key]
+separated(l, s, w=false) ::= "<if (DropEmpty.(first(l)))><if (w)><s><endif><first(l)><separated(rest(l), s, true)><else><if (rest(l))><separated(rest(l), s, w)><endif><endif>"
+
+// end of separated
+
+// ====== internal helper ========================
+
+side() ::= "<if(side)><side><endif>"
+
+referencePoint() ::= "<if(relativeToComponent)>relative to the given {@code component}<else>in screen coordinates<endif>"
+
+buttonSideToNumberMap ::= ["Left":"1", "Right":"3"]
+buttonMask() ::= "InputEvent.BUTTON<buttonSideToNumberMap.(side)>_DOWN_MASK"
+
+// ====== click ========================
+
+clickParams(position) ::= <<
+<separated([
+	{<if(!side)>int buttonsMask<endif>},
+	{<if(relativeToComponent)>Component component<endif>},
+	{<if(!center)><position><endif>},
+	{<if(!singleClick)>int clickCount<endif>}], ", ")>
+>>
+
+click(
+	designatedMethod=false,
+	side=false,
+	singleClick=false,
+	relativeToComponent=false,
+	center=false) ::= <<
+
+/**
+ * <if(side)><side> clicks<else>Clicks<endif><if(!singleClick)> {@code clickCount} times<endif> <if(!side)>with the buttons defined by
+ * {@code buttonsMask} <endif><if(center)>into the center of the given {@code component}<else>at {@code (x,y)}, <referencePoint()><endif>.
+ * \<p>
+ * Calling this method more than once with the same coordinates will not
+ * generate a "double click", use the <if(singleClick)>method with the extra <endif>{@code clickCount} parameter instead.
+ *
+<if(!side)> * @param buttonsMask defines the mouse buttons as a
+ *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+ *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+<endif>
+<if(relativeToComponent)> * @param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
+<endif>
+<if(!center)> * @param x           the x coordinate of the location to click at, <referencePoint()>.
+ *                    If &lt; 0 offset is taken from the right of the component
+ * @param y           the y coordinate of the location to click at, <referencePoint()>.
+ *                    if &lt; 0 offset is taken from the bottom of the component
+<endif>
+<if(!singleClick)> * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+<endif>
+ */
+<if(!designatedMethod)>default <endif>void click<side()>(<clickParams("int x, int y")>)<if(!designatedMethod)> {
+    click(InputEvent.BUTTON<buttonSideToNumberMap.(side)>_DOWN_MASK, <if(relativeToComponent)>component, <endif><if(center)>component.getWidth() / 2, component.getHeight() / 2<else>x, y<endif>, <if(singleClick)>1<else>clickCount<endif>);
+}<else>;<endif>
+<if(!center)>
+
+/**
+ * <if(side)><side> clicks<else>Clicks<endif><if(!singleClick)> {@code clickCount} times<endif> <if(!side)>with the buttons defined by
+ * {@code buttonsMask} <endif>at {@code position}, <referencePoint()>.
+ * \<p>
+ * Calling this method more than once with the same coordinates will not
+ * generate a "double click", use the <if(singleClick)>method with the extra <endif>{@code clickCount} parameter instead.
+ *
+<if(!side)> * @param buttonsMask defines the mouse buttons as a
+ *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+ *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+<endif>
+<if(relativeToComponent)> * @param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
+<endif>
+ * @param position    the position to click at, <referencePoint()>.
+<if(!singleClick)> * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+<endif>
+ */
+default void click<side()>(<clickParams("Point position")>) {
+    click<side()>(<if(!side)>buttonsMask, <endif><if(relativeToComponent)>component, <endif>position.x, position.y<if(!singleClick)>, clickCount<endif>);
+}<else><endif>
+>>
+
+// ====== drag ========================
+
+dragParams(positions) ::= "<if(!side)>int buttonsMask, <endif><if(relativeToComponent)>Component component, <endif><positions>"
+
+drag(designatedMethod=false,side=false,relativeToComponent=false,center=false) ::= <<
+/**
+ * <if(side)><side> drags<else>Drags<endif> the mouse <if(!side)>with the buttons defined by {@code buttonsMask}<endif>
+ * from {@code (x1,y1)} to {@code (x2,y2)}, <referencePoint()>.
+ * \<p>
+ * <if(!side)>@param buttonsMask defines the mouse buttons as a
+ *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+ *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+ * <endif><if(relativeToComponent)>@param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
+ * <endif>@param x1 the x coordinate of the start location of the drag operation, <referencePoint()>.
+ *           If &lt; 0 offset is taken from the right of the screen
+ * @param y1 the y coordinate of the start location of the drag operation, <referencePoint()>.
+ *           If &lt; 0 offset is taken from the bottom of the screen
+ * @param x2 the x coordinate of the end location of the drag operation, <referencePoint()>.
+ *           If &lt; 0 offset is taken from the right of the screen
+ * @param y2 the y coordinate of the end location of the drag operation, <referencePoint()>.
+ *           If &lt; 0 offset is taken from the bottom of the screen
+ */
+<if(!designatedMethod)>default <endif>void drag<side()>(<dragParams("int x1, int y1, int x2, int y2")>)<if(!designatedMethod)> {
+    drag(<buttonMask()>, <if(relativeToComponent)>component, <endif>x1, y1, x2, y2);
+}<else>;<endif>
+
+
+/**
+ * <if(side)><side> drags<else>Drags<endif> the mouse <if(!side)>with the buttons defined by {@code buttonsMask}<endif>
+ * from {@code from} to {@code to}, <referencePoint()>.
+ * \<p>
+ * <if(!side)>@param buttonsMask defines the mouse buttons as a
+ *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+ *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+ * <endif><if(relativeToComponent)>@param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
+ * <endif>@param from         the start location of the drag operation, <referencePoint()>.
+ * @param to           the end location of the drag operation, <referencePoint()>.
+ */
+default void drag<side()>(<dragParams("Point from, Point to")>) {
+    drag<side()>(<if(!side)>buttonsMask, <endif><if(relativeToComponent)>component, <endif>from.x, from.y, to.x, to.y);
+}
+
+>>
+
+// ====== main ========================
+
+main() ::= <<
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019 Udo Borkowski, (ub@abego.org)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package org.abego.guitesting;
+
+import org.eclipse.jdt.annotation.Nullable;
+
+import javax.swing.text.JTextComponent;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+
+import static org.abego.commons.swing.JTextComponentUtil.modelToView;
+import static org.abego.commons.swing.RectangleUtil.center;
+
+public interface MouseSupport extends BasicMouseSupport {
+
+    /**
+     * Moves the mouse pointer to the given {@code position}.
+     *
+     * @param position the location to move the mouse pointer to (in screen coordinates)
+     */
+    default void mouseMove(Point position) {
+        mouseMove(position.x, position.y);
+    }
+    <click(designatedMethod=true)>
+    <click(side="Left")>
+    <click(singleClick=true,side="Left")>
+    <click(side="Right")>
+    <click(singleClick=true,side="Right")>
+    <click(designatedMethod=true,relativeToComponent=true)>
+    <click(relativeToComponent=true,side="Left")>
+    <click(relativeToComponent=true,singleClick=true,side="Left")>
+    <click(center=true,relativeToComponent=true,side="Left")>
+    <click(center=true,relativeToComponent=true,singleClick=true,side="Left")>
+    <click(relativeToComponent=true,side="Right")>
+    <click(relativeToComponent=true,singleClick=true,side="Right")>
+    <click(center=true,relativeToComponent=true,side="Right")>
+    <click(center=true,relativeToComponent=true,singleClick=true,side="Right")>
+
+    /**
+     * Left clicks before the index-th character of the textComponent.
+     * \<p>
+     * A negative index refers to a position from the end of the text,
+     * i.e. -1 behind the last character, -2 behind the second last character etc.
+     *
+     * @param textComponent the {@link JTextComponent} to click into
+     * @param index the index of the character in the textComponent to click in front of.
+     */
+    default void clickCharacterAtIndex(JTextComponent textComponent, int index) {
+        // negative index refers to an index from the end.
+        if (index \< 0) {
+            index = textComponent.getText().length() + index + 1;
+        }
+        @Nullable Rectangle r = modelToView(textComponent, index);
+        if (r == null)
+            return;
+        clickLeft(textComponent, center(r));
+    }
+
+    <drag(designatedMethod=true)>
+    <drag(designatedMethod=true,relativeToComponent=true)>
+    <drag(side="Left")>
+    <drag(side="Right")>
+    <drag(side="Left",relativeToComponent=true)>
+    <drag(side="Right",relativeToComponent=true)>
+}
+>>

@@ -52,7 +52,7 @@ final class WaitSupportImpl implements WaitSupport {
 
     /**
      * Return a Pause object with a timeout defined by the given
-     * <code>timeoutSupplier</code>.
+     * {@code timeoutSupplier}.
      */
     static WaitSupport newWaitSupport(TimeoutSupplier timeoutProvider) {
         return new WaitSupportImpl(timeoutProvider);

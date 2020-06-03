@@ -34,7 +34,7 @@ import static org.abego.guitesting.ComponentBaseSupport.hasComponentNamePredicat
 
 public interface WindowBaseSupport {
     /**
-     * Return all Windows, including invisible ones, of the given <code>windowClass</code>.
+     * Return all Windows, including invisible ones, of the given {@code windowClass}.
      */
     <T extends Window> Seq<T> allWindowsIncludingInvisibleOnes(Class<T> windowClass);
 
@@ -46,7 +46,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return all Windows of the given <code>windowClass</code>.
+     * Return all Windows of the given {@code windowClass}.
      *
      * <p>Invisible Windows are not considered.</p>
      */
@@ -64,8 +64,8 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return all Windows of the given <code>windowClass</code> that match the
-     * <code>condition</code>.
+     * Return all Windows of the given {@code windowClass} that match the
+     * {@code condition}.
      *
      * <p>Invisible Windows are not considered.</p>
      */
@@ -74,7 +74,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return all Windows that match the <code>condition</code>.
+     * Return all Windows that match the {@code condition}.
      *
      * <p>Invisible Windows are not considered.</p>
      */
@@ -83,32 +83,32 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return <code>true</code> when a window of the given <code>windowClass</code>
-     * exists that matches the <code>condition</code> or <code>false</code> otherwise.
+     * Return {@code true} when a window of the given {@code windowClass}
+     * exists that matches the {@code condition} or {@code false} otherwise.
      */
     default <T extends Window> boolean hasWindowWith(Class<T> windowClass, Predicate<T> condition) {
         return !allWindowsWith(windowClass, condition).isEmpty();
     }
 
     /**
-     * Return <code>true</code> when a window exists that matches the
-     * <code>condition</code> or <code>false</code> otherwise.
+     * Return {@code true} when a window exists that matches the
+     * {@code condition} or {@code false} otherwise.
      */
     default boolean hasWindowWith(Predicate<Window> condition) {
         return !allWindowsWith(condition).isEmpty();
     }
 
     /**
-     * Return <code>true</code> when a window of the given <code>windowClass</code>
-     * exists that has the expected <code>name</code>.
+     * Return {@code true} when a window of the given {@code windowClass}
+     * exists that has the expected {@code name}.
      */
     default <T extends Window> boolean hasWindowNamed(Class<T> windowClass, String name) {
         return hasWindowWith(windowClass, hasComponentNamePredicate(name));
     }
 
     /**
-     * Return <code>true</code> when a window exists that has the expected
-     * <code>name</code>.
+     * Return {@code true} when a window exists that has the expected
+     * {@code name}.
      */
     default boolean hasWindowNamed(String name) {
         return hasWindowNamed(Window.class, name);
@@ -116,7 +116,7 @@ public interface WindowBaseSupport {
 
 
     /**
-     * Return the window of the given <code>windowClass</code> that matches the <code>condition</code>.
+     * Return the window of the given {@code windowClass} that matches the {@code condition}.
      *
      * <p>Throw a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
@@ -126,7 +126,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return the window that matches the <code>condition</code>.
+     * Return the window that matches the {@code condition}.
      *
      * <p>Throw a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
@@ -136,8 +136,8 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return the window of the given <code>windowClass</code> that has the
-     * expected <code>name</code>.
+     * Return the window of the given {@code windowClass} that has the
+     * expected {@code name}.
      *
      * <p>Throw a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
@@ -147,7 +147,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return the window that has the expected <code>name</code>.
+     * Return the window that has the expected {@code name}.
      *
      * <p>Throw a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
@@ -157,8 +157,8 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return a Window of the given <code>windowClass</code> that matches the
-     * <code>condition</code>.
+     * Return a Window of the given {@code windowClass} that matches the
+     * {@code condition}.
      *
      * <p>When multiple Windows match the condition return one of them.</p>
      *
@@ -171,7 +171,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Return a Window that matches the <code>condition</code>.
+     * Return a Window that matches the {@code condition}.
      *
      * <p>When multiple Windows match the condition return one of them.</p>
      *
@@ -184,7 +184,7 @@ public interface WindowBaseSupport {
     }
 
     /**
-     * Close the <code>window</code>.
+     * Close the {@code window}.
      */
     default void close(Window window) {
         window.dispose();

@@ -32,7 +32,7 @@ import java.util.function.BooleanSupplier;
 public interface WaitUntilFunction {
 
     /**
-     * Wait until <code>condition</code> becomes true.
+     * Wait until {@code condition} becomes true.
      */
     @Timeoutable
     void waitUntil(BooleanSupplier condition);

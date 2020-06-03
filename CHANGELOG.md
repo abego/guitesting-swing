@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 0.10.0
+
+### Changes
+
+- GuiTesting -> GT, GuiTestingFactory -> GuiTesting
+- clickAtStartOf -> clickAtStartOfSubstring
+
+### New
+
+- GuiTestingException
+
+- add GuiTesting#debug
+- add MouseSupport#clickCharacterAtIndex
+- add TimeoutSupport#setTimeoutMillis(long)
+
+### Improvements
+
+- Fix typos
+- Documentation
+
+### Bug Fixes
+
+- Bug: NPE in toDebugString(JTree,...) when tree is not a JViewport
+- Bug: Exception in JTextComponentTestUtil#getTextAndHighlights 
+
 ## 0.9.5
 
 ### New

@@ -104,7 +104,6 @@ public final class PauseUI {
         } while (waitingForUser);
     }
 
-    @SuppressWarnings("serial")
     private class PauseUIWindow extends JWindow {
 		private final JButton button = new JButton();
         private final JTextField textField = new JTextField();

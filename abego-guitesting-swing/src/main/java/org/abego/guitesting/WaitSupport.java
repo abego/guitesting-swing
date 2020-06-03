@@ -37,7 +37,7 @@ import java.util.function.BooleanSupplier;
  */
 public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     /**
-     * Wait while <code>condition</code> is true.
+     * Wait while {@code condition} is true.
      */
     @Timeoutable
     default void waitWhile(BooleanSupplier condition) {
@@ -45,12 +45,12 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     }
 
     /**
-     * Wait for the given <code>duration</code>.
+     * Wait for the given {@code duration}.
      */
     void waitFor(Duration duration);
 
     /**
-     * Wait for <code>n</code> milli seconds.
+     * Wait for {@code n} milli seconds.
      */
     default void waitForMillis(long n) {
         waitFor(Duration.ofMillis(n));
@@ -60,8 +60,8 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
      * Give the user a way to signal he likes to "continue" and wait until
      * the user actually signals "continue".
      *
-     * @param message text to show to the user. When <code>null</code> show no
-     *                text to the user [Default: <code>null</code>]
+     * @param message text to show to the user. When {@code null} show no
+     *                text to the user [Default: {@code null}]
      */
     void waitForUser(@Nullable String message);
 

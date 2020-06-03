@@ -46,13 +46,13 @@ public interface RobotAPI extends
     BufferedImage createScreenCapture(Rectangle rectangle);
 
     /**
-     * Sleep for <code>milliseconds</code> milli seconds.
+     * Sleep for {@code milliseconds} milli seconds.
      */
     void delay(int milliseconds);
 
     /**
-     * Return <code>true</code> when <code>waitForIdle</code> is automatically
-     * called after this Robot generated an event, <code>false</code> otherwise.
+     * Return {@code true} when {@code waitForIdle} is automatically
+     * called after this Robot generated an event, {@code false} otherwise.
      */
     boolean isAutoWaitForIdle();
 

@@ -62,14 +62,15 @@
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
-        <abego-commons-base.version>0.10.0-SNAPSHOT</abego-commons-base.version>
-        <abego-commons-test.version>0.10.0-SNAPSHOT</abego-commons-test.version>
-        <abego-commons-swing.version>0.10.0-SNAPSHOT</abego-commons-swing.version>
+        <abego-commons-base.version>0.10.0</abego-commons-base.version>
+        <abego-commons-test.version>0.10.0</abego-commons-test.version>
+        <abego-commons-swing.version>0.10.0</abego-commons-swing.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
         <junit-jupiter.version>5.3.2</junit-jupiter.version>
         <junit-platform-surefire-provider.version>1.1.0</junit-platform-surefire-provider.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
 
     <licenses>
@@ -139,38 +140,19 @@
                 </dependencies>
             </plugin>
 
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
         </plugins>
-
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<!-- see https://stackoverflow.com/a/13043842 -->
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-enforcer-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>enforce</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		
     </build>
 

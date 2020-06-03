@@ -33,30 +33,42 @@ import java.awt.event.ActionListener;
  */
 public interface EDTSupport {
     /**
-     * Run the <code>runnable</code> in the Event Dispatch Thread (EDT).
+     * Runs the {@code runnable} in the Event Dispatch Thread (EDT) and
+     * waits until the runnable is finished.
      * <p>
-     * Process the event queue before running the runnable. Return when the
-     * runnable is finished.
-     * <p>
-     * When called by the EventDispatchThread execute the runnable immediately.
+     * The method may also called from within the EventDispatchThread. In that
+     * case the runnable runs immediately.
+     *
+     * @param runnable the {@link Runnable} to run in the Event Dispatch Thread.
      */
     void runInEDT(Runnable runnable);
 
     /**
-     * Run the <code>actionListener</code> with the event (using
-     * action.actionPerformed) in the Event Dispatch Thread (EDT).
+     * Runs the {@code actionListener} with the given {@code event} in the
+     * Event Dispatch Thread (EDT) (using action.actionPerformed) and
+     * waits until the actionListener is finished.
      * <p>
-     * Process the event queue before running the actionListener. Return when the
-     * runnable is finished.
-     * <p>
-     * When called by the EventDispatchThread execute the runnable immediately.
+     * The method may also called from within the EventDispatchThread. In that
+     * case the actionListener runs immediately.
+     *
+     * @param actionListener the {@link ActionListener} to run in the Event
+     *                       Dispatch Thread.
+     * @param event          the {@link ActionEvent} passed to the actionListener
      */
     default void runInEDT(ActionListener actionListener, ActionEvent event) {
         runInEDT(() -> actionListener.actionPerformed(event));
     }
 
     /**
-     * See {@link #runInEDT(ActionListener, ActionEvent)}
+     * Runs the {@code actionListener} with an
+     * {@link ActionEvent#ACTION_PERFORMED} event and
+     * waits until the actionListener is finished.
+     * <p>
+     * The method may also called from within the EventDispatchThread. In that
+     * case the actionListener runs immediately.
+     *
+     * @param actionListener the {@link ActionListener} to run in the Event
+     *                       Dispatch Thread.
      */
     default void runInEDT(ActionListener actionListener) {
         runInEDT(actionListener,
@@ -64,8 +76,11 @@ public interface EDTSupport {
     }
 
     /**
-     * Return <code>true</code> when the current thread is the Event Dispatch
-     * Thread, <code>false</code> otherwise.
+     * Returns {@code true} when the current thread is the Event Dispatch
+     * Thread, {@code false} otherwise.
+     *
+     * @return {@code true} when the current thread is the Event Dispatch
+     * Thread, {@code false} otherwise
      */
     default boolean isEDT() {
         return SwingUtilities.isEventDispatchThread();

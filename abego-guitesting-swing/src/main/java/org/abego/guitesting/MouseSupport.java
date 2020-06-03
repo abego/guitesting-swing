@@ -26,309 +26,588 @@ package org.abego.guitesting;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-import static org.abego.commons.swing.JTextComponentUtil.modelToView;
-import static org.abego.commons.swing.RectangleUtil.center;
-
+import javax.swing.text.JTextComponent;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 
-import javax.swing.text.JTextComponent;
+import static org.abego.commons.swing.JTextComponentUtil.modelToView;
+import static org.abego.commons.swing.RectangleUtil.center;
 
 public interface MouseSupport extends BasicMouseSupport {
 
     /**
-     * Move mouse pointer to the given {@code position} (in screen coordinates).
+     * Moves the mouse pointer to the given {@code position}.
+     *
+     * @param position the location to move the mouse pointer to (in screen coordinates)
      */
     default void mouseMove(Point position) {
         mouseMove(position.x, position.y);
     }
 
     /**
-     * Use the buttons defined by <code>buttonsMask</code> to click
-     * <code>clickCount</code> times at {@code (x,y)}, in screen coordinates.
+     * Clicks {@code clickCount} times with the buttons defined by
+     * {@code buttonsMask} at {@code (x,y)}, in screen coordinates.
      * <p>
      * Calling this method more than once with the same coordinates will not
-     * generate a "double click", use the <code>clickCount</code> parameter instead.
+     * generate a "double click", use the {@code clickCount} parameter instead.
      *
-     * @param x          if &lt; 0 offset is taken from the right of the component
-     * @param y          if &lt; 0 offset is taken from the bottom of the component
-     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param x           the x coordinate of the location to click at, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the right of the component
+     * @param y           the y coordinate of the location to click at, in screen coordinates.
+     *                    if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
      */
     void click(int buttonsMask, int x, int y, int clickCount);
 
-    default void click(int buttonsMask, Point pos, int clickCount) {
-        click(buttonsMask, pos.x, pos.y, clickCount);
+    /**
+     * Clicks {@code clickCount} times with the buttons defined by
+     * {@code buttonsMask} at {@code position}, in screen coordinates.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param position    the position to click at, in screen coordinates.
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void click(int buttonsMask, Point position, int clickCount) {
+        click(buttonsMask, position.x, position.y, clickCount);
     }
 
     /**
-     * Left click <code>clickCount</code> times at {@code (x,y)}, in screen coordinates.
+     * Left clicks {@code clickCount} times at {@code (x,y)}, in screen coordinates.
      * <p>
-     * See {@link #click(int, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param x          the x coordinate of the location to click at, in screen coordinates.
+     *                   If &lt; 0 offset is taken from the right of the component
+     * @param y          the y coordinate of the location to click at, in screen coordinates.
+     *                   if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickLeft(int x, int y, int clickCount) {
         click(InputEvent.BUTTON1_DOWN_MASK, x, y, clickCount);
     }
 
-    default void clickLeft(Point pos, int clickCount) {
-        clickLeft(pos.x, pos.y, clickCount);
+    /**
+     * Left clicks {@code clickCount} times at {@code position}, in screen coordinates.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param position    the position to click at, in screen coordinates.
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void clickLeft(Point position, int clickCount) {
+        clickLeft(position.x, position.y, clickCount);
     }
 
     /**
-     * Left click at {@code (x,y)}, in screen coordinates.
+     * Left clicks at {@code (x,y)}, in screen coordinates.
      * <p>
-     * See {@link #click(int, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param x           the x coordinate of the location to click at, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the right of the component
+     * @param y           the y coordinate of the location to click at, in screen coordinates.
+     *                    if &lt; 0 offset is taken from the bottom of the component
      */
     default void clickLeft(int x, int y) {
         click(InputEvent.BUTTON1_DOWN_MASK, x, y, 1);
     }
 
-    default void clickLeft(Point pos) {
-        clickLeft(pos.x, pos.y);
+    /**
+     * Left clicks at {@code position}, in screen coordinates.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param position    the position to click at, in screen coordinates.
+     */
+    default void clickLeft(Point position) {
+        clickLeft(position.x, position.y);
     }
 
     /**
-     * Right click <code>clickCount</code> times at {@code (x,y)}, in screen coordinates.
+     * Right clicks {@code clickCount} times at {@code (x,y)}, in screen coordinates.
      * <p>
-     * See {@link #click(int, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param x           the x coordinate of the location to click at, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the right of the component
+     * @param y           the y coordinate of the location to click at, in screen coordinates.
+     *                    if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickRight(int x, int y, int clickCount) {
         click(InputEvent.BUTTON3_DOWN_MASK, x, y, clickCount);
     }
 
-    default void clickRight(Point pos, int clickCount) {
-        clickRight(pos.x, pos.y, clickCount);
+    /**
+     * Right clicks {@code clickCount} times at {@code position}, in screen coordinates.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param position   the position to click at, in screen coordinates.
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void clickRight(Point position, int clickCount) {
+        clickRight(position.x, position.y, clickCount);
     }
 
     /**
-     * Right click at {@code (x,y)}, in screen coordinates.
+     * Right clicks at {@code (x,y)}, in screen coordinates.
      * <p>
-     * See {@link #click(int, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param x the x coordinate of the location to click at, in screen coordinates.
+     *          If &lt; 0 offset is taken from the right of the component
+     * @param y the y coordinate of the location to click at, in screen coordinates.
+     *          if &lt; 0 offset is taken from the bottom of the component
      */
     default void clickRight(int x, int y) {
         click(InputEvent.BUTTON3_DOWN_MASK, x, y, 1);
     }
 
-    default void clickRight(Point pos) {
-        clickRight(pos.x, pos.y);
-    }
-
     /**
-     * Use the buttons defined by <code>buttonsMask</code> to click
-     * <code>clickCount</code> times at {@code (x,y)}, relative to the given
-     * <code>component</code>.
+     * Right clicks at {@code position}, in screen coordinates.
      * <p>
      * Calling this method more than once with the same coordinates will not
-     * generate a "double click", use the <code>clickCount</code> parameter instead.
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
      *
-     * @param x          if &lt; 0 offset is taken from the right of the component
-     * @param y          if &lt; 0 offset is taken from the bottom of the component
-     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
+     * @param position the position to click at, in screen coordinates.
      */
-    void click(int buttonsMask,
-               Component component,
-               int x,
-               int y,
-               int clickCount);
-
-    default void click(int buttonsMask,
-                       Component component, Point pos, int clickCount) {
-        click(buttonsMask, component, pos.x, pos.y, clickCount);
+    default void clickRight(Point position) {
+        clickRight(position.x, position.y);
     }
 
     /**
-     * Left click <code>clickCount</code> times at {@code (x,y)}, relative to
-     * the given <code>component</code>.
+     * Clicks {@code clickCount} times with the buttons defined by
+     * {@code buttonsMask} at {@code (x,y)}, relative to the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param component   the {@link Component} used as reference point
+     * @param x           the x coordinate of the location to click at, relative to the given {@code component}.
+     *                    If &lt; 0 offset is taken from the right of the component
+     * @param y           the y coordinate of the location to click at, relative to the given {@code component}.
+     *                    if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     */
+    void click(int buttonsMask, Component component, int x, int y, int clickCount);
+
+    /**
+     * Clicks {@code clickCount} times with the buttons defined by
+     * {@code buttonsMask} at {@code position}, relative to the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param component   the {@link Component} used as reference point
+     * @param position    the position to click at, relative to the given {@code component}.
+     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void click(int buttonsMask, Component component, Point position, int clickCount) {
+        click(buttonsMask, component, position.x, position.y, clickCount);
+    }
+
+    /**
+     * Left clicks {@code clickCount} times at {@code (x,y)}, relative to the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} used as reference point
+     * @param x          the x coordinate of the location to click at, relative to the given {@code component}.
+     *                   If &lt; 0 offset is taken from the right of the component
+     * @param y          the y coordinate of the location to click at, relative to the given {@code component}.
+     *                   if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickLeft(Component component, int x, int y, int clickCount) {
         click(InputEvent.BUTTON1_DOWN_MASK, component, x, y, clickCount);
     }
 
-    default void clickLeft(Component component, Point pos, int clickCount) {
-        clickLeft(component, pos.x, pos.y, clickCount);
+    /**
+     * Left clicks {@code clickCount} times at {@code position}, relative to the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} used as reference point
+     * @param position   the position to click at, relative to the given {@code component}.
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void clickLeft(Component component, Point position, int clickCount) {
+        clickLeft(component, position.x, position.y, clickCount);
     }
 
     /**
-     * Left click at {@code (x,y)}, relative to the given <code>component</code>.
+     * Left clicks at {@code (x,y)}, relative to the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component the {@link Component} used as reference point
+     * @param x         the x coordinate of the location to click at, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the component
+     * @param y         the y coordinate of the location to click at, relative to the given {@code component}.
+     *                  if &lt; 0 offset is taken from the bottom of the component
      */
     default void clickLeft(Component component, int x, int y) {
         click(InputEvent.BUTTON1_DOWN_MASK, component, x, y, 1);
     }
 
-    default void clickLeft(Component component, Point pos) {
-        clickLeft(component, pos.x, pos.y);
+    /**
+     * Left clicks at {@code position}, relative to the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component the {@link Component} used as reference point
+     * @param position  the position to click at, relative to the given {@code component}.
+     */
+    default void clickLeft(Component component, Point position) {
+        clickLeft(component, position.x, position.y);
     }
 
     /**
-     * Left click <code>clickCount</code> times into the center of the
-     * given <code>component</code>.
+     * Left clicks {@code clickCount} times into the center of the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} to click into
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickLeft(Component component, int clickCount) {
-        clickLeft(component, component.getWidth() / 2, component.getHeight() / 2, clickCount);
+        click(InputEvent.BUTTON1_DOWN_MASK, component, component.getWidth() / 2, component.getHeight() / 2, clickCount);
     }
 
     /**
-     * Left click into the center of the given <code>component</code>.
+     * Left clicks into the center of the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component   the {@link Component} to click into
      */
     default void clickLeft(Component component) {
-        clickLeft(component, 1);
+        click(InputEvent.BUTTON1_DOWN_MASK, component, component.getWidth() / 2, component.getHeight() / 2, 1);
     }
 
     /**
-     * Left click before the index-th character of the textComponent.
+     * Right clicks {@code clickCount} times at {@code (x,y)}, relative to the given {@code component}.
      * <p>
-     * A negative index refers to a position from the end of the text,
-     * i.e. -1 behind the last character, -2 behind the second last character etc.
-     */
-    default void clickCharacterAtIndex(JTextComponent textComponent, int index) {
-    	// negative index refers to an index from the end.
-    	if (index < 0) {
-    		index = textComponent.getText().length()+index+1;
-    	}
-    	@Nullable Rectangle r = modelToView(textComponent, index);
-    	if (r == null) 
-    		return;
-    	clickLeft(textComponent, center(r));
-    }
-    
-    /**
-     * Right click <code>clickCount</code> times at {@code (x,y)}, relative to
-     * the given <code>component</code>.
-     * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} used as reference point
+     * @param x          the x coordinate of the location to click at, relative to the given {@code component}.
+     *                   If &lt; 0 offset is taken from the right of the component
+     * @param y          the y coordinate of the location to click at, relative to the given {@code component}.
+     *                   if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickRight(Component component, int x, int y, int clickCount) {
         click(InputEvent.BUTTON3_DOWN_MASK, component, x, y, clickCount);
     }
 
-    default void clickRight(Component component, Point pos, int clickCount) {
-        clickRight(component, pos.x, pos.y, clickCount);
+    /**
+     * Right clicks {@code clickCount} times at {@code position}, relative to the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} used as reference point
+     * @param position   the position to click at, relative to the given {@code component}.
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
+     */
+    default void clickRight(Component component, Point position, int clickCount) {
+        clickRight(component, position.x, position.y, clickCount);
     }
 
     /**
-     * Right click at {@code (x,y)}, relative to the given <code>component</code>.
+     * Right clicks at {@code (x,y)}, relative to the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component the {@link Component} used as reference point
+     * @param x         the x coordinate of the location to click at, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the component
+     * @param y         the y coordinate of the location to click at, relative to the given {@code component}.
+     *                  if &lt; 0 offset is taken from the bottom of the component
      */
     default void clickRight(Component component, int x, int y) {
-        clickRight(component, x, y, 1);
-    }
-
-    default void clickRight(Component component, Point pos) {
-        clickRight(component, pos.x, pos.y);
+        click(InputEvent.BUTTON3_DOWN_MASK, component, x, y, 1);
     }
 
     /**
-     * Right click <code>clickCount</code> times into the center of the
-     * given <code>component</code>.
+     * Right clicks at {@code position}, relative to the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component the {@link Component} used as reference point
+     * @param position  the position to click at, relative to the given {@code component}.
+     */
+    default void clickRight(Component component, Point position) {
+        clickRight(component, position.x, position.y);
+    }
+
+    /**
+     * Right clicks {@code clickCount} times into the center of the given {@code component}.
+     * <p>
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the {@code clickCount} parameter instead.
+     *
+     * @param component  the {@link Component} to click into
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickRight(Component component, int clickCount) {
-        clickRight(component, component.getWidth() / 2, component.getHeight() / 2, clickCount);
+        click(InputEvent.BUTTON3_DOWN_MASK, component, component.getWidth() / 2, component.getHeight() / 2, clickCount);
     }
 
     /**
-     * Right click into the center of the given <code>component</code>.
+     * Right clicks into the center of the given {@code component}.
      * <p>
-     * See {@link #click(int, Component, int, int, int)}
+     * Calling this method more than once with the same coordinates will not
+     * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
+     *
+     * @param component the {@link Component} to click into
      */
     default void clickRight(Component component) {
-        clickRight(component, 1);
+        click(InputEvent.BUTTON3_DOWN_MASK, component, component.getWidth() / 2, component.getHeight() / 2, 1);
     }
 
     /**
-     * Use the buttons defined by <code>buttonsMask</code> to drag the mouse
+     * Left clicks before the index-th character of the textComponent.
+     * <p>
+     * A negative index refers to a position from the end of the text,
+     * i.e. -1 behind the last character, -2 behind the second last character etc.
+     *
+     * @param textComponent the {@link JTextComponent} to click into
+     * @param index         the index of the character in the textComponent to click in front of.
+     */
+    default void clickCharacterAtIndex(JTextComponent textComponent, int index) {
+        // negative index refers to an index from the end.
+        if (index < 0) {
+            index = textComponent.getText().length() + index + 1;
+        }
+        @Nullable Rectangle r = modelToView(textComponent, index);
+        if (r == null)
+            return;
+        clickLeft(textComponent, center(r));
+    }
+
+    /**
+     * Drags the mouse with the buttons defined by {@code buttonsMask}
      * from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
      * <p>
-     *
-     * @param x1 if &lt; 0 offset is taken from the right of the screen
-     * @param y1 if &lt; 0 offset is taken from the bottom of the screen
-     * @param x2 if &lt; 0 offset is taken from the right of the screen
-     * @param y2 if &lt; 0 offset is taken from the bottom of the screen
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param x1 the x coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y1 the y coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2 the x coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y2 the y coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
      */
     void drag(int buttonsMask, int x1, int y1, int x2, int y2);
 
+    /**
+     * Drags the mouse with the buttons defined by {@code buttonsMask}
+     * from {@code from} to {@code to}, in screen coordinates.
+     * <p>
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param from        the start location of the drag operation, in screen coordinates.
+     * @param to          the end location of the drag operation, in screen coordinates.
+     */
     default void drag(int buttonsMask, Point from, Point to) {
         drag(buttonsMask, from.x, from.y, to.x, to.y);
     }
 
     /**
-     * Use the buttons defined by <code>buttonsMask</code> to drag the mouse
-     * from {@code (x1,y1)} to {@code (x2,y2)}, relative to the given
-     * <code>component</code>
+     * Drags the mouse with the buttons defined by {@code buttonsMask}
+     * from {@code (x1,y1)} to {@code (x2,y2)}, relative to the given {@code component}.
      * <p>
      *
-     * @param x1 if &lt; 0 offset is taken from the right of the component
-     * @param y1 if &lt; 0 offset is taken from the bottom of the component
-     * @param x2 if &lt; 0 offset is taken from the right of the component
-     * @param y2 if &lt; 0 offset is taken from the bottom of the component
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param component   the {@link Component} used as reference point
+     * @param x1          the x coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                    If &lt; 0 offset is taken from the right of the screen
+     * @param y1          the y coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                    If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2          the x coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                    If &lt; 0 offset is taken from the right of the screen
+     * @param y2          the y coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                    If &lt; 0 offset is taken from the bottom of the screen
      */
     void drag(int buttonsMask, Component component, int x1, int y1, int x2, int y2);
 
+    /**
+     * Drags the mouse with the buttons defined by {@code buttonsMask}
+     * from {@code from} to {@code to}, relative to the given {@code component}.
+     * <p>
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
+     * @param component   the {@link Component} used as reference point
+     * @param from        the start location of the drag operation, relative to the given {@code component}.
+     * @param to          the end location of the drag operation, relative to the given {@code component}.
+     */
     default void drag(int buttonsMask, Component component, Point from, Point to) {
         drag(buttonsMask, component, from.x, from.y, to.x, to.y);
     }
 
     /**
-     * Left drag the mouse from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
+     * Left drags the mouse
+     * from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
      * <p>
-     * See {@link #drag(int, int, int, int, int)}
+     *
+     * @param x1 the x coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y1 the y coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2 the x coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y2 the y coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
      */
     default void dragLeft(int x1, int y1, int x2, int y2) {
         drag(InputEvent.BUTTON1_DOWN_MASK, x1, y1, x2, y2);
     }
 
+    /**
+     * Left drags the mouse
+     * from {@code from} to {@code to}, in screen coordinates.
+     * <p>
+     *
+     * @param from the start location of the drag operation, in screen coordinates.
+     * @param to   the end location of the drag operation, in screen coordinates.
+     */
     default void dragLeft(Point from, Point to) {
         dragLeft(from.x, from.y, to.x, to.y);
     }
 
     /**
-     * Right drag the mouse from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
+     * Right drags the mouse
+     * from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
      * <p>
-     * See {@link #drag(int, int, int, int, int)}
+     *
+     * @param x1 the x coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y1 the y coordinate of the start location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2 the x coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the right of the screen
+     * @param y2 the y coordinate of the end location of the drag operation, in screen coordinates.
+     *           If &lt; 0 offset is taken from the bottom of the screen
      */
     default void dragRight(int x1, int y1, int x2, int y2) {
         drag(InputEvent.BUTTON3_DOWN_MASK, x1, y1, x2, y2);
     }
 
+    /**
+     * Right drags the mouse
+     * from {@code from} to {@code to}, in screen coordinates.
+     * <p>
+     *
+     * @param from the start location of the drag operation, in screen coordinates.
+     * @param to   the end location of the drag operation, in screen coordinates.
+     */
     default void dragRight(Point from, Point to) {
         dragRight(from.x, from.y, to.x, to.y);
     }
 
     /**
-     * Left drag the mouse from {@code (x1,y1)} to {@code (x2,y2)}, relative to
-     * the given <code>component</code>
+     * Left drags the mouse
+     * from {@code (x1,y1)} to {@code (x2,y2)}, relative to the given {@code component}.
      * <p>
-     * See {@link #drag(int, Component, int, int, int, int)}
+     *
+     * @param component the {@link Component} used as reference point
+     * @param x1        the x coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the screen
+     * @param y1        the y coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2        the x coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the screen
+     * @param y2        the y coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the bottom of the screen
      */
     default void dragLeft(Component component, int x1, int y1, int x2, int y2) {
         drag(InputEvent.BUTTON1_DOWN_MASK, component, x1, y1, x2, y2);
     }
 
+    /**
+     * Left drags the mouse
+     * from {@code from} to {@code to}, relative to the given {@code component}.
+     * <p>
+     *
+     * @param component the {@link Component} used as reference point
+     * @param from      the start location of the drag operation, relative to the given {@code component}.
+     * @param to        the end location of the drag operation, relative to the given {@code component}.
+     */
     default void dragLeft(Component component, Point from, Point to) {
         dragLeft(component, from.x, from.y, to.x, to.y);
     }
 
     /**
-     * Right drag the mouse from {@code (x1,y1)} to {@code (x2,y2)}, relative to
-     * the given <code>component</code>
+     * Right drags the mouse
+     * from {@code (x1,y1)} to {@code (x2,y2)}, relative to the given {@code component}.
      * <p>
-     * See {@link #drag(int, Component, int, int, int, int)}
+     *
+     * @param component the {@link Component} used as reference point
+     * @param x1        the x coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the screen
+     * @param y1        the y coordinate of the start location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2        the x coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the right of the screen
+     * @param y2        the y coordinate of the end location of the drag operation, relative to the given {@code component}.
+     *                  If &lt; 0 offset is taken from the bottom of the screen
      */
     default void dragRight(Component component, int x1, int y1, int x2, int y2) {
         drag(InputEvent.BUTTON3_DOWN_MASK, component, x1, y1, x2, y2);
     }
 
+    /**
+     * Right drags the mouse
+     * from {@code from} to {@code to}, relative to the given {@code component}.
+     * <p>
+     * @param component   the {@link Component} used as reference point
+     * @param from         the start location of the drag operation, relative to the given {@code component}.
+     * @param to           the end location of the drag operation, relative to the given {@code component}.
+     */
     default void dragRight(Component component, Point from, Point to) {
         dragRight(component, from.x, from.y, to.x, to.y);
     }

@@ -27,22 +27,27 @@ package org.abego.guitesting;
 public interface BasicMouseSupport {
     /**
      * Move mouse pointer to {@code (x,y)} (in screen coordinates).
+     *
+     * @param x the horizontal position of the mouse pointer, in screen coordinates
+     * @param y the vertical position of the mouse pointer, in screen coordinates
      */
     void mouseMove(int x, int y);
 
     /**
      * Press the mouse buttons given by the {@code buttonsMask}.
-     * <p>
-     * {@code buttonsMask} is a combination {@code InputEvent.BUTTON1_DOWN_MASK},
-     * {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}.
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
      **/
     void mousePress(int buttonsMask);
 
     /**
      * Release the mouse buttons given by the {@code buttonsMask}.
-     * <p>
-     * {@code buttonsMask} is a combination {@code InputEvent.BUTTON1_DOWN_MASK},
-     * {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}.
+     *
+     * @param buttonsMask defines the mouse buttons as a
+     *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+     *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
      */
     void mouseRelease(int buttonsMask);
 

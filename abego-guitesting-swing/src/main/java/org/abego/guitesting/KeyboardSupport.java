@@ -27,14 +27,16 @@ package org.abego.guitesting;
 public interface KeyboardSupport extends BasicKeyboardSupport {
 
     /**
-     * Type the given <code>text</code>.
+     * Types the given {@code text}, character by character.
+     *
+     * @param text the text to type
      */
     void type(String text);
 
     /**
-     * Type the key with the given {@code keycode}.
-     * <p>
-     * See {@link java.awt.event.KeyEvent} for details on keycodes.
+     * Types the key with the given {@code keycode}.
+     *
+     * @param keycode the keycode of the key to type, as defined in {@link java.awt.event.KeyEvent}
      */
     void typeKeycode(int keycode);
 

@@ -25,6 +25,7 @@
 package org.abego.guitesting;
 
 import org.eclipse.jdt.annotation.Nullable;
+
 import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,37 +33,73 @@ import java.awt.Point;
 
 public interface DialogAndFrameSupport {
     /**
-     * Show the <code>component</code> in a new modal dialog.
+     * Show the {@code component} in a new modal dialog.
      *
      * <p>The method returns when the dialog is closed.
+     *
+     * @param component the {@link Component} to display in the dialog
      */
     void showInDialog(Component component);
 
     /**
-     * Show the <code>component</code> in a new modal dialog with the given
-     * <code>title</code>.
+     * Show the {@code component} in a new modal dialog with the given
+     * {@code title}.
      *
      * <p>The method returns when the dialog is closed.
+     *
+     * @param title     the title of the dialog
+     * @param component the {@link Component} to display in the dialog
      */
     void showInDialogTitled(String title, Component component);
 
     /**
-     * Show the <code>component</code> in a new JFrame.
+     * Show the {@code component} in a new JFrame.
+     *
+     * @param component the {@link Component} to display in the frame
+     * @param position the position of the frame; when {@code null} the
+     *                 frame is centered on the screen
+     * @param size  the size of the frame; when {@code null} the
+     *                 frame is "packed"
+     * @return the newly created {@link JFrame}
      */
     JFrame showInFrame(Component component, @Nullable Point position, @Nullable Dimension size);
 
+    /**
+     * Show the {@code component} in a new {@link JFrame}, with the frame
+     * centered on the screen.
+     *
+     * @param component the {@link Component} to display in the frame
+     * @return the newly created {@link JFrame}
+     */
     @SuppressWarnings("UnusedReturnValue")
     default JFrame showInFrame(Component component) {
         return showInFrame(component, null, null);
     }
 
     /**
-     * Show the <code>component</code> in a new JFrame with the given
-     * <code>title</code>.
+     * Show the {@code component} in a new JFrame with the given
+     * {@code title}.
+     *
+     * @param title the title of the frame
+     * @param component the {@link Component} to display in the frame;
+     *                  when {@code null} the frame is empty
+     * @param position the position of the frame; when {@code null} the
+     *                 frame is centered on the screen
+     * @param size  the size of the frame; when {@code null} the
+     *                 frame is "packed"
+     * @return the newly created {@link JFrame}
      */
     JFrame showInFrameTitled(String title, @Nullable Component component,
                              @Nullable Point position, @Nullable Dimension size);
 
+    /**
+     * Show the {@code component} in a new JFrame with the given
+     * {@code title}, with the frame centered on the screen.
+     *
+     * @param title the title of the frame
+     * @param component the {@link Component} to display in the frame.
+     * @return the newly created {@link JFrame}
+     */
     @SuppressWarnings("UnusedReturnValue")
     default JFrame showInFrameTitled(String title, Component component) {
         return showInFrameTitled(title, component, null, null);

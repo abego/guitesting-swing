@@ -155,7 +155,6 @@ public interface GT extends
      *     <li>"GT.timeoutMillis": time duration in milliseconds, used for
      *     initialTimeout and timeout.</li>
      * </ul>
-     * </p>
      */
     void readSystemProperties();
 

@@ -55,8 +55,8 @@ public interface TimeoutSupport extends TimeoutSupplier {
     void setInitialTimeout(Duration duration);
 
     /**
-     * Run the <code>runnable</code>, with the timeout temporarily set
-     * to the <code>timeoutDuration</code>.
+     * Run the {@code runnable}, with the timeout temporarily set
+     * to the {@code timeoutDuration}.
      */
     void runWithTimeout(Duration timeoutDuration, Runnable runnable);
 
