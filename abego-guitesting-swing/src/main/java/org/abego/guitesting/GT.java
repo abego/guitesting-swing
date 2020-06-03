@@ -55,7 +55,7 @@ public interface GT extends
     /**
      * see {@link #readSystemProperties()}.
      */
-    static final String SYSTEM_PROPERTY_TIMEOUT_MILLIS = "GT.timeoutMillis"; //NON-NLS
+    String SYSTEM_PROPERTY_TIMEOUT_MILLIS = "GT.timeoutMillis"; //NON-NLS
 
     // ======================================================================
     // Blackboard

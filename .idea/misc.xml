@@ -2,6 +2,11 @@
 <project version="4">
   <component name="EntryPointsManager">
     <pattern value="org.abego.guitesting.WaitSupport" method="pause" />
+    <pattern value="org.abego.guitesting.ComponentSupport" method="waitForComponentNamed" />
+    <pattern value="org.abego.guitesting.ComponentSupport" method="waitForComponentWith" />
+    <pattern value="org.abego.guitesting.WindowSupport" method="waitForWindowNamed" />
+    <pattern value="org.abego.guitesting.WindowSupport" method="waitForWindowWith" />
+    <pattern value="org.abego.guitesting.WindowSupport" />
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="JavaScriptSettings">
