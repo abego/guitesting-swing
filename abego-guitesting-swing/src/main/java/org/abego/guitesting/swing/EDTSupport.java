@@ -29,7 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Event Dispatch Thread Support
+ * Event Dispatch Thread (EDT) Support
  */
 public interface EDTSupport {
     /**
