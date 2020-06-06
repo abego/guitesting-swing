@@ -26,6 +26,11 @@ package org.abego.guitesting.swing;
 
 import java.io.PrintStream;
 
+/**
+ * Features useful when debugging a failing GUI test, like dumping all available
+ * {@link java.awt.Component}s to evaluate why a component-related assertion
+ * failed.
+ */
 public interface DebugSupport {
 
     /**

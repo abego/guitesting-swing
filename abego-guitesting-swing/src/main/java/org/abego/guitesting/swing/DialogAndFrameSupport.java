@@ -31,6 +31,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 
+/**
+ * Operations dealing with {@link JFrame}s and {@link java.awt.Dialog}s.
+ */
 public interface DialogAndFrameSupport {
     /**
      * Show the {@code component} in a new modal dialog.
