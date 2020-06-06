@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 
 /**
  * Operations dealing with {@link Component}s, like waiting for a specific
- * Component.
+ * Component, plus the stuff from {@link ComponentBaseSupport}.
  */
 public interface ComponentSupport extends ComponentBaseSupport {
 

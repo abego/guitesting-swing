@@ -33,12 +33,15 @@ import java.time.Duration;
 import java.util.function.BooleanSupplier;
 
 /**
- * Provide various ways to wait, i.e. pause the execution of the current thread.
+ * Various ways to wait (pause the execution of the current thread).
  */
 public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
 
     /**
      * Waits while {@code condition} is true.
+     *
+     * <p>
+     * <em>(This operation may timeout.)</em>
      *
      * @param condition the condition to check if the waiting is over
      */
@@ -49,6 +52,8 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
 
     /**
      * Waits for the given {@code duration}.
+     * <p>
+     * <em>(This operation does not timeout.)</em>
      *
      * @param duration the duration to wait
      */
@@ -56,6 +61,8 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
 
     /**
      * Waits for the given {@code milliSeconds}.
+     * <p>
+     * <em>(This operation does not timeout.)</em>
      *
      * @param milliSeconds the duration to wait (in milli seconds)
      */
@@ -66,6 +73,8 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     /**
      * Gives the user a way to signal he likes to "continue" and wait until
      * the user actually signals "continue".
+     * <p>
+     * <em>(This operation does not timeout.)</em>
      *
      * @param message text to show to the user. When {@code null} show no
      *                text to the user [Default: {@code null}]
@@ -75,6 +84,8 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     /**
      * Gives the user a way to signal he likes to "continue" and wait until
      * the user actually signals "continue".
+     * <p>
+     * <em>(This operation does NOT timeout.)</em>
      */
     default void waitForUser() {
         waitForUser(null);

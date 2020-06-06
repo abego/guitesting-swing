@@ -37,6 +37,9 @@ public interface WaitUntilFunction {
     /**
      * Wait until {@code condition} becomes true.
      *
+     * <p>
+     * <em>(This operation may timeout.)</em>
+     *
      * @param condition the condition to check.
      */
     @Timeoutable

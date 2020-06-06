@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 
 /**
  * Operations dealing with {@link Window}s, like waiting for a specific
- * Window.
+ * Window, plus the stuff from {@link WindowBaseSupport}.
  */
 public interface WindowSupport extends WindowBaseSupport {
 
