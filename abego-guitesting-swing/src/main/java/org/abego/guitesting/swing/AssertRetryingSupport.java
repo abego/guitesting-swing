@@ -34,6 +34,39 @@ import java.util.function.Supplier;
 
 import static java.lang.Boolean.TRUE;
 
+/**
+ * Assert methods with retries and timeout, for testing multi-threading code
+ * like in Swing applications.
+ * <p>
+ * When testing multi-threading code "assert..." methods in the test methods
+ * may need to check states that are affected by other, parallel threads.
+ * <p>
+ * For example in Swing most methods are not thread safe and therefore need
+ * to run in the Event Dispatch Thread (EDT). Because of that a test method
+ * typically will make its "action" part run in the EDT, e.g. using the
+ * {@link javax.swing.SwingUtilities#invokeLater(Runnable)} method, and will do
+ * the checks/assertions in the "main" (/test) thread. As both threads run
+ * independently we may run into an assertion before the code in the parallel
+ * EDT had a chance to change the state to the expected value.
+ * <p>
+ * An assertion methods implemented according to the following approach avoids
+ * this multi-threading issue:
+ * <ol>
+ *     <li>Start a timer for a timeout.</li>
+ *     <li>If the actual state is equal to the expected state return from
+ *     this assertion method.</li>
+ *     <li>Otherwise if the assertion method is running longer than defined by
+ *     the timeout throw an {@link AssertionError}.
+ *     </li>
+ *     <li>Otherwise wait for a while and then "retry" the check again by
+ *     continuing with step 2.
+ *     </li>
+ * </ol>
+ * <p>
+ * The "assert...Retrying" methods (like
+ * {@link #assertEqualsRetrying(Object, Supplier)} or
+ * {@link #assertTrueRetrying(BooleanSupplier)} are implemented this way.
+ */
 public interface AssertRetryingSupport extends TimeoutSupplier {
     @Timeoutable
     <T> void assertEqualsRetrying(T expected,
