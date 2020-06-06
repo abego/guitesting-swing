@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
-
-import org.abego.guitesting.swing.GT;
-import org.abego.guitesting.swing.GuiTestingException;
+package org.abego.guitesting.swing;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;

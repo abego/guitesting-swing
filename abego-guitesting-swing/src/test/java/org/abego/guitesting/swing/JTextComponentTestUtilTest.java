@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing;
 
-import org.abego.guitesting.swing.GT;
-import org.abego.guitesting.swing.GuiTesting;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +35,7 @@ import javax.swing.text.Highlighter;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import static org.abego.guitesting.swing.internal.JTextComponentTestUtil.CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE;
+import static org.abego.guitesting.swing.JTextComponentTestUtil.CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
