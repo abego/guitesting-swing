@@ -54,6 +54,10 @@ public interface FocusSupport extends TimeoutSupplier {
     /**
      * Waits until {@code component} has the focus.
      *
+     * <p>
+     * Other than {@link #setFocusOwner(Component)} this method does NOT
+     * actively change the focus but just waits until this happens.
+     *
      * @param component the {@link Component} expected to receive the focus.
      */
     @Timeoutable
@@ -61,6 +65,9 @@ public interface FocusSupport extends TimeoutSupplier {
 
     /**
      * Makes the {@code component} have the focus.
+     *
+     * <p>
+     * The method returns when the {@code component} received the focus.
      *
      * @param component the {@link Component} to receive the focus.
      */

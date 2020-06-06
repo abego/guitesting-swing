@@ -24,6 +24,43 @@
 
 /**
  * Easily write GUI Tests in Java (for Swing).
+ * <p>
+ * This module provides a bunch of features useful when testing desktop Swing
+ * applications. Most functionality is accessible through the
+ * {@link org.abego.guitesting.swing.GT} interface.
+ * <p>
+ * A typical code snippet may look like this:
+ * <pre>
+ * // A GT instance is the main thing we need when testing GUI code.
+ * GT gt = newGT();
+ *
+ * // run some application code that opens a window
+ * openInputWindow();
+ *
+ * // In that window we are interested in a JTextField named "input"
+ * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
+ *
+ * // we move the focus to that input field and type "Your name" ", please!
+ * gt.setFocusOwner(input);
+ * gt.type("Your name");
+ * gt.type(", please!");
+ *
+ * // Verify if the text field really contains the expected text.
+ * gt.assertEqualsRetrying("Your name, please!", () -> input.getText());
+ *
+ * // When we are done with our tests we can ask GT to cleanup
+ * // (This will dispose open windows etc.)
+ * gt.cleanup();
+ * </pre>
+ * <b>Unit Testing</b>
+ * <p>
+ * When writing JUnit tests you may want to subclass from
+ * {@link org.abego.guitesting.swing.GuiTestBase}.
+ * <p>
+ * <b>Sample Code</b>
+ * <p>
+ * For sample code how to use the GUITesting Swing module have a look at the
+ * test code of this module.
  */
 
 @NonNullByDefault

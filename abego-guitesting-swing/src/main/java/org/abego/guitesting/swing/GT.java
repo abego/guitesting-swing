@@ -70,7 +70,9 @@ public interface GT extends
     @Override
     @Timeoutable
     default <T extends Window> T waitForWindowWith(Class<T> windowClass, Predicate<T> condition) {
-        Seq<T> windows = poll(() -> allWindowsWith(windowClass, condition), w -> !w.isEmpty());
+        Seq<T> windows = poll(
+                () -> allWindowsWith(windowClass, condition),
+                w -> !w.isEmpty());
         return windows.singleItem();
     }
 
@@ -83,7 +85,8 @@ public interface GT extends
     @Override
     @Timeoutable
     default <T extends Window> T waitForWindowNamed(Class<T> windowClass, String name) {
-        return waitForWindowWith(windowClass, w -> Objects.equals(w.getName(), name));
+        return waitForWindowWith(
+                windowClass, w -> Objects.equals(w.getName(), name));
     }
 
     @Override
@@ -100,7 +103,9 @@ public interface GT extends
     @Timeoutable
     default <T extends Component> T waitForComponentWith(Class<T> componentClass,
                                                          Predicate<T> condition) {
-        Seq<T> seq = poll(() -> allComponentsWith(componentClass, condition), a -> !a.isEmpty());
+        Seq<T> seq = poll(
+                () -> allComponentsWith(componentClass, condition),
+                a -> !a.isEmpty());
         return seq.singleItem();
     }
 
@@ -108,7 +113,9 @@ public interface GT extends
     @Timeoutable
     default <T extends Component> T waitForComponentNamed(Class<T> componentClass, String name) {
         try {
-            return waitForComponentWith(componentClass, c -> Objects.equals(c.getName(), name));
+            return waitForComponentWith(
+                    componentClass,
+                    c -> Objects.equals(c.getName(), name));
         } catch (Exception e) {
             Assertions.fail(String.format(
                     "Error when looking for %s named '%s': %s", //NON-NLS
@@ -144,6 +151,9 @@ public interface GT extends
 
     /**
      * Reset this GT instance and dispose all windows.
+     *
+     * <p>
+     * See also {@link #reset()}
      */
     void cleanup();
 
