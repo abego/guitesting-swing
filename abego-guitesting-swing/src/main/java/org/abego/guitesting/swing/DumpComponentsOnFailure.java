@@ -27,11 +27,17 @@ package org.abego.guitesting.swing;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import static org.abego.guitesting.swing.GuiTesting.newGT;
+
+/**
+ * An JUnit 5 {@link org.junit.jupiter.api.extension.Extension} to dump all
+ * components after a failed test.
+ */
 public class DumpComponentsOnFailure implements AfterTestExecutionCallback {
 
     @Override
     public void afterTestExecution(ExtensionContext context) {
         context.getExecutionException().ifPresent(
-                e -> GuiTesting.newGT().dumpAllComponents());
+                e -> newGT().dumpAllComponents());
     }
 }
