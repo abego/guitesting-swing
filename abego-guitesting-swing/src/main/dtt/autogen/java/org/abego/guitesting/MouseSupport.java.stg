@@ -6,10 +6,8 @@
 // using the separator, ignoring items with empty string values.
 //
 // source: https://stackoverflow.com/a/45679564 "Filter out empty strings in ST4"
-
 DropEmpty ::= ["": [], default: key]
 separated(l, s, w=false) ::= "<if (DropEmpty.(first(l)))><if (w)><s><endif><first(l)><separated(rest(l), s, true)><else><if (rest(l))><separated(rest(l), s, w)><endif><endif>"
-
 // end of separated
 
 // ====== internal helper ========================
@@ -21,6 +19,26 @@ referencePoint() ::= "<if(relativeToComponent)>relative to the given {@code comp
 buttonSideToNumberMap ::= ["Left":"1", "Right":"3"]
 buttonMask() ::= "InputEvent.BUTTON<buttonSideToNumberMap.(side)>_DOWN_MASK"
 
+javaDocNoDoubleClick() ::= <<
+ * \<p>
+ * Calling this method more than once with the same coordinates will not
+ * generate a "double click", use the <if(singleClick)>method with the extra <endif>{@code clickCount} parameter instead.
+ *
+>>
+
+javaDocButtonMask() ::= <<
+<if(!side)> * @param buttonsMask defines the mouse buttons as a
+ *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
+ *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}<endif>
+>>
+
+javaDocComponent() ::= <<
+<if(relativeToComponent)> * @param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif><endif>
+>>
+
+javaDocClickCount() ::= <<
+<if(!singleClick)> * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks<endif>
+>>
 // ====== click ========================
 
 clickParams(position) ::= <<
@@ -41,23 +59,15 @@ click(
 /**
  * <if(side)><side> clicks<else>Clicks<endif><if(!singleClick)> {@code clickCount} times<endif> <if(!side)>with the buttons defined by
  * {@code buttonsMask} <endif><if(center)>into the center of the given {@code component}<else>at {@code (x,y)}, <referencePoint()><endif>.
- * \<p>
- * Calling this method more than once with the same coordinates will not
- * generate a "double click", use the <if(singleClick)>method with the extra <endif>{@code clickCount} parameter instead.
- *
-<if(!side)> * @param buttonsMask defines the mouse buttons as a
- *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
- *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
-<endif>
-<if(relativeToComponent)> * @param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
-<endif>
+<javaDocNoDoubleClick()>
+<javaDocButtonMask()>
+<javaDocComponent()>
 <if(!center)> * @param x           the x coordinate of the location to click at, <referencePoint()>.
  *                    If &lt; 0 offset is taken from the right of the component
  * @param y           the y coordinate of the location to click at, <referencePoint()>.
  *                    if &lt; 0 offset is taken from the bottom of the component
 <endif>
-<if(!singleClick)> * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
-<endif>
+<javaDocClickCount()>
  */
 <if(!designatedMethod)>default <endif>void click<side()>(<clickParams("int x, int y")>)<if(!designatedMethod)> {
     click(InputEvent.BUTTON<buttonSideToNumberMap.(side)>_DOWN_MASK, <if(relativeToComponent)>component, <endif><if(center)>component.getWidth() / 2, component.getHeight() / 2<else>x, y<endif>, <if(singleClick)>1<else>clickCount<endif>);
@@ -67,19 +77,11 @@ click(
 /**
  * <if(side)><side> clicks<else>Clicks<endif><if(!singleClick)> {@code clickCount} times<endif> <if(!side)>with the buttons defined by
  * {@code buttonsMask} <endif>at {@code position}, <referencePoint()>.
- * \<p>
- * Calling this method more than once with the same coordinates will not
- * generate a "double click", use the <if(singleClick)>method with the extra <endif>{@code clickCount} parameter instead.
- *
-<if(!side)> * @param buttonsMask defines the mouse buttons as a
- *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
- *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
-<endif>
-<if(relativeToComponent)> * @param component   the {@link Component} <if(center)>to click into<else>used as reference point<endif>
-<endif>
+<javaDocNoDoubleClick()>
+<javaDocButtonMask()>
+<javaDocComponent()>
  * @param position    the position to click at, <referencePoint()>.
-<if(!singleClick)> * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
-<endif>
+<javaDocClickCount()>
  */
 default void click<side()>(<clickParams("Point position")>) {
     click<side()>(<if(!side)>buttonsMask, <endif><if(relativeToComponent)>component, <endif>position.x, position.y<if(!singleClick)>, clickCount<endif>);
