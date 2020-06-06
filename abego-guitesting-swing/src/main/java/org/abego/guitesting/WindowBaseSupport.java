@@ -34,157 +34,217 @@ import static org.abego.guitesting.ComponentBaseSupport.hasComponentNamePredicat
 
 public interface WindowBaseSupport {
     /**
-     * Return all Windows, including invisible ones, of the given {@code windowClass}.
+     * Returns all Windows, including invisible ones, of the given
+     * {@code windowClass}.
+     *
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @return all Windows, including invisible ones, of the given {@code windowClass}
      */
     <T extends Window> Seq<T> allWindowsIncludingInvisibleOnes(Class<T> windowClass);
 
     /**
-     * Return all Windows, including invisible ones.
+     * Returns all Windows, including invisible ones.
+     *
+     * @return all Windows, including invisible ones
      */
     default Seq<Window> allWindowsIncludingInvisibleOnes() {
         return allWindowsIncludingInvisibleOnes(Window.class);
     }
 
     /**
-     * Return all Windows of the given {@code windowClass}.
+     * Returns all visible Windows of the given {@code windowClass}.
      *
-     * <p>Invisible Windows are not considered.</p>
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @return all visible Windows of the given {@code windowClass}.
      */
     default <T extends Window> Seq<T> allWindows(Class<T> windowClass) {
         return allWindowsIncludingInvisibleOnes(windowClass).filter(Component::isVisible);
     }
 
     /**
-     * Return all Windows.
+     * Returns all visible Windows.
      *
-     * <p>Invisible Windows are not considered.</p>
+     * @return all visible Windows
      */
     default Seq<Window> allWindows() {
         return allWindows(Window.class);
     }
 
     /**
-     * Return all Windows of the given {@code windowClass} that match the
+     * Returns all visible Windows of the given {@code windowClass} that match the
      * {@code condition}.
      *
-     * <p>Invisible Windows are not considered.</p>
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @param condition   the condition of the window to check
+     * @return all visible Windows of the given {@code windowClass} that match the
+     * {@code condition}
      */
     default <T extends Window> Seq<T> allWindowsWith(Class<T> windowClass, Predicate<T> condition) {
         return allWindows(windowClass).filter(condition);
     }
 
     /**
-     * Return all Windows that match the {@code condition}.
+     * Returns all visible Windows that match the {@code condition}.
      *
-     * <p>Invisible Windows are not considered.</p>
+     * @param condition the condition of the window to check
+     * @return all Windows  that match the {@code condition}
      */
     default Seq<Window> allWindowsWith(Predicate<Window> condition) {
         return allWindowsWith(Window.class, condition);
     }
 
     /**
-     * Return {@code true} when a window of the given {@code windowClass}
-     * exists that matches the {@code condition} or {@code false} otherwise.
+     * Returns {@code true} when a window of the given {@code windowClass}
+     * exists that matches the {@code condition}; returns {@code false} otherwise.
+     *
+     * @param windowClass the type of {@link Window}s to check
+     * @param <T>         the type of {@link Window}s to check
+     * @param condition   the condition of the window to check
+     * @return {@code true} when a window of the given {@code windowClass}
+     * exists that matches the {@code condition}; {@code false} otherwise
      */
     default <T extends Window> boolean hasWindowWith(Class<T> windowClass, Predicate<T> condition) {
         return !allWindowsWith(windowClass, condition).isEmpty();
     }
 
     /**
-     * Return {@code true} when a window exists that matches the
+     * Returns {@code true} when a window exists that matches the
      * {@code condition} or {@code false} otherwise.
+     *
+     * @param condition the condition of the window to check
+     * @return {@code true} when a window exists that matches the
+     * {@code condition} or {@code false} otherwise
      */
     default boolean hasWindowWith(Predicate<Window> condition) {
         return !allWindowsWith(condition).isEmpty();
     }
 
     /**
-     * Return {@code true} when a window of the given {@code windowClass}
-     * exists that has the expected {@code name}.
+     * Returns {@code true} when a window of the given {@code windowClass}
+     * exists that has the expected {@code name}; returns {@code false} otherwise.
+     *
+     * @param windowClass the type of {@link Window}s to check
+     * @param <T>         the type of {@link Window}s to check
+     * @param name        the expected name of a window
+     * @return {@code true} when a window of the given {@code windowClass}
+     * exists that has the expected {@code name}; {@code false} otherwise
      */
     default <T extends Window> boolean hasWindowNamed(Class<T> windowClass, String name) {
         return hasWindowWith(windowClass, hasComponentNamePredicate(name));
     }
 
     /**
-     * Return {@code true} when a window exists that has the expected
+     * Returns {@code true} when a window exists that has the expected
      * {@code name}.
+     *
+     * @param name the expected name of a window
+     * @return {@code true} when a window exists that has the expected
+     * {@code name}
      */
     default boolean hasWindowNamed(String name) {
         return hasWindowNamed(Window.class, name);
     }
 
-
     /**
-     * Return the window of the given {@code windowClass} that matches the {@code condition}.
+     * Returns the window of the given {@code windowClass} that matches the {@code condition}.
      *
-     * <p>Throw a NoSuchElementException when no window or more than one window
+     * <p>Throws a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
+     *
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @param condition   the condition of the window to return
+     * @return the window of the given {@code windowClass} that matches the {@code condition}
      */
     default <T extends Window> T windowWith(Class<T> windowClass, Predicate<T> condition) {
         return allWindowsWith(windowClass, condition).singleItem();
     }
 
     /**
-     * Return the window that matches the {@code condition}.
+     * Returns the window that matches the {@code condition}.
      *
-     * <p>Throw a NoSuchElementException when no window or more than one window
+     * <p>Throws a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
+     *
+     * @param condition the condition of the window to return
+     * @return the window that matches the {@code condition}
      */
     default Window windowWith(Predicate<Window> condition) {
         return windowWith(Window.class, condition);
     }
 
     /**
-     * Return the window of the given {@code windowClass} that has the
+     * Returns the window of the given {@code windowClass} that has the
      * expected {@code name}.
      *
-     * <p>Throw a NoSuchElementException when no window or more than one window
+     * <p>Throws a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
+     *
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @param name        the name of the window to return
+     * @return the window of the given {@code windowClass} that has the expected {@code name}
      */
     default <T extends Window> T windowNamed(Class<T> windowClass, String name) {
         return windowWith(windowClass, hasComponentNamePredicate(name));
     }
 
     /**
-     * Return the window that has the expected {@code name}.
+     * Returns the window that has the expected {@code name}.
      *
-     * <p>Throw a NoSuchElementException when no window or more than one window
+     * <p>Throws a NoSuchElementException when no window or more than one window
      * matches the condition.</p>
+     *
+     * @param name the name of the window to return
+     * @return the window that has the expected {@code name}
      */
     default Window windowNamed(String name) {
         return windowWith(hasComponentNamePredicate(name));
     }
 
     /**
-     * Return a Window of the given {@code windowClass} that matches the
+     * Returns a Window of the given {@code windowClass} that matches the
      * {@code condition}.
      *
      * <p>When multiple Windows match the condition return one of them.</p>
      *
      * <p>Invisible Windows are not considered.</p>
      *
-     * <p>Throw a NoSuchElementException when no window matches the condition.</p>
+     * <p>Throws a NoSuchElementException when no window matches the condition.</p>
+     *
+     * @param windowClass the type of {@link Window}s to return
+     * @param <T>         the type of {@link Window}s to return
+     * @param condition   the condition of the window to return
+     * @return a Window of the given {@code windowClass} that matches the
+     * {@code condition}
      */
     default <T extends Window> T anyWindowWith(Class<T> windowClass, Predicate<T> condition) {
         return allWindows(windowClass).filter(condition).anyItem();
     }
 
     /**
-     * Return a Window that matches the {@code condition}.
+     * Returns a Window that matches the {@code condition}.
      *
      * <p>When multiple Windows match the condition return one of them.</p>
      *
      * <p>Invisible Windows are not considered.</p>
      *
      * <p>Throw a NoSuchElementException when no window matches the condition.</p>
+     *
+     * @param condition the condition of the window to return
+     * @return a Window that matches the {@code condition}
      */
     default Window anyWindowWith(Predicate<Window> condition) {
         return anyWindowWith(Window.class, condition);
     }
 
     /**
-     * Close the {@code window}.
+     * Closes the {@code window}.
+     *
+     * @param window the {@link Window} to close
      */
     default void close(Window window) {
         window.dispose();
