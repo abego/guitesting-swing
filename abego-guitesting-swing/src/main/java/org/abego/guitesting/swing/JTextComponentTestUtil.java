@@ -32,6 +32,9 @@ import java.awt.Rectangle;
 
 import static org.abego.commons.lang.StringUtil.substringSafe;
 
+/**
+ * Helpers dealing with {@link JTextComponent}.
+ */
 public class JTextComponentTestUtil {
 
     static final String CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE = "clickAtOffset with invalid offset"; //NON-NLS

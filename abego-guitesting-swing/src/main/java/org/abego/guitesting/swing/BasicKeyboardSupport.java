@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing;
 
 /**
- * Perform basic operations on the keyboard, like pressing and releasing a key.
+ * Basic operations on the keyboard, like pressing and releasing a key.
  */
 public interface BasicKeyboardSupport {
     /**

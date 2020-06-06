@@ -24,6 +24,9 @@
 
 package org.abego.guitesting.swing;
 
+/**
+ * Operations on the keyboard, like typing text or individual keys.
+ */
 public interface KeyboardSupport extends BasicKeyboardSupport {
 
     /**
