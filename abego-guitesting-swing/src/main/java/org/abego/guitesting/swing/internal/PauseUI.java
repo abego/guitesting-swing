@@ -68,7 +68,7 @@ public final class PauseUI {
 
         @Nullable PauseUIWindow w = pauseUIWindow;
         if (w != null) {
-        	w.dispose();
+            w.dispose();
         }
         pauseUIWindow = null;
     }
@@ -103,7 +103,8 @@ public final class PauseUI {
     }
 
     private class PauseUIWindow extends JWindow {
-		private final JButton button = new JButton();
+        private static final long serialVersionUID = 1L;
+        private final JButton button = new JButton();
         private final JTextField textField = new JTextField();
         private final JPanel panel = new JPanel();
 
@@ -161,7 +162,7 @@ public final class PauseUI {
 
         private Point locationOnScreen() {
             Rectangle bounds = SwingUtil.screenBounds();
-            return new Point(0, bounds.height -getHeight());
+            return new Point(0, bounds.height - getHeight());
         }
     }
 }
