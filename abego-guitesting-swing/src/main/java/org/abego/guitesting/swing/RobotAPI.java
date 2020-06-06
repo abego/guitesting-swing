@@ -29,7 +29,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 /**
- * Provides features similar to the ones from {@link java.awt.Robot}.
+ * Operations similar to the ones from {@link java.awt.Robot}.
  */
 public interface RobotAPI extends
         BasicMouseSupport,
