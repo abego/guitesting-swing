@@ -64,7 +64,7 @@
  * <b>Sample Code</b>
  * <p>
  * For sample code how to use the GUITesting Swing module have a look at the
- * test code of this module.
+ * test code of this module, in the {@code src/test/java} folder.
  */
 
 @NonNullByDefault
