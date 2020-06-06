@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing;
 
 /**
- * Perform basic operations with the mouse, like moving it, pressing and
+ * Basic operations with the mouse, like moving it, pressing and
  * releasing buttons, or rotating the wheel.
  */
 public interface BasicMouseSupport {

@@ -35,6 +35,9 @@ import java.awt.event.InputEvent;
 import static org.abego.commons.swing.JTextComponentUtil.modelToView;
 import static org.abego.commons.swing.RectangleUtil.center;
 
+/**
+ * Operations with the mouse, like moving it, clicking, or dragging.
+ */
 public interface MouseSupport extends BasicMouseSupport {
 
     /**
