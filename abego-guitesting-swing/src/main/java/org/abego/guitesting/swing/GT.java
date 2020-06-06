@@ -36,6 +36,65 @@ import java.util.function.Predicate;
 
 import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
 
+/**
+ * GT, the main interface for GUI Testing.
+ *
+ * <p>
+ * GT provides access to most of the functionality of the GUITesting module.
+ * <p>
+ * A typical code snippet using GT may look like this:
+ * <pre>
+ * import static org.abego.guitesting.swing.GuiTesting.newGT;
+ *
+ * ...
+ *
+ * // A GT instance is the main thing we need when testing GUI code.
+ * GT gt = newGT();
+ *
+ * // run some application code that opens a window
+ * openInputWindow();
+ *
+ * // In that window we are interested in a JTextField named "input"
+ * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
+ *
+ * // we move the focus to that input field and type "Your name" ", please!
+ * gt.setFocusOwner(input);
+ * gt.type("Your name");
+ * gt.type(", please!");
+ *
+ * // Verify if the text field really contains the expected text.
+ * gt.assertEqualsRetrying("Your name, please!", () -> input.getText());
+ *
+ * // When we are done with our tests we can ask GT to cleanup
+ * // (This will dispose open windows etc.)
+ * gt.cleanup();
+ * </pre>
+ * <p>
+ * <b>Feature Areas and "....Support" interfaces</b>
+ * <p>
+ * GT is a quite large API with many methods that cover various areas related
+ * to GUI testing. To better manage this large feature set we have different
+ * "...Support" interfaces for each area, like {@link KeyboardSupport} or
+ * {@link WindowSupport}. GT gives access to these feature areas through
+ * methods starting with an underscore, like {@link #_keyboard()} or
+ * {@link #_window()}, for code like this:
+ * <pre>
+ * gt._keyboard().type("hello world");
+ * </pre>
+ * or
+ * <pre>
+ * gt._window().waitForWindowNamed("preferences");
+ * </pre>
+ * As GT also inherits from these feature area interfaces you may also access
+ * the methods directly, for code like this:
+ * <pre>
+ * gt.type("hello world");
+ * </pre>
+ * or
+ * <pre>
+ * gt.waitForWindowNamed("preferences");
+ * </pre>
+ */
 public interface GT extends
         AssertRetryingSupport,
         ComponentSupport,

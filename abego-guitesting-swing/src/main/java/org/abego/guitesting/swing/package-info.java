@@ -29,8 +29,12 @@
  * applications. Most functionality is accessible through the
  * {@link org.abego.guitesting.swing.GT} interface.
  * <p>
- * A typical code snippet may look like this:
+ * A typical code snippet using GT may look like this:
  * <pre>
+ * import static org.abego.guitesting.swing.GuiTesting.newGT;
+ *
+ * ...
+ *
  * // A GT instance is the main thing we need when testing GUI code.
  * GT gt = newGT();
  *
