@@ -29,6 +29,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+/**
+ * A base class for GUI JUnit tests.
+ * <p>
+ * It holds a protected final field {@code gt} with a {@link GT} instance
+ * initialized according to the system properties (see
+ * {@link GT#readSystemProperties()}. Subclasses typically use {@code gt} in
+ * their test methods.
+ * <p>
+ * After each test {@link GT#cleanup()} is performed, e.g. to dispose all
+ * windows.
+ */
 @ExtendWith(DumpComponentsOnFailure.class)
 public class GuiTestBase {
     protected final GT gt = GuiTesting.newGT();

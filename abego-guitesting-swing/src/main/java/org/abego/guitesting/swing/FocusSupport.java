@@ -32,6 +32,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.awt.Component;
 import java.awt.KeyboardFocusManager;
 
+/**
+ * (Keyboard) Focus related operations.
+ */
 public interface FocusSupport extends TimeoutSupplier {
     /**
      * Returns the focus owner, i.e. the {@link Component} that will receive all
