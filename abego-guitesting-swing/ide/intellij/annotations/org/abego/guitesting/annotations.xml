@@ -23,12 +23,12 @@
   -->
 
 <root>
-    <item name='org.abego.guitesting.DialogAndFrameSupport javax.swing.JFrame showInFrame(java.awt.Component)'>
+    <item name='org.abego.guitesting.swing.DialogAndFrameSupport javax.swing.JFrame showInFrame(java.awt.Component)'>
         <annotation name='java.lang.SuppressWarnings'>
             <val val="&quot;UnusedReturnValue&quot;"/>
         </annotation>
     </item>
-    <item name='org.abego.guitesting.DialogAndFrameSupport javax.swing.JFrame showInFrameTitled(java.lang.String, java.awt.Component)'>
+    <item name='org.abego.guitesting.swing.DialogAndFrameSupport javax.swing.JFrame showInFrameTitled(java.lang.String, java.awt.Component)'>
         <annotation name='java.lang.SuppressWarnings'>
             <val val="&quot;UnusedReturnValue&quot;"/>
         </annotation>
@@ -43,13 +43,13 @@
             <val val="&quot;SameParameterValue&quot;"/>
         </annotation>
     </item>
-    <item name='org.abego.guitesting.WindowSupport T windowNamed(java.lang.Class&lt;T&gt;, java.lang.String) 1'>
+    <item name='org.abego.guitesting.swing.WindowSupport T windowNamed(java.lang.Class&lt;T&gt;, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NonNls'/>
     </item>
-    <item name='org.abego.guitesting.WindowSupport boolean hasWindowNamed(java.lang.Class&lt;T&gt;, java.lang.String) 1'>
+    <item name='org.abego.guitesting.swing.WindowSupport boolean hasWindowNamed(java.lang.Class&lt;T&gt;, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NonNls'/>
     </item>
-    <item name='org.abego.guitesting.WindowSupport java.awt.Window windowNamed(java.lang.String) 0'>
+    <item name='org.abego.guitesting.swing.WindowSupport java.awt.Window windowNamed(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NonNls'/>
     </item>
 </root>
