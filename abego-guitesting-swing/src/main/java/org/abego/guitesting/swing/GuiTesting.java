@@ -26,6 +26,10 @@ package org.abego.guitesting.swing;
 
 import org.abego.guitesting.swing.internal.GTImpl;
 
+/**
+ * The entry to the GuiTesting module, containing the factory method for
+ * {@link GT} instances.
+ */
 public class GuiTesting {
 
     public static GT newGT() {
