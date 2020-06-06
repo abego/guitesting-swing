@@ -32,6 +32,10 @@ import java.time.Duration;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * Operations related to Polling (the process of waiting for a certain state and
+ * periodically checking if the state is reached).
+ */
 public interface PollingSupport extends TimeoutSupplier {
 
     /**
