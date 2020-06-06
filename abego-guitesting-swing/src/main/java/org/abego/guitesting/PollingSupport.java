@@ -44,6 +44,7 @@ public interface PollingSupport extends TimeoutSupplier {
      * <p><em>Polling</em> refers to the process of waiting for a certain state and
      * periodically checking if the state is reached.</p>
      *
+     * @param <T>            the type of the value to be polled
      * @param functionToPoll the function used to poll for the value
      * @param isResult       function that returns {@code true} when the
      *                       passed value is a possible result value,
@@ -51,6 +52,8 @@ public interface PollingSupport extends TimeoutSupplier {
      * @param timeout        the duration the method will poll the value
      *                       before throwing a {@link TimeoutUncheckedException}.
      *                       [Default: {@code timeout()}]
+     * @return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}
      */
     @Timeoutable
     <T> T poll(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout);
@@ -58,8 +61,20 @@ public interface PollingSupport extends TimeoutSupplier {
     /**
      * Return the first value polled from {@code functionToPoll} that makes
      * {@code isResult(value)} evaluate to {@code true}.
-     * <p>
-     * For details see {@link #poll(Supplier, Predicate, Duration)}
+     *
+     * <p>Throw a {@link TimeoutUncheckedException} when {@code isResult} did not
+     * return {@code true} within {@code timeout()}.</p>
+     *
+     * <p><em>Polling</em> refers to the process of waiting for a certain state and
+     * periodically checking if the state is reached.</p>
+     *
+     * @param <T>            the type of the value to be polled
+     * @param functionToPoll the function used to poll for the value
+     * @param isResult       function that returns {@code true} when the
+     *                       passed value is a possible result value,
+     *                       {@code false} otherwise.
+     * @return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}
      */
     @Timeoutable
     default <T> T poll(Supplier<T> functionToPoll, Predicate<T> isResult) {
@@ -68,20 +83,24 @@ public interface PollingSupport extends TimeoutSupplier {
     }
 
     /**
-     * Return the first value polled from {@code functionToPoll} that makes
+     * Returns the first value polled from {@code functionToPoll} that makes
      * {@code isResult(value)} evaluate to {@code true}, or the last
      * polled value after the timeout occurred.
      *
      * <p><em>Polling</em> refers to the process of waiting for a certain state and
      * periodically checking if the state is reached.</p>
      *
+     * @param <T>            the type of the value to be polled
      * @param functionToPoll the function used to poll for the value
      * @param isResult       function that returns {@code true} when the
      *                       passed value is a possible result value,
      *                       {@code false} otherwise.
-     * @param timeout        the duration the method will poll for the value.
-     *                       After that duration return the last polled value.
-     *                       [Default: {@code timeout()}]
+     * @param timeout        the duration the method will poll the value
+     *                       before stop polling and returning the last polled
+     *                       value.
+     * @return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}, or the last
+     * polled value after the timeout occurred.
      */
     @Timeoutable
     <T> T pollNoFail(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout);
@@ -89,9 +108,19 @@ public interface PollingSupport extends TimeoutSupplier {
     /**
      * Return the first value polled from {@code functionToPoll} that makes
      * {@code isResult(value)} evaluate to {@code true}, or the last
-     * polled value after the timeout occurred.
+     * polled value after the timeout (defined by {@code timeout()} occurred.
      * <p>
-     * For details see {@link #pollNoFail(Supplier, Predicate, Duration)}
+     * <em>Polling</em> refers to the process of waiting for a certain state and
+     * periodically checking if the state is reached.</p>
+     *
+     * @param <T>            the type of the value to be polled
+     * @param functionToPoll the function used to poll for the value
+     * @param isResult       function that returns {@code true} when the
+     *                       passed value is a possible result value,
+     *                       {@code false} otherwise.
+     * @return the first value polled from {@code functionToPoll} that makes
+     * {@code isResult(value)} evaluate to {@code true}, or the last
+     * polled value after the timeout occurred.
      */
     @Timeoutable
     default <T> T pollNoFail(Supplier<T> functionToPoll, Predicate<T> isResult) {

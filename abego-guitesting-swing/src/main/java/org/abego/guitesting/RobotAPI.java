@@ -28,47 +28,71 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+/**
+ * Provides features similar to the ones from {@link java.awt.Robot}.
+ */
 public interface RobotAPI extends
         BasicMouseSupport,
         BasicKeyboardSupport,
         WaitForIdleSupport {
 
     /**
-     * Return the color of the pixel at {@code (x,y)} (in screen coordinates).
+     * Returns the color of the pixel at {@code (x,y)}.
+     *
+     * @param x the x-coordinate of the pixel (in screen coordinates)
+     * @param y the y-coordinate of the pixel (in screen coordinates)
+     * @return the color of the pixel at {@code (x,y)}
      */
     Color getPixelColor(int x, int y);
 
     /**
-     * Return an image of the rectangle of the screen (in screen coordinates).
+     * Returns an image/screenshot of the rectangle of the screen.
      * <p>
-     * Don't include the mouse cursor in the image.
+     * Doesn't include the mouse cursor in the image.
+     *
+     * @param rectangle a {@link Rectangle} on the screen (in screen coordinates)
+     * @return an image of the rectangle of the screen.
      */
     BufferedImage createScreenCapture(Rectangle rectangle);
 
     /**
-     * Sleep for {@code milliseconds} milli seconds.
+     * Sleeps (the current thread) for {@code milliseconds} milli seconds.
+     *
+     * @param milliseconds the time in milli seconds
      */
     void delay(int milliseconds);
 
     /**
-     * Return {@code true} when {@code waitForIdle} is automatically
+     * Returns {@code true} when {@code waitForIdle} is automatically
+     * called after this Robot generated an event, {@code false} otherwise.
+     *
+     * @return {@code true} when {@code waitForIdle} is automatically
      * called after this Robot generated an event, {@code false} otherwise.
      */
     boolean isAutoWaitForIdle();
 
     /**
+     * Sets the {@code autoWaitForIdle} property to the given {@code value}.
+     * <p>
      * See {@link #isAutoWaitForIdle()}.
+     *
+     * @param value the new value of the property
      */
-    void setAutoWaitForIdle(boolean isOn);
+    void setAutoWaitForIdle(boolean value);
 
     /**
-     * Return the number of milliseconds this Robot sleeps after generating an event.
+     * Returns the number of milliseconds this Robot sleeps after generating an event.
+     *
+     * @return the number of milliseconds this Robot sleeps after generating an event.
      */
     int getAutoDelay();
 
     /**
+     * Sets the {@code autoDelay} property to the given {@code milliseconds}.
+     * <p>
      * See {@link #getAutoDelay()}.
+     *
+     * @param milliseconds the new value of the property
      */
-    void setAutoDelay(int ms);
-
+    void setAutoDelay(int milliseconds);
 }

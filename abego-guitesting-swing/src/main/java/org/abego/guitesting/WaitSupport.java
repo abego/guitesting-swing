@@ -36,8 +36,11 @@ import java.util.function.BooleanSupplier;
  * Provide various ways to wait, i.e. pause the execution of the current thread.
  */
 public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
+
     /**
-     * Wait while {@code condition} is true.
+     * Waits while {@code condition} is true.
+     *
+     * @param condition the condition to check if the waiting is over
      */
     @Timeoutable
     default void waitWhile(BooleanSupplier condition) {
@@ -45,19 +48,23 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     }
 
     /**
-     * Wait for the given {@code duration}.
+     * Waits for the given {@code duration}.
+     *
+     * @param duration the duration to wait
      */
     void waitFor(Duration duration);
 
     /**
-     * Wait for {@code n} milli seconds.
+     * Waits for the given {@code milliSeconds}.
+     *
+     * @param milliSeconds the duration to wait (in milli seconds)
      */
-    default void waitForMillis(long n) {
-        waitFor(Duration.ofMillis(n));
+    default void waitForMillis(long milliSeconds) {
+        waitFor(Duration.ofMillis(milliSeconds));
     }
 
     /**
-     * Give the user a way to signal he likes to "continue" and wait until
+     * Gives the user a way to signal he likes to "continue" and wait until
      * the user actually signals "continue".
      *
      * @param message text to show to the user. When {@code null} show no
@@ -66,7 +73,7 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
     void waitForUser(@Nullable String message);
 
     /**
-     * Give the user a way to signal he likes to "continue" and wait until
+     * Gives the user a way to signal he likes to "continue" and wait until
      * the user actually signals "continue".
      */
     default void waitForUser() {

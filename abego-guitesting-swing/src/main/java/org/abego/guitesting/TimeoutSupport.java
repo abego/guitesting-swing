@@ -31,32 +31,45 @@ import java.time.Duration;
 public interface TimeoutSupport extends TimeoutSupplier {
 
     /**
-     * see {@link #timeout()}.
+     * Sets the {@code timeout} property, as returned by {@link #timeout()}, to
+     * the given {@code duration}.
+     *
+     * @param duration the timeout duration
      */
     void setTimeout(Duration duration);
 
     /**
-     * As {@link #setTimeout(Duration)}, but the duration is given in milli seconds.
+     * Sets the {@code timeout} property, as returned by {@link #timeout()}, to
+     * the given {@code durationInMillis}.
+     *
+     * @param durationInMillis the duration of the timeout, in milli seconds
      */
     default void setTimeoutMillis(long durationInMillis) {
         setTimeout(Duration.ofMillis(durationInMillis));
     }
 
     /**
-     * Return the value used as the initial timeout or after a "reset".
+     * Returns the duration of the initial timeout, i.e. the value
+     * {@link #timeout()} returns initially or after a "reset".
      *
      * <p>See {@link #timeout()}</p>
      */
     Duration initialTimeout();
 
     /**
-     * see {@link #initialTimeout()}.
+     * Sets the {@code initialTimeout} property, as returned by
+     * {@link #initialTimeout()}.
+     *
+     * @param duration the new duration
      */
     void setInitialTimeout(Duration duration);
 
     /**
-     * Run the {@code runnable}, with the timeout temporarily set
+     * Runs the {@code runnable}, with the timeout temporarily set
      * to the {@code timeoutDuration}.
+     *
+     * @param timeoutDuration the duration of the timeout
+     * @param runnable        the runnable to run
      */
     void runWithTimeout(Duration timeoutDuration, Runnable runnable);
 
