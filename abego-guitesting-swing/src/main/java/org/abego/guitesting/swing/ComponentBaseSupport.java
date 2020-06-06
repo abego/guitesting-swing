@@ -32,6 +32,10 @@ import java.util.function.Predicate;
 
 import static org.abego.commons.seq.SeqUtil.newSeq;
 
+/**
+ * Basic operations dealing with {@link Component}s, like detecting and
+ * collecting Components.
+ */
 public interface ComponentBaseSupport {
 
     static <T extends Component> Predicate<T> hasComponentNamePredicate(String name) {
