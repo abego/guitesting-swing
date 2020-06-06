@@ -24,6 +24,9 @@
 
 package org.abego.guitesting.swing;
 
+/**
+ * "Wait for idle" related stuff.
+ */
 public interface WaitForIdleSupport {
     /**
      * Wait until all events currently on the event queue have been processed.

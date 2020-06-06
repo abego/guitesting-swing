@@ -28,6 +28,9 @@ import org.abego.commons.timeout.Timeoutable;
 
 import java.util.function.BooleanSupplier;
 
+/**
+ * Wait until a condition becomes true.
+ */
 @FunctionalInterface
 public interface WaitUntilFunction {
 

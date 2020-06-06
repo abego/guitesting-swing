@@ -28,6 +28,9 @@ import org.abego.commons.timeout.TimeoutSupplier;
 
 import java.time.Duration;
 
+/**
+ * Timeout related operations.
+ */
 public interface TimeoutSupport extends TimeoutSupplier {
 
     /**
