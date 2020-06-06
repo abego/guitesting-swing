@@ -23,7 +23,8 @@
  */
 
 /**
- * Implementation of GT
+ * The implementation package of the module, not intended to be access directly
+ * by client code.
  * <p>
  * Stuff inside this package may change any time without prior notice.
  */

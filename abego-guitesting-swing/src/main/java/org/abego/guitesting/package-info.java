@@ -23,7 +23,7 @@
  */
 
 /**
- * Easily write GUI Tests in Java.
+ * Easily write GUI Tests in Java (for Swing).
  */
 
 @NonNullByDefault

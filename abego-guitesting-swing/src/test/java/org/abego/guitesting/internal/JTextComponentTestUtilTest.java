@@ -22,26 +22,24 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing;
+package org.abego.guitesting.internal;
 
-import static org.abego.guitesting.swing.JTextComponentTestUtil.CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.awt.Dimension;
-import java.awt.Point;
+import org.abego.guitesting.GT;
+import org.abego.guitesting.GuiTesting;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
+import java.awt.Dimension;
+import java.awt.Point;
 
-import org.abego.guitesting.GT;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
-import org.abego.guitesting.GuiTesting;
+import static org.abego.guitesting.internal.JTextComponentTestUtil.CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JTextComponentTestUtilTest {
     private final static GT gt = GuiTesting.newGT();
@@ -72,7 +70,7 @@ class JTextComponentTestUtilTest {
         Exception e = assertThrows(Exception.class,
                 () -> JTextComponentTestUtil.clickAtOffset(textArea, 50, gt));
 
-        assertEquals(CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE,e.getMessage());
+        assertEquals(CLICK_AT_OFFSET_WITH_INVALID_OFFSET_MESSAGE, e.getMessage());
     }
 
     @Test
@@ -103,7 +101,7 @@ class JTextComponentTestUtilTest {
         JTextArea textArea = new JTextArea();
         textArea.setText("foo bar \nbaz qux");
         Highlighter highlighter = textArea.getHighlighter();
-        highlighter.addHighlight(4,7, DefaultHighlighter.DefaultPainter);
+        highlighter.addHighlight(4, 7, DefaultHighlighter.DefaultPainter);
         gt.showInFrame(new JScrollPane(textArea), new Point(50, 50), new Dimension(200, 100));
 
         String textAndHighlights = JTextComponentTestUtil.getTextAndHighlights(textArea);
