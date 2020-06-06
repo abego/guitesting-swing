@@ -56,6 +56,9 @@ public interface TimeoutSupport extends TimeoutSupplier {
      * {@link #timeout()} returns initially or after a "reset".
      *
      * <p>See {@link #timeout()}</p>
+     *
+     * @return the duration of the initial timeout, i.e. the value
+     * {@link #timeout()} returns initially or after a "reset"
      */
     Duration initialTimeout();
 

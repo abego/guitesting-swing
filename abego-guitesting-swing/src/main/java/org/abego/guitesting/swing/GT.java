@@ -63,14 +63,14 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * gt.type(", please!");
  *
  * // Verify if the text field really contains the expected text.
- * gt.assertEqualsRetrying("Your name, please!", () -> input.getText());
+ * gt.assertEqualsRetrying("Your name, please!", () -&gt; input.getText());
  *
  * // When we are done with our tests we can ask GT to cleanup
  * // (This will dispose open windows etc.)
  * gt.cleanup();
  * </pre>
  * <p>
- * <b>Feature Areas and "....Support" interfaces</b>
+ * <b>Feature Areas and "...Support" interfaces</b>
  * <p>
  * GT is a quite large API with many methods that cover various areas related
  * to GUI testing. To better manage this large feature set we have different

@@ -36,6 +36,8 @@ public interface WaitUntilFunction {
 
     /**
      * Wait until {@code condition} becomes true.
+     *
+     * @param condition the condition to check.
      */
     @Timeoutable
     void waitUntil(BooleanSupplier condition);
