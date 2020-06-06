@@ -24,6 +24,9 @@
 
 package org.abego.guitesting.swing;
 
+/**
+ * The module specific (unchecked) Exception.
+ */
 @SuppressWarnings("serial")
 public class GuiTestingException extends RuntimeException {
 
