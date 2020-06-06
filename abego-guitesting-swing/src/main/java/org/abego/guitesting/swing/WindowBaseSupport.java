@@ -32,6 +32,10 @@ import java.util.function.Predicate;
 
 import static org.abego.guitesting.swing.ComponentBaseSupport.hasComponentNamePredicate;
 
+/**
+ * Basic operations dealing with {@link Window}s, like detecting and
+ * collecting Windows.
+ */
 public interface WindowBaseSupport {
     /**
      * Returns all Windows, including invisible ones, of the given

@@ -29,7 +29,7 @@ import java.awt.Component;
 import java.util.function.Predicate;
 
 /**
- * More operations dealing with {@link Component}s, like waiting for a specific
+ * Operations dealing with {@link Component}s, like waiting for a specific
  * Component.
  */
 public interface ComponentSupport extends ComponentBaseSupport {

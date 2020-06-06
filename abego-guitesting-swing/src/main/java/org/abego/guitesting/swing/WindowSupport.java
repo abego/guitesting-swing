@@ -28,6 +28,10 @@ import org.abego.commons.timeout.Timeoutable;
 import java.awt.Window;
 import java.util.function.Predicate;
 
+/**
+ * Operations dealing with {@link Window}s, like waiting for a specific
+ * Window.
+ */
 public interface WindowSupport extends WindowBaseSupport {
 
     @Timeoutable
