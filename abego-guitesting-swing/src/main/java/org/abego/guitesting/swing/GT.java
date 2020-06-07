@@ -77,7 +77,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * "...Support" interfaces for each area, like {@link KeyboardSupport} or
  * {@link WindowSupport}. GT gives access to these feature areas through
  * methods starting with an underscore, like {@link #_keyboard()} or
- * {@link #_window()}, for code like this:
+ * {@link #_window()}, e.g. with code like this:
  * <pre>
  * gt._keyboard().type("hello world");
  * </pre>
@@ -86,7 +86,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * gt._window().waitForWindowNamed("preferences");
  * </pre>
  * As GT also inherits from these feature area interfaces you may also access
- * the methods directly, for code like this:
+ * the methods directly, e.g. with code like this:
  * <pre>
  * gt.type("hello world");
  * </pre>
@@ -120,6 +120,11 @@ public interface GT extends
     // Blackboard
     // ======================================================================
 
+    /**
+     * Returns the default {@link Blackboard}.
+     *
+     * @return the default {@link Blackboard}
+     */
     Blackboard<Object> blackboard();
 
     // ======================================================================
@@ -231,62 +236,137 @@ public interface GT extends
     // Feature group access
     // ======================================================================
 
+    /**
+     * Provides access to "assert...Retrying" methods.
+     *
+     * @return this object as AssertRetryingSupport
+     */
     default AssertRetryingSupport _assert() {
         return this;
     }
 
-    default ComponentBaseSupport _component() {
+    /**
+     * Provides access to component related methods
+     *
+     * @return this object as ComponentSupport.
+     */
+    default ComponentSupport _component() {
         return this;
     }
 
+    /**
+     * Provides access to methods for GUI test debugging.
+     *
+     * @return this object as DebugSupport
+     */
     default DebugSupport _debug() {
         return this;
     }
 
+    /**
+     * Provides access to Dialog related methods.
+     *
+     * @return this object as DialogAndFrameSupport
+     */
     default DialogAndFrameSupport _dialog() {
         return this;
     }
 
+    /**
+     * Provides access to Event Dispatch Thread (EDT) related methods.
+     *
+     * @return this object as EDTSupport
+     */
     default EDTSupport _edt() {
         return this;
     }
 
+    /**
+     * Provides access to (keyboard) focus related methods.
+     *
+     * @return this object as FocusSupport
+     */
     default FocusSupport _focus() {
         return this;
     }
 
+    /**
+     * Provides access to {@link javax.swing.JFrame} related methods.
+     *
+     * @return this object as DialogAndFrameSupport
+     */
     default DialogAndFrameSupport _frame() {
         return this;
     }
 
+    /**
+     * Provides access to keyboard related methods.
+     *
+     * @return this object as KeyboardSupport
+     */
     default KeyboardSupport _keyboard() {
         return this;
     }
 
+    /**
+     * Provides access to mouse related methods.
+     *
+     * @return this object as MouseSupport
+     */
     default MouseSupport _mouse() {
         return this;
     }
 
+    /**
+     * Provides access to "polling" methods.
+     *
+     * @return this object as PollingSupport
+     */
     default PollingSupport _poll() {
         return this;
     }
 
+    /**
+     * Provides access to a {@link java.awt.Robot}-like API .
+     *
+     * @return this object as RobotAPI
+     */
     default RobotAPI _robotAPI() {
         return this;
     }
 
+    /**
+     * Provides access to timeout related methods.
+     *
+     * @return this object as TimeoutSupport
+     */
     default TimeoutSupport _timeout() {
         return this;
     }
 
+    /**
+     * Provides access to "idle" related methods.
+     *
+     * @return this object as WaitForIdleSupport
+     */
     default WaitForIdleSupport _idle() {
         return this;
     }
 
+    /**
+     * Provides access to methods related to "waiting".
+     *
+     * @return this object as WaitSupport
+     */
     default WaitSupport _wait() {
         return this;
     }
 
+    /**
+     * Provides access to {@link Window} related methods.
+     *
+     * @return this object as WindowSupport
+     */
     default WindowSupport _window() {
         return this;
     }
