@@ -41,6 +41,10 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  *
  * <p>
  * GT provides access to most of the functionality of the GUITesting module.
+ * The interface covers a wide range of areas related to GUI testing,
+ * like dealing with windows or components, using input devices like
+ * keyboard or mouse, checking test results with GUI specific
+ * "assert..." methods and many more.
  * <p>
  * A typical code snippet using GT may look like this:
  * <pre>
@@ -57,7 +61,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * // In that window we are interested in a JTextField named "input"
  * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
  *
- * // we move the focus to that input field and type "Your name" ", please!
+ * // we move the focus to that input field and type "Your name" ", please!"
  * gt.setFocusOwner(input);
  * gt.type("Your name");
  * gt.type(", please!");

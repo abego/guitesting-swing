@@ -1,13 +1,61 @@
-# abego GuiTesting 
+# abego GuiTesting Swing
  
-__Easily write GUI Tests in Java__
+__Easily write GUI Tests in Java (for Swing)__
 
-abego GuiTesting is a library to make it easy for Java developers 
+## Overview
+
+abego GuiTesting Swing is a library to make it easy for Java developers 
 to write tests involving graphical user interfaces (GUIs), like 
 Swing windows and dialogs.
 
 Use the GuiTesting library to quickly write GUI tests in the same way 
 you write "faceless" JUnit tests.
+
+## The GT Interface
+ 
+GUITesting Swing provides most of its features through the GT interface.
+The interface covers a wide range of areas related to GUI testing, 
+like dealing with windows or components, using input devices like 
+keyboard or mouse, checking test results with GUI specific 
+"assert..." methods and many more.
+
+A typical code snippet using GT may look like this:
+
+```java
+import static org.abego.guitesting.swing.GuiTesting.newGT;
+
+...
+
+// A GT instance is the main thing we need when testing GUI code.
+GT gt = newGT();
+
+// run some application code that opens a window
+openSampleWindow();
+
+// In that window we are interested in a JTextField named "input"
+JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
+
+// we move the focus to that input field and type "Your name" ", please!"
+gt.setFocusOwner(input);
+gt.type("Your name");
+gt.type(", please!");
+
+// Verify if the text field really contains the expected text.
+gt.assertEqualsRetrying("Your name, please!", input::getText);
+
+// When we are done with our tests we can ask GT to cleanup
+// (This will dispose open windows etc.)
+gt.cleanup();
+```
+   
+## Unit Testing
+
+When writing JUnit tests you may want to subclass from `GuiTestBase`.
+
+## Sample Code
+
+For samples how to use the GUITesting Swing module have a look 
+at the test code of this module, in the `src/test/java` folder.
 
 ## Download
 
@@ -18,15 +66,15 @@ __Maven:__
 ```
 <dependency>
     <groupId>org.abego.guitesting</groupId>
-    <artifactId>guitesting-swing</artifactId>
+    <artifactId>abego-guitesting-swing</artifactId>
     <version>0.9.5</version>
 </dependency>
 ```
 
 ## Development
 
-You may check out the source code from the [GitHub repository](https://github.com/abego/guitesting).
-
+You may check out the source code from the 
+[GitHub repository](https://github.com/abego/guitesting).
 
 ## Links
 

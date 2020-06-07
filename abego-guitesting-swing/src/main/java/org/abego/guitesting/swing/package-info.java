@@ -47,7 +47,7 @@
  * // In that window we are interested in a JTextField named "input"
  * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
  *
- * // we move the focus to that input field and type "Your name" ", please!
+ * // we move the focus to that input field and type "Your name" ", please!"
  * gt.setFocusOwner(input);
  * gt.type("Your name");
  * gt.type(", please!");
@@ -66,7 +66,7 @@
  * <p>
  * <b>Sample Code</b>
  * <p>
- * For sample code how to use the GUITesting Swing module have a look at the
+ * For samples how to use the GUITesting Swing module have a look at the
  * test code of this module, in the {@code src/test/java} folder.
  */
 
