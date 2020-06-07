@@ -40,8 +40,8 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * GT, the main interface for GUI testing.
  *
  * <p>
- * GT provides access to most of the functionality of the GUITesting module.
- * The interface covers a wide range of areas related to GUI testing,
+ * The GT interfac provides access to most features of the GUITesting Swing
+ * library. The interface covers many areas related to GUI testing,
  * like dealing with windows or components, using input devices like
  * keyboard or mouse, checking test results with GUI specific
  * "assert..." methods and many more.
@@ -76,8 +76,8 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * <p>
  * <b>Feature Areas and "...Support" interfaces</b>
  * <p>
- * GT is a quite large API with many methods that cover various areas related
- * to GUI testing. To better manage this large feature set we have different
+ * GT is a quite large API with many methods for different GUI testing areas.
+ * To better manage this large feature set we have different
  * "...Support" interfaces for each area, like {@link KeyboardSupport} or
  * {@link WindowSupport}. GT gives access to these feature areas through
  * methods starting with an underscore, like {@link #_keyboard()} or
@@ -118,7 +118,7 @@ public interface GT extends
     /**
      * see {@link #readSystemProperties()}.
      */
-    String SYSTEM_PROPERTY_TIMEOUT_MILLIS = "GT.timeoutMillis"; //NON-NLS
+    String SYSTEM_PROPERTY_TIMEOUT_MILLIS = "abego-guitesting-swing.timeoutmillis"; //NON-NLS
 
     // ======================================================================
     // Blackboard
@@ -230,7 +230,7 @@ public interface GT extends
      *
      * <p>The following properties are supported:
      * <ul>
-     *     <li>"GT.timeoutMillis": time duration in milliseconds, used for
+     *     <li>"abego-guitesting-swing.timeoutmillis": time duration in milliseconds, used for
      *     initialTimeout and timeout.</li>
      * </ul>
      */

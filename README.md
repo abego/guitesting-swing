@@ -4,17 +4,13 @@ __Easily write GUI Tests in Java (for Swing)__
 
 ## Overview
 
-abego GuiTesting Swing is a library to make it easy for Java developers 
-to write tests involving graphical user interfaces (GUIs), like 
-Swing windows and dialogs.
-
-Use the GuiTesting library to quickly write GUI tests in the same way 
-you write "faceless" JUnit tests.
+Use the abego GuiTesting Swing library to quickly write GUI tests for Swing 
+applications in the same way you write "headless" JUnit tests.
 
 ## The GT Interface
  
 GUITesting Swing provides most of its features through the GT interface.
-The interface covers a wide range of areas related to GUI testing, 
+The interface covers many areas  related to GUI testing, 
 like dealing with windows or components, using input devices like 
 keyboard or mouse, checking test results with GUI specific 
 "assert..." methods and many more.
@@ -54,8 +50,8 @@ When writing JUnit tests you may want to subclass from `GuiTestBase`.
 
 ## Sample Code
 
-For samples how to use the GUITesting Swing module have a look 
-at the test code of this module, in the `src/test/java` folder.
+For samples how to use the GUITesting Swing library have a look 
+at the test code of this project, in the `src/test/java` folder.
 
 ## Download
 

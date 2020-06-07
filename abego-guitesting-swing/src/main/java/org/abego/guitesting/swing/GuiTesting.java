@@ -27,7 +27,7 @@ package org.abego.guitesting.swing;
 import org.abego.guitesting.swing.internal.GTImpl;
 
 /**
- * The entry to the GuiTesting module, containing the factory method for
+ * The entry to the GuiTesting Swing library, containing the factory method for
  * {@link GT} instances, {@link #newGT()}.
  */
 public class GuiTesting {
