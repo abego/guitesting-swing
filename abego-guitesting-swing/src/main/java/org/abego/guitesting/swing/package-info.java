@@ -42,7 +42,7 @@
  * GT gt = newGT();
  *
  * // run some application code that opens a window
- * openInputWindow();
+ * openSampleWindow();
  *
  * // In that window we are interested in a JTextField named "input"
  * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
@@ -53,7 +53,7 @@
  * gt.type(", please!");
  *
  * // Verify if the text field really contains the expected text.
- * gt.assertEqualsRetrying("Your name, please!", () -&gt; input.getText());
+ * gt.assertEqualsRetrying("Your name, please!", input::getText);
  *
  * // When we are done with our tests we can ask GT to cleanup
  * // (This will dispose open windows etc.)

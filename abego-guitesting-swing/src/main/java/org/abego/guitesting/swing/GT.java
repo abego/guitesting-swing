@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
 
 /**
- * GT, the main interface for GUI Testing.
+ * GT, the main interface for GUI testing.
  *
  * <p>
  * GT provides access to most of the functionality of the GUITesting module.
@@ -52,7 +52,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * GT gt = newGT();
  *
  * // run some application code that opens a window
- * openInputWindow();
+ * openSampleWindow();
  *
  * // In that window we are interested in a JTextField named "input"
  * JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
@@ -63,7 +63,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * gt.type(", please!");
  *
  * // Verify if the text field really contains the expected text.
- * gt.assertEqualsRetrying("Your name, please!", () -&gt; input.getText());
+ * gt.assertEqualsRetrying("Your name, please!", input::getText);
  *
  * // When we are done with our tests we can ask GT to cleanup
  * // (This will dispose open windows etc.)

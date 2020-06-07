@@ -28,10 +28,15 @@ import org.abego.guitesting.swing.internal.GTImpl;
 
 /**
  * The entry to the GuiTesting module, containing the factory method for
- * {@link GT} instances.
+ * {@link GT} instances, {@link #newGT()}.
  */
 public class GuiTesting {
 
+    /**
+     * Returns a new instance of {@link GT}, the main interface for GUI testing.
+     *
+     * @return a new instance of {@link GT}
+     */
     public static GT newGT() {
         return GTImpl.newGT();
     }

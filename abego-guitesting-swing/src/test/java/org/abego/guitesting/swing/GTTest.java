@@ -28,6 +28,7 @@ import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.io.PrintStreamToBuffer;
 import org.abego.commons.lang.RunOnClose;
 import org.abego.commons.seq.Seq;
+import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.internal.PauseUI;
 import org.junit.jupiter.api.AfterEach;
@@ -750,6 +751,31 @@ class GTTest {
 
         MyGT.assertEqualsRetrying("keyPressed: 66\n" +
                 "keyReleased: 66", MyGT.blackboard()::text);
+    }
+
+    private static void openSampleWindow() {
+        JTextField tf = new JTextField();
+        tf.setName("input");
+        JFrameUtil.showInFrame(tf);
+    }
+
+    // the following test is used in the documentation/JavaDocs
+    @Test
+    void testSample() {
+
+        // run some application code that opens a window
+        openSampleWindow();
+
+        // In that window we are interested in a JTextField named "input"
+        JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
+
+        // Move the focus to that input field and type "Your name" ", please!"
+        gt.setFocusOwner(input);
+        gt.type("Your name");
+        gt.type(", please!");
+
+        // Verify if the text field really contains the expected text.
+        gt.assertEqualsRetrying("Your name, please!", input::getText);
     }
 
     @Test
@@ -2042,7 +2068,7 @@ class GTTest {
 
 
         PrintStreamToBuffer out = newPrintStreamToBuffer();
-        try(RunOnClose r = systemOutRedirect(out)) {
+        try (RunOnClose r = systemOutRedirect(out)) {
             gt.dumpAllComponents();
         }
 
@@ -2060,20 +2086,20 @@ class GTTest {
 
     @Test
     void featureGroupAccess() {
-        assertSame(gt,gt._assert());
-        assertSame(gt,gt._component());
-        assertSame(gt,gt._debug());
-        assertSame(gt,gt._dialog());
-        assertSame(gt,gt._edt());
-        assertSame(gt,gt._focus());
-        assertSame(gt,gt._frame());
-        assertSame(gt,gt._idle());
-        assertSame(gt,gt._keyboard());
-        assertSame(gt,gt._mouse());
-        assertSame(gt,gt._poll());
-        assertSame(gt,gt._robotAPI());
-        assertSame(gt,gt._timeout());
-        assertSame(gt,gt._wait());
-        assertSame(gt,gt._window());
+        assertSame(gt, gt._assert());
+        assertSame(gt, gt._component());
+        assertSame(gt, gt._debug());
+        assertSame(gt, gt._dialog());
+        assertSame(gt, gt._edt());
+        assertSame(gt, gt._focus());
+        assertSame(gt, gt._frame());
+        assertSame(gt, gt._idle());
+        assertSame(gt, gt._keyboard());
+        assertSame(gt, gt._mouse());
+        assertSame(gt, gt._poll());
+        assertSame(gt, gt._robotAPI());
+        assertSame(gt, gt._timeout());
+        assertSame(gt, gt._wait());
+        assertSame(gt, gt._window());
     }
 }

@@ -30,15 +30,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * A base class for GUI JUnit tests.
+ * A base class for JUnit 5 GUI tests.
  * <p>
- * It holds a protected final field {@code gt} with a {@link GT} instance
- * initialized according to the system properties (see
- * {@link GT#readSystemProperties()}. Subclasses typically use {@code gt} in
- * their test methods.
+ * It holds a protected final field {@code gt} with a {@link GT} instance.
+ * Subclasses typically use {@code gt} in their test methods like in this
+ * example:
+ * <pre>
+ * &#64;Test
+ * void testSample() {
+ *
+ *     // run some application code that opens a window
+ *     openSampleWindow();
+ *
+ *     // In that window we are interested in a JTextField named "input"
+ *     JTextField input = gt.waitForComponentNamed(JTextField.class, "input");
+ *
+ *     // Move the focus to that input field and type "Your name" ", please!"
+ *     gt.setFocusOwner(input);
+ *     gt.type("Your name");
+ *     gt.type(", please!");
+ *
+ *     // Verify if the text field really contains the expected text.
+ *     gt.assertEqualsRetrying("Your name, please!", input::getText);
+ * }
+ * </pre>
+ * For every test a new {@link GT} instance is used. The instance is also
+ * observes the  GuiTesting related system properties (see
+ * {@link GT#readSystemProperties()}).
  * <p>
- * After each test {@link GT#cleanup()} is performed, e.g. to dispose all
- * windows.
+ * After each test {@link GT#cleanup()} is performed, e.g. to all remaining
+ * windows are closes/disposed.
  */
 @ExtendWith(DumpComponentsOnFailure.class)
 public class GuiTestBase {
