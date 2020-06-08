@@ -103,7 +103,7 @@ public interface FocusSupport extends TimeoutSupplier {
      * Sets the focus to the {@code component} and runs the {@code runnable}.
      *
      * @param component the {@link Component} to receive the focus.
-     * @param runnable the {@link Runnable} to run.
+     * @param runnable  the {@link Runnable} to run.
      */
     @Timeoutable
     default void runWithFocusIn(Component component, Runnable runnable) {

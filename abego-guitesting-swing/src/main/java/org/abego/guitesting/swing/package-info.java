@@ -29,7 +29,7 @@
  * applications in the same way you write "headless" JUnit tests.
  * <p>
  * <b>The GT Interface</b>
- *
+ * <p>
  * GUITesting Swing provides most of its features through the
  * {@link org.abego.guitesting.swing.GT} interface.
  * The interface covers many areas related to GUI testing,

@@ -107,8 +107,8 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the {@code clickCount} parameter instead.
      *
-     * @param position    the position to click at, in screen coordinates.
-     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     * @param position   the position to click at, in screen coordinates.
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickLeft(Point position, int clickCount) {
         clickLeft(position.x, position.y, clickCount);
@@ -120,10 +120,10 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
      *
-     * @param x           the x coordinate of the location to click at, in screen coordinates.
-     *                    If &lt; 0 offset is taken from the right of the component
-     * @param y           the y coordinate of the location to click at, in screen coordinates.
-     *                    if &lt; 0 offset is taken from the bottom of the component
+     * @param x the x coordinate of the location to click at, in screen coordinates.
+     *          If &lt; 0 offset is taken from the right of the component
+     * @param y the y coordinate of the location to click at, in screen coordinates.
+     *          if &lt; 0 offset is taken from the bottom of the component
      */
     default void clickLeft(int x, int y) {
         click(InputEvent.BUTTON1_DOWN_MASK, x, y, 1);
@@ -135,7 +135,7 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
      *
-     * @param position    the position to click at, in screen coordinates.
+     * @param position the position to click at, in screen coordinates.
      */
     default void clickLeft(Point position) {
         clickLeft(position.x, position.y);
@@ -147,11 +147,11 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the {@code clickCount} parameter instead.
      *
-     * @param x           the x coordinate of the location to click at, in screen coordinates.
-     *                    If &lt; 0 offset is taken from the right of the component
-     * @param y           the y coordinate of the location to click at, in screen coordinates.
-     *                    if &lt; 0 offset is taken from the bottom of the component
-     * @param clickCount  [clickCount &gt; 0; default=1] the number of clicks
+     * @param x          the x coordinate of the location to click at, in screen coordinates.
+     *                   If &lt; 0 offset is taken from the right of the component
+     * @param y          the y coordinate of the location to click at, in screen coordinates.
+     *                   if &lt; 0 offset is taken from the bottom of the component
+     * @param clickCount [clickCount &gt; 0; default=1] the number of clicks
      */
     default void clickRight(int x, int y, int clickCount) {
         click(InputEvent.BUTTON3_DOWN_MASK, x, y, clickCount);
@@ -313,7 +313,7 @@ public interface MouseSupport extends BasicMouseSupport {
      * Calling this method more than once with the same coordinates will not
      * generate a "double click", use the method with the extra {@code clickCount} parameter instead.
      *
-     * @param component   the {@link Component} to click into
+     * @param component the {@link Component} to click into
      */
     default void clickLeft(Component component) {
         click(InputEvent.BUTTON1_DOWN_MASK, component, component.getWidth() / 2, component.getHeight() / 2, 1);
@@ -428,17 +428,18 @@ public interface MouseSupport extends BasicMouseSupport {
      * Drags the mouse with the buttons defined by {@code buttonsMask}
      * from {@code (x1,y1)} to {@code (x2,y2)}, in screen coordinates.
      * <p>
+     *
      * @param buttonsMask defines the mouse buttons as a
      *                    bitwise combination of {@code InputEvent.BUTTON1_DOWN_MASK},
      *                    {@code InputEvent.BUTTON2_DOWN_MASK}, or {@code InputEvent.BUTTON3_DOWN_MASK}
-     * @param x1 the x coordinate of the start location of the drag operation, in screen coordinates.
-     *           If &lt; 0 offset is taken from the right of the screen
-     * @param y1 the y coordinate of the start location of the drag operation, in screen coordinates.
-     *           If &lt; 0 offset is taken from the bottom of the screen
-     * @param x2 the x coordinate of the end location of the drag operation, in screen coordinates.
-     *           If &lt; 0 offset is taken from the right of the screen
-     * @param y2 the y coordinate of the end location of the drag operation, in screen coordinates.
-     *           If &lt; 0 offset is taken from the bottom of the screen
+     * @param x1          the x coordinate of the start location of the drag operation, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the right of the screen
+     * @param y1          the y coordinate of the start location of the drag operation, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the bottom of the screen
+     * @param x2          the x coordinate of the end location of the drag operation, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the right of the screen
+     * @param y2          the y coordinate of the end location of the drag operation, in screen coordinates.
+     *                    If &lt; 0 offset is taken from the bottom of the screen
      */
     void drag(int buttonsMask, int x1, int y1, int x2, int y2);
 
@@ -608,9 +609,10 @@ public interface MouseSupport extends BasicMouseSupport {
      * Right drags the mouse
      * from {@code from} to {@code to}, relative to the given {@code component}.
      * <p>
-     * @param component   the {@link Component} used as reference point
-     * @param from         the start location of the drag operation, relative to the given {@code component}.
-     * @param to           the end location of the drag operation, relative to the given {@code component}.
+     *
+     * @param component the {@link Component} used as reference point
+     * @param from      the start location of the drag operation, relative to the given {@code component}.
+     * @param to        the end location of the drag operation, relative to the given {@code component}.
      */
     default void dragRight(Component component, Point from, Point to) {
         dragRight(component, from.x, from.y, to.x, to.y);

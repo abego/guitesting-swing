@@ -451,11 +451,11 @@ public final class GTImpl implements GT {
 
     @Override
     public void waitForUser(@Nullable String message) {
-    	waitSupport.waitForUser(message);
+        waitSupport.waitForUser(message);
     }
 
     @Override
     public void waitUntil(BooleanSupplier condition) {
-    	waitSupport.waitUntil(condition);
+        waitSupport.waitUntil(condition);
     }
 }

@@ -53,7 +53,7 @@ public final class SwingUtil {
         GraphicsEnvironment env = getLocalGraphicsEnvironment();
         return env.getMaximumWindowBounds();
     }
-    
+
     @SuppressWarnings("SameParameterValue")
     static Icon iconFromResource(Class<?> theClass, String name) {
         return new ImageIcon(resource(theClass, name));

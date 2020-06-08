@@ -38,6 +38,7 @@ public interface BasicKeyboardSupport {
     /**
      * Release the key with the given {@code keycode}.
      * <p>
+     *
      * @param keycode See {@link java.awt.event.KeyEvent} for details on keycodes
      */
     void keyRelease(int keycode);

@@ -68,13 +68,13 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
         runIfNotNull(realSyncRunnable);
     }
 
-	private static void runIfNotNull(@Nullable Runnable runnable) {
-		if (runnable != null) {
-			runnable.run();
+    private static void runIfNotNull(@Nullable Runnable runnable) {
+        if (runnable != null) {
+            runnable.run();
         }
-	}
+    }
 
-	@Nullable
+    @Nullable
     private static Runnable sunToolkitReadSyncAsRunnableOrNull() {
         try {
             Toolkit toolkit = Toolkit.getDefaultToolkit();

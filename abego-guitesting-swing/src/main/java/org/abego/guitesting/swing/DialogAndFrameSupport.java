@@ -59,10 +59,10 @@ public interface DialogAndFrameSupport {
      * Show the {@code component} in a new JFrame.
      *
      * @param component the {@link Component} to display in the frame
-     * @param position the position of the frame; when {@code null} the
-     *                 frame is centered on the screen
-     * @param size  the size of the frame; when {@code null} the
-     *                 frame is "packed"
+     * @param position  the position of the frame; when {@code null} the
+     *                  frame is centered on the screen
+     * @param size      the size of the frame; when {@code null} the
+     *                  frame is "packed"
      * @return the newly created {@link JFrame}
      */
     JFrame showInFrame(Component component, @Nullable Point position, @Nullable Dimension size);
@@ -83,13 +83,13 @@ public interface DialogAndFrameSupport {
      * Show the {@code component} in a new JFrame with the given
      * {@code title}.
      *
-     * @param title the title of the frame
+     * @param title     the title of the frame
      * @param component the {@link Component} to display in the frame;
      *                  when {@code null} the frame is empty
-     * @param position the position of the frame; when {@code null} the
-     *                 frame is centered on the screen
-     * @param size  the size of the frame; when {@code null} the
-     *                 frame is "packed"
+     * @param position  the position of the frame; when {@code null} the
+     *                  frame is centered on the screen
+     * @param size      the size of the frame; when {@code null} the
+     *                  frame is "packed"
      * @return the newly created {@link JFrame}
      */
     JFrame showInFrameTitled(String title, @Nullable Component component,
@@ -99,7 +99,7 @@ public interface DialogAndFrameSupport {
      * Show the {@code component} in a new JFrame with the given
      * {@code title}, with the frame centered on the screen.
      *
-     * @param title the title of the frame
+     * @param title     the title of the frame
      * @param component the {@link Component} to display in the frame.
      * @return the newly created {@link JFrame}
      */

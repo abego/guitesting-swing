@@ -53,7 +53,7 @@ final class DialogAndFrameSupportImpl implements DialogAndFrameSupport {
 
     @Override
     public void showInDialogTitled(String title, Component component) {
-    	JDialogUtil.showInDialog(title, component);
+        JDialogUtil.showInDialog(title, component);
 
     }
 

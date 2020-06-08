@@ -57,7 +57,7 @@ class DebugSupport {
 
 
     @SuppressWarnings("HardCodedStringLiteral")
-    @Nullable 
+    @Nullable
     private static String guessTitleOrNull(Object object) {
         @Nullable String result = callStringGetter(object, "getTitle");
         if (result == null)
@@ -67,7 +67,7 @@ class DebugSupport {
         return result != null ? limitString(result, 40) : null;
     }
 
-    @Nullable 
+    @Nullable
     private static String callStringGetter(Object object, String methodName) {
         try {
             Method m = object.getClass().getMethod(methodName);

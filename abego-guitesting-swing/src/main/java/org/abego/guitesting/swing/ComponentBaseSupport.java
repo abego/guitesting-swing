@@ -39,7 +39,7 @@ import static org.abego.commons.seq.SeqUtil.newSeq;
 public interface ComponentBaseSupport {
 
     static <T extends Component> Predicate<T> hasComponentNamePredicate(String name) {
-        return t -> Objects.equals(t.getName(),name);
+        return t -> Objects.equals(t.getName(), name);
     }
 
     <T extends Component> Seq<T> allComponentsWith(Class<T> componentClass, Seq<Component> roots, Predicate<T> condition);
