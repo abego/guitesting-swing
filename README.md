@@ -2,6 +2,7 @@
  
 __Easily write GUI Tests in Java (for Swing)__
 
+[![Build Status](https://travis-ci.com/abego/guitesting-swing.svg?branch=master)](https://travis-ci.com/abego/guitesting-swing)
 ## Overview
 
 Use the abego GuiTesting Swing library to quickly write GUI tests for Swing 
