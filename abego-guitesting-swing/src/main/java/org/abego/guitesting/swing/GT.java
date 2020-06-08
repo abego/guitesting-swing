@@ -40,7 +40,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * GT, the main interface for GUI testing.
  *
  * <p>
- * The GT interfac provides access to most features of the GUITesting Swing
+ * The GT interface provides access to most features of the GUITesting Swing
  * library. The interface covers many areas related to GUI testing,
  * like dealing with windows or components, using input devices like
  * keyboard or mouse, checking test results with GUI specific
