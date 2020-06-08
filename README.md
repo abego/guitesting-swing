@@ -69,12 +69,12 @@ add the following to the <dependencies> element in your pom.xml file.
 ```
 
 
-__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.5 
+__Download:__ https://github.com/abego/guitesting-swing/releases/tag/v0.9.5 
 
 ## Development
 
 You may check out the source code from the 
-[GitHub repository](https://github.com/abego/guitesting).
+[GitHub repository](https://github.com/abego/guitesting-swing).
 
 ## Known Issues
 
@@ -82,7 +82,7 @@ You may check out the source code from the
 
 ## Links
 
-- Sources: https://github.com/abego/guitesting
+- Sources: https://github.com/abego/guitesting-swing
 - Twitter: @abego (e.g. for announcements of new releases)
 
 ## License
