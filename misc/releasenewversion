@@ -6,8 +6,8 @@ if [ "$#" -ne 2 ]; then
     echo "Usage: releasenewversion <version> <nextVersion>"
     echo
     echo "          version     the version to release (e.g. 0.10.0)"
-    echo "          nextVersion the next version development is targeting (e.g. 0.11.0)"
-    echo "                      (don't include the '-SNAPSHOT' in the version"
+    echo "          nextVersion the next development is targeting after this release (e.g. 0.11.0)"
+    echo "                      (don't include the '-SNAPSHOT' in the version)"
     exit 1
 fi
 version="$1"
