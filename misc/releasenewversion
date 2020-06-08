@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# Release a new version to GitHub and Maven Central
+
+# Get and check the arguments
+if [ "$#" -ne 2 ]; then
+    echo "Usage: releasenewversion <version> <nextVersion>"
+    echo
+    echo "          version     the version to release (e.g. 0.10.0)"
+    echo "          nextVersion the next version development is targeting (e.g. 0.11.0)"
+    echo "                      (don't include the '-SNAPSHOT' in the version"
+    exit 1
+fi
+version="$1"
+nextVersion="$2"
+
+
+# Checking Git stuff
+echo "Checking Git status... "
+
+# Make sure you are on the `master` branch.
+branchname=`git rev-parse --abbrev-ref HEAD`
+if [ "$branchname" != "master" ]; then
+   echo "You are not on the 'master' branch."
+   exit 1
+fi
+
+# Must not have uncommited changes
+if ! output=$(git status --porcelain) || ! [ -z "$output" ]; then
+   echo "Uncommited changes detected."
+   exit 1
+fi
+
+# Make sure the "CHANGELOG.md" was updated
+while true; do
+    read -p "Have you updated the CHANGELOG.md to cover all changes for this release?" yn
+    case ${yn} in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Check of the current code runs without errors
+echo "Testing current code..."
+mvn clean test
+if [ $? -ne 0 ]; then
+    echo "The current code does not run without errors. Not released."
+    exit 1
+fi
+
+# update README to new version
+echo Updating README.md ...
+sed -i '' "s|<version>.*</version>|<version>${version}</version>|" README.md
+sed -i '' "s|https://github.com/abego/guitesting-swing/releases/tag/.*|https://github.com/abego/guitesting-swing/releases/tag/v${version}|" README.md
+
+# update pom.xml files to new version
+echo Updating pom.xml files ...
+misc/setartifactversion "abego-guitesting" "$version" "pom.xml"
+misc/setartifactversion "abego-guitesting" "$version" "abego-guitesting-swing/pom.xml"
+
+# Do the Git stuff
+echo "Pushing changes to Git server..."
+git add .
+git commit -m "Release ${version}"
+git tag "v${version}" # tag the commit as `vx.y.z` (e.g. "`v0.10.0`")
+git push origin "v${version}" #o push the changes to the Git server, incl. tag.
+
+echo "Prepare for next development iteration..."
+misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "pom.xml"
+misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "abego-guitesting-swing/pom.xml"
+git add .
+git commit -m "Prepare for next development iteration"
+git push origin
+
+echo "Deploying release ${version} to Maven Central..."
+# checkout the release version (by tag)
+git checkout "v${version}"
+mvn -DskipTests=true clean deploy
+git checkout origin/master # back to main development
+
+echo
+echo "Automatic part of releasing ${version} completed."
+# ----- end of automatic process --------------------------
+
+# -----  Remaining Manual Steps  --------------------------
+
+# get the path to the local Maven repository
+m2repoDir=`mvn help:evaluate -Dexpression=settings.localRepository | grep -E '^([a-zA-Z]:|/)'`
+m2releaseDir="${m2repoDir}/org/abego/guitesting/abego-guitesting-swing/${version}/"
+
+echo
+echo "    Remaining manual steps:"
+echo "        - on https://github.com/abego/guitesting-swing/releases"
+echo "           - Create a new release ${version}"
+echo "           - Copy the CHANGELOG entry for ${version} to the server"
+echo "           - Add all files from local Maven repo to release on GitHub"
+
+read -p "Press Return to open GitHub, CHANGELOG and local Maven repo directory:"
+open "${m2releaseDir}"
+open "CHANGELOG.md"
+open "https://github.com/abego/guitesting-swing/releases"
