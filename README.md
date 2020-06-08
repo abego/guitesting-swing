@@ -53,11 +53,12 @@ When writing JUnit tests you may want to subclass from `GuiTestBase`.
 For samples how to use the GUITesting Swing library have a look 
 at the test code of this project, in the `src/test/java` folder.
 
-## Download
-
-__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.5
+## Installation
 
 __Maven:__
+
+To use abego GUITesting Swing in a project built with Maven, 
+add the following to the <dependencies> element in your pom.xml file.
 
 ```
 <dependency>
@@ -66,6 +67,9 @@ __Maven:__
     <version>0.9.5</version>
 </dependency>
 ```
+
+
+__Download:__ https://github.com/abego/guitesting/releases/tag/v0.9.5 
 
 ## Development
 
