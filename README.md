@@ -72,6 +72,10 @@ __Maven:__
 You may check out the source code from the 
 [GitHub repository](https://github.com/abego/guitesting).
 
+## Known Issues
+
+- Does not yet work well on Travis CI etc. (Help greatly appreciated!)
+
 ## Links
 
 - Sources: https://github.com/abego/guitesting
