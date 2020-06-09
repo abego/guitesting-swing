@@ -1,7 +1,43 @@
 #!/usr/bin/env bash
-# Release a new version to GitHub and Maven Central
+# MIT License
+#
+# Copyright (c) 2020 Udo Borkowski, (ub@abego.org)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
-# Get and check the arguments
+
+# =========================================================================
+# Release a new version to GitHub and Maven Central
+#
+# Usage: releasenewversion <version> <nextVersion>"
+#
+#   version     the version to release (e.g. 0.10.0)
+#   nextVersion the next development is targeting
+#               after this release (e.g. 0.11.0)
+#               (don't include the '-SNAPSHOT' in the version)
+#
+# =========================================================================
+
+
+# ====== Check Preconditions ==============================================
+
+# --- Get and check the arguments -----------------------------------------
 if [ "$#" -ne 2 ]; then
     echo "Usage: releasenewversion <version> <nextVersion>"
     echo
@@ -13,8 +49,7 @@ fi
 version="$1"
 nextVersion="$2"
 
-
-# Checking Git stuff
+# --- Checking Git stuff --------------------------------------------------
 echo "Checking Git status... "
 
 # Make sure you are on the `master` branch.
@@ -24,13 +59,13 @@ if [ "$branchname" != "master" ]; then
    exit 1
 fi
 
-# Must not have uncommited changes
+# --- Must not have uncommited changes ------------------------------------
 if ! output=$(git status --porcelain) || ! [ -z "$output" ]; then
    echo "Uncommited changes detected."
    exit 1
 fi
 
-# Make sure the "CHANGELOG.md" was updated
+# --- Make sure the "CHANGELOG.md" was updated ----------------------------
 while true; do
     read -p "Have you updated the CHANGELOG.md to cover all changes for this release?" yn
     case ${yn} in
@@ -40,7 +75,7 @@ while true; do
     esac
 done
 
-# Check of the current code runs without errors
+# --- Check of the current code runs without errors -----------------------
 echo "Testing current code..."
 mvn clean test
 if [ $? -ne 0 ]; then
@@ -48,23 +83,27 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# update README to new version
+# ====== Perform the actual Release =======================================
+
+# --- update README to new version ----------------------------------------
+
 echo Updating README.md ...
 sed -i '' "s|<version>.*</version>|<version>${version}</version>|" README.md
 sed -i '' "s|https://github.com/abego/guitesting-swing/releases/tag/.*|https://github.com/abego/guitesting-swing/releases/tag/v${version}|" README.md
 
-# update pom.xml files to new version
+# --- update pom.xml files to new version ---------------------------------
 echo Updating pom.xml files ...
 misc/setartifactversion "abego-guitesting" "$version" "pom.xml"
 misc/setartifactversion "abego-guitesting" "$version" "abego-guitesting-swing/pom.xml"
 
-# Do the Git stuff
+# --- Do the Git stuff  ---------------------------------------------------
 echo "Pushing changes to Git server..."
 git add .
 git commit -m "Release ${version}"
 git tag "v${version}" # tag the commit as `vx.y.z` (e.g. "`v0.10.0`")
 git push origin "v${version}" #o push the changes to the Git server, incl. tag.
 
+# --- Prepare for next development iteration ("bump version") -------------
 echo "Prepare for next development iteration..."
 misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "pom.xml"
 misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "abego-guitesting-swing/pom.xml"
@@ -72,6 +111,7 @@ git add .
 git commit -m "Prepare for next development iteration"
 git push origin
 
+# --- Deploying to Maven Central ------------------------------------------
 echo "Deploying release ${version} to Maven Central..."
 # checkout the release version (by tag)
 git checkout "v${version}"
@@ -80,11 +120,11 @@ git checkout origin/master # back to main development
 
 echo
 echo "Automatic part of releasing ${version} completed."
-# ----- end of automatic process --------------------------
+# ====== End of automatic release process =================================
 
-# -----  Remaining Manual Steps  --------------------------
+# ====== Motivate remaining Manual Steps ==================================
 
-# get the path to the local Maven repository
+# --- get the path to the local Maven repository --------------------------
 m2repoDir=`mvn help:evaluate -Dexpression=settings.localRepository | grep -E '^([a-zA-Z]:|/)'`
 m2releaseDir="${m2repoDir}/org/abego/guitesting/abego-guitesting-swing/${version}/"
 
