@@ -116,7 +116,7 @@ echo "Deploying release ${version} to Maven Central..."
 # checkout the release version (by tag)
 git checkout "v${version}"
 mvn -DskipTests=true clean deploy
-git checkout origin/master # back to main development
+git checkout master # back to main development
 
 echo
 echo "Automatic part of releasing ${version} completed."
