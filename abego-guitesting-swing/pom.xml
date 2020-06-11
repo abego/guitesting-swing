@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.abego.guitesting</groupId>
         <artifactId>abego-guitesting</artifactId>
-        <version>0.11.0-SNAPSHOT</version>
+        <version>0.10.1</version>
     </parent>
 
     <artifactId>abego-guitesting-swing</artifactId>
