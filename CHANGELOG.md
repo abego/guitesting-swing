@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.10.1
+
+### Documentation
+
+- update release process documentation
+ 
 ## 0.10.0
 
 ### Changes
