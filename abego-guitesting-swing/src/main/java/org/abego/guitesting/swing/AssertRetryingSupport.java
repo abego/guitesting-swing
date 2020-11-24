@@ -89,5 +89,17 @@ public interface AssertRetryingSupport extends TimeoutSupplier {
         assertTrueRetrying(actualSupplier, null);
     }
 
+    @Timeoutable
+    default void assertSuccessRetrying(Runnable runnable) {
+        assertTrueRetrying(() -> {
+            try {
+                runnable.run();
+                return true; // running without error/failure is a success
+            } catch (Exception e) {
+                return false; // A failure/error is no success
+            }
+        }, null);
+    }
+
 
 }
