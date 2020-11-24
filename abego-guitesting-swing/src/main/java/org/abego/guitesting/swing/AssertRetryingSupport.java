@@ -33,6 +33,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import static java.lang.Boolean.TRUE;
+import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
 
 /**
  * Assert methods with retries and timeout, for testing multi-threading code
@@ -91,14 +92,15 @@ public interface AssertRetryingSupport extends TimeoutSupplier {
 
     @Timeoutable
     default void assertSuccessRetrying(Runnable runnable) {
-        assertTrueRetrying(() -> {
+        String expectedValue = "Success"; //NON-NLS
+        assertEqualsRetrying(expectedValue, () -> {
             try {
                 runnable.run();
-                return true; // running without error/failure is a success
+                return expectedValue; // running without error/failure is a success
             } catch (Exception e) {
-                return false; // A failure/error is no success
+                return messageOrClassName(e); // A failure/error is no success
             }
-        }, null);
+        });
     }
 
 

@@ -35,6 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -75,6 +76,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test GT
@@ -189,6 +191,7 @@ class GTTest {
         });
 
         gt.assertTrueRetrying(() -> b[0]);
+        assertTrue(b[0]);
     }
 
     @Test
@@ -210,6 +213,34 @@ class GTTest {
         });
 
         assertEquals("[Timeout] MyMessage ==> expected: <true> but was: <false>", ex.getMessage());
+    }
+
+    @Test
+    void assertSuccessRetrying_ok() {
+
+        int[] countVar = new int[]{0};
+        gt.assertSuccessRetrying(() -> countVar[0]++);
+        assertEquals(1, countVar[0]);
+    }
+
+    @Test
+    void assertSuccessRetrying_assert() {
+
+        int[] countVar = new int[]{0};
+        gt.setTimeoutMillis(1);
+        try {
+            gt.assertSuccessRetrying(() -> {
+                countVar[0]++;
+                throw new IllegalStateException();
+            });
+            fail("Expected assertion");
+
+        } catch (AssertionFailedError e) {
+            assertEquals(
+                    "[Timeout]  ==> expected: <Success> but was: <java.lang.IllegalStateException>",
+                    e.getMessage());
+        }
+        assertTrue(countVar[0] > 1); // must have done several trys/polls
     }
 
     @Test
