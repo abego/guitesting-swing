@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+#
 # MIT License
 #
-# Copyright (c) 2020 Udo Borkowski, (ub@abego.org)
+# Copyright (c) 2019 Udo Borkowski, (ub@abego.org)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +21,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+#
 
 
 # =========================================================================
@@ -28,7 +30,7 @@
 # Usage: releasenewversion <version> <nextVersion>"
 #
 #   version     the version to release (e.g. 0.10.0)
-#   nextVersion the next development is targeting
+#   nextVersion the next version development is targeting
 #               after this release (e.g. 0.11.0)
 #               (don't include the '-SNAPSHOT' in the version)
 #
@@ -42,7 +44,8 @@ if [ "$#" -ne 2 ]; then
     echo "Usage: releasenewversion <version> <nextVersion>"
     echo
     echo "          version     the version to release (e.g. 0.10.0)"
-    echo "          nextVersion the next development is targeting after this release (e.g. 0.11.0)"
+    echo "          nextVersion the next version development is targeting"
+    echo "                      after this release (e.g. 0.11.0)"
     echo "                      (don't include the '-SNAPSHOT' in the version)"
     exit 1
 fi
