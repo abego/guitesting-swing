@@ -33,4 +33,8 @@ public class GuiTestingException extends RuntimeException {
     public GuiTestingException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public GuiTestingException(String message) {
+        super(message);
+    }
 }
