@@ -48,6 +48,7 @@ import static org.abego.guitesting.swing.internal.SwingUtil.toScreenCoordinates;
 
 final class MouseSupportImpl implements MouseSupport {
     private static final int MULTI_CLICK_INTERVAL_MILLIS_DEFAULT = 500;
+    private static final int NEAR_DISTANCE = 4;
     private static final Duration MAX_WAIT_TIME_FOR_MOUSE_EVENT = ofMillis(100);
 
     // Both lastClickTime and lastClickPos need to be static, i.e. be shared
@@ -164,11 +165,14 @@ final class MouseSupportImpl implements MouseSupport {
         setLastClickTime(System.currentTimeMillis());
     }
 
+
     private void avoidMultiClickEvent(int x, int y) {
-        if (getLastClickPos().x == x && getLastClickPos().y == y) {
+        int dx = getLastClickPos().x - x;
+        int dy = getLastClickPos().y - y;
+        if (Math.abs(dx) <= NEAR_DISTANCE && Math.abs(dy) <= NEAR_DISTANCE) {
             // make sure a new "click sequence" starts not earlier than
             // 2 * multiClickIntervalMillis to avoid recognition as a double click
-            long delay = (getLastClickTime() + 2 * multiClickIntervalMillis)
+            long delay = (getLastClickTime() + 2L * multiClickIntervalMillis)
                     - System.currentTimeMillis();
             if (delay > 0) {
                 sleep(delay);
