@@ -589,7 +589,8 @@ class GTTest {
 
         async(() -> gt.showInFrameTitled("Sample", btn, pos, size));
 
-        JFrame frame = MyGT.waitForWindowWith(JFrame.class, w -> true);
+        JFrame frame = MyGT.waitForWindowWith(
+                JFrame.class, w -> w.getTitle() != null);
 
         assertEquals("Sample", frame.getTitle());
         assertEquals(pos, frame.getLocation());
