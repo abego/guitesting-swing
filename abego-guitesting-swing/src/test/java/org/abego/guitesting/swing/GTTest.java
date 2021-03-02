@@ -87,7 +87,7 @@ class GTTest {
     private static final String meta = isMac() ? "⌘" : "Meta";
 
     private static boolean isMac() {
-        return System.getProperty("os.name").equalsIgnoreCase("mac");
+        return System.getProperty("os.name").toLowerCase().contains("mac");
     }
 
     private static String head(int count, String text) {
