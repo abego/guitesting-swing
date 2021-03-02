@@ -1797,8 +1797,8 @@ class GTTest {
         int left = frame.getLocation().x;
         int top = frame.getLocation().y;
 
-        assertEquals(Color.white, gt.getPixelColor(left + 20, top + 20));
-        assertEquals(Color.black, gt.getPixelColor(left + 50, top + 50));
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
 
         // The other color we cannot directly compare as getPixelColor does not
         // always return the "native" colors. So we just check the "color-ish"
