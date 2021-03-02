@@ -42,6 +42,7 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelListener;
+import java.time.Duration;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -213,7 +214,7 @@ class MyGT {
 
         JFrame frame = showFrameTitled("A Title",
                 new Point(50, 50),
-                new Dimension(200, 200));
+                new Dimension(400, 200));
         frame.addMouseListener(logMouseEventsToBlackboardWriter());
 
         return frame;

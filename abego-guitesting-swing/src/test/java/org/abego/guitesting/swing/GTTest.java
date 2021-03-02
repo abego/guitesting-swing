@@ -31,6 +31,7 @@ import org.abego.commons.seq.Seq;
 import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.internal.PauseUI;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -83,6 +84,11 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 class GTTest {
     private final static GT gt = GuiTesting.newGT();
+    private static final String meta = isMac() ? "⌘" : "Meta";
+
+    private static boolean isMac() {
+        return System.getProperty("os.name").equalsIgnoreCase("mac");
+    }
 
     private static String head(int count, String text) {
         String[] lines = text.split("\\r?\\n");
@@ -896,10 +902,20 @@ class GTTest {
         gt.mouseWheel(100);
         gt.mouseWheel(-200);
 
-        MyGT.assertEqualsRetrying(
-                "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=1,wheelRotation=-100,preciseWheelRotation=-100.0\n" +
-                        "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=1,wheelRotation=200,preciseWheelRotation=200.0",
-                MyGT.blackboard()::text);
+        if (isMac()) {
+            // wheel rotation "inverted"
+            MyGT.assertEqualsRetrying(
+                    "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=1,wheelRotation=-100,preciseWheelRotation=-100.0\n" +
+                            "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=1,wheelRotation=200,preciseWheelRotation=200.0",
+                    MyGT.blackboard()::text);
+
+        } else {
+            // scrollAmount 3
+            MyGT.assertEqualsRetrying(
+                    "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=3,wheelRotation=100,preciseWheelRotation=100.0\n" +
+                            "MOUSE_WHEEL,(50,50),absolute(0,0),button=0,clickCount=0,scrollType=WHEEL_UNIT_SCROLL,scrollAmount=3,wheelRotation=-200,preciseWheelRotation=-200.0",
+                    MyGT.blackboard()::text);
+        }
     }
 
     @Test
@@ -1133,12 +1149,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1152,12 +1168,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1171,12 +1187,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1190,12 +1206,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1381,12 +1397,12 @@ class GTTest {
         gt.clickRight(comp, 40, 15, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1400,12 +1416,12 @@ class GTTest {
         gt.clickRight(comp, new Point(40, 15), 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1419,12 +1435,12 @@ class GTTest {
         gt.clickRight(comp, 40, 15);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1438,12 +1454,12 @@ class GTTest {
         gt.clickRight(comp, new Point(40, 15));
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1459,12 +1475,12 @@ class GTTest {
         gt.clickRight(comp, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1478,12 +1494,12 @@ class GTTest {
         gt.clickRight(comp);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=⌘+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1522,7 +1538,7 @@ class GTTest {
                         "MOUSE_RELEASED,(100,100),absolute(150,150),button=1,modifiers=Button1,clickCount=1\n" +
                         "MOUSE_CLICKED,(100,100),absolute(150,150),button=1,modifiers=Button1,clickCount=1\n" +
                         "MOUSE_PRESSED,(100,100),absolute(150,150),button=1,modifiers=Button1,clickCount=1\n" +
-                        "MOUSE_RELEASED,(101,101),absolute(151,151),button=1,modifiers=Button1,clickCount=0",
+                        "MOUSE_RELEASED,(101,101),absolute(151,151),button=1,modifiers=Button1," + clickCountOnReleased(),
                 firstFiveLinesOfBlackboard());
     }
 
@@ -1533,7 +1549,7 @@ class GTTest {
         gt.drag(InputEvent.BUTTON1_DOWN_MASK, frame, 30, 40, 150, 170);
 
         MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=1,modifiers=Button1,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1,clickCount=0", firstTwoLinesOfBlackboard());
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1543,7 +1559,7 @@ class GTTest {
         gt.drag(InputEvent.BUTTON1_DOWN_MASK, frame, new Point(30, 40), new Point(150, 170));
 
         MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=1,modifiers=Button1,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1,clickCount=0", firstTwoLinesOfBlackboard());
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1573,7 +1589,7 @@ class GTTest {
         gt.dragLeft(frame, 30, 40, 150, 170);
 
         MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=1,modifiers=Button1,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1,clickCount=0", firstTwoLinesOfBlackboard());
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1583,7 +1599,7 @@ class GTTest {
         gt.dragLeft(frame, new Point(30, 40), new Point(150, 170));
 
         MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=1,modifiers=Button1,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1,clickCount=0", firstTwoLinesOfBlackboard());
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=1,modifiers=Button1," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1592,8 +1608,8 @@ class GTTest {
 
         gt.dragRight(80, 90, 200, 220);
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=⌘+Button3,clickCount=0", firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1602,8 +1618,8 @@ class GTTest {
 
         gt.dragRight(new Point(80, 90), new Point(200, 220));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=⌘+Button3,clickCount=0", firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1612,8 +1628,14 @@ class GTTest {
 
         gt.dragRight(frame, 30, 40, 150, 170);
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=⌘+Button3,clickCount=0", firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(),
+                firstTwoLinesOfBlackboard());
+    }
+
+    @NonNull
+    private String clickCountOnReleased() {
+        return "clickCount=" + (isMac() ? "0" : "1");
     }
 
     @Test
@@ -1622,8 +1644,8 @@ class GTTest {
 
         gt.dragRight(frame, new Point(130, 40), new Point(50, 170));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers=⌘+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers=⌘+Button3,clickCount=0", firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
 
@@ -2080,16 +2102,29 @@ class GTTest {
         PrintStreamToBuffer out = newPrintStreamToBuffer();
         gt.dumpAllComponents(out);
 
-        assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 595x39\n" +
-                        "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
-                        "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 595x39\n" +
-                        "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 595x39\n" +
-                        "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 595x39\n" +
-                        "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
-                        "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,6) 250x26\n" +
-                        "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(260,6) 250x26\n" +
-                        "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(515,5) 75x29\n",
-                out.text());
+        if (isMac()) {
+            assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 595x39\n" +
+                            "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
+                            "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 595x39\n" +
+                            "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 595x39\n" +
+                            "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 595x39\n" +
+                            "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
+                            "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,6) 250x26\n" +
+                            "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(260,6) 250x26\n" +
+                            "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(515,5) 75x29\n",
+                    out.text());
+        } else {
+            assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 519x36\r\n" +
+                            "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 519x36\r\n" +
+                            "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 519x36\r\n" +
+                            "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,8) 224x20\r\n" +
+                            "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(234,8) 224x20\r\n" +
+                            "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(463,5) 51x26\r\n",
+                    out.text());
+        }
     }
 
     @Test
@@ -2104,16 +2139,32 @@ class GTTest {
             gt.dumpAllComponents();
         }
 
-        assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 595x39\n" +
-                        "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
-                        "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 595x39\n" +
-                        "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 595x39\n" +
-                        "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 595x39\n" +
-                        "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
-                        "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,6) 250x26\n" +
-                        "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(260,6) 250x26\n" +
-                        "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(515,5) 75x29\n",
-                out.text());
+        if (isMac()) {
+            assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 595x39\n" +
+                            "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
+                            "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 595x39\n" +
+                            "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 595x39\n" +
+                            "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 595x39\n" +
+                            "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 595x39\n" +
+                            "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,6) 250x26\n" +
+                            "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(260,6) 250x26\n" +
+                            "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(515,5) 75x29\n",
+                    out.text());
+        } else {
+            assertEquals("JFrame (javax.swing)\t\"nameInput\"\t\"\"\t@(50,50) 519x36\r\n" +
+                            "    JRootPane (javax.swing)\tnull\tnull\t@(0,0) 519x36\r\n" +
+                            "        JPanel (javax.swing)\t\"null.glassPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "        JLayeredPane (javax.swing)\t\"null.layeredPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "            JPanel (javax.swing)\t\"null.contentPane\"\tnull\t@(0,0) 519x36\r\n" +
+                            "                JPanel (javax.swing)\tnull\tnull\t@(0,0) 519x36\r\n" +
+                            "                    JTextField (javax.swing)\t\"firstname\"\t\"\"\t@(5,8) 224x20\r\n" +
+                            "                    JTextField (javax.swing)\t\"lastname\"\t\"\"\t@(234,8) 224x20\r\n" +
+                            "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(463,5) 51x26\r\n",
+                    out.text());
+        }
+
+
+
     }
 
     @Test
