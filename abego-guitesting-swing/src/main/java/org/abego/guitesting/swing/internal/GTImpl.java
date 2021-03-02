@@ -35,6 +35,7 @@ import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
+import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
@@ -46,11 +47,14 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.PrintStream;
 import java.time.Duration;
 import java.util.OptionalLong;
@@ -87,6 +91,7 @@ public final class GTImpl implements GT {
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
     private final FocusSupport focusSupport = FocusSupportImpl.newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, timeoutSupport);
 
     private GTImpl() {
     }
@@ -325,6 +330,81 @@ public final class GTImpl implements GT {
     @Override
     public void setAutoDelay(int ms) {
         robot.setAutoDelay(ms);
+    }
+
+
+    // ======================================================================
+    // ScreenCaptureSupport API
+    // ======================================================================
+
+    public BufferedImage captureScreen(Rectangle screenRect) {
+        return screenCaptureSupport.captureScreen(screenRect);
+    }
+
+    @Override
+    public BufferedImage captureScreen(Component component, @Nullable Rectangle rectangle) {
+        return screenCaptureSupport.captureScreen(component, rectangle);
+    }
+
+    @Override
+    public BufferedImage captureScreen(Component component) {
+        return screenCaptureSupport.captureScreen(component);
+    }
+
+    @Override
+    public ImageDifference difference(Image imageA, Image imageB) {
+        return screenCaptureSupport.difference(imageA, imageB);
+    }
+
+    @Override
+    public void waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, Image... expectedImages) {
+        screenCaptureSupport.waitUntilScreenshotMatchesImage(component, rectangle, expectedImages);
+    }
+
+    @Override
+    public void waitUntilScreenshotMatchesImage(Component component, Image... expectedImages) {
+        screenCaptureSupport.waitUntilScreenshotMatchesImage(component, expectedImages);
+
+    }
+
+    @Override
+    public boolean getGenerateSnapshotIfMissing() {
+        return screenCaptureSupport.getGenerateSnapshotIfMissing();
+    }
+
+    @Override
+    public void setGenerateSnapshotIfMissing(boolean value) {
+        screenCaptureSupport.setGenerateSnapshotIfMissing(value);
+    }
+
+    @Override
+    public Duration getDelayBeforeNewSnapshot() {
+        return screenCaptureSupport.getDelayBeforeNewSnapshot();
+    }
+
+    @Override
+    public void setDelayBeforeNewSnapshot(Duration duration) {
+        screenCaptureSupport.setDelayBeforeNewSnapshot(duration);
+    }
+
+    @Override
+    public void waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+        screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
+    }
+
+    @Override
+    public void waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+        screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component,snapshotName);
+    }
+
+    @Override
+    public void writeImage(RenderedImage image, File file) {
+        screenCaptureSupport.writeImage(image,file);
+    }
+
+    @Override
+    public Image readImage(File file) {
+        return screenCaptureSupport.readImage(file);
     }
 
     // ======================================================================

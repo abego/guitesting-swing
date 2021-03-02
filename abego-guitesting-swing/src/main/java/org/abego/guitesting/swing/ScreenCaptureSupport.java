@@ -34,6 +34,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.net.URI;
 import java.time.Duration;
@@ -46,10 +47,10 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns an image/screenshot of the rectangle of the screen.
      *
-     * @param rectangle a {@link Rectangle} on the screen (in screen coordinates)
+     * @param screenRect a {@link Rectangle} on the screen
      * @return an image of the rectangle of the screen.
      */
-    BufferedImage createScreenCapture(Rectangle rectangle);
+    BufferedImage captureScreen(Rectangle screenRect);
 
     /**
      * Returns an image/screenshot of the {@code component}, or of the
@@ -63,8 +64,8 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      *                  should be returned.
      * @return an image of the {@code component} or a part of it
      */
-    BufferedImage createScreenCapture(Component component,
-                                      @Nullable Rectangle rectangle);
+    BufferedImage captureScreen(Component component,
+                                @Nullable Rectangle rectangle);
 
     /**
      * Returns an image/screenshot of the {@code component}.
@@ -72,7 +73,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param component the {@link Component} to take a screenshot of.
      * @return an image/screenshot of the {@code component}
      */
-    BufferedImage createScreenCapture(Component component);
+    BufferedImage captureScreen(Component component);
 
     /**
      * Returns the difference between {@code imageA} and {@code imageB} as an
@@ -213,7 +214,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Writes the {@code image} to the given {@code file}.
      */
-    void writeImage(Image image, File file);
+    void writeImage(RenderedImage image, File file);
 
     /**
      * Returns the {@link Image} read from the given {@code file}.

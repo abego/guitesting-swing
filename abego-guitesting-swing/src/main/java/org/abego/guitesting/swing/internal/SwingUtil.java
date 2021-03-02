@@ -105,4 +105,13 @@ public final class SwingUtil {
         return p;
     }
 
+    //TODO move to ComponentUtil
+     static Rectangle toScreenCoordinates(Component component, Rectangle rectangle) {
+        Rectangle result = rectangle.getBounds();
+        Point p = result.getLocation();
+        Point locationOnScreen = toScreenCoordinates(component,p.x,p.y);
+        result.translate(locationOnScreen.x, locationOnScreen.y);
+        return result;
+    }
+
 }

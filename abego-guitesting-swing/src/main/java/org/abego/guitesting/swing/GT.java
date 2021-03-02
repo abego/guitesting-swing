@@ -110,6 +110,7 @@ public interface GT extends
         MouseSupport,
         PollingSupport,
         RobotAPI,
+        ScreenCaptureSupport,
         TimeoutSupport,
         WaitForIdleSupport,
         WaitSupport,
