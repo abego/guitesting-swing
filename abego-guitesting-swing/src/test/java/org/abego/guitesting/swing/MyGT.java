@@ -42,7 +42,6 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelListener;
-import java.time.Duration;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -206,6 +205,10 @@ class MyGT {
         button.revalidate();
         button.addMouseListener(logMouseEventsToBlackboardWriter());
         button.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
+
+        // some clicks were lost because the window was not visible when
+        // the method returned. Therefore wait until this happend.
+        waitForWindowWith(JFrame.class, f -> f == frame && f.isVisible());
 
         return frame;
     }
