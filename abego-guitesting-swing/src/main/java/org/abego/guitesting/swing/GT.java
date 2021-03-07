@@ -230,7 +230,7 @@ public interface GT extends
      *
      * <p>The following properties are supported:
      * <ul>
-     *     <li>"abego-guitesting-swing.timeoutmillis": time duration in milliseconds, used for
+     *     <li>{@link #SYSTEM_PROPERTY_TIMEOUT_MILLIS}: time duration in milliseconds, used for
      *     initialTimeout and timeout.</li>
      * </ul>
      */
