@@ -34,7 +34,6 @@ import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -87,7 +86,7 @@ class GTTest {
     private static final String meta = isMac() ? "⌘" : "Meta";
 
     private static boolean isMac() {
-        return System.getProperty("os.name").equalsIgnoreCase("mac");
+        return System.getProperty("os.name").toLowerCase().contains("mac");
     }
 
     private static String head(int count, String text) {
@@ -589,7 +588,8 @@ class GTTest {
 
         async(() -> gt.showInFrameTitled("Sample", btn, pos, size));
 
-        JFrame frame = MyGT.waitForWindowWith(JFrame.class, w -> true);
+        JFrame frame = MyGT.waitForWindowWith(
+                JFrame.class, w -> w.getTitle() != null);
 
         assertEquals("Sample", frame.getTitle());
         assertEquals(pos, frame.getLocation());
@@ -1464,9 +1464,11 @@ class GTTest {
     }
 
     @Test
-    @Disabled
-        //TODO: this test sometimes fails, especially when executed after test waitUntilInFocus_ok. It looks like the first click is lost sometimes
     void clickRight_Component_centered_withClickCount_ok() {
+        //TODO: this test sometimes fails, especially when executed after test
+        // waitUntilInFocus_ok. It looks like the first click is lost sometimes.
+        // 2021-03-07: enabled test again, to check if problem still exists
+
         JFrame frame = MyGT.showFrameForMouseTests();
 
         JButton comp = MyGT.componentWith(JButton.class, frame, c -> true);
@@ -1475,12 +1477,12 @@ class GTTest {
         gt.clickRight(comp, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1796,8 +1798,8 @@ class GTTest {
         int left = frame.getLocation().x;
         int top = frame.getLocation().y;
 
-        assertEquals(Color.white, gt.getPixelColor(left + 20, top + 20));
-        assertEquals(Color.black, gt.getPixelColor(left + 50, top + 50));
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
 
         // The other color we cannot directly compare as getPixelColor does not
         // always return the "native" colors. So we just check the "color-ish"
@@ -1809,6 +1811,16 @@ class GTTest {
     @Test
     void createScreenCapture_ok() {
         JFrame frame = MyGT.showFrameWithColors();
+
+        // We repeat the code from getPixelColor_ok. After that code we are
+        // sure the frame is correctly displayed. Without this "delay" the
+        // createScreenCapture sometimes took a screenshot of an "appearing"
+        // frame, e.g. with "gray" and not yet black colors.
+        int left = frame.getLocation().x;
+        int top = frame.getLocation().y;
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
+        // The frame is now displayed completely and in "full colors".
 
         BufferedImage image = gt.createScreenCapture(frame.getBounds());
 
