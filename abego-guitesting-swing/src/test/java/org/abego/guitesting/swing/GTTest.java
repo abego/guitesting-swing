@@ -34,7 +34,6 @@ import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -1465,9 +1464,11 @@ class GTTest {
     }
 
     @Test
-    @Disabled
-        //TODO: this test sometimes fails, especially when executed after test waitUntilInFocus_ok. It looks like the first click is lost sometimes
     void clickRight_Component_centered_withClickCount_ok() {
+        //TODO: this test sometimes fails, especially when executed after test
+        // waitUntilInFocus_ok. It looks like the first click is lost sometimes.
+        // 2021-03-07: enabled test again, to check if problem still exists
+
         JFrame frame = MyGT.showFrameForMouseTests();
 
         JButton comp = MyGT.componentWith(JButton.class, frame, c -> true);
@@ -1476,12 +1477,12 @@ class GTTest {
         gt.clickRight(comp, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
