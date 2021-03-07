@@ -1811,6 +1811,16 @@ class GTTest {
     void createScreenCapture_ok() {
         JFrame frame = MyGT.showFrameWithColors();
 
+        // We repeat the code from getPixelColor_ok. After that code we are
+        // sure the frame is correctly displayed. Without this "delay" the
+        // createScreenCapture sometimes took a screenshot of an "appearing"
+        // frame, e.g. with "gray" and not yet black colors.
+        int left = frame.getLocation().x;
+        int top = frame.getLocation().y;
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
+        // The frame is now displayed completely and in "full colors".
+
         BufferedImage image = gt.createScreenCapture(frame.getBounds());
 
         assertEquals(Color.white, new Color(image.getRGB(20, 20)));
