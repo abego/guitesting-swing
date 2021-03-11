@@ -28,6 +28,7 @@ import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
 import org.eclipse.jdt.annotation.Nullable;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -55,7 +56,7 @@ import static org.abego.commons.lang.ClassUtil.resource;
  * This approach must be revised once "mutation testing" is used. So possibly
  * we have to "re-"implement a subset of GT's functionality.
  */
-class MyGT {
+public class MyGT {
     private static final GT gt2 = GuiTesting.newGT();
 
     static <T> void assertEqualsRetrying(T expected, Supplier<T> actualSupplier) {
@@ -134,7 +135,7 @@ class MyGT {
         Icon icon = new ImageIcon(resource(MyGT.class, "colors.png"));
 
         JButton button = new JButton(icon);
-
+        button.setBorder(BorderFactory.createEmptyBorder());
         JFrame result = showInFrame(button, new Point(100, 100), null);
 
         waitForIdle();
