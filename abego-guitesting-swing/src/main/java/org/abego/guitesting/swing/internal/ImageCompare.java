@@ -150,7 +150,7 @@ public final class ImageCompare {
     }
 
     /**
-     * Returns an image marking the differences between imageA and imageV with
+     * Returns an image marking the differences between imageA and imageB with
      * {@link Color#black} pixels on a (transparent) white canvas,
      * or {@code null} when imageA and imageB are not different.
      *
