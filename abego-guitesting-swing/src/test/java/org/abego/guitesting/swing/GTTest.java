@@ -1812,27 +1812,11 @@ class GTTest {
     void createScreenCapture_ok() {
         JFrame frame = MyGT.showFrameWithColors();
 
-        // We repeat the code from getPixelColor_ok. After that code we are
-        // sure the frame is correctly displayed. Without this "delay" the
-        // createScreenCapture sometimes took a screenshot of an "appearing"
-        // frame, e.g. with "gray" and not yet black colors.
-        int left = frame.getLocation().x;
-        int top = frame.getLocation().y;
-        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
-        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
-        // The frame is now displayed completely and in "full colors".
+        assertFrameWithColorsIsDisplayedRetrying(frame);
 
         BufferedImage image = gt.createScreenCapture(frame.getBounds());
 
-        assertEquals(Color.white, new Color(image.getRGB(20, 20)));
-        assertEquals(Color.black, new Color(image.getRGB(50, 50)));
-
-        // The other color we cannot directly compare as createScreenCapture
-        // does not always reproduces the "native" colors. So we just check
-        // the "color-ish"
-        assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
-        assertTrue(isGreenish(new Color(image.getRGB(20, 90))));
-        assertTrue(isRedish(new Color(image.getRGB(90, 20))));
+        assertMatchesColorsImage(image);
     }
 
     @Test
@@ -2197,4 +2181,25 @@ class GTTest {
         assertSame(gt, gt._wait());
         assertSame(gt, gt._window());
     }
+
+    private void assertFrameWithColorsIsDisplayedRetrying(JFrame frame) {
+        int left = frame.getLocation().x;
+        int top = frame.getLocation().y;
+
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
+    }
+
+    private void assertMatchesColorsImage(BufferedImage image) {
+        assertEquals(Color.white, new Color(image.getRGB(20, 20)));
+        assertEquals(Color.black, new Color(image.getRGB(50, 50)));
+
+        // The other color we cannot directly compare as createScreenCapture
+        // does not always reproduces the "native" colors. So we just check
+        // the "color-ish"
+        assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
+        assertTrue(isGreenish(new Color(image.getRGB(20, 90))));
+        assertTrue(isRedish(new Color(image.getRGB(90, 20))));
+    }
+
 }
