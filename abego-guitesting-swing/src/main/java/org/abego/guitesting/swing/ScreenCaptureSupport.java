@@ -222,7 +222,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     BufferedImage readImage(File file);
 
     /**
-     * The difference between two {@link Image}s.
+     * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
      */
     interface ImageDifference {
 
