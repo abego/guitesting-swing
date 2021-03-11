@@ -235,49 +235,23 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         }
 
         /**
-         * Returns the color to use by default to indicate a pixel in
-         * {@code imageA} does not match a pixel in {@code imageB}.
-         * <p>See {@link #getDifferenceImage()}.</p>
-         */
-        Color getDefaultDiffColor();
-
-        /**
          * Returns the first image of the comparison.
          */
-        Image getImageA();
+        BufferedImage getImageA();
 
         /**
          * Returns the second image of the comparison.
          */
-        Image getImageB();
+        BufferedImage getImageB();
 
         /**
-         * Returns an {@link Image} with pixels having the same color as in
-         * {@code imageA} if the pixel matches the pixel in {@code imageB},
-         * and {@code diffColor} if the pixels do not match.
+         * Returns an image marking the differences between imageA and imageB
+         * with {@link Color#black} pixels on a (transparent) white canvas.
+         *
+         * <p>The images are compared pixel by pixel and all pixel that are not
+         * similar or that only exist in one image are marked {@link Color#black}.</p>
          */
-        Image getDifferenceImage(Color diffColor);
-
-        /**
-         * Returns an {@link Image} with pixels having the same color as in
-         * {@code imageA} if the pixel matches the pixel in {@code imageB},
-         * and {@link #getDefaultDiffColor()} if the pixels do not match.
-         */
-        Image getDifferenceImage();
-
-        /**
-         * Returns an {@link Image} with pixels having in {@link Color#white}
-         * if the pixel matches in {@code imageA} in {@code imageB},
-         * and {@code maskColor} if the pixels do not match.
-         */
-        Image getDifferenceMaskImage(Color maskColor);
-
-        /**
-         * Returns an {@link Image} with pixels having in {@link Color#white}
-         * if the pixel matches in {@code imageA} in {@code imageB},
-         * and {@link Color#black} if the pixels do not match.
-         */
-        Image getDifferenceMaskImage();
+        BufferedImage getDifferenceMask();
 
         /**
          * Returns the {@link Kind} of the difference between the two images.
