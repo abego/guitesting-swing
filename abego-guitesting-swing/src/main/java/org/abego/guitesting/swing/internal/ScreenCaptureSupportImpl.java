@@ -43,10 +43,12 @@ import java.time.Duration;
 import static org.abego.guitesting.swing.internal.SwingUtil.toScreenCoordinates;
 
 class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
+    private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
+
     private final Robot robot;
     private final TimeoutSupplier timeoutProvider;
     private boolean generateSnapshotIfMissing = true;
-    private Duration delayBeforeNewSnapshot = Duration.ofMillis(200);
+    private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
 
     private ScreenCaptureSupportImpl(Robot robot, TimeoutSupplier timeoutProvider) {
         this.robot = robot;
