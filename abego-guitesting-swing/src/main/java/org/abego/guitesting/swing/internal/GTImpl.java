@@ -403,7 +403,7 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public Image readImage(File file) {
+    public BufferedImage readImage(File file) {
         return screenCaptureSupport.readImage(file);
     }
 

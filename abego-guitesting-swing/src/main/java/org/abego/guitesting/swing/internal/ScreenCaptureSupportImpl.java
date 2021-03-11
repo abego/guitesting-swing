@@ -141,13 +141,13 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public Image readImage(File file) {
+    public BufferedImage readImage(File file) {
         checkIsPngFilename(file);
         try {
             return ImageIO.read(file);
         } catch (IOException e) {
             throw new GuiTestingException(
-                    "Error when reading image file "+file.getAbsolutePath(),e);
+                    "Error when reading image file " + file.getAbsolutePath(), e);
         }
     }
 

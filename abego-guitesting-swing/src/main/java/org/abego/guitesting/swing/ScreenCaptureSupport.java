@@ -219,7 +219,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns the {@link Image} read from the given {@code file}.
      */
-    Image readImage(File file);
+    BufferedImage readImage(File file);
 
     /**
      * The difference between two {@link Image}s.
