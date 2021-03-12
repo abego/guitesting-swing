@@ -73,6 +73,9 @@ import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColors2Image;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColors2DifferenceMask;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsImage;
 import static org.abego.guitesting.swing.internal.SwingUtil.isBlueish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isGreenish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isRedish;
@@ -2243,6 +2246,26 @@ public class GTTest {
                 new Rectangle(100, 100));
 
         assertMatchesColorsImage(image);
+    }
+
+    @Test
+    void imageDifference() throws IOException {
+        BufferedImage image1 = getColorsImage();
+
+        ScreenCaptureSupport.ImageDifference noDiff = gt.imageDifference(image1, image1);
+        assertFalse(noDiff.imagesAreDifferent());
+        assertEquals(ScreenCaptureSupport.ImageDifference.Kind.NO_DIFFERENCE,
+                noDiff.getDifferenceKind());
+        assertImageEquals(image1, noDiff.getDifferenceMask(), "noDiff");
+
+        BufferedImage image2 = getColors2Image();
+        ScreenCaptureSupport.ImageDifference diff = gt.imageDifference(image1, image2);
+
+        BufferedImage expectedDiffMask = getColorsColors2DifferenceMask();
+        @Nullable
+        BufferedImage diffMask = diff.getDifferenceMask();
+
+        assertImageEquals(expectedDiffMask, diffMask, "noDiff");
     }
 
     private void assertFrameWithColorsIsDisplayedRetrying(JFrame frame) {

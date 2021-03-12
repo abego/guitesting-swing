@@ -81,7 +81,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public ImageDifference difference(Image imageA, Image imageB) {
+    public ImageDifference imageDifference(Image imageA, Image imageB) {
         throw new GuiTestingException("Not yet implemented"); //TODO: implement
     }
 

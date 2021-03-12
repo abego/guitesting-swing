@@ -79,7 +79,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * Returns the difference between {@code imageA} and {@code imageB} as an
      * {@link ImageDifference} object.
      */
-    ImageDifference difference(Image imageA, Image imageB);
+    ImageDifference imageDifference(Image imageA, Image imageB);
 
     /**
      * Waits until the {@code component}, or the {@code rectangle} of the
