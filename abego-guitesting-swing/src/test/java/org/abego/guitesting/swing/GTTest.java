@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.io.FileUtil;
 import org.abego.commons.io.PrintStreamToBuffer;
 import org.abego.commons.lang.RunOnClose;
 import org.abego.commons.seq.Seq;
@@ -32,9 +33,11 @@ import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.opentest4j.AssertionFailedError;
 
 import javax.swing.JButton;
@@ -55,6 +58,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
@@ -67,6 +72,7 @@ import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
+import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
 import static org.abego.guitesting.swing.internal.SwingUtil.isBlueish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isGreenish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isRedish;
@@ -2183,13 +2189,6 @@ public class GTTest {
         assertSame(gt, gt._window());
     }
 
-    //TODO: move to utils/commons
-    private static Rectangle getBoundsOnScreen(Component component) {
-        Point origin = new Point();
-        SwingUtilities.convertPointToScreen(origin, component);
-        return new Rectangle(origin, component.getSize());
-    }
-
     @Test
     void captureScreen_Rectangle() {
         JFrame frame = MyGT.showFrameWithColors();
@@ -2210,6 +2209,38 @@ public class GTTest {
         assertFrameWithColorsIsDisplayedRetrying(frame);
 
         BufferedImage image = gt.captureScreen(frame.getContentPane());
+
+        assertMatchesColorsImage(image);
+    }
+
+    public static void assertImageEquals(
+            BufferedImage expectedImage, BufferedImage actualImage,
+            String imageBaseName) {
+        @Nullable
+        BufferedImage diffMask = newImageCompare().differenceMask(
+                expectedImage, actualImage);
+        if (diffMask != null) {
+            gt.writeImage(expectedImage, new File(imageBaseName + "-expected.png"));
+            gt.writeImage(actualImage, new File(imageBaseName + "-actual.png"));
+            gt.writeImage(diffMask, new File(imageBaseName + "-difference.png"));
+        }
+    }
+
+    //TODO: move to utils/commons
+    private static Rectangle getBoundsOnScreen(Component component) {
+        Point origin = new Point();
+        SwingUtilities.convertPointToScreen(origin, component);
+        return new Rectangle(origin, component.getSize());
+    }
+
+    @Test
+    void captureScreen_Component_Rectangle() {
+        JFrame frame = MyGT.showFrameWithColors();
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        BufferedImage image = gt.captureScreen(
+                frame.getContentPane(),
+                new Rectangle(100, 100));
 
         assertMatchesColorsImage(image);
     }
@@ -2235,14 +2266,19 @@ public class GTTest {
     }
 
     @Test
-    void captureScreen_Component_Rectangle() {
-        JFrame frame = MyGT.showFrameWithColors();
-        assertFrameWithColorsIsDisplayedRetrying(frame);
+    void readImage_writeImage(@TempDir File tempDir) throws IOException {
+        File imageFile1 = new File(tempDir, "readImage_writeImage-sample.png");
+        FileUtil.copyResourceToFile(MyGT.class, "colors.png", imageFile1);
 
-        BufferedImage image = gt.captureScreen(
-                frame.getContentPane(),
-                new Rectangle(100, 100));
+        // read
+        BufferedImage img = gt.readImage(imageFile1);
 
-        assertMatchesColorsImage(image);
+        // write
+        File imageFile2 = new File(tempDir, "readImage_writeImage-sample2.png");
+        gt.writeImage(img, imageFile2);
+
+        // read and verify
+        BufferedImage img2 = gt.readImage(imageFile2);
+        assertImageEquals(img, img2, "readImage_writeImage");
     }
 }
