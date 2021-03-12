@@ -47,6 +47,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test GT
  */
-class GTTest {
+public class GTTest {
     private final static GT gt = GuiTesting.newGT();
     private static final String meta = isMac() ? "⌘" : "Meta";
 
@@ -2182,6 +2183,37 @@ class GTTest {
         assertSame(gt, gt._window());
     }
 
+    //TODO: move to utils/commons
+    private static Rectangle getBoundsOnScreen(Component component) {
+        Point origin = new Point();
+        SwingUtilities.convertPointToScreen(origin, component);
+        return new Rectangle(origin, component.getSize());
+    }
+
+    @Test
+    void captureScreen_Rectangle() {
+        JFrame frame = MyGT.showFrameWithColors();
+
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        Component component = frame.getContentPane();
+        Rectangle result = getBoundsOnScreen(component);
+
+        BufferedImage image = gt.captureScreen(result);
+
+        assertMatchesColorsImage(image);
+    }
+
+    @Test
+    void captureScreen_Component() {
+        JFrame frame = MyGT.showFrameWithColors();
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        BufferedImage image = gt.captureScreen(frame.getContentPane());
+
+        assertMatchesColorsImage(image);
+    }
+
     private void assertFrameWithColorsIsDisplayedRetrying(JFrame frame) {
         int left = frame.getLocation().x;
         int top = frame.getLocation().y;
@@ -2202,4 +2234,15 @@ class GTTest {
         assertTrue(isRedish(new Color(image.getRGB(90, 20))));
     }
 
+    @Test
+    void captureScreen_Component_Rectangle() {
+        JFrame frame = MyGT.showFrameWithColors();
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        BufferedImage image = gt.captureScreen(
+                frame.getContentPane(),
+                new Rectangle(100, 100));
+
+        assertMatchesColorsImage(image);
+    }
 }
