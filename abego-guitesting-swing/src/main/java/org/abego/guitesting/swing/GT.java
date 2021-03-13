@@ -27,7 +27,7 @@ package org.abego.guitesting.swing;
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.Timeoutable;
-import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 
 import java.awt.Component;
 import java.awt.Window;
@@ -185,18 +185,12 @@ public interface GT extends
                     componentClass,
                     c -> Objects.equals(c.getName(), name));
         } catch (Exception e) {
-            Assertions.fail(String.format(
+            throw new AssertionFailedError(String.format(
                     "Error when looking for %s named '%s': %s", //NON-NLS
                     componentClass.getName(),
                     name,
                     messageOrClassName(e)),
                     e);
-
-            // never reached.
-            // `fail` will not return, but the compiler does not know that.
-            // (We don't throw an 'AssertionException' as we would then
-            // introduce a dependency to the 'hidden' exception class)
-            throw new IllegalStateException();
         }
     }
 
