@@ -82,6 +82,15 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB);
 
     /**
+     * Returns the difference between {@code imageA} and {@code imageB} as an
+     * an image with {@link Color#black} pixels marking the parts of that differ
+     * in both images or only exist in one of them.
+     *
+     * <p>The parts that don't differ are transparent white.</p>
+     */
+    BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB);
+
+    /**
      * Waits until the {@code component}, or the {@code rectangle} of the
      * {@code component}, if {@code rectangle} is not {@code null},
      * matches one of the {@code expectedImages}.

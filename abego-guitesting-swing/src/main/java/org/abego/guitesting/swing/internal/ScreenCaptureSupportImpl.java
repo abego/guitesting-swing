@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal;
 
+import org.abego.commons.io.FileUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.PollingSupport;
@@ -39,7 +40,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.abego.guitesting.swing.internal.SwingUtil.toScreenCoordinates;
 
@@ -99,9 +104,36 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
+    private static boolean isJUnitMethod(StackTraceElement element) {
+        return element.getClassName().startsWith("org.junit.jupiter.");
+    }
+
 
     private File getOutputDirectory() {
         return new File("target/guitesting-reports");
+    }
+
+    private static String getTestMethodName(StackTraceElement[] stackTrace) {
+        boolean foundJUnitMethod = false;
+        for (StackTraceElement element : stackTrace) {
+            if (isJUnitMethod(element)) {
+                foundJUnitMethod = true;
+            } else {
+                // The first non-JUnit method after a JUnit method is the one
+                // we are looking for
+                if (foundJUnitMethod) {
+                    return element.getClassName() + "." + element.getMethodName();
+                }
+            }
+        }
+        return "unknownMethod";
+    }
+
+    @Override
+    public BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB) {
+        ImageCompare compare = ImageCompare.newImageCompare();
+        @Nullable BufferedImage diff = compare.differenceMask(imageA, imageB);
+        return diff != null ? diff : compare.transparentImage(imageA);
     }
 
     @Override
@@ -123,27 +155,94 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 throw new AssertionFailedError("Timeout before first screenshot", e);
             }
 
-            String name = getTestMethodName(e.getStackTrace());
-            File actualImageFile = new File(name + "-actualImage.png");
-            writeImage(actualImage, actualImageFile);
-
-            int i = 1;
-            for (BufferedImage expectedImage : expectedImages) {
-                File expectedImageFile = new File(name + "-expectedImage" + i + ".png");
-                writeImage(expectedImage, expectedImageFile);
-                File differenceImageFile = new File(name + "-differenceImage" + i + ".png");
-                ImageDifference diff = imageDifference(expectedImage, actualImage);
-                writeImage(diff.getDifferenceMask(), differenceImageFile);
-
-                i++;
-                //TODO: generate report with images
-            }
+            writeImagesDifferReport(actualImage, expectedImages, e);
             throw new AssertionFailedError("Screenshot does not match expected image (Timeout)", e);
         }
     }
 
-    private String getTestMethodName(StackTraceElement[] stackTrace) {
-        return "org.example.SomeTestClass.mytestmethod";
+    private void writeImagesDifferReport(
+            BufferedImage actualImage,
+            BufferedImage[] expectedImages,
+            Exception exception) {
+
+        File outputDir = getOutputDirectory();
+        File imagesDir = new File(outputDir, "images");
+        FileUtil.ensureDirectoryExists(imagesDir);
+
+        String methodName = getTestMethodName(exception.getStackTrace());
+        Date timestamp = new Date();
+        String actualImageFileName = methodName + "-actualImage.png";
+        File actualImageFile = new File(imagesDir, actualImageFileName);
+        writeImage(actualImage, actualImageFile);
+
+        List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles = new ArrayList<>();
+
+        int i = 1;
+        for (BufferedImage expectedImage : expectedImages) {
+
+            String expectedImageFileName = methodName + "-expectedImage" + i + ".png";
+            File expectedImageFile = new File(imagesDir, expectedImageFileName);
+            writeImage(expectedImage, expectedImageFile);
+
+            String differenceImageFileName = methodName + "-differenceImage" + i + ".png";
+            File differenceImageFile = new File(imagesDir, differenceImageFileName);
+            writeImage(
+                    imageDifferenceMask(expectedImage, actualImage),
+                    differenceImageFile);
+
+            expectedAndDifferenceFiles.add(
+                    new ExpectedAndDifferenceFile(
+                            expectedImageFileName, differenceImageFileName));
+
+            i++;
+        }
+
+        writeReportFile(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception);
+    }
+
+    private void writeReportFile(
+            File outputDir,
+            String methodName,
+            Date timestamp,
+            String actualImageFileName,
+            List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles,
+            Exception exception) {
+
+        File reportFile = new File(outputDir, methodName + "-failed.html");
+        try (PrintStream report = new PrintStream(reportFile)) {
+            report.println("" +
+                    "<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "<head>\n" +
+                    "    <meta charset=\"UTF-8\">\n" +
+                    "    <title>" + methodName + " failed</title>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "<h1>" + methodName + " failed</h1>\n" +
+                    timestamp + "\n" +
+                    "<h2>Actual</h2>\n" +
+                    "<img src=\"images/" + actualImageFileName + "\" alt=\"actual image\">\n");
+
+            int n = expectedAndDifferenceFiles.size();
+            for (int i = 1; i <= n; i++) {
+                ExpectedAndDifferenceFile item = expectedAndDifferenceFiles.get(i - 1);
+                report.println("" +
+                        "<h2>Expected (Option " + i + " of " + n + ")</h2>\n" +
+                        "<img src=\"images/" + item.expectedImageFileName + "\" alt=\"expected image " + i + "\">\n" +
+                        "<h3>Difference</h3>\n" +
+                        "<img src=\"images/" + item.differenceImageFileName + "\" alt=\"difference image " + i + "\">\n");
+            }
+
+            report.println("<h2>Stack</h2>\n<pre>");
+            exception.printStackTrace(report);
+            report.println("" +
+                    "</pre>\n" +
+                    "</body>\n" +
+                    "</html>");
+        } catch (Exception e) {
+            throw new GuiTestingException(
+                    "Error when writing report file " + reportFile.getAbsolutePath(), e);
+        }
     }
 
     @Override
@@ -282,6 +381,16 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         @Nullable
         public BufferedImage getLastScreenshot() {
             return lastScreenshot;
+        }
+    }
+
+    private static class ExpectedAndDifferenceFile {
+        final String expectedImageFileName;
+        final String differenceImageFileName;
+
+        private ExpectedAndDifferenceFile(String expectedImageFileName, String differenceImageFileName) {
+            this.expectedImageFileName = expectedImageFileName;
+            this.differenceImageFileName = differenceImageFileName;
         }
     }
 }

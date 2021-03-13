@@ -356,6 +356,11 @@ public final class GTImpl implements GT {
     }
 
     @Override
+    public BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB) {
+        return screenCaptureSupport.imageDifferenceMask(imageA, imageB);
+    }
+
+    @Override
     public BufferedImage waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
         return screenCaptureSupport.waitUntilScreenshotMatchesImage(component, rectangle, expectedImages);
     }

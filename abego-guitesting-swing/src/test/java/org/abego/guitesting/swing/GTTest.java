@@ -2356,12 +2356,14 @@ public class GTTest {
     void waitUntilScreenshotMatchesImage_timeout() {
         JFrame frame = MyGT.showFrameWithColors();
         BufferedImage notReallyExpectedImage = getColors2Image();
+        BufferedImage notReallyExpectedImage2 = getColorsLargerImage();
+        gt.setTimeout(Duration.ofSeconds(3));
 
-        gt.setTimeout(Duration.ofSeconds(5));
         AssertionFailedError error = assertThrows(AssertionFailedError.class,
                 () -> {
                     gt.waitUntilScreenshotMatchesImage(
-                            frame.getContentPane(), notReallyExpectedImage);
+                            frame.getContentPane(),
+                            notReallyExpectedImage, notReallyExpectedImage2);
                 });
 
         assertEquals("Screenshot does not match expected image (Timeout)",
