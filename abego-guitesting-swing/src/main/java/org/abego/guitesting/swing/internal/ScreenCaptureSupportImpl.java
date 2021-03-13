@@ -272,13 +272,19 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public void waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(
+            Component component,
+            @Nullable Rectangle rectangle,
+            String snapshotName)
+            throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
         throw new GuiTestingException("Not yet implemented"); //TODO: implement
     }
 
     @Override
-    public void waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
-        throw new GuiTestingException("Not yet implemented"); //TODO: implement
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(
+            Component component, String snapshotName)
+            throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+        return waitUntilScreenshotMatchesSnapshot(component, null, snapshotName);
     }
 
     @Override

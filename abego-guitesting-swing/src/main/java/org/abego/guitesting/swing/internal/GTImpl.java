@@ -391,13 +391,13 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public void waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
-        screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+        return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
     }
 
     @Override
-    public void waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
-        screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component,snapshotName);
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+        return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, snapshotName);
     }
 
     @Override

@@ -180,9 +180,10 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param snapshotName a Java identifier to identify the snapshot. The
      *                     snapshotName must be unique within the method calling
      *                     this method.
+     * @return the screenshot image
      */
     @Timeoutable
-    void waitUntilScreenshotMatchesSnapshot(
+    BufferedImage waitUntilScreenshotMatchesSnapshot(
             Component component,
             @Nullable Rectangle rectangle,
             String snapshotName)
@@ -213,9 +214,10 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param snapshotName a Java identifier to identify the snapshot. The
      *                     snapshotName must be unique within the method calling
      *                     this method.
+     * @return the screenshot image
      */
     @Timeoutable
-    void waitUntilScreenshotMatchesSnapshot(
+    BufferedImage waitUntilScreenshotMatchesSnapshot(
             Component component, String snapshotName)
             throws
             UndefinedSnapshotException, ImageNotMatchingSnapshotException;
