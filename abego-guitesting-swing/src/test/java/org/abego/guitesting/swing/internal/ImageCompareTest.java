@@ -24,13 +24,13 @@
 
 package org.abego.guitesting.swing.internal;
 
-import org.abego.guitesting.swing.MyGT;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,34 +58,42 @@ public class ImageCompareTest {
         assertNull(diffMask2);
     }
 
-    public static BufferedImage getColorsColorsDifferenceMask() throws IOException {
-        return ImageIO.read(ImageCompareTest.class.getResource(
-                "/org/abego/guitesting/swing/colors-colors-difference.png"));
+    public static BufferedImage getColorsColorsDifferenceMask() {
+        return readResourceImage("colors-colors-difference.png");
     }
 
-    public static BufferedImage getColorsColors2DifferenceMask() throws IOException {
-        return ImageIO.read(ImageCompareTest.class.getResource(
-                "/org/abego/guitesting/swing/colors-colors2-difference.png"));
+
+    public static BufferedImage getColorsColors2DifferenceMask() {
+        return readResourceImage("colors-colors2-difference.png");
     }
 
-    public static BufferedImage getColors2Image() throws IOException {
-        return ImageIO.read(ImageCompareTest.class.getResource(
-                "/org/abego/guitesting/swing/colors2.png"));
+    public static BufferedImage getColors2Image() {
+        return readResourceImage("colors2.png");
     }
 
-    public static BufferedImage getColorsImage() throws IOException {
-        return ImageIO.read(ImageCompareTest.class.getResource(
-                "/org/abego/guitesting/swing/colors.png"));
+    public static BufferedImage getColorsImage() {
+        return readResourceImage("colors.png");
     }
 
-    public static BufferedImage getColorsColorsLargerDifferenceMask() throws IOException {
-        return ImageIO.read(MyGT.class.getResource(
-                "colors-colorsLarger-difference.png"));
+    public static BufferedImage getColorsAtScreen1Image() {
+        return readResourceImage("colors@screen1.png");
     }
 
-    public static BufferedImage getColorsLargerImage() throws IOException {
-        return ImageIO.read(ImageCompareTest.class.getResource(
-                "/org/abego/guitesting/swing/colorsLarger.png"));
+    public static BufferedImage getColorsColorsLargerDifferenceMask() {
+        return readResourceImage("colors-colorsLarger-difference.png");
+    }
+
+    public static BufferedImage getColorsLargerImage() {
+        return readResourceImage("colorsLarger.png");
+    }
+
+    private static BufferedImage readResourceImage(String name) {
+        try {
+            return ImageIO.read(ImageCompareTest.class.getResource(
+                    "/org/abego/guitesting/swing/" + name));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     @Test

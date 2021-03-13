@@ -73,8 +73,10 @@ import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
+import static org.abego.guitesting.swing.internal.ImageCompare.imagesAreEqual;
 import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColors2Image;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsAtScreen1Image;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColors2DifferenceMask;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsDifferenceMask;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsLargerDifferenceMask;
@@ -118,6 +120,32 @@ public class GTTest {
         JTextField tf = new JTextField();
         tf.setName("input");
         JFrameUtil.showInFrame(tf);
+    }
+
+    public static void assertImageEquals(
+            BufferedImage expectedImage, BufferedImage actualImage,
+            String imageBaseName) {
+        @Nullable
+        BufferedImage diffMask = newImageCompare().differenceMask(
+                expectedImage, actualImage);
+        if (diffMask != null) {
+            gt.writeImage(expectedImage, new File(imageBaseName + "-expected.png"));
+            gt.writeImage(actualImage, new File(imageBaseName + "-actual.png"));
+            gt.writeImage(diffMask, new File(imageBaseName + "-difference.png"));
+            fail("Images are not equal");
+        }
+    }
+
+    public static void assertImageEquals(
+            BufferedImage expectedImage, BufferedImage actualImage) {
+        assertImageEquals(expectedImage, actualImage, "image");
+    }
+
+    //TODO: move to utils/commons
+    private static Rectangle getBoundsOnScreen(Component component) {
+        Point origin = new Point();
+        SwingUtilities.convertPointToScreen(origin, component);
+        return new Rectangle(origin, component.getSize());
     }
 
     private Supplier<String> firstTwoLinesOfBlackboard() {
@@ -2212,27 +2240,6 @@ public class GTTest {
         assertMatchesColorsImage(image);
     }
 
-    public static void assertImageEquals(
-            BufferedImage expectedImage, BufferedImage actualImage,
-            String imageBaseName) {
-        @Nullable
-        BufferedImage diffMask = newImageCompare().differenceMask(
-                expectedImage, actualImage);
-        if (diffMask != null) {
-            gt.writeImage(expectedImage, new File(imageBaseName + "-expected.png"));
-            gt.writeImage(actualImage, new File(imageBaseName + "-actual.png"));
-            gt.writeImage(diffMask, new File(imageBaseName + "-difference.png"));
-            fail("Images are not equal");
-        }
-    }
-
-    //TODO: move to utils/commons
-    private static Rectangle getBoundsOnScreen(Component component) {
-        Point origin = new Point();
-        SwingUtilities.convertPointToScreen(origin, component);
-        return new Rectangle(origin, component.getSize());
-    }
-
     @Test
     void captureScreen_Component_Rectangle() {
         JFrame frame = MyGT.showFrameWithColors();
@@ -2329,4 +2336,36 @@ public class GTTest {
         BufferedImage img2 = gt.readImage(imageFile2);
         assertImageEquals(img, img2, "readImage_writeImage");
     }
+
+    @Test
+    void waitUntilScreenshotMatchesImage_match() {
+        JFrame frame = MyGT.showFrameWithColors();
+        BufferedImage expectedImage = getColorsImage();
+        BufferedImage expectedImage2 = getColorsAtScreen1Image();
+
+        BufferedImage actualImage =
+                gt.waitUntilScreenshotMatchesImage(
+                        frame.getContentPane(), expectedImage, expectedImage2);
+
+        assertTrue(
+                imagesAreEqual(expectedImage, actualImage)
+                        || imagesAreEqual(expectedImage2, actualImage));
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesImage_timeout() {
+        JFrame frame = MyGT.showFrameWithColors();
+        BufferedImage notReallyExpectedImage = getColors2Image();
+
+        gt.setTimeout(Duration.ofSeconds(5));
+        AssertionFailedError error = assertThrows(AssertionFailedError.class,
+                () -> {
+                    gt.waitUntilScreenshotMatchesImage(
+                            frame.getContentPane(), notReallyExpectedImage);
+                });
+
+        assertEquals("Screenshot does not match expected image (Timeout)",
+                error.getMessage());
+    }
+
 }

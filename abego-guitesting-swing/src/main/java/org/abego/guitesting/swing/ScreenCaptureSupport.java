@@ -95,10 +95,10 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param expectedImages the images to compare the given area with
      */
     @Timeoutable
-    void waitUntilScreenshotMatchesImage(
+    BufferedImage waitUntilScreenshotMatchesImage(
             Component component,
             @Nullable Rectangle rectangle,
-            Image... expectedImages);
+            BufferedImage... expectedImages);
 
     /**
      * Waits until the {@code component} matches one of the
@@ -109,9 +109,9 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param expectedImages the images to compare the {@code component} with.
      */
     @Timeoutable
-    void waitUntilScreenshotMatchesImage(
+    BufferedImage waitUntilScreenshotMatchesImage(
             Component component,
-            Image... expectedImages);
+            BufferedImage... expectedImages);
 
     /**
      * Returns the value of the {@code generateSnapshotIfMissing} property.

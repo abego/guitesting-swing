@@ -24,14 +24,15 @@
 
 package org.abego.guitesting.swing.internal;
 
-import org.abego.commons.timeout.TimeoutSupplier;
+import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.GuiTestingException;
+import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opentest4j.AssertionFailedError;
 
 import javax.imageio.ImageIO;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
@@ -46,18 +47,18 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
 
     private final Robot robot;
-    private final TimeoutSupplier timeoutProvider;
+    private final PollingSupport pollingSupport;
     private boolean generateSnapshotIfMissing = true;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
 
-    private ScreenCaptureSupportImpl(Robot robot, TimeoutSupplier timeoutProvider) {
+    private ScreenCaptureSupportImpl(Robot robot, PollingSupport pollingSupport) {
         this.robot = robot;
-        this.timeoutProvider = timeoutProvider;
+        this.pollingSupport = pollingSupport;
     }
 
     public static ScreenCaptureSupport newScreenCaptureSupport(
-            Robot robot, TimeoutSupplier timeoutProvider) {
-        return new ScreenCaptureSupportImpl(robot, timeoutProvider);
+            Robot robot, PollingSupport pollingSupport) {
+        return new ScreenCaptureSupportImpl(robot, pollingSupport);
     }
 
     private static void checkIsPngFilename(File file) {
@@ -98,14 +99,56 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
-    @Override
-    public void waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, Image... expectedImages) {
-        throw new GuiTestingException("Not yet implemented"); //TODO: implement
+
+    private File getOutputDirectory() {
+        return new File("target/guitesting-reports");
     }
 
     @Override
-    public void waitUntilScreenshotMatchesImage(Component component, Image... expectedImages) {
-        throw new GuiTestingException("Not yet implemented"); //TODO: implement
+    public BufferedImage waitUntilScreenshotMatchesImage(
+            Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+        if (expectedImages.length == 0) {
+            throw new IllegalArgumentException("No expectedImages specified");
+        }
+        CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
+                component, rectangle, expectedImages);
+
+        try {
+            return pollingSupport.poll(
+                    () -> csc.capture(),
+                    image -> csc.imageMatchesAnyExpectedImage(image));
+        } catch (TimeoutUncheckedException e) {
+            BufferedImage actualImage = csc.getLastScreenshot();
+            if (actualImage == null) {
+                throw new AssertionFailedError("Timeout before first screenshot", e);
+            }
+
+            String name = getTestMethodName(e.getStackTrace());
+            File actualImageFile = new File(name + "-actualImage.png");
+            writeImage(actualImage, actualImageFile);
+
+            int i = 1;
+            for (BufferedImage expectedImage : expectedImages) {
+                File expectedImageFile = new File(name + "-expectedImage" + i + ".png");
+                writeImage(expectedImage, expectedImageFile);
+                File differenceImageFile = new File(name + "-differenceImage" + i + ".png");
+                ImageDifference diff = imageDifference(expectedImage, actualImage);
+                writeImage(diff.getDifferenceMask(), differenceImageFile);
+
+                i++;
+                //TODO: generate report with images
+            }
+            throw new AssertionFailedError("Screenshot does not match expected image (Timeout)", e);
+        }
+    }
+
+    private String getTestMethodName(StackTraceElement[] stackTrace) {
+        return "org.example.SomeTestClass.mytestmethod";
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, BufferedImage... expectedImages) {
+        return waitUntilScreenshotMatchesImage(component, null, expectedImages);
     }
 
     @Override
@@ -162,7 +205,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public Duration timeout() {
-        return timeoutProvider.timeout();
+        return pollingSupport.timeout();
     }
 
     private static class ImageDifferenceImpl implements ImageDifference {
@@ -201,6 +244,44 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         @Override
         public BufferedImage getDifferenceMask() {
             return differenceMask;
+        }
+    }
+
+    private class CaptureScreenAndCompare {
+        private final Component component;
+        private final @Nullable Rectangle rectangle;
+        private final BufferedImage[] expectedImages;
+
+        private @Nullable BufferedImage lastScreenshot;
+
+        private CaptureScreenAndCompare(
+                Component component,
+                @Nullable Rectangle rectangle,
+                BufferedImage[] expectedImages) {
+            this.component = component;
+            this.rectangle = rectangle;
+            this.expectedImages = expectedImages;
+        }
+
+        private boolean imageMatchesAnyExpectedImage(BufferedImage image) {
+            for (BufferedImage expectedImage : expectedImages) {
+                ImageDifference diff = imageDifference(image, expectedImage);
+                if (!diff.imagesAreDifferent()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private @Nullable BufferedImage capture() {
+            BufferedImage result = captureScreen(component, rectangle);
+            this.lastScreenshot = result;
+            return result;
+        }
+
+        @Nullable
+        public BufferedImage getLastScreenshot() {
+            return lastScreenshot;
         }
     }
 }

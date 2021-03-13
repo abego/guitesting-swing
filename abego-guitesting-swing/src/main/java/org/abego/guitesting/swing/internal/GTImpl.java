@@ -47,7 +47,6 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -91,7 +90,7 @@ public final class GTImpl implements GT {
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
     private final FocusSupport focusSupport = FocusSupportImpl.newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
-    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, timeoutSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, pollingSupport);
 
     private GTImpl() {
     }
@@ -357,14 +356,13 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public void waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, Image... expectedImages) {
-        screenCaptureSupport.waitUntilScreenshotMatchesImage(component, rectangle, expectedImages);
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+        return screenCaptureSupport.waitUntilScreenshotMatchesImage(component, rectangle, expectedImages);
     }
 
     @Override
-    public void waitUntilScreenshotMatchesImage(Component component, Image... expectedImages) {
-        screenCaptureSupport.waitUntilScreenshotMatchesImage(component, expectedImages);
-
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, BufferedImage... expectedImages) {
+        return screenCaptureSupport.waitUntilScreenshotMatchesImage(component, expectedImages);
     }
 
     @Override

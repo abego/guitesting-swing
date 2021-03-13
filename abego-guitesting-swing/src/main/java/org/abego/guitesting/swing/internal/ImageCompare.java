@@ -34,11 +34,20 @@ import java.awt.image.PixelGrabber;
 
 public final class ImageCompare {
 
+    private static final ImageCompare INSTANCE = new ImageCompare();
+
     private ImageCompare() {
     }
 
     public static ImageCompare newImageCompare() {
-        return new ImageCompare();
+        // for now the class has no state, so we don't need to create new
+        // instances but can just use a single instance
+        return INSTANCE;
+    }
+
+    public static boolean imagesAreEqual(
+            BufferedImage imageA, BufferedImage imageB) {
+        return newImageCompare().differenceMask(imageA, imageB) == null;
     }
 
     /**
