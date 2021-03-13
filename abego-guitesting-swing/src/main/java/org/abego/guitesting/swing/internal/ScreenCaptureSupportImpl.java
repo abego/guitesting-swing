@@ -72,6 +72,26 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
+    private static boolean isJUnitMethod(StackTraceElement element) {
+        return element.getClassName().startsWith("org.junit.jupiter.");
+    }
+
+    private static String getTestMethodName(StackTraceElement[] stackTrace) {
+        boolean foundJUnitMethod = false;
+        for (StackTraceElement element : stackTrace) {
+            if (isJUnitMethod(element)) {
+                foundJUnitMethod = true;
+            } else {
+                // The first non-JUnit method after a JUnit method is the one
+                // we are looking for
+                if (foundJUnitMethod) {
+                    return element.getClassName() + "." + element.getMethodName();
+                }
+            }
+        }
+        return "unknownMethod";
+    }
+
     @Override
     public BufferedImage captureScreen(Rectangle screenRect) {
         return robot.createScreenCapture(screenRect);
@@ -92,7 +112,6 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         return captureScreen(component, null);
     }
 
-
     @Override
     public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
         ImageCompare compare = ImageCompare.newImageCompare();
@@ -104,29 +123,8 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
-    private static boolean isJUnitMethod(StackTraceElement element) {
-        return element.getClassName().startsWith("org.junit.jupiter.");
-    }
-
-
     private File getOutputDirectory() {
         return new File("target/guitesting-reports");
-    }
-
-    private static String getTestMethodName(StackTraceElement[] stackTrace) {
-        boolean foundJUnitMethod = false;
-        for (StackTraceElement element : stackTrace) {
-            if (isJUnitMethod(element)) {
-                foundJUnitMethod = true;
-            } else {
-                // The first non-JUnit method after a JUnit method is the one
-                // we are looking for
-                if (foundJUnitMethod) {
-                    return element.getClassName() + "." + element.getMethodName();
-                }
-            }
-        }
-        return "unknownMethod";
     }
 
     @Override
@@ -150,17 +148,21 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                     () -> csc.capture(),
                     image -> csc.imageMatchesAnyExpectedImage(image));
         } catch (TimeoutUncheckedException e) {
+
             BufferedImage actualImage = csc.getLastScreenshot();
             if (actualImage == null) {
                 throw new AssertionFailedError("Timeout before first screenshot", e);
             }
 
-            writeImagesDifferReport(actualImage, expectedImages, e);
-            throw new AssertionFailedError("Screenshot does not match expected image (Timeout)", e);
+            File report = writeImagesDifferReport(actualImage, expectedImages, e);
+
+            throw new AssertionFailedError(
+                    "Screenshot does not match expected image (Timeout).\n" +
+                            "    For details see " + report.getAbsolutePath(), e);
         }
     }
 
-    private void writeImagesDifferReport(
+    private File writeImagesDifferReport(
             BufferedImage actualImage,
             BufferedImage[] expectedImages,
             Exception exception) {
@@ -176,10 +178,8 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         writeImage(actualImage, actualImageFile);
 
         List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles = new ArrayList<>();
-
-        int i = 1;
         for (BufferedImage expectedImage : expectedImages) {
-
+            int i = expectedAndDifferenceFiles.size() + 1;
             String expectedImageFileName = methodName + "-expectedImage" + i + ".png";
             File expectedImageFile = new File(imagesDir, expectedImageFileName);
             writeImage(expectedImage, expectedImageFile);
@@ -193,14 +193,14 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             expectedAndDifferenceFiles.add(
                     new ExpectedAndDifferenceFile(
                             expectedImageFileName, differenceImageFileName));
-
-            i++;
         }
 
-        writeReportFile(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception);
+        return writeReportFile(
+                outputDir, methodName, timestamp,
+                actualImageFileName, expectedAndDifferenceFiles, exception);
     }
 
-    private void writeReportFile(
+    private File writeReportFile(
             File outputDir,
             String methodName,
             Date timestamp,
@@ -239,6 +239,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                     "</pre>\n" +
                     "</body>\n" +
                     "</html>");
+            return reportFile;
         } catch (Exception e) {
             throw new GuiTestingException(
                     "Error when writing report file " + reportFile.getAbsolutePath(), e);
@@ -346,6 +347,16 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
+    private static class ExpectedAndDifferenceFile {
+        final String expectedImageFileName;
+        final String differenceImageFileName;
+
+        private ExpectedAndDifferenceFile(String expectedImageFileName, String differenceImageFileName) {
+            this.expectedImageFileName = expectedImageFileName;
+            this.differenceImageFileName = differenceImageFileName;
+        }
+    }
+
     private class CaptureScreenAndCompare {
         private final Component component;
         private final @Nullable Rectangle rectangle;
@@ -381,16 +392,6 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         @Nullable
         public BufferedImage getLastScreenshot() {
             return lastScreenshot;
-        }
-    }
-
-    private static class ExpectedAndDifferenceFile {
-        final String expectedImageFileName;
-        final String differenceImageFileName;
-
-        private ExpectedAndDifferenceFile(String expectedImageFileName, String differenceImageFileName) {
-            this.expectedImageFileName = expectedImageFileName;
-            this.differenceImageFileName = differenceImageFileName;
         }
     }
 }

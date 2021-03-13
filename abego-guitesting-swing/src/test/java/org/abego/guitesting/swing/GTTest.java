@@ -66,6 +66,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.min;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -2366,8 +2368,21 @@ public class GTTest {
                             notReallyExpectedImage, notReallyExpectedImage2);
                 });
 
-        assertEquals("Screenshot does not match expected image (Timeout)",
-                error.getMessage());
+        // Check the error message.
+        // E.g.the error message contains a reference to the "report file", i.e.
+        // that file must exist.
+        String errorMessage = error.getMessage();
+        Pattern expectedMessagePattern = Pattern.compile(
+                "Screenshot does not match expected image \\(Timeout\\)\\.\r?\n" +
+                        "    For details see (.+)", Pattern.DOTALL);
+        Matcher matcher = expectedMessagePattern.matcher(errorMessage);
+        if (!matcher.find()) {
+            fail("Wrong error message: " + errorMessage);
+        }
+        File reportFile = new File(matcher.group(1));
+        if (!reportFile.isFile()) {
+            fail("Report file missing: " + reportFile.getAbsolutePath());
+        }
     }
 
 }
