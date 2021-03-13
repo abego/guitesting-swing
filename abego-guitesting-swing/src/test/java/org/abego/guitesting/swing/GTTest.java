@@ -31,6 +31,7 @@ import org.abego.commons.lang.RunOnClose;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
+import org.abego.guitesting.swing.ScreenCaptureSupport.ImageDifference;
 import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -75,7 +76,10 @@ import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColors2Image;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColors2DifferenceMask;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsDifferenceMask;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsLargerDifferenceMask;
 import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsImage;
+import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsLargerImage;
 import static org.abego.guitesting.swing.internal.SwingUtil.isBlueish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isGreenish;
 import static org.abego.guitesting.swing.internal.SwingUtil.isRedish;
@@ -2226,6 +2230,7 @@ public class GTTest {
             gt.writeImage(expectedImage, new File(imageBaseName + "-expected.png"));
             gt.writeImage(actualImage, new File(imageBaseName + "-actual.png"));
             gt.writeImage(diffMask, new File(imageBaseName + "-difference.png"));
+            fail("Images are not equal");
         }
     }
 
@@ -2249,24 +2254,52 @@ public class GTTest {
     }
 
     @Test
-    void imageDifference() throws IOException {
-        BufferedImage image1 = getColorsImage();
+    void imageDifference_noDifference() throws IOException {
+        BufferedImage image = getColorsImage();
 
-        ScreenCaptureSupport.ImageDifference noDiff = gt.imageDifference(image1, image1);
-        assertFalse(noDiff.imagesAreDifferent());
-        assertEquals(ScreenCaptureSupport.ImageDifference.Kind.NO_DIFFERENCE,
-                noDiff.getDifferenceKind());
-        assertImageEquals(image1, noDiff.getDifferenceMask(), "noDiff");
+        ImageDifference diff = gt.imageDifference(image, image);
 
-        BufferedImage image2 = getColors2Image();
-        ScreenCaptureSupport.ImageDifference diff = gt.imageDifference(image1, image2);
-
-        BufferedImage expectedDiffMask = getColorsColors2DifferenceMask();
-        @Nullable
-        BufferedImage diffMask = diff.getDifferenceMask();
-
-        assertImageEquals(expectedDiffMask, diffMask, "noDiff");
+        assertFalse(diff.imagesAreDifferent());
+        assertImageEquals(image, diff.getImageA(), "imageA");
+        assertImageEquals(image, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColorsDifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
     }
+
+    @Test
+    void imageDifference_withDifference_sameSize() throws IOException {
+        BufferedImage image1 = getColorsImage();
+        BufferedImage image2 = getColors2Image();
+
+        ImageDifference diff = gt.imageDifference(image1, image2);
+
+        assertTrue(diff.imagesAreDifferent());
+        assertImageEquals(image1, diff.getImageA(), "imageA");
+        assertImageEquals(image2, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColors2DifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
+    }
+
+    @Test
+    void imageDifference_withDifference_differentSize() throws IOException {
+        BufferedImage image1 = getColorsImage();
+        BufferedImage image2 = getColorsLargerImage();
+
+        ImageDifference diff = gt.imageDifference(image1, image2);
+
+        assertTrue(diff.imagesAreDifferent());
+        assertImageEquals(image1, diff.getImageA(), "imageA");
+        assertImageEquals(image2, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColorsLargerDifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
+    }
+
 
     private void assertFrameWithColorsIsDisplayedRetrying(JFrame frame) {
         int left = frame.getLocation().x;

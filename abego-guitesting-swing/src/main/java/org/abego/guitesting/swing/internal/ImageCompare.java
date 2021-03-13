@@ -50,14 +50,20 @@ public final class ImageCompare {
     }
 
     /**
-     * @return the size of the image, or null when the image is not
-     * loaded (completely)
+     * Returns the size of the image.
+     *
+     * @param image a (completely loaded) Image
      */
-    private static @Nullable Dimension getSize(Image image) {
+    //TODO move to commons/util
+    private static Dimension getSize(Image image) {
         Dimension size = new Dimension(
                 image.getWidth(null),
                 image.getHeight(null));
-        return size.getWidth() < 0 || size.getHeight() < 0 ? null : size;
+        if (size.getWidth() < 0 || size.getHeight() < 0) {
+            throw new IllegalArgumentException(
+                    "Image is not loaded completely.");
+        }
+        return size;
     }
 
     /**
@@ -83,15 +89,10 @@ public final class ImageCompare {
      * @return array of pixels in INT_ARGB format
      */
     private static int[] getPixels(Image image) {
-        int width = image.getWidth(null);
-        int height = image.getHeight(null);
-        if (width < 0 || height < 0) {
-            throw new IllegalArgumentException(
-                    "image must be loaded completely before pixels can be retrieved");
-        }
-        int[] pixels = new int[width * height];
+        Dimension size = getSize(image);
+        int[] pixels = new int[size.width * size.height];
         PixelGrabber pg = new PixelGrabber(
-                image, 0, 0, width, height, pixels, 0, width);
+                image, 0, 0, size.width, size.height, pixels, 0, size.width);
         try {
             pg.grabPixels();
         } catch (InterruptedException e) {
@@ -161,21 +162,13 @@ public final class ImageCompare {
     @Nullable
     public BufferedImage differenceMask(Image imageA, Image imageB) {
 
-        @Nullable
         Dimension sizeA = getSize(imageA);
-        @Nullable
         Dimension sizeB = getSize(imageB);
-
-        if (sizeA == null || sizeB == null) {
-            throw new IllegalArgumentException(
-                    "images must be loaded completely before they can be compared");
-        }
-
         Dimension size = max(sizeA, sizeB);
         int h = size.height;
         int w = size.width;
 
-        int whiteTransparentPixel = getPixel(new Color(255, 255, 255, 0));
+        int whiteTransparentPixel = getWhiteTransparentPixel();
         int blackPixel = getPixel(Color.black);
         int[] pixelsA = getPixels(imageA);
         int[] pixelsB = getPixels(imageB);
@@ -200,6 +193,32 @@ public final class ImageCompare {
         }
 
         return imagesDiffer ? getImageFromPixels(pixelsResult, w, h) : null;
+    }
+
+    /**
+     * Returns a new image of transparent white pixels with the same size as
+     * originalImage
+     */
+    public BufferedImage transparentImage(Image originalImage) {
+
+        Dimension size = getSize(originalImage);
+        int h = size.height;
+        int w = size.width;
+
+        int whiteTransparentPixel = getWhiteTransparentPixel();
+        int[] pixelsResult = new int[size.width * size.height];
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                pixelsResult[y * w + x] = whiteTransparentPixel;
+            }
+        }
+
+        return getImageFromPixels(pixelsResult, w, h);
+    }
+
+    private int getWhiteTransparentPixel() {
+        return getPixel(new Color(255, 255, 255, 0));
     }
 
     public interface Context {

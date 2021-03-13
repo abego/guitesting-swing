@@ -352,7 +352,7 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public ImageDifference imageDifference(Image imageA, Image imageB) {
+    public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
         return screenCaptureSupport.imageDifference(imageA, imageB);
     }
 

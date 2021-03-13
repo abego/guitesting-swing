@@ -79,7 +79,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * Returns the difference between {@code imageA} and {@code imageB} as an
      * {@link ImageDifference} object.
      */
-    ImageDifference imageDifference(Image imageA, Image imageB);
+    ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB);
 
     /**
      * Waits until the {@code component}, or the {@code rectangle} of the
@@ -230,9 +230,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
          * Returns {@code true} when the images don't match, i.e. there are
          * differences between the images, {@code false} otherwise.
          */
-        default boolean imagesAreDifferent() {
-            return getDifferenceKind() != Kind.NO_DIFFERENCE;
-        }
+        boolean imagesAreDifferent();
 
         /**
          * Returns the first image of the comparison.
@@ -252,26 +250,6 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
          * similar or that only exist in one image are marked {@link Color#black}.</p>
          */
         BufferedImage getDifferenceMask();
-
-        /**
-         * Returns the {@link Kind} of the difference between the two images.
-         */
-        Kind getDifferenceKind();
-
-        enum Kind {
-            /**
-             * No differences between the images.
-             */
-            NO_DIFFERENCE,
-            /**
-             * The images have difference sizes.
-             */
-            DIFFERENT_SIZE,
-            /**
-             * The content of the images does not match.
-             */
-            DIFFERENT_CONTENT
-        }
     }
 
     /**

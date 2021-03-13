@@ -58,6 +58,11 @@ public class ImageCompareTest {
         assertNull(diffMask2);
     }
 
+    public static BufferedImage getColorsColorsDifferenceMask() throws IOException {
+        return ImageIO.read(ImageCompareTest.class.getResource(
+                "/org/abego/guitesting/swing/colors-colors-difference.png"));
+    }
+
     public static BufferedImage getColorsColors2DifferenceMask() throws IOException {
         return ImageIO.read(ImageCompareTest.class.getResource(
                 "/org/abego/guitesting/swing/colors-colors2-difference.png"));

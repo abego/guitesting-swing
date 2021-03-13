@@ -60,6 +60,12 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         return new ScreenCaptureSupportImpl(robot, timeoutProvider);
     }
 
+    private static void checkIsPngFilename(File file) {
+        if (!file.getName().toLowerCase().endsWith(".png")) {
+            throw new GuiTestingException("Only PNG files supported");
+        }
+    }
+
     @Override
     public BufferedImage captureScreen(Rectangle screenRect) {
         return robot.createScreenCapture(screenRect);
@@ -77,12 +83,19 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public BufferedImage captureScreen(Component component) {
-        return captureScreen(component,null);
+        return captureScreen(component, null);
     }
 
+
     @Override
-    public ImageDifference imageDifference(Image imageA, Image imageB) {
-        throw new GuiTestingException("Not yet implemented"); //TODO: implement
+    public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
+        ImageCompare compare = ImageCompare.newImageCompare();
+        @Nullable BufferedImage diff = compare.differenceMask(imageA, imageB);
+        if (diff != null) {
+            return new ImageDifferenceImpl(true, imageA, imageB, diff);
+        } else {
+            return new ImageDifferenceImpl(false, imageA, imageB, compare.transparentImage(imageA));
+        }
     }
 
     @Override
@@ -132,13 +145,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
             throw new GuiTestingException(
-                    "Error when writing image file "+file.getAbsolutePath(),e);
-        }
-    }
-
-    private static void checkIsPngFilename(File file) {
-        if (!file.getName().toLowerCase().endsWith(".png")) {
-            throw new GuiTestingException("Only PNG files supported");
+                    "Error when writing image file " + file.getAbsolutePath(), e);
         }
     }
 
@@ -156,5 +163,44 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public Duration timeout() {
         return timeoutProvider.timeout();
+    }
+
+    private static class ImageDifferenceImpl implements ImageDifference {
+        private final boolean imagesAreDifferent;
+        private final BufferedImage imageA;
+        private final BufferedImage imageB;
+        private final BufferedImage differenceMask;
+
+        private ImageDifferenceImpl(
+                boolean imagesAreDifferent,
+                BufferedImage imageA,
+                BufferedImage imageB,
+                BufferedImage differenceMask) {
+
+            this.imagesAreDifferent = imagesAreDifferent;
+            this.imageA = imageA;
+            this.imageB = imageB;
+            this.differenceMask = differenceMask;
+        }
+
+        @Override
+        public boolean imagesAreDifferent() {
+            return imagesAreDifferent;
+        }
+
+        @Override
+        public BufferedImage getImageA() {
+            return imageA;
+        }
+
+        @Override
+        public BufferedImage getImageB() {
+            return imageB;
+        }
+
+        @Override
+        public BufferedImage getDifferenceMask() {
+            return differenceMask;
+        }
     }
 }
