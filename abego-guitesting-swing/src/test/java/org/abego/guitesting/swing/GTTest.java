@@ -1384,6 +1384,12 @@ class GTTest {
         gt.type("qux");
 
         MyGT.assertEqualsRetrying("foobazbarqux", textComponent::getText);
+
+        // specifying an invalid index will keep the last valid index
+        gt.clickCharacterAtIndex(textComponent, 1);
+        gt.clickCharacterAtIndex(textComponent, 100); // out of range
+        gt.type("x");
+        MyGT.assertEqualsRetrying("fxoobazbarqux", textComponent::getText);
     }
 
 
