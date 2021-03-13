@@ -89,9 +89,11 @@ final class MouseSupportImpl implements MouseSupport {
     }
 
     private static long getLastClickTime() {
-        synchronized (MouseSupportImpl.class) {
-            return lastClickTime;
-        }
+        // keep the following code in one line to workaround
+        // code coverage issue in IntelliJ
+        // @formatter:off
+        synchronized (MouseSupportImpl.class) { return lastClickTime; }
+        // @formatter:on
     }
 
     private static void setLastClickTime(long time) {
@@ -101,9 +103,11 @@ final class MouseSupportImpl implements MouseSupport {
     }
 
     private static Point getLastClickPos() {
-        synchronized (MouseSupportImpl.class) {
-            return lastClickPos;
-        }
+        // keep the following code in one line to workaround
+        // code coverage issue in IntelliJ
+        // @formatter:off
+        synchronized (MouseSupportImpl.class) { return lastClickPos; }
+        // @formatter:on
     }
 
     private static void setLastClickPos(Point position) {
@@ -290,9 +294,11 @@ final class MouseSupportImpl implements MouseSupport {
         }
 
         private Point getLastGlobalMouseEventPos() {
-            synchronized (this) {
-                return lastGlobalMouseEventPos;
-            }
+            // keep the following code in one line to workaround
+            // code coverage issue in IntelliJ
+            // @formatter:off
+            synchronized (this) { return lastGlobalMouseEventPos; }
+            // @formatter:on
         }
 
         private void setLastGlobalMouseEventPos(Point lastGlobalMouseEventPos) {
