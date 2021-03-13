@@ -1163,12 +1163,12 @@ public class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1182,12 +1182,12 @@ public class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1201,12 +1201,12 @@ public class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1220,12 +1220,12 @@ public class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1400,7 +1400,6 @@ public class GTTest {
         MyGT.assertEqualsRetrying("foobazbarqux", textComponent::getText);
     }
 
-
     @Test
     void clickRight_Component_withClickCount_ok() {
         JFrame frame = MyGT.showFrameForMouseTests();
@@ -1411,12 +1410,12 @@ public class GTTest {
         gt.clickRight(comp, 40, 15, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1430,12 +1429,12 @@ public class GTTest {
         gt.clickRight(comp, new Point(40, 15), 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1449,12 +1448,12 @@ public class GTTest {
         gt.clickRight(comp, 40, 15);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1468,12 +1467,12 @@ public class GTTest {
         gt.clickRight(comp, new Point(40, 15));
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1510,12 +1509,12 @@ public class GTTest {
         gt.clickRight(comp);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1624,8 +1623,8 @@ public class GTTest {
 
         gt.dragRight(80, 90, 200, 220);
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1634,8 +1633,8 @@ public class GTTest {
 
         gt.dragRight(new Point(80, 90), new Point(200, 220));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1660,10 +1659,9 @@ public class GTTest {
 
         gt.dragRight(frame, new Point(130, 40), new Point(50, 170));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
-
 
     @Test
     void waitWhile_ok() {
@@ -1735,7 +1733,6 @@ public class GTTest {
         MyGT.assertEqualsRetrying("pause ended", MyGT.blackboard()::text);
     }
 
-
     @Test
     void poll_ok() {
         // endTime in 100ms, ends before timeout
@@ -1751,7 +1748,6 @@ public class GTTest {
         assertThrows(TimeoutUncheckedException.class,
                 () -> gt.poll(Date::new, d -> false));
     }
-
 
     @Test
     void pollNoFail_ok() {
@@ -1786,7 +1782,6 @@ public class GTTest {
         assertThrows(TimeoutUncheckedException.class,
                 () -> gt.poll(Date::new, d -> false, Duration.ofSeconds(1)));
     }
-
 
     @Test
     void pollNoFail_explicitTimeout_ok() {
@@ -1863,7 +1858,6 @@ public class GTTest {
         gt.setAutoDelay(3);
         assertEquals(3, gt.getAutoDelay());
     }
-
 
     @Test
     void reset_ok() {
@@ -1957,7 +1951,6 @@ public class GTTest {
         assertThrows(TimeoutUncheckedException.class, () ->
                 gt.runWithTimeout(Duration.ofMillis(1), () -> gt.poll(() -> true, v -> false)));
     }
-
 
     @Test
     void waitForIdle_ok() {
@@ -2172,7 +2165,6 @@ public class GTTest {
                             "                    JButton (javax.swing)\t\"ok\"\t\"OK\"\t@(463,5) 51x26\r\n",
                     out.text());
         }
-
 
 
     }
