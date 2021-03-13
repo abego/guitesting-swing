@@ -34,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -192,25 +193,30 @@ class MyGT {
 
 
     static JFrame showFrameForMouseTests() {
-        JButton button = new JButton("Click");
+        final String frameName = "mouseTestsFrame";
+        SwingUtilities.invokeLater(() -> {
+            JButton button = new JButton("Click");
 
-        JFrame frame = showInFrame(button,
-                new Point(50, 50),
-                new Dimension(200, 200));
-        frame.addMouseListener(logMouseEventsToBlackboardWriter());
-        frame.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
-        frame.setLayout(null);
-        button.setLocation(100, 100);
-        button.setSize(80, 30);
-        button.revalidate();
-        button.addMouseListener(logMouseEventsToBlackboardWriter());
-        button.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
+            JFrame frame = showInFrame(button,
+                    new Point(50, 50),
+                    new Dimension(200, 200));
+            frame.addMouseListener(logMouseEventsToBlackboardWriter());
+            frame.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
+            frame.setLayout(null);
+            button.setLocation(100, 100);
+            button.setSize(80, 30);
+            button.revalidate();
+            button.addMouseListener(logMouseEventsToBlackboardWriter());
+            button.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
+            // set the name after all other initialization so we can synchronize
+            // with the non-EDT thread's "waitForWindowWith" call (see below)
+            frame.setName(frameName);
+        });
 
-        // some clicks were lost because the window was not visible when
-        // the method returned. Therefore wait until this happend.
-        waitForWindowWith(JFrame.class, f -> f == frame && f.isVisible());
-
-        return frame;
+        // Wait until the frame is completely setup and visible
+        // so no clicks are lost.
+        return waitForWindowWith(JFrame.class,
+                f -> f.getName().equals(frameName) && f.isVisible());
     }
 
     static JFrame showFrameForDragTests() {
