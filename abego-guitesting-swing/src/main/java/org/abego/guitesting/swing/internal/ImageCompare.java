@@ -34,19 +34,11 @@ import java.awt.image.PixelGrabber;
 
 public final class ImageCompare {
 
-    private final Context context;
-
-    private ImageCompare(Context context) {
-        this.context = context;
-    }
-
-    public static ImageCompare newImageCompare(Context context) {
-        return new ImageCompare(context);
+    private ImageCompare() {
     }
 
     public static ImageCompare newImageCompare() {
-        return newImageCompare(new Context() {
-        });
+        return new ImageCompare();
     }
 
     /**
@@ -103,6 +95,15 @@ public final class ImageCompare {
     }
 
     /**
+     * @return pixel in INT_ARGB format
+     */
+    private static int getPixel(int red, int green, int blue, int alpha) {
+        return ((alpha << 24) & 0xff000000) | ((red << 16) & 0xff0000)
+                | ((green << 8) & 0xff00) | ((blue) & 0xff);
+    }
+
+
+    /**
      * @param pixel in INT_ARGB format
      */
     private static Color getColorOfPixel(int pixel) {
@@ -122,14 +123,6 @@ public final class ImageCompare {
     /**
      * @return pixel in INT_ARGB format
      */
-    private static int getPixel(int red, int green, int blue, int alpha) {
-        return ((alpha << 24) & 0xff000000) | ((red << 16) & 0xff0000)
-                | ((green << 8) & 0xff00) | ((blue) & 0xff);
-    }
-
-    /**
-     * @return pixel in INT_ARGB format
-     */
     private static int getPixel(Color color) {
         return getPixel(
                 color.getRed(),
@@ -138,17 +131,6 @@ public final class ImageCompare {
                 color.getAlpha());
     }
 
-    private boolean arePixelsSimilar(int pixelA, int pixelB) {
-
-        if (pixelA != pixelB) {
-            Color colorA = getColorOfPixel(pixelA);
-            Color colorB = getColorOfPixel(pixelB);
-
-            return context.colorsAreSimilar(colorA, colorB);
-        }
-
-        return true;
-    }
 
     /**
      * Returns an image marking the differences between imageA and imageB with
@@ -156,8 +138,7 @@ public final class ImageCompare {
      * or {@code null} when imageA and imageB are not different.
      *
      * <p>The images are compared pixel by pixel and all pixel that are not
-     * similar as defines {@link Context#colorsAreSimilar(Color, Color)}
-     * or that only exist in one image are marked {@link Color#black}.</p>
+     * equal or that only exist in one image are marked {@link Color#black}.</p>
      */
     @Nullable
     public BufferedImage differenceMask(Image imageA, Image imageB) {
@@ -182,7 +163,7 @@ public final class ImageCompare {
                 boolean hasPixelB = x < sizeB.width && y < sizeB.height;
                 int pixelA = hasPixelA ? pixelsA[y * sizeA.width + x] : 0;
                 int pixelB = hasPixelB ? pixelsB[y * sizeB.width + x] : 0;
-                if (hasPixelA && hasPixelB && arePixelsSimilar(pixelA, pixelB)) {
+                if (hasPixelA && hasPixelB && pixelA == pixelB) {
                     color = whiteTransparentPixel;
                 } else {
                     imagesDiffer = true;
@@ -219,16 +200,5 @@ public final class ImageCompare {
 
     private int getWhiteTransparentPixel() {
         return getPixel(new Color(255, 255, 255, 0));
-    }
-
-    public interface Context {
-        /**
-         * Returns true when colorA is similar to colorB.
-         *
-         * <p>By default both colors are similar when they are equal.</p>
-         */
-        default boolean colorsAreSimilar(Color colorA, Color colorB) {
-            return colorA.equals(colorB);
-        }
     }
 }
