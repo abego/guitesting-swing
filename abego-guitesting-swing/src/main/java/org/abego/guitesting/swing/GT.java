@@ -341,6 +341,15 @@ public interface GT extends
     }
 
     /**
+     * Provides access to screen capture related methods.
+     *
+     * @return this object as ScreenCaptureSupport
+     */
+    default ScreenCaptureSupport _screenCapture() {
+        return this;
+    }
+
+    /**
      * Provides access to timeout related methods.
      *
      * @return this object as TimeoutSupport
