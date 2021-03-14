@@ -24,12 +24,17 @@
 
 package org.abego.guitesting.swing.internal.screencapture;
 
+/**
+ * Holds the pathes to an expectedImage and its corresponding differenceImage
+ * file, relative to the 'outputDirectory'.
+ */
 class ExpectedAndDifferenceFile {
-    final String expectedImageFileName;
-    final String differenceImageFileName;
+    final String expectedImageFilePath;
+    final String differenceImageFilePath;
 
-    ExpectedAndDifferenceFile(String expectedImageFileName, String differenceImageFileName) {
-        this.expectedImageFileName = expectedImageFileName;
-        this.differenceImageFileName = differenceImageFileName;
+    ExpectedAndDifferenceFile(
+            String expectedImageFilePath, String differenceImageFilePath) {
+        this.expectedImageFilePath = expectedImageFilePath;
+        this.differenceImageFilePath = differenceImageFilePath;
     }
 }

@@ -45,8 +45,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -177,10 +177,11 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
         File outputDir = getOutputDirectory();
         String methodName = getFullMethodName(caller);
-        Date timestamp = new Date();
+        String timestamp = Instant.now().toString();
         String actualImageFileName = methodName + "-actualImage.png";
 
-        File imagesDir = new File(outputDir, "images");
+        String imagesDirName = "images";
+        File imagesDir = new File(outputDir, imagesDirName);
         FileUtil.ensureDirectoryExists(imagesDir);
         File actualImageFile = new File(imagesDir, actualImageFileName);
         writeImage(actualImage, actualImageFile);
@@ -200,10 +201,12 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
             expectedAndDifferenceFiles.add(
                     new ExpectedAndDifferenceFile(
-                            expectedImageFileName, differenceImageFileName));
+                            imagesDirName + "/" + expectedImageFileName,
+                            imagesDirName + "/" + differenceImageFileName));
         }
 
-        return ScreenshotCompareReportData.of(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources);
+        return ScreenshotCompareReportData.of(outputDir, methodName,
+                imagesDirName + "/" + actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources, timestamp);
     }
 
     @Override

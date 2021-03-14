@@ -44,7 +44,6 @@ public class ScreenshotCompareHtmlReport {
     public File writeReportFile() {
 
         File reportFile = new File(reportData.getOutputDirectory(), reportData.getMethodName() + "-failed.html");
-        String actualImagePath = "images/" + reportData.getActualImageFileName();
         try (PrintStream report = new PrintStream(reportFile, StandardCharsets.UTF_8.name())) {
             report.println("" +
                     "<!DOCTYPE html>\n" +
@@ -57,30 +56,30 @@ public class ScreenshotCompareHtmlReport {
                     "<h1>" + reportData.getMethodName() + " failed</h1>\n" +
                     reportData.getTimestamp() + "\n" +
                     "<h2>Actual</h2>\n" +
-                    "<img src=\"" + actualImagePath + "\" alt=\"actual image\">\n");
+                    "<img src=\"" + reportData.getActualImageFilePath() + "\" alt=\"actual image\">\n");
 
-            if (reportData.getNewImageFileForResources() != null) {
-                File actualImageFile = new File(reportData.getOutputDirectory(), actualImagePath);
+            if (reportData.getNewImageAbsoluteFilePath() != null) {
                 report.println("" +
                         "<h3>Choices</h3>\n" +
                         "<h4>To make the image an additional option of the snapshot run the following in a bash terminal:</h4>\n" +
                         "<pre>\n" +
-                        "cp " + actualImageFile.getAbsolutePath() + " " + reportData.getNewImageFileForResources().getAbsolutePath() + "\n" +
+                        "cp " + reportData.getActualImageAbsoluteFilePath() + " " + reportData.getNewImageAbsoluteFilePath() + "\n" +
                         "</pre>\n");
             }
 
             int n = reportData.getExpectedAndDifferenceFiles().size();
-            for (int i = 1; i <= n; i++) {
-                ExpectedAndDifferenceFile item = reportData.getExpectedAndDifferenceFiles().get(i - 1);
+            int i = 1;
+            for (ExpectedAndDifferenceFile item : reportData.getExpectedAndDifferenceFiles()) {
                 report.println("" +
                         "<h2>Expected (Option " + i + " of " + n + ")</h2>\n" +
-                        "<img src=\"images/" + item.expectedImageFileName + "\" alt=\"expected image " + i + "\">\n" +
+                        "<img src=\"" + item.expectedImageFilePath + "\" alt=\"expected image " + i + "\">\n" +
                         "<h3>Difference</h3>\n" +
-                        "<img src=\"images/" + item.differenceImageFileName + "\" alt=\"difference image " + i + "\">\n");
+                        "<img src=\"" + item.differenceImageFilePath + "\" alt=\"difference image " + i + "\">\n");
+                i++;
             }
 
             report.println("<h2>Stack</h2>\n<pre>");
-            reportData.getException().printStackTrace(report);
+            report.println(reportData.getStackTrace());
             report.println("" +
                     "</pre>\n" +
                     "</body>\n" +

@@ -24,41 +24,43 @@
 
 package org.abego.guitesting.swing.internal.screencapture;
 
+import org.abego.commons.io.PrintStreamToBuffer;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.io.File;
-import java.util.Date;
 import java.util.List;
+
+import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 
 class ScreenshotCompareReportData {
     private final File outputDirectory;
     private final String methodName;
-    private final Date timestamp;
     private final String actualImageFileName;
     private final List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles;
     private final Exception exception;
+    private final String timestamp;
 
-    private final @Nullable File newImageFileForResources;
+    private final @Nullable File newImageFile;
 
-    private ScreenshotCompareReportData(File outputDirectory, String methodName, Date timestamp, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception, @Nullable File newImageFileForResources) {
+    private ScreenshotCompareReportData(File outputDirectory, String methodName, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception, @Nullable File newImageFile, String timestamp) {
         this.outputDirectory = outputDirectory;
         this.methodName = methodName;
-        this.timestamp = timestamp;
         this.actualImageFileName = actualImageFileName;
         this.expectedAndDifferenceFiles = expectedAndDifferenceFiles;
         this.exception = exception;
-        this.newImageFileForResources = newImageFileForResources;
+        this.newImageFile = newImageFile;
+        this.timestamp = timestamp;
     }
 
     static ScreenshotCompareReportData of(
             File outputDirectory,
             String methodName,
-            Date timestamp,
             String actualImageFileName,
             List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles,
             Exception exception,
-            @Nullable File newImageFileForResources) {
-        return new ScreenshotCompareReportData(outputDirectory, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources);
+            @Nullable File newImageFile,
+            String timestamp) {
+        return new ScreenshotCompareReportData(outputDirectory, methodName, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFile, timestamp);
     }
 
     public File getOutputDirectory() {
@@ -69,24 +71,30 @@ class ScreenshotCompareReportData {
         return methodName;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public String getActualImageFileName() {
+    public String getActualImageFilePath() {
         return actualImageFileName;
+    }
+
+    public String getActualImageAbsoluteFilePath() {
+        return new File(getOutputDirectory(), getActualImageFilePath()).getAbsolutePath();
     }
 
     public List<ExpectedAndDifferenceFile> getExpectedAndDifferenceFiles() {
         return expectedAndDifferenceFiles;
     }
 
-    public Exception getException() {
-        return exception;
+    public String getStackTrace() {
+        PrintStreamToBuffer result = newPrintStreamToBuffer();
+        exception.printStackTrace(result);
+        return result.text();
     }
 
-    public File getNewImageFileForResources() {
-        return newImageFileForResources;
+    public String getNewImageAbsoluteFilePath() {
+        return newImageFile != null ? newImageFile.getAbsolutePath() : null;
     }
 
 }
