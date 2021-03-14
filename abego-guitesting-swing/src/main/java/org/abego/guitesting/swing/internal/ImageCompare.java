@@ -61,8 +61,9 @@ public final class ImageCompare {
 
         if (pixels.length != width * height) {
             throw new IllegalArgumentException(
-                    "pixels must contain width*height items (" + pixels.length
-                            + " != " + width + "*" + height + ")");
+                    String.format(
+                            "pixels must contain width*height items (%d != %d*%d)",  //NON-NLS
+                            pixels.length, width, height));
         }
         BufferedImage image = new BufferedImage(
                 width, height, BufferedImage.TYPE_INT_ARGB);
@@ -83,7 +84,7 @@ public final class ImageCompare {
             pg.grabPixels();
         } catch (InterruptedException e) {
             throw new IllegalStateException(
-                    "Unexpected interrupt when retrieving image pixels", e);
+                    "Unexpected interrupt when retrieving image pixels", e); //NON-NLS
         }
         return pixels;
     }
@@ -96,17 +97,6 @@ public final class ImageCompare {
                 | ((green << 8) & 0xff00) | ((blue) & 0xff);
     }
 
-
-    /**
-     * @param pixel in INT_ARGB format
-     */
-    private static Color getColorOfPixel(int pixel) {
-        int alpha = (pixel >> 24) & 0xff;
-        int red = (pixel >> 16) & 0xff;
-        int green = (pixel >> 8) & 0xff;
-        int blue = (pixel) & 0xff;
-        return new Color(red, green, blue, alpha);
-    }
 
     private static Dimension max(Dimension size1, Dimension size2) {
         return new Dimension(

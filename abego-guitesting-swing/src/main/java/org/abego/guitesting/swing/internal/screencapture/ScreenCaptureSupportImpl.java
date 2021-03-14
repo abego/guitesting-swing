@@ -60,7 +60,7 @@ import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
-    private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots";
+    private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots"; //NON-NLS
 
     private final Robot robot;
     private final PollingSupport pollingSupport;
@@ -116,14 +116,18 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         return imageDifference(imageA, imageB).getDifferenceMask();
     }
 
+    private static String getReadImageErrorMessage(String source) {
+        return String.format("Error when reading image from %s", source); //NON-NLS
+    }
+
     @Override
     public void writeImage(RenderedImage image, File file) {
         checkIsPngFilename(file);
         try {
-            ImageIO.write(image, "png", file);
+            ImageIO.write(image, "png", file); //NON-NLS
         } catch (IOException e) {
             throw new GuiTestingException(
-                    "Error when writing image to " + file.getAbsolutePath(), e);
+                    String.format("Error when writing image to %s", file.getAbsolutePath()), e); //NON-NLS
         }
     }
 
@@ -134,7 +138,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             return ImageIO.read(file);
         } catch (Exception e) {
             throw new GuiTestingException(
-                    "Error when reading image from " + file.getAbsolutePath(), e);
+                    getReadImageErrorMessage(file.getAbsolutePath()), e);
         }
     }
 
@@ -143,8 +147,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         try {
             return ImageIO.read(url);
         } catch (Exception e) {
-            throw new GuiTestingException(
-                    "Error when reading image from " + url, e);
+            throw new GuiTestingException(getReadImageErrorMessage(url.toString()), e);
         }
     }
 
@@ -212,7 +215,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                         component, rectangle, newImageFile);
             } else {
                 throw new GuiTestingException(String.format(
-                        "No images defined for snapshot '%s' of %s",
+                        "No images defined for snapshot '%s' of %s", //NON-NLS
                         snapshotName, getFullMethodName(testMethod)));
             }
 
@@ -230,7 +233,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         waitSupport.waitFor(getDelayBeforeNewSnapshot());
         BufferedImage image = captureScreen(component, rectangle);
         writeImage(image, imageFile);
-        LOGGER.info(String.format("Initial snapshot image written: '%s'", imageFile.getAbsolutePath()));
+        LOGGER.info(String.format("Initial snapshot image written: '%s'", imageFile.getAbsolutePath())); //NON-NLS
         return image;
     }
 
@@ -242,18 +245,19 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     private File getDirectoryForSnapshotImageResources(Class<?> testClass) {
         URL url = testClass.getResource("");
-        if (!url.getProtocol().equals("file")) {
-            throw new GuiTestingException("Can write snapshot image only to file system ('file:/...'). Got " + url);
+        //noinspection CallToSuspiciousStringMethod
+        if (!url.getProtocol().equals("file")) { //NON-NLS
+            throw new GuiTestingException(String.format("Can write snapshot image only to file system ('file:/...'). Got %s", url)); //NON-NLS
         }
         String urlText = url.toString();
-        String testClassesPattern = "/target/test-classes/";
+        String testClassesPattern = "/target/test-classes/"; //NON-NLS
         if (!urlText.contains(testClassesPattern)) {
             throw new GuiTestingException(
-                    String.format("Standard Maven directory structure required (%s not found in %s)", testClassesPattern, urlText));
+                    String.format("Standard Maven directory structure required (%s not found in %s)", testClassesPattern, urlText)); //NON-NLS
         }
         String inTestResourcesDirURL = urlText.replace(
-                testClassesPattern, "/src/test/resources/");
-        File snapshotsResourcesDir = urlToFile(inTestResourcesDirURL + "/" + SNAP_SHOTS_DIRECTORY_NAME);
+                testClassesPattern, "/src/test/resources/"); //NON-NLS
+        File snapshotsResourcesDir = urlToFile(String.format("%s/%s", inTestResourcesDirURL, SNAP_SHOTS_DIRECTORY_NAME)); //NON-NLS
         FileUtil.ensureDirectoryExists(snapshotsResourcesDir);
         return snapshotsResourcesDir;
     }
@@ -278,11 +282,11 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Nullable
     private URL getSnapshotImageURL(StackTraceElement caller, String snapshotName, int i) {
         String imageName = getSnapshotImageName(caller, snapshotName, i);
-        return GuiTestingUtil.getClass(caller).getResource("snap-shots" + "/" + imageName);
+        return GuiTestingUtil.getClass(caller).getResource(SNAP_SHOTS_DIRECTORY_NAME + "/" + imageName);
     }
 
     private String getSnapshotImageName(StackTraceElement caller, String snapshotName, int i) {
-        return getSimpleClassAndMethodName(caller) + "-" + snapshotName + "@" + i + ".png";
+        return String.format("%s-%s@%d.png", getSimpleClassAndMethodName(caller), snapshotName, i); //NON-NLS
     }
 
     private String getSimpleClassAndMethodName(StackTraceElement caller) {
@@ -299,7 +303,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             @Nullable File newImageFile, StackTraceElement caller) {
 
         if (expectedImages.length == 0) {
-            throw new IllegalArgumentException("No expectedImages specified");
+            throw new IllegalArgumentException("No expectedImages specified"); //NON-NLS
         }
 
         CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
@@ -312,14 +316,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
             @Nullable BufferedImage actualImage = csc.getLastScreenshot();
             if (actualImage == null) {
-                throw new AssertionFailedError("Timeout before first screenshot", e);
+                throw new AssertionFailedError("Timeout before first screenshot", e); //NON-NLS
             }
 
             File report = writeUnmatchedScreenshotReport(
                     actualImage, expectedImages, e, caller, newImageFile);
             throw new AssertionFailedError(
-                    "Screenshot does not match expected image (Timeout).\n" +
-                            "For details see:\n- " + report.getAbsolutePath(), e);
+                    String.format("Screenshot does not match expected image (Timeout).\nFor details see:\n- %s", report.getAbsolutePath()), e); //NON-NLS
         }
     }
 
@@ -345,9 +348,9 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         File outputDir = getOutputDirectory();
         String methodName = getFullMethodName(caller);
         String timestamp = Instant.now().toString();
-        String actualImageFileName = methodName + "-actualImage.png";
+        String actualImageFileName = String.format("%s-actualImage.png", methodName); //NON-NLS
 
-        String imagesDirName = "images";
+        String imagesDirName = "images"; //NON-NLS
         File imagesDir = new File(outputDir, imagesDirName);
         FileUtil.ensureDirectoryExists(imagesDir);
         File actualImageFile = new File(imagesDir, actualImageFileName);
@@ -356,11 +359,11 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles = new ArrayList<>();
         for (BufferedImage expectedImage : expectedImages) {
             int i = expectedAndDifferenceFiles.size() + 1;
-            String expectedImageFileName = methodName + "-expectedImage" + i + ".png";
+            String expectedImageFileName = String.format("%s-expectedImage%d.png", methodName, i); //NON-NLS
             File expectedImageFile = new File(imagesDir, expectedImageFileName);
             writeImage(expectedImage, expectedImageFile);
 
-            String differenceImageFileName = methodName + "-differenceImage" + i + ".png";
+            String differenceImageFileName = String.format("%s-differenceImage%d.png", methodName, i); //NON-NLS
             File differenceImageFile = new File(imagesDir, differenceImageFileName);
             writeImage(
                     imageDifferenceMask(expectedImage, actualImage),
@@ -368,12 +371,12 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
             expectedAndDifferenceFiles.add(
                     new ExpectedAndDifferenceFile(
-                            imagesDirName + "/" + expectedImageFileName,
-                            imagesDirName + "/" + differenceImageFileName));
+                            String.format("%s/%s", imagesDirName, expectedImageFileName), //NON-NLS
+                            String.format("%s/%s", imagesDirName, differenceImageFileName))); //NON-NLS
         }
 
         return ScreenshotCompareReportData.of(outputDir, methodName,
-                imagesDirName + "/" + actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources, timestamp);
+                String.format("%s/%s", imagesDirName, actualImageFileName), expectedAndDifferenceFiles, exception, newImageFileForResources, timestamp); //NON-NLS
     }
 
     private class CaptureScreenAndCompare {

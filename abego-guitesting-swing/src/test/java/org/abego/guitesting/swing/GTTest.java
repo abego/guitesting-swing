@@ -1504,11 +1504,6 @@ public class GTTest {
     @Test
     void clickRight_Component_centered_withClickCount_ok() {
 
-        // TODO: remove this comment when the test hasn't failed for some time.
-        //  This test sometimes failed, especially when executed after test
-        //  waitUntilInFocus_ok. It looks like the first click was lost sometimes.
-        //  2021-03-07: enabled test again, to check if problem still exists
-
         JFrame frame = MyGT.showFrameForMouseTests();
 
         JButton comp = MyGT.componentWith(JButton.class, frame, c -> true);

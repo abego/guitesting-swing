@@ -41,6 +41,7 @@ public class ScreenshotCompareHtmlReport {
         return new ScreenshotCompareHtmlReport(reportData);
     }
 
+    @SuppressWarnings({"StringConcatenation", "HardCodedStringLiteral"})
     public File writeReportFile() {
 
         File reportFile = new File(reportData.getOutputDirectory(), reportData.getMethodName() + "-failed.html");

@@ -150,7 +150,7 @@ public final class GuiTestingUtil {
         @Nullable StackTraceElement caller =
                 findCaller(e -> e.getMethodName().equals(calleeName));
         if (caller == null) {
-            throw new IllegalStateException("Cannot find method calling " + calleeName);
+            throw new IllegalStateException(String.format("Cannot find method calling %s", calleeName)); //NON-NLS
         }
         return caller;
     }
@@ -165,7 +165,7 @@ public final class GuiTestingUtil {
         try {
             return Class.forName(stackTraceElement.getClassName());
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid class in stackTraceElement", e);
+            throw new IllegalArgumentException("Invalid class in stackTraceElement", e); //NON-NLS
         }
     }
 
@@ -180,7 +180,7 @@ public final class GuiTestingUtil {
     public static void checkIsPngFilename(File file) {
         //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
         if (!file.getName().toLowerCase().endsWith(".png")) {
-            throw new GuiTestingException("Only 'png' files supported. Got " + file);
+            throw new GuiTestingException(String.format("Only 'png' files supported. Got %s", file)); //NON-NLS
         }
     }
 
@@ -198,8 +198,7 @@ public final class GuiTestingUtil {
                 image.getWidth(null),
                 image.getHeight(null));
         if (size.getWidth() < 0 || size.getHeight() < 0) {
-            throw new IllegalArgumentException(
-                    "Image is not loaded completely.");
+            throw new IllegalArgumentException("Image is not loaded completely."); //NON-NLS
         }
         return size;
     }
