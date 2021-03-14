@@ -78,6 +78,11 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns the difference between {@code imageA} and {@code imageB} as an
      * {@link ImageDifference} object.
+     *
+     * @param imageA an {@link Image} to compare with the other
+     * @param imageB an {@link Image} to compare with the other
+     * @return the difference between {@code imageA} and {@code imageB} as an
+     * {@link ImageDifference} object
      */
     ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB);
 
@@ -87,21 +92,36 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * in both images or only exist in one of them.
      *
      * <p>The parts that don't differ are transparent white.</p>
+     *
+     * @param imageA an {@link Image} to compare with the other
+     * @param imageB an {@link Image} to compare with the other
+     * @return the difference between {@code imageA} and {@code imageB} as an
+     * an {@link Image} with {@link Color#black} pixels marking the parts of that differ
+     * in both images or only exist in one of them
      */
     BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB);
 
     /**
      * Writes the {@code image} to the given {@code file}.
+     *
+     * @param image the {@link Image} to write
+     * @param file  the {@link File} to write the image to
      */
     void writeImage(RenderedImage image, File file);
 
     /**
      * Returns the {@link Image} read from the given {@code file}.
+     *
+     * @param file the {@link File} to read the image from
+     * @return the {@link Image} read from {@code file}
      */
     BufferedImage readImage(File file);
 
     /**
      * Returns the {@link Image} read from the given {@code url}.
+     *
+     * @param url the {@link java.net.URI} to read the image from.
+     * @return the {@link Image} read from {@code url}
      */
     BufferedImage readImage(URL url);
 
@@ -117,6 +137,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      *                       {@code expectedImages}. When {@code null}
      *                       the full component is compared
      * @param expectedImages the images to compare the given area with
+     * @return the {@link Image} of the screenshot
      */
     @Timeoutable
     BufferedImage waitUntilScreenshotMatchesImage(
@@ -131,6 +152,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param component      the {@link Component} to compare with the
      *                       {@code expectedImages}
      * @param expectedImages the images to compare the {@code component} with.
+     * @return the {@link Image} of the screenshot
      */
     @Timeoutable
     BufferedImage waitUntilScreenshotMatchesImage(
@@ -140,6 +162,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns the value of the {@code generateSnapshotIfMissing} property.
      *
+     * @return the value of the {@code generateSnapshotIfMissing} property
      * @see #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)
      */
     boolean getGenerateSnapshotIfMissing();
@@ -147,6 +170,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Sets the {@code generateSnapshotIfMissing} property to the {@code value}.
      *
+     * @param value the value to set the {@code generateSnapshotIfMissing} property to
      * @see #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)
      */
     void setGenerateSnapshotIfMissing(boolean value);
@@ -154,6 +178,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns the value of the {@code delayBeforeNewSnapshot} property.
      *
+     * @return the value of the {@code delayBeforeNewSnapshot} property
      * @see #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)
      */
     Duration getDelayBeforeNewSnapshot();
@@ -161,17 +186,23 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Sets the {@code delayBeforeNewSnapshot} property to the {@code duration}.
      *
+     * @param duration the value to set the {@code delayBeforeNewSnapshot} property to
      * @see #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)
      */
     void setDelayBeforeNewSnapshot(Duration duration);
 
     /**
      * Returns the images of the snapshot with the given name.
+     *
+     * @param name the name of the snapshot
+     * @return the images of the snapshot with the given name
      */
     BufferedImage[] getImagesOfSnapshot(String name);
 
     /**
-     * Returns the images of the snapshot SNAPSHOT_NAME_DEFAULT
+     * Returns the images of the snapshot {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT}
+     *
+     * @return the images of the snapshot {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT}
      */
     default BufferedImage[] getImagesOfSnapshot() {
         return getImagesOfSnapshot(SNAPSHOT_NAME_DEFAULT);
@@ -179,8 +210,8 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
 
     /**
-     * Waits until the {@code component}, or the {@code rectangle} of the
-     * {@code component}, if {@code rectangle} is not {@code null},
+     * Waits until the screenshot of the {@code component}, or of the
+     * {@code rectangle} of the {@code component}, if {@code rectangle} is not {@code null},
      * matches one of the images defined for the snapshot with the given
      * {@code snapshotName}, and returns the image.
      *
@@ -218,12 +249,37 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
             throws GuiTestingException;
 
     /**
-     * Waits until the {@code component}, or the {@code rectangle} of the
-     * {@code component}, if {@code rectangle} is not {@code null},
+     * Waits until the screenshot of the {@code component}, or of the
+     * {@code rectangle} of the {@code component}, if {@code rectangle} is not {@code null},
      * matches one of the images defined for the snapshot named
-     * SNAPSHOT_NAME_DEFAULT, and returns the image.
+     * {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT},
+     * and returns the image.
      *
-     * <p>For details see {@link #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)}</p>
+     *
+     * <p>When the snapshot does not yet have images the behaviour depends on
+     * the property {@code generateSnapshotIfMissing}
+     * (see {@link #getGenerateSnapshotIfMissing()}):</p>
+     * <ul>
+     *     <li>{@code generateSnapshotIfMissing == true}: after a delay of {@link #getDelayBeforeNewSnapshot()}
+     *     a screenshot of the given area is stored as the first image of this
+     *     snapshot and the method returns normally.</li>
+     *     <li>{@code generateSnapshotIfMissing == false}: the method throws
+     *     a {@link GuiTestingException}</li>
+     * </ul>
+     *
+     * <p>When the snapshot has images but the given area does not match any
+     * of these images, even after the duration defined by {@link #timeout()},
+     * the method throws a {@link GuiTestingException}.
+     *
+     * <p>See also {@link #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)}</p>
+     *
+     * @param component the {@link Component} to compare with the images of
+     *                  the snapshot
+     * @param rectangle the area of the component (in coordinates relative
+     *                  to the component) to compare with the images of the
+     *                  snapshot.
+     *                  When {@code null} the full component is compared.
+     * @return the screenshot image
      */
     @Timeoutable
     default BufferedImage waitUntilScreenshotMatchesSnapshot(
@@ -234,7 +290,8 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     }
 
     /**
-     * Waits until the {@code component} matches one of the images defined for
+     * Waits until the screenshot of the {@code component}
+     * matches one of the images defined for
      * the snapshot with the given {@code snapshotName}, and returns the image.
      *
      * <p>When the snapshot does not yet have images the behaviour depends on
@@ -267,10 +324,29 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     }
 
     /**
-     * Waits until the {@code component} matches one of the images defined for
-     * the snapshot named SNAPSHOT_NAME_DEFAULT, and returns the image.
+     * Waits until the screenshot of the {@code component}
+     * matches one of the images defined for
+     * the snapshot  named {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT},
+     * and returns the image.
      *
-     * <p>For details see {@link #waitUntilScreenshotMatchesSnapshot(Component, String)}</p>
+     * <p>When the snapshot does not yet have images the behaviour depends on
+     * the property {@code generateSnapshotIfMissing}
+     * (see {@link #getGenerateSnapshotIfMissing()}):</p>
+     * <ul>
+     *     <li>{@code generateSnapshotIfMissing == true}: after a delay of {@link #getDelayBeforeNewSnapshot()}
+     *     a screenshot of the {@code component} is stored as the first image
+     *     of this snapshot and the method returns normally.</li>
+     *     <li>{@code generateSnapshotIfMissing == false}: the method throws
+     *     a {@link GuiTestingException}</li>
+     * </ul>
+     *
+     * <p>When the snapshot has images but the {@code component} does not match
+     * any of these images, even after the duration defined by
+     * {@link #timeout()}, the method throws a {@link GuiTestingException}.
+     *
+     * @param component the {@link Component} to compare with the images of
+     *                  the snapshot
+     * @return the screenshot image
      */
     @Timeoutable
     default BufferedImage waitUntilScreenshotMatchesSnapshot(Component component)
@@ -286,16 +362,24 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         /**
          * Returns {@code true} when the images don't match, i.e. there are
          * differences between the images, {@code false} otherwise.
+         *
+         * @return {@code true} when the images don't match, i.e. there are
+         * differences between the images, {@code false} otherwise
          */
+
         boolean imagesAreDifferent();
 
         /**
          * Returns the first image of the comparison.
+         *
+         * @return the first image of the comparison
          */
         BufferedImage getImageA();
 
         /**
          * Returns the second image of the comparison.
+         *
+         * @return the second image of the comparison
          */
         BufferedImage getImageB();
 
@@ -305,6 +389,9 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
          *
          * <p>The images are compared pixel by pixel and all pixel that are not
          * similar or that only exist in one image are marked {@link Color#black}.</p>
+         *
+         * @return an image marking the differences between imageA and imageB
+         * with {@link Color#black} pixels on a (transparent) white canvas
          */
         BufferedImage getDifferenceMask();
     }

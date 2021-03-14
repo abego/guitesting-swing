@@ -26,7 +26,6 @@ package org.abego.guitesting.swing.internal;
 
 import org.abego.commons.lang.exception.MustNotInstantiateException;
 import org.abego.guitesting.swing.GuiTestingException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Icon;
@@ -91,8 +90,10 @@ public final class GuiTestingUtil {
      * Converts a point (x,y) given in coordinates relative to the component
      * into "global" screen coordinates.
      *
-     * @param x if < 0 offset is taken from the right of the component
-     * @param y if < 0 offset is taken from the bottom of the component
+     * @param component the component used as a reference
+     * @param x         if &lt; 0 offset is taken from the right of the component
+     * @param y         if &lt; 0 offset is taken from the bottom of the component
+     * @return the point in screen coordinates
      */
     public static Point toScreenCoordinates(
             Component component,
@@ -112,6 +113,14 @@ public final class GuiTestingUtil {
         return p;
     }
 
+    /**
+     * Converts a rectangle given in coordinates relative to the component
+     * into "global" screen coordinates.
+     *
+     * @param component the component used as a reference
+     * @param rectangle the {@link Rectangle} to convert
+     * @return the rectangle in screen coordinates
+     */
     public static Rectangle toScreenCoordinates(Component component, Rectangle rectangle) {
         Rectangle result = rectangle.getBounds();
         Point p = result.getLocation();
@@ -121,11 +130,14 @@ public final class GuiTestingUtil {
     }
 
     /**
-     * Returns the StackTraceElement the caller of the callee
-     * but is not itself a callee.
+     * Returns the StackTraceElement of the first caller of a callee
+     * that is not itself a callee (in the given stackTrace).
      *
-     * @param isCallee returns true when the StackTraceElement passed in is a
-     *                 `callee`, false otherwise.
+     * @param stackTrace the stacktrace to consider for the call chain.
+     * @param isCallee   returns true when the StackTraceElement passed in is a
+     *                   `callee`, false otherwise.
+     * @return the StackTraceElement of the first caller of a callee
+     * that is not itself a callee
      */
     @Nullable
     public static StackTraceElement findCaller(
@@ -146,6 +158,28 @@ public final class GuiTestingUtil {
         return null;
     }
 
+    /**
+     * Returns the StackTraceElement of the first caller of a callee
+     * that is not itself a callee (in the current thread's stacktrace).
+     *
+     * @param isCallee returns true when the StackTraceElement passed in is a
+     *                 `callee`, false otherwise.
+     * @return the StackTraceElement of the first caller of a callee
+     * that is not itself a callee
+     */
+    @Nullable
+    public static StackTraceElement findCaller(
+            Predicate<StackTraceElement> isCallee) {
+        return findCaller(Thread.currentThread().getStackTrace(), isCallee);
+    }
+
+    /**
+     * Returns the StackTraceElement of the first caller of a method with
+     * the given calleeName (in the current thread's stacktrace).
+     *
+     * @param calleeName the name of the method being called.
+     * @return the StackTraceElement of the caller
+     */
     public static StackTraceElement getCaller(String calleeName) {
         @Nullable StackTraceElement caller =
                 findCaller(e -> e.getMethodName().equals(calleeName));
@@ -155,13 +189,15 @@ public final class GuiTestingUtil {
         return caller;
     }
 
-    @Nullable
-    public static StackTraceElement findCaller(
-            Predicate<StackTraceElement> isCallee) {
-        return findCaller(Thread.currentThread().getStackTrace(), isCallee);
-    }
-
-    public static Class<?> getClass(@NonNull StackTraceElement stackTraceElement) {
+    /**
+     * Returns the {@link Class} defining the method identified by the
+     * stackTraceElement.
+     *
+     * @param stackTraceElement the {@link StackTraceElement} to consider
+     * @return the {@link Class} defining the method identified by the
+     * stackTraceElement
+     */
+    public static Class<?> getClass(StackTraceElement stackTraceElement) {
         try {
             return Class.forName(stackTraceElement.getClassName());
         } catch (Exception e) {
@@ -169,14 +205,25 @@ public final class GuiTestingUtil {
         }
     }
 
-    public static File urlToFile(String snapshotsDirURL) {
+    /**
+     * Returns the {@link File} for the given urlString.
+     *
+     * @param urlString a String representing an {@link URL}
+     * @return the {@link File} for the given urlString
+     */
+    public static File urlToFile(String urlString) {
         try {
-            return new File(new URL(snapshotsDirURL).toURI());
+            return new File(new URL(urlString).toURI());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Throws a {@link GuiTestingException} when the file is not a "png" file name.
+     *
+     * @param file the {@link File} to check
+     */
     public static void checkIsPngFilename(File file) {
         //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
         if (!file.getName().toLowerCase().endsWith(".png")) {
@@ -184,14 +231,23 @@ public final class GuiTestingUtil {
         }
     }
 
-    public static String getFullMethodName(StackTraceElement element) {
-        return getClass(element).getName() + "." + element.getMethodName();
+    /**
+     * Returns the fully qualified name of the method identified
+     * by the stackTraceElement.
+     *
+     * @param stackTraceElement the {@link StackTraceElement} to check.
+     * @return the fully qualified name of the method identified
+     * by the stackTraceElement
+     */
+    public static String getFullMethodName(StackTraceElement stackTraceElement) {
+        return getClass(stackTraceElement).getName() + "." + stackTraceElement.getMethodName();
     }
 
     /**
      * Returns the size of the image.
      *
      * @param image a (completely loaded) Image
+     * @return the size of the image
      */
     static Dimension getSize(Image image) {
         Dimension size = new Dimension(

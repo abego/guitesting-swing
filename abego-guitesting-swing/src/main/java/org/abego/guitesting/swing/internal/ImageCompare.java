@@ -123,6 +123,12 @@ public final class ImageCompare {
      *
      * <p>The images are compared pixel by pixel and all pixel that are not
      * equal or that only exist in one image are marked {@link Color#black}.</p>
+     *
+     * @param imageA an {@link Image} to compare with the other
+     * @param imageB an {@link Image} to compare with the other
+     * @return the difference between {@code imageA} and {@code imageB} as an
+     * an {@link Image} with {@link Color#black} pixels marking the parts of that differ
+     * in both images or only exist in one of them
      */
     @Nullable
     public BufferedImage differenceMask(Image imageA, Image imageB) {
@@ -162,6 +168,10 @@ public final class ImageCompare {
 
     /**
      * Returns a new image of transparent white pixels with the same size as
+     * originalImage.
+     *
+     * @param originalImage the {@link Image} to determine the size
+     * @return a new image of transparent white pixels with the same size as
      * originalImage
      */
     public BufferedImage transparentImage(Image originalImage) {
