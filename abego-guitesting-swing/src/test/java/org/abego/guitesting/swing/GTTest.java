@@ -2436,6 +2436,7 @@ public class GTTest {
     void waitUntilScreenshotMatchesSnapshot_missingScreenshots_generate() {
         //TODO: find a way to test this
         JFrame frame = MyGT.showFrameWithColors();
+        gt.setGenerateSnapshotIfMissing(true);
 
         BufferedImage actualImage =
                 gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
