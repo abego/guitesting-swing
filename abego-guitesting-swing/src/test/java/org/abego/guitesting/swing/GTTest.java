@@ -49,6 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -2423,13 +2424,68 @@ public class GTTest {
                             notReallyExpectedImage, notReallyExpectedImage2);
                 });
 
+        assertIsUnmatchedScreenshotError(error);
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate() {
+        JFrame frame = MyGT.showFrameWithColors();
+        Container component = frame.getContentPane();
+
+        gt.setGenerateSnapshotIfMissing(false);
+
+        // Not using assertThrows here but the "old" technique
+        // to make sure the proper method name is used for the snapshot
+        try {
+            gt.waitUntilScreenshotMatchesSnapshot(component);
+            fail("Exception expected");
+
+        } catch (GuiTestingException error) {
+            assertEquals(
+                    "No images defined for snapshot 'snapshot' of org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate",
+                    error.getMessage());
+        }
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_missingScreenshots_generate() {
+        //TODO: find a way to test this
+        JFrame frame = MyGT.showFrameWithColors();
+
+        BufferedImage actualImage =
+                gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
+
+        BufferedImage expectedImage = getColorsImage();
+        BufferedImage expectedImage2 = getColorsAtScreen1Image();
+        assertTrue(
+                imagesAreEqual(expectedImage, actualImage)
+                        || imagesAreEqual(expectedImage2, actualImage));
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot() {
+        JFrame frame = MyGT.showFrameWithColors();
+        gt.setTimeout(Duration.ofSeconds(3));
+
+        // Not using assertThrows here but the "old" technique
+        // to make sure the proper method name is used for the snapshot
+        try {
+            gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
+            fail("Exception expected");
+
+        } catch (AssertionFailedError error) {
+            assertIsUnmatchedScreenshotError(error);
+        }
+    }
+
+    private void assertIsUnmatchedScreenshotError(AssertionFailedError error) {
         // Check the error message.
         // E.g.the error message contains a reference to the "report file", i.e.
         // that file must exist.
         String errorMessage = error.getMessage();
         Pattern expectedMessagePattern = Pattern.compile(
-                "Screenshot does not match expected image \\(Timeout\\)\\.\r?\n" +
-                        "    For details see (.+)", Pattern.DOTALL);
+                "Screenshot does not match expected image \\(Timeout\\)\\.\\s+" +
+                        "For details see:\\s+- (.+)", Pattern.DOTALL);
         Matcher matcher = expectedMessagePattern.matcher(errorMessage);
         if (!matcher.find()) {
             fail("Wrong error message: " + errorMessage);

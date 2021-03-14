@@ -32,6 +32,7 @@ import org.abego.guitesting.swing.DialogAndFrameSupport;
 import org.abego.guitesting.swing.EDTSupport;
 import org.abego.guitesting.swing.FocusSupport;
 import org.abego.guitesting.swing.GT;
+import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
@@ -91,7 +92,7 @@ public final class GTImpl implements GT {
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
     private final FocusSupport focusSupport = FocusSupportImpl.newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
-    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, pollingSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, pollingSupport, waitSupport);
 
     private GTImpl() {
     }
@@ -392,13 +393,18 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws GuiTestingException {
         return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
     }
 
     @Override
-    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws UndefinedSnapshotException, ImageNotMatchingSnapshotException {
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws GuiTestingException {
         return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, snapshotName);
+    }
+
+    @Override
+    public BufferedImage[] getImagesOfSnapshot(String name) {
+        return screenCaptureSupport.getImagesOfSnapshot(name);
     }
 
     @Override

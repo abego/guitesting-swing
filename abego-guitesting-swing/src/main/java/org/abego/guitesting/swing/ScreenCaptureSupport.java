@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing;
 
-import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.Timeoutable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -36,7 +35,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 
@@ -44,6 +42,7 @@ import java.time.Duration;
  * Support for screen captures/screenshots of the screen or {@link Component}s.
  */
 public interface ScreenCaptureSupport extends TimeoutSupplier {
+    String SNAPSHOT_NAME_DEFAULT = "snapshot";
 
     /**
      * Returns an image/screenshot of the rectangle of the screen.
@@ -155,7 +154,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * Waits until the {@code component}, or the {@code rectangle} of the
      * {@code component}, if {@code rectangle} is not {@code null},
      * matches one of the images defined for the snapshot with the given
-     * {@code snapshotName}.
+     * {@code snapshotName}, and returns the image.
      *
      * <p>When the snapshot does not yet have images the behaviour depends on
      * the property {@code generateSnapshotIfMissing}
@@ -165,12 +164,12 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      *     a screenshot of the given area is stored as the first image of this
      *     snapshot and the method returns normally.</li>
      *     <li>{@code generateSnapshotIfMissing == false}: the method throws
-     *     a {@link UndefinedSnapshotException}</li>
+     *     a {@link GuiTestingException}</li>
      * </ul>
      *
      * <p>When the snapshot has images but the given area does not match any
      * of these images, even after the duration defined by {@link #timeout()},
-     * the method throws a {@link ImageNotMatchingSnapshotException}.
+     * the method throws a {@link GuiTestingException}.
      *
      * @param component    the {@link Component} to compare with the images of
      *                     the snapshot
@@ -188,12 +187,27 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
             Component component,
             @Nullable Rectangle rectangle,
             String snapshotName)
-            throws
-            UndefinedSnapshotException, ImageNotMatchingSnapshotException;
+            throws GuiTestingException;
+
+    /**
+     * Waits until the {@code component}, or the {@code rectangle} of the
+     * {@code component}, if {@code rectangle} is not {@code null},
+     * matches one of the images defined for the snapshot named
+     * SNAPSHOT_NAME_DEFAULT, and returns the image.
+     *
+     * <p>For details see {@link #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)}</p>
+     */
+    @Timeoutable
+    default BufferedImage waitUntilScreenshotMatchesSnapshot(
+            Component component,
+            @Nullable Rectangle rectangle)
+            throws GuiTestingException {
+        return waitUntilScreenshotMatchesSnapshot(component, rectangle, SNAPSHOT_NAME_DEFAULT);
+    }
 
     /**
      * Waits until the {@code component} matches one of the images defined for
-     * the snapshot with the given {@code snapshotName}.
+     * the snapshot with the given {@code snapshotName}, and returns the image.
      *
      * <p>When the snapshot does not yet have images the behaviour depends on
      * the property {@code generateSnapshotIfMissing}
@@ -203,12 +217,12 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      *     a screenshot of the {@code component} is stored as the first image
      *     of this snapshot and the method returns normally.</li>
      *     <li>{@code generateSnapshotIfMissing == false}: the method throws
-     *     a {@link UndefinedSnapshotException}</li>
+     *     a {@link GuiTestingException}</li>
      * </ul>
      *
      * <p>When the snapshot has images but the {@code component} does not match
      * any of these images, even after the duration defined by
-     * {@link #timeout()}, the method throws a {@link ImageNotMatchingSnapshotException}.
+     * {@link #timeout()}, the method throws a {@link GuiTestingException}.
      *
      * @param component    the {@link Component} to compare with the images of
      *                     the snapshot
@@ -218,10 +232,36 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @return the screenshot image
      */
     @Timeoutable
-    BufferedImage waitUntilScreenshotMatchesSnapshot(
+    default BufferedImage waitUntilScreenshotMatchesSnapshot(
             Component component, String snapshotName)
-            throws
-            UndefinedSnapshotException, ImageNotMatchingSnapshotException;
+            throws GuiTestingException {
+        return waitUntilScreenshotMatchesSnapshot(component, null, snapshotName);
+    }
+
+    /**
+     * Waits until the {@code component} matches one of the images defined for
+     * the snapshot named SNAPSHOT_NAME_DEFAULT, and returns the image.
+     *
+     * <p>For details see {@link #waitUntilScreenshotMatchesSnapshot(Component, String)}</p>
+     */
+    @Timeoutable
+    default BufferedImage waitUntilScreenshotMatchesSnapshot(Component component)
+            throws GuiTestingException {
+        return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
+    }
+
+    /**
+     * Returns the images of the snapshot with the given name.
+     */
+    BufferedImage[] getImagesOfSnapshot(String name);
+
+    /**
+     * Returns the images of the snapshot SNAPSHOT_NAME_DEFAULT
+     */
+    default BufferedImage[] getImagesOfSnapshot() {
+        return getImagesOfSnapshot(SNAPSHOT_NAME_DEFAULT);
+    }
+
 
     /**
      * Writes the {@code image} to the given {@code file}.
@@ -269,61 +309,4 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         BufferedImage getDifferenceMask();
     }
 
-    /**
-     * No snapshot defined with the given snapshot name.
-     */
-    class UndefinedSnapshotException extends GuiTestingException {
-        private final Description description;
-
-        public UndefinedSnapshotException(Description description) {
-            super(description.getMessage());
-            this.description = description;
-        }
-
-        public Description getDescription() {
-            return description;
-        }
-
-        interface Description {
-            String getMessage();
-
-            String getSnapshotName();
-
-            URI getSnapshotContainer();
-
-            URI getActualImage();
-        }
-    }
-
-    /**
-     * The image does not match any of the images in the snapshot.
-     */
-    class ImageNotMatchingSnapshotException extends GuiTestingException {
-        private final Description description;
-
-        public ImageNotMatchingSnapshotException(Description description) {
-            super(description.getMessage());
-            this.description = description;
-        }
-
-        public Description getDescription() {
-            return description;
-        }
-
-        interface Description {
-            String getMessage();
-
-            String getSnapshotName();
-
-            URI getSnapshotContainer();
-
-            URI getActualImage();
-
-            Seq<URI> getSnapshotImages();
-
-            Seq<URI> getDifferenceImages();
-
-            Seq<URI> getDifferenceMaskImages();
-        }
-    }
 }
