@@ -155,7 +155,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 throw new AssertionFailedError("Timeout before first screenshot", e);
             }
 
-            File report = writeImagesDifferReport(actualImage, expectedImages, e);
+            File report = writeUnmatchedScreenshotReport(actualImage, expectedImages, e);
 
             throw new AssertionFailedError(
                     "Screenshot does not match expected image (Timeout).\n" +
@@ -163,18 +163,23 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
     }
 
-    private File writeImagesDifferReport(
+    private File writeUnmatchedScreenshotReport(
             BufferedImage actualImage,
             BufferedImage[] expectedImages,
             Exception exception) {
 
-        File outputDir = getOutputDirectory();
-        File imagesDir = new File(outputDir, "images");
-        FileUtil.ensureDirectoryExists(imagesDir);
+        UnmatchedScreenshotReportData reportData = generateReportData(actualImage, expectedImages, exception);
+        return writeReportFile(reportData);
+    }
 
+    private UnmatchedScreenshotReportData generateReportData(BufferedImage actualImage, BufferedImage[] expectedImages, Exception exception) {
+        File outputDir = getOutputDirectory();
         String methodName = getTestMethodName(exception.getStackTrace());
         Date timestamp = new Date();
         String actualImageFileName = methodName + "-actualImage.png";
+
+        File imagesDir = new File(outputDir, "images");
+        FileUtil.ensureDirectoryExists(imagesDir);
         File actualImageFile = new File(imagesDir, actualImageFileName);
         writeImage(actualImage, actualImageFile);
 
@@ -196,37 +201,29 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                             expectedImageFileName, differenceImageFileName));
         }
 
-        return writeReportFile(
-                outputDir, methodName, timestamp,
-                actualImageFileName, expectedAndDifferenceFiles, exception);
+        return UnmatchedScreenshotReportData.of(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception);
     }
 
-    private File writeReportFile(
-            File outputDir,
-            String methodName,
-            Date timestamp,
-            String actualImageFileName,
-            List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles,
-            Exception exception) {
+    private File writeReportFile(UnmatchedScreenshotReportData reportData) {
 
-        File reportFile = new File(outputDir, methodName + "-failed.html");
+        File reportFile = new File(reportData.getOutputDirectory(), reportData.getMethodName() + "-failed.html");
         try (PrintStream report = new PrintStream(reportFile, StandardCharsets.UTF_8.name())) {
             report.println("" +
                     "<!DOCTYPE html>\n" +
                     "<html lang=\"en\">\n" +
                     "<head>\n" +
                     "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>" + methodName + " failed</title>\n" +
+                    "    <title>" + reportData.getMethodName() + " failed</title>\n" +
                     "</head>\n" +
                     "<body>\n" +
-                    "<h1>" + methodName + " failed</h1>\n" +
-                    timestamp + "\n" +
+                    "<h1>" + reportData.getMethodName() + " failed</h1>\n" +
+                    reportData.getTimestamp() + "\n" +
                     "<h2>Actual</h2>\n" +
-                    "<img src=\"images/" + actualImageFileName + "\" alt=\"actual image\">\n");
+                    "<img src=\"images/" + reportData.getActualImageFileName() + "\" alt=\"actual image\">\n");
 
-            int n = expectedAndDifferenceFiles.size();
+            int n = reportData.getExpectedAndDifferenceFiles().size();
             for (int i = 1; i <= n; i++) {
-                ExpectedAndDifferenceFile item = expectedAndDifferenceFiles.get(i - 1);
+                ExpectedAndDifferenceFile item = reportData.getExpectedAndDifferenceFiles().get(i - 1);
                 report.println("" +
                         "<h2>Expected (Option " + i + " of " + n + ")</h2>\n" +
                         "<img src=\"images/" + item.expectedImageFileName + "\" alt=\"expected image " + i + "\">\n" +
@@ -235,7 +232,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             }
 
             report.println("<h2>Stack</h2>\n<pre>");
-            exception.printStackTrace(report);
+            reportData.getException().printStackTrace(report);
             report.println("" +
                     "</pre>\n" +
                     "</body>\n" +
@@ -399,6 +396,52 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         @Nullable
         public BufferedImage getLastScreenshot() {
             return lastScreenshot;
+        }
+    }
+
+    private static class UnmatchedScreenshotReportData {
+        private final File outputDirectory;
+        private final String methodName;
+        private final Date timestamp;
+        private final String actualImageFileName;
+        private final List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles;
+        private final Exception exception;
+
+        private UnmatchedScreenshotReportData(File outputDirectory, String methodName, Date timestamp, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception) {
+            this.outputDirectory = outputDirectory;
+            this.methodName = methodName;
+            this.timestamp = timestamp;
+            this.actualImageFileName = actualImageFileName;
+            this.expectedAndDifferenceFiles = expectedAndDifferenceFiles;
+            this.exception = exception;
+        }
+
+        private static UnmatchedScreenshotReportData of(File outputDirectory, String methodName, Date timestamp, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception) {
+            return new UnmatchedScreenshotReportData(outputDirectory, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception);
+        }
+
+        public File getOutputDirectory() {
+            return outputDirectory;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public Date getTimestamp() {
+            return timestamp;
+        }
+
+        public String getActualImageFileName() {
+            return actualImageFileName;
+        }
+
+        public List<ExpectedAndDifferenceFile> getExpectedAndDifferenceFiles() {
+            return expectedAndDifferenceFiles;
+        }
+
+        public Exception getException() {
+            return exception;
         }
     }
 }
