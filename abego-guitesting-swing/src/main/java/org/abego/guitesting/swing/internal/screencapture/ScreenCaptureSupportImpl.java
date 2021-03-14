@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.screencapture;
 
 import org.abego.commons.io.FileUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
@@ -30,6 +30,8 @@ import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.WaitSupport;
+import org.abego.guitesting.swing.internal.ImageCompare;
+import org.abego.guitesting.swing.internal.SwingUtil;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opentest4j.AssertionFailedError;
@@ -49,14 +51,12 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.abego.guitesting.swing.internal.SwingUtil.toScreenCoordinates;
 
-class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
+public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private final static Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private final static Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
 
@@ -79,7 +79,8 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     private static void checkIsPngFilename(File file) {
-        if (!file.getName().toLowerCase(Locale.ENGLISH).endsWith(".png")) {
+        //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
+        if (!file.getName().toLowerCase().endsWith(".png")) {
             throw new GuiTestingException("Only 'png' files supported. Got " + file);
         }
     }
@@ -139,7 +140,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             rectangle = componentRect;
         }
         Rectangle rect = rectangle.intersection(componentRect);
-        return captureScreen(toScreenCoordinates(component, rect));
+        return captureScreen(SwingUtil.toScreenCoordinates(component, rect));
     }
 
     @Override

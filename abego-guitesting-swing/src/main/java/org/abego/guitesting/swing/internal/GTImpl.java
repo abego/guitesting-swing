@@ -41,6 +41,7 @@ import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
+import org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JFrame;

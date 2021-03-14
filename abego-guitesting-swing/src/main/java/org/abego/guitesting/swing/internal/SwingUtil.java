@@ -87,7 +87,7 @@ public final class SwingUtil {
      * @param x if < 0 offset is taken from the right of the component
      * @param y if < 0 offset is taken from the bottom of the component
      */
-    static Point toScreenCoordinates(
+    public static Point toScreenCoordinates(
             Component component,
             int x,
             int y) {
@@ -106,10 +106,10 @@ public final class SwingUtil {
     }
 
     //TODO move to ComponentUtil
-     static Rectangle toScreenCoordinates(Component component, Rectangle rectangle) {
+    public static Rectangle toScreenCoordinates(Component component, Rectangle rectangle) {
         Rectangle result = rectangle.getBounds();
         Point p = result.getLocation();
-        Point locationOnScreen = toScreenCoordinates(component,p.x,p.y);
+        Point locationOnScreen = toScreenCoordinates(component, p.x, p.y);
         result.translate(locationOnScreen.x, locationOnScreen.y);
         return result;
     }
