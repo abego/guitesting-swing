@@ -2429,8 +2429,9 @@ public class GTTest {
     void waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate() {
         JFrame frame = MyGT.showFrameWithColors();
         Container component = frame.getContentPane();
-
         gt.setGenerateSnapshotIfMissing(false);
+
+        assertEquals(0, gt.getImagesOfSnapshot().length);
 
         // Not using assertThrows here but the "old" technique
         // to make sure the proper method name is used for the snapshot
@@ -2464,6 +2465,8 @@ public class GTTest {
     void waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot() {
         JFrame frame = MyGT.showFrameWithColors();
         gt.setTimeout(Duration.ofSeconds(3));
+
+        assertEquals(1, gt.getImagesOfSnapshot().length);
 
         // Not using assertThrows here but the "old" technique
         // to make sure the proper method name is used for the snapshot

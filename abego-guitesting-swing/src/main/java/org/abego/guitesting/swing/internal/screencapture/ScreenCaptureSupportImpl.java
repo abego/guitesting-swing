@@ -115,163 +115,6 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public BufferedImage waitUntilScreenshotMatchesImage(
-            Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
-        return waitUntilScreenshotMatchesImageHelper(
-                component, rectangle, expectedImages, null, getCaller("waitUntilScreenshotMatchesImage")
-        );
-    }
-
-    private File getOutputDirectory() {
-        return new File("target/guitesting-reports");
-    }
-
-    private BufferedImage waitUntilScreenshotMatchesImageHelper(
-            Component component, @Nullable Rectangle rectangle,
-            BufferedImage[] expectedImages,
-            @Nullable File newImageFile, StackTraceElement caller) {
-
-        if (expectedImages.length == 0) {
-            throw new IllegalArgumentException("No expectedImages specified");
-        }
-
-        CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
-                component, rectangle, expectedImages);
-        try {
-            return pollingSupport.poll(
-                    () -> csc.capture(),
-                    image -> csc.imageMatchesAnyExpectedImage(image));
-        } catch (TimeoutUncheckedException e) {
-
-            BufferedImage actualImage = csc.getLastScreenshot();
-            if (actualImage == null) {
-                throw new AssertionFailedError("Timeout before first screenshot", e);
-            }
-
-            File report = writeUnmatchedScreenshotReport(
-                    actualImage, expectedImages, e, caller, newImageFile);
-            throw new AssertionFailedError(
-                    "Screenshot does not match expected image (Timeout).\n" +
-                            "For details see:\n- " + report.getAbsolutePath(), e);
-        }
-    }
-
-    private File writeUnmatchedScreenshotReport(
-            BufferedImage actualImage,
-            BufferedImage[] expectedImages,
-            Exception exception,
-            StackTraceElement caller,
-            @Nullable File newImageFileForResources) {
-
-        ScreenshotCompareReportData reportData = generateReportData(
-                actualImage, expectedImages, exception, caller, newImageFileForResources);
-        return ScreenshotCompareHtmlReport.of(reportData).writeReportFile();
-    }
-
-    private ScreenshotCompareReportData generateReportData(
-            BufferedImage actualImage,
-            BufferedImage[] expectedImages,
-            Exception exception,
-            StackTraceElement caller,
-            @Nullable File newImageFileForResources) {
-
-        File outputDir = getOutputDirectory();
-        String methodName = getFullMethodName(caller);
-        String timestamp = Instant.now().toString();
-        String actualImageFileName = methodName + "-actualImage.png";
-
-        String imagesDirName = "images";
-        File imagesDir = new File(outputDir, imagesDirName);
-        FileUtil.ensureDirectoryExists(imagesDir);
-        File actualImageFile = new File(imagesDir, actualImageFileName);
-        writeImage(actualImage, actualImageFile);
-
-        List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles = new ArrayList<>();
-        for (BufferedImage expectedImage : expectedImages) {
-            int i = expectedAndDifferenceFiles.size() + 1;
-            String expectedImageFileName = methodName + "-expectedImage" + i + ".png";
-            File expectedImageFile = new File(imagesDir, expectedImageFileName);
-            writeImage(expectedImage, expectedImageFile);
-
-            String differenceImageFileName = methodName + "-differenceImage" + i + ".png";
-            File differenceImageFile = new File(imagesDir, differenceImageFileName);
-            writeImage(
-                    imageDifferenceMask(expectedImage, actualImage),
-                    differenceImageFile);
-
-            expectedAndDifferenceFiles.add(
-                    new ExpectedAndDifferenceFile(
-                            imagesDirName + "/" + expectedImageFileName,
-                            imagesDirName + "/" + differenceImageFileName));
-        }
-
-        return ScreenshotCompareReportData.of(outputDir, methodName,
-                imagesDirName + "/" + actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources, timestamp);
-    }
-
-    @Override
-    public BufferedImage waitUntilScreenshotMatchesImage(Component component, BufferedImage... expectedImages) {
-        return waitUntilScreenshotMatchesImage(component, null, expectedImages);
-    }
-
-    @Override
-    public boolean getGenerateSnapshotIfMissing() {
-        return generateSnapshotIfMissing;
-    }
-
-    @Override
-    public void setGenerateSnapshotIfMissing(boolean value) {
-        generateSnapshotIfMissing = value;
-    }
-
-    @Override
-    public Duration getDelayBeforeNewSnapshot() {
-        return delayBeforeNewSnapshot;
-    }
-
-    @Override
-    public void setDelayBeforeNewSnapshot(Duration duration) {
-        delayBeforeNewSnapshot = duration;
-    }
-
-    @Override
-    public BufferedImage waitUntilScreenshotMatchesSnapshot(
-            Component component,
-            @Nullable Rectangle rectangle,
-            String snapshotName)
-            throws GuiTestingException {
-        StackTraceElement testMethod = getCaller("waitUntilScreenshotMatchesSnapshot");
-        BufferedImage[] snapshotImages = getImagesOfSnapshot(testMethod, snapshotName);
-        // Calculate the file we would use to store a new screenshot image,
-        // e.g. if no existing snapshot image matches the current screenshot.
-        File newImageFile = getSnapshotImageFile(
-                testMethod, snapshotName, snapshotImages.length);
-        if (snapshotImages.length == 0) {
-            // No snapshot image exists
-
-            if (getGenerateSnapshotIfMissing()) {
-                return captureAndWriteInitialSnapshotImage(
-                        component, rectangle, snapshotName, newImageFile);
-            } else {
-                throw new GuiTestingException(String.format(
-                        "No images defined for snapshot '%s' of %s",
-                        snapshotName, getFullMethodName(testMethod)));
-            }
-
-        } else {
-            // Snapshot images already exist.
-            return waitUntilScreenshotMatchesImageHelper(
-                    component, rectangle, snapshotImages, newImageFile, testMethod);
-        }
-    }
-
-    @Override
-    public BufferedImage[] getImagesOfSnapshot(String name) {
-        StackTraceElement testMethod = getCaller("getImagesOfSnapshot");
-        return getImagesOfSnapshot(testMethod, name);
-    }
-
-    @Override
     public void writeImage(RenderedImage image, File file) {
         SwingUtil.checkIsPngFilename(file);
         try {
@@ -306,6 +149,76 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public Duration timeout() {
         return pollingSupport.timeout();
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesImage(
+            Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+        return waitUntilScreenshotMatchesImageHelper(
+                component, rectangle, expectedImages, null, getCaller("waitUntilScreenshotMatchesImage")
+        );
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, BufferedImage... expectedImages) {
+        return waitUntilScreenshotMatchesImage(component, null, expectedImages);
+    }
+
+    @Override
+    public boolean getGenerateSnapshotIfMissing() {
+        return generateSnapshotIfMissing;
+    }
+
+    @Override
+    public void setGenerateSnapshotIfMissing(boolean value) {
+        generateSnapshotIfMissing = value;
+    }
+
+    @Override
+    public Duration getDelayBeforeNewSnapshot() {
+        return delayBeforeNewSnapshot;
+    }
+
+    @Override
+    public void setDelayBeforeNewSnapshot(Duration duration) {
+        delayBeforeNewSnapshot = duration;
+    }
+
+    @Override
+    public BufferedImage[] getImagesOfSnapshot(String name) {
+        StackTraceElement testMethod = getCaller("getImagesOfSnapshot");
+        return getImagesOfSnapshot(testMethod, name);
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(
+            Component component,
+            @Nullable Rectangle rectangle,
+            String snapshotName)
+            throws GuiTestingException {
+        StackTraceElement testMethod = getCaller("waitUntilScreenshotMatchesSnapshot");
+        BufferedImage[] snapshotImages = getImagesOfSnapshot(testMethod, snapshotName);
+        // Calculate the file we would use to store a new screenshot image,
+        // e.g. if no existing snapshot image matches the current screenshot.
+        File newImageFile = getSnapshotImageFile(
+                testMethod, snapshotName, snapshotImages.length);
+        if (snapshotImages.length == 0) {
+            // No snapshot image exists
+
+            if (getGenerateSnapshotIfMissing()) {
+                return captureAndWriteInitialSnapshotImage(
+                        component, rectangle, snapshotName, newImageFile);
+            } else {
+                throw new GuiTestingException(String.format(
+                        "No images defined for snapshot '%s' of %s",
+                        snapshotName, getFullMethodName(testMethod)));
+            }
+
+        } else {
+            // Snapshot images already exist.
+            return waitUntilScreenshotMatchesImageHelper(
+                    component, rectangle, snapshotImages, newImageFile, testMethod);
+        }
     }
 
     private BufferedImage captureAndWriteInitialSnapshotImage(
@@ -372,6 +285,93 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     private String getSimpleClassAndMethodName(StackTraceElement caller) {
         return SwingUtil.getClass(caller).getSimpleName() + "." + caller.getMethodName();
+    }
+
+    private File getOutputDirectory() {
+        return new File("target/guitesting-reports");
+    }
+
+    private BufferedImage waitUntilScreenshotMatchesImageHelper(
+            Component component, @Nullable Rectangle rectangle,
+            BufferedImage[] expectedImages,
+            @Nullable File newImageFile, StackTraceElement caller) {
+
+        if (expectedImages.length == 0) {
+            throw new IllegalArgumentException("No expectedImages specified");
+        }
+
+        CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
+                component, rectangle, expectedImages);
+        try {
+            return pollingSupport.poll(
+                    () -> csc.capture(),
+                    image -> csc.imageMatchesAnyExpectedImage(image));
+        } catch (TimeoutUncheckedException e) {
+
+            BufferedImage actualImage = csc.getLastScreenshot();
+            if (actualImage == null) {
+                throw new AssertionFailedError("Timeout before first screenshot", e);
+            }
+
+            File report = writeUnmatchedScreenshotReport(
+                    actualImage, expectedImages, e, caller, newImageFile);
+            throw new AssertionFailedError(
+                    "Screenshot does not match expected image (Timeout).\n" +
+                            "For details see:\n- " + report.getAbsolutePath(), e);
+        }
+    }
+
+    private File writeUnmatchedScreenshotReport(
+            BufferedImage actualImage,
+            BufferedImage[] expectedImages,
+            Exception exception,
+            StackTraceElement caller,
+            @Nullable File newImageFileForResources) {
+
+        ScreenshotCompareReportData reportData = generateScreenshotCompareReportData(
+                actualImage, expectedImages, exception, caller, newImageFileForResources);
+        return ScreenshotCompareHtmlReport.of(reportData).writeReportFile();
+    }
+
+    private ScreenshotCompareReportData generateScreenshotCompareReportData(
+            BufferedImage actualImage,
+            BufferedImage[] expectedImages,
+            Exception exception,
+            StackTraceElement caller,
+            @Nullable File newImageFileForResources) {
+
+        File outputDir = getOutputDirectory();
+        String methodName = getFullMethodName(caller);
+        String timestamp = Instant.now().toString();
+        String actualImageFileName = methodName + "-actualImage.png";
+
+        String imagesDirName = "images";
+        File imagesDir = new File(outputDir, imagesDirName);
+        FileUtil.ensureDirectoryExists(imagesDir);
+        File actualImageFile = new File(imagesDir, actualImageFileName);
+        writeImage(actualImage, actualImageFile);
+
+        List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles = new ArrayList<>();
+        for (BufferedImage expectedImage : expectedImages) {
+            int i = expectedAndDifferenceFiles.size() + 1;
+            String expectedImageFileName = methodName + "-expectedImage" + i + ".png";
+            File expectedImageFile = new File(imagesDir, expectedImageFileName);
+            writeImage(expectedImage, expectedImageFile);
+
+            String differenceImageFileName = methodName + "-differenceImage" + i + ".png";
+            File differenceImageFile = new File(imagesDir, differenceImageFileName);
+            writeImage(
+                    imageDifferenceMask(expectedImage, actualImage),
+                    differenceImageFile);
+
+            expectedAndDifferenceFiles.add(
+                    new ExpectedAndDifferenceFile(
+                            imagesDirName + "/" + expectedImageFileName,
+                            imagesDirName + "/" + differenceImageFileName));
+        }
+
+        return ScreenshotCompareReportData.of(outputDir, methodName,
+                imagesDirName + "/" + actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources, timestamp);
     }
 
     private class CaptureScreenAndCompare {

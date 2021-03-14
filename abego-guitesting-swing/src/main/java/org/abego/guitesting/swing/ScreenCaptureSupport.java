@@ -42,7 +42,7 @@ import java.time.Duration;
  * Support for screen captures/screenshots of the screen or {@link Component}s.
  */
 public interface ScreenCaptureSupport extends TimeoutSupplier {
-    String SNAPSHOT_NAME_DEFAULT = "snapshot";
+    String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
 
     /**
      * Returns an image/screenshot of the rectangle of the screen.
@@ -89,6 +89,21 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * <p>The parts that don't differ are transparent white.</p>
      */
     BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB);
+
+    /**
+     * Writes the {@code image} to the given {@code file}.
+     */
+    void writeImage(RenderedImage image, File file);
+
+    /**
+     * Returns the {@link Image} read from the given {@code file}.
+     */
+    BufferedImage readImage(File file);
+
+    /**
+     * Returns the {@link Image} read from the given {@code url}.
+     */
+    BufferedImage readImage(URL url);
 
     /**
      * Waits until the {@code component}, or the {@code rectangle} of the
@@ -149,6 +164,19 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @see #waitUntilScreenshotMatchesSnapshot(Component, Rectangle, String)
      */
     void setDelayBeforeNewSnapshot(Duration duration);
+
+    /**
+     * Returns the images of the snapshot with the given name.
+     */
+    BufferedImage[] getImagesOfSnapshot(String name);
+
+    /**
+     * Returns the images of the snapshot SNAPSHOT_NAME_DEFAULT
+     */
+    default BufferedImage[] getImagesOfSnapshot() {
+        return getImagesOfSnapshot(SNAPSHOT_NAME_DEFAULT);
+    }
+
 
     /**
      * Waits until the {@code component}, or the {@code rectangle} of the
@@ -249,34 +277,6 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
             throws GuiTestingException {
         return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
     }
-
-    /**
-     * Returns the images of the snapshot with the given name.
-     */
-    BufferedImage[] getImagesOfSnapshot(String name);
-
-    /**
-     * Returns the images of the snapshot SNAPSHOT_NAME_DEFAULT
-     */
-    default BufferedImage[] getImagesOfSnapshot() {
-        return getImagesOfSnapshot(SNAPSHOT_NAME_DEFAULT);
-    }
-
-
-    /**
-     * Writes the {@code image} to the given {@code file}.
-     */
-    void writeImage(RenderedImage image, File file);
-
-    /**
-     * Returns the {@link Image} read from the given {@code file}.
-     */
-    BufferedImage readImage(File file);
-
-    /**
-     * Returns the {@link Image} read from the given {@code url}.
-     */
-    BufferedImage readImage(URL url);
 
     /**
      * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
