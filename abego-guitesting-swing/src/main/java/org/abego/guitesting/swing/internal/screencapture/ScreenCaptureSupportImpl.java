@@ -36,6 +36,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opentest4j.AssertionFailedError;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -159,6 +160,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public BufferedImage waitUntilScreenshotMatchesImage(
             Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+        rectangle = adjustRectangleForScreenCapture(component, rectangle);
         return waitUntilScreenshotMatchesImageHelper(
                 component, rectangle, expectedImages, null, getCaller("waitUntilScreenshotMatchesImage")
         );
@@ -202,6 +204,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             String snapshotName)
             throws GuiTestingException {
         StackTraceElement testMethod = getCaller("waitUntilScreenshotMatchesSnapshot");
+        rectangle = adjustRectangleForScreenCapture(component, rectangle);
+
         BufferedImage[] snapshotImages = getImagesOfSnapshot(testMethod, snapshotName);
         // Calculate the file we would use to store a new screenshot image,
         // e.g. if no existing snapshot image matches the current screenshot.
@@ -224,6 +228,32 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             return waitUntilScreenshotMatchesImageHelper(
                     component, rectangle, snapshotImages, newImageFile, testMethod);
         }
+    }
+
+    /**
+     * Returns a rectangle suited for a screen capture image of the
+     * component.
+     *
+     * <p>The bounds of a {@link JFrame} are slightly larger than the
+     * "obvious" area covered on the screen as the bounds also includes the
+     * area occupied by the "drop shadow" painted around the frame. As the drop
+     * shadow is semi-transparent pixels from the desktop "shine through".
+     * Because of this a screenshot of the frame with its bound would also
+     * include pixels not in the control of the frame and may change randomly.
+     * To get more reproducible results we use smaller rectangle for JFrame
+     * screenshot (when no rectangle is explicitly specified). This includes the
+     * root pane and the menu bar.</p>
+     */
+    @Nullable
+    private Rectangle adjustRectangleForScreenCapture(
+            Component component, @Nullable Rectangle rectangle) {
+        if (component instanceof JFrame && rectangle == null) {
+            rectangle = ((JFrame) component).getRootPane().getBounds();
+            rectangle.x = (rectangle.x+1)/2;
+            rectangle.height += rectangle.y;
+            rectangle.y = 0;
+        }
+        return rectangle;
     }
 
     private BufferedImage captureAndWriteInitialSnapshotImage(
