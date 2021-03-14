@@ -139,12 +139,6 @@ public class GTTest {
         }
     }
 
-    public static void assertImageEquals(
-            BufferedImage expectedImage, BufferedImage actualImage) {
-        assertImageEquals(expectedImage, actualImage, "image");
-    }
-
-    //TODO: move to utils/commons
     private static Rectangle getBoundsOnScreen(Component component) {
         Point origin = new Point();
         SwingUtilities.convertPointToScreen(origin, component);
@@ -290,7 +284,7 @@ public class GTTest {
                     "[Timeout]  ==> expected: <Success> but was: <java.lang.IllegalStateException>",
                     e.getMessage());
         }
-        assertTrue(countVar[0] > 1); // must have done several trys/polls
+        assertTrue(countVar[0] > 1); // must have done several try/poll calls
     }
 
     @Test
@@ -1509,9 +1503,11 @@ public class GTTest {
 
     @Test
     void clickRight_Component_centered_withClickCount_ok() {
-        //TODO: this test sometimes fails, especially when executed after test
-        // waitUntilInFocus_ok. It looks like the first click is lost sometimes.
-        // 2021-03-07: enabled test again, to check if problem still exists
+
+        // TODO: remove this comment when the test hasn't failed for some time.
+        //  This test sometimes failed, especially when executed after test
+        //  waitUntilInFocus_ok. It looks like the first click was lost sometimes.
+        //  2021-03-07: enabled test again, to check if problem still exists
 
         JFrame frame = MyGT.showFrameForMouseTests();
 
@@ -2168,7 +2164,7 @@ public class GTTest {
 
 
         PrintStreamToBuffer out = newPrintStreamToBuffer();
-        try (RunOnClose r = systemOutRedirect(out)) {
+        try (RunOnClose ignored = systemOutRedirect(out)) {
             gt.dumpAllComponents();
         }
 
@@ -2255,7 +2251,7 @@ public class GTTest {
     }
 
     @Test
-    void imageDifference_noDifference() throws IOException {
+    void imageDifference_noDifference() {
         BufferedImage image = getColorsImage();
 
         ImageDifference diff = gt.imageDifference(image, image);
@@ -2270,7 +2266,7 @@ public class GTTest {
     }
 
     @Test
-    void imageDifference_withDifference_sameSize() throws IOException {
+    void imageDifference_withDifference_sameSize() {
         BufferedImage image1 = getColorsImage();
         BufferedImage image2 = getColors2Image();
 
@@ -2286,7 +2282,7 @@ public class GTTest {
     }
 
     @Test
-    void imageDifference_withDifference_differentSize() throws IOException {
+    void imageDifference_withDifference_differentSize() {
         BufferedImage image1 = getColorsImage();
         BufferedImage image2 = getColorsLargerImage();
 
@@ -2343,9 +2339,8 @@ public class GTTest {
     void readImage_badFile(@TempDir File tempDir) {
         File badFile = new File(tempDir, "badFile.png");
 
-        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
-            gt.readImage(badFile);
-        });
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badFile));
 
         assertEquals(
                 "Error when reading image from " + badFile,
@@ -2356,9 +2351,8 @@ public class GTTest {
     void readImage_nonPngFile(@TempDir File tempDir) {
         File badFile = new File(tempDir, "badFile");
 
-        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
-            gt.readImage(badFile);
-        });
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badFile));
 
         assertEquals(
                 "Only 'png' files supported. Got " + badFile,
@@ -2366,7 +2360,7 @@ public class GTTest {
     }
 
     @Test
-    void readImage_URL(@TempDir File tempDir) throws IOException {
+    void readImage_URL(@TempDir File tempDir) {
         URL imageURL = MyGT.class.getResource("colors.png");
         // read
         BufferedImage img = gt.readImage(imageURL);
@@ -2381,13 +2375,12 @@ public class GTTest {
     }
 
     @Test
-    void readImage_URL_badURL(@TempDir File tempDir) throws IOException {
+    void readImage_URL_badURL() throws IOException {
         String spec = getClass().getResource("colors.png").toString() + "-invalid";
         URL badURL = new URL(spec);
 
-        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
-            gt.readImage(badURL);
-        });
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badURL));
 
         assertEquals(
                 "Error when reading image from " + badURL, exception.getMessage());
@@ -2416,11 +2409,9 @@ public class GTTest {
         gt.setTimeout(Duration.ofSeconds(3));
 
         AssertionFailedError error = assertThrows(AssertionFailedError.class,
-                () -> {
-                    gt.waitUntilScreenshotMatchesImage(
-                            frame.getContentPane(),
-                            notReallyExpectedImage, notReallyExpectedImage2);
-                });
+                () -> gt.waitUntilScreenshotMatchesImage(
+                        frame.getContentPane(),
+                        notReallyExpectedImage, notReallyExpectedImage2));
 
         assertIsUnmatchedScreenshotError(error);
     }
