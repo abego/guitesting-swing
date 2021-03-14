@@ -56,7 +56,6 @@ class DebugSupport {
     }
 
 
-    @SuppressWarnings("HardCodedStringLiteral")
     @Nullable
     private static String guessTitleOrNull(Object object) {
         @Nullable String result = callStringGetter(object, "getTitle");
@@ -120,7 +119,7 @@ class DebugSupport {
 
         private void println(Class<?> type, @Nullable String nameOrNull, @Nullable String titleOrNull, Rectangle bounds, int level) {
             //noinspection HardCodedStringLiteral
-            out.println(String.format("%s%s (%s)\t%s\t%s\t@(%d,%d) %dx%d",
+            out.printf("%s%s (%s)\t%s\t%s\t@(%d,%d) %dx%d%n",
                     getIndentString(level),
                     type.getSimpleName(),
                     type.getPackage().getName(),
@@ -129,7 +128,7 @@ class DebugSupport {
                     bounds.x,
                     bounds.y,
                     bounds.width,
-                    bounds.height));
+                    bounds.height);
         }
 
         private String getIndentString(int indentLevel) {

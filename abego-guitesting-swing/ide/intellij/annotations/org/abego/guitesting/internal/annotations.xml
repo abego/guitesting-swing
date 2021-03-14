@@ -23,7 +23,7 @@
   -->
 
 <root>
-    <item name='org.abego.guitesting.swing.internal.SwingUtil javax.swing.Icon iconFromResource(java.lang.Class&lt;?&gt;, java.lang.String)'>
+    <item name='org.abego.guitesting.swing.internal.GuiTestingUtil javax.swing.Icon iconFromResource(java.lang.Class&lt;?&gt;, java.lang.String)'>
         <annotation name='java.lang.SuppressWarnings'>
             <val val="&quot;SameParameterValue&quot;"/>
         </annotation>

@@ -30,8 +30,8 @@ import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.WaitSupport;
+import org.abego.guitesting.swing.internal.GuiTestingUtil;
 import org.abego.guitesting.swing.internal.ImageCompare;
-import org.abego.guitesting.swing.internal.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opentest4j.AssertionFailedError;
 
@@ -51,9 +51,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.abego.guitesting.swing.internal.SwingUtil.getCaller;
-import static org.abego.guitesting.swing.internal.SwingUtil.getFullMethodName;
-import static org.abego.guitesting.swing.internal.SwingUtil.urlToFile;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.checkIsPngFilename;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.getCaller;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.getFullMethodName;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.toScreenCoordinates;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
 
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
@@ -90,7 +92,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             rectangle = componentRect;
         }
         Rectangle rect = rectangle.intersection(componentRect);
-        return captureScreen(SwingUtil.toScreenCoordinates(component, rect));
+        return captureScreen(toScreenCoordinates(component, rect));
     }
 
     @Override
@@ -116,7 +118,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public void writeImage(RenderedImage image, File file) {
-        SwingUtil.checkIsPngFilename(file);
+        checkIsPngFilename(file);
         try {
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
@@ -127,7 +129,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public BufferedImage readImage(File file) {
-        SwingUtil.checkIsPngFilename(file);
+        checkIsPngFilename(file);
         try {
             return ImageIO.read(file);
         } catch (Exception e) {
@@ -207,7 +209,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
             if (getGenerateSnapshotIfMissing()) {
                 return captureAndWriteInitialSnapshotImage(
-                        component, rectangle, snapshotName, newImageFile);
+                        component, rectangle, newImageFile);
             } else {
                 throw new GuiTestingException(String.format(
                         "No images defined for snapshot '%s' of %s",
@@ -223,7 +225,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     private BufferedImage captureAndWriteInitialSnapshotImage(
             Component component, @Nullable Rectangle rectangle,
-            String snapshotName, File imageFile) {
+            File imageFile) {
 
         waitSupport.waitFor(getDelayBeforeNewSnapshot());
         BufferedImage image = captureScreen(component, rectangle);
@@ -233,7 +235,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     private File getSnapshotImageFile(StackTraceElement caller, String snapshotName, int index) {
-        File dir = getDirectoryForSnapshotImageResources(SwingUtil.getClass(caller));
+        File dir = getDirectoryForSnapshotImageResources(GuiTestingUtil.getClass(caller));
         String imageName = getSnapshotImageName(caller, snapshotName, index);
         return new File(dir, imageName);
     }
@@ -276,7 +278,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Nullable
     private URL getSnapshotImageURL(StackTraceElement caller, String snapshotName, int i) {
         String imageName = getSnapshotImageName(caller, snapshotName, i);
-        return SwingUtil.getClass(caller).getResource("snap-shots" + "/" + imageName);
+        return GuiTestingUtil.getClass(caller).getResource("snap-shots" + "/" + imageName);
     }
 
     private String getSnapshotImageName(StackTraceElement caller, String snapshotName, int i) {
@@ -284,7 +286,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     private String getSimpleClassAndMethodName(StackTraceElement caller) {
-        return SwingUtil.getClass(caller).getSimpleName() + "." + caller.getMethodName();
+        return GuiTestingUtil.getClass(caller).getSimpleName() + "." + caller.getMethodName();
     }
 
     private File getOutputDirectory() {
@@ -304,11 +306,11 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 component, rectangle, expectedImages);
         try {
             return pollingSupport.poll(
-                    () -> csc.capture(),
-                    image -> csc.imageMatchesAnyExpectedImage(image));
+                    csc::capture,
+                    csc::imageMatchesAnyExpectedImage);
         } catch (TimeoutUncheckedException e) {
 
-            BufferedImage actualImage = csc.getLastScreenshot();
+            @Nullable BufferedImage actualImage = csc.getLastScreenshot();
             if (actualImage == null) {
                 throw new AssertionFailedError("Timeout before first screenshot", e);
             }
@@ -400,7 +402,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             return false;
         }
 
-        private @Nullable BufferedImage capture() {
+        private BufferedImage capture() {
             BufferedImage result = captureScreen(component, rectangle);
             this.lastScreenshot = result;
             return result;

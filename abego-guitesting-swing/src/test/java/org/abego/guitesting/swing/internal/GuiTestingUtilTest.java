@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SwingUtilTest {
+class GuiTestingUtilTest {
     @Test
     void constructor_fails() {
-        assertThrows(MustNotInstantiateException.class, SwingUtil::new);
+        assertThrows(MustNotInstantiateException.class, GuiTestingUtil::new);
     }
 }

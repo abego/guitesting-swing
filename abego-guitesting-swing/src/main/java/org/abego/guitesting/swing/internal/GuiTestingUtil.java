@@ -34,7 +34,9 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
@@ -44,10 +46,9 @@ import java.util.function.Predicate;
 import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static org.abego.commons.lang.ClassUtil.resource;
 
-//TODO rename to (e.g.) GuiTestingUtil
-public final class SwingUtil {
+public final class GuiTestingUtil {
 
-    SwingUtil() {
+    GuiTestingUtil() {
         throw new MustNotInstantiateException();
     }
 
@@ -111,7 +112,6 @@ public final class SwingUtil {
         return p;
     }
 
-    //TODO move to ComponentUtil
     public static Rectangle toScreenCoordinates(Component component, Rectangle rectangle) {
         Rectangle result = rectangle.getBounds();
         Point p = result.getLocation();
@@ -161,7 +161,7 @@ public final class SwingUtil {
         return findCaller(Thread.currentThread().getStackTrace(), isCallee);
     }
 
-    public static Class getClass(@NonNull StackTraceElement stackTraceElement) {
+    public static Class<?> getClass(@NonNull StackTraceElement stackTraceElement) {
         try {
             return Class.forName(stackTraceElement.getClassName());
         } catch (Exception e) {
@@ -188,4 +188,19 @@ public final class SwingUtil {
         return getClass(element).getName() + "." + element.getMethodName();
     }
 
+    /**
+     * Returns the size of the image.
+     *
+     * @param image a (completely loaded) Image
+     */
+    static Dimension getSize(Image image) {
+        Dimension size = new Dimension(
+                image.getWidth(null),
+                image.getHeight(null));
+        if (size.getWidth() < 0 || size.getHeight() < 0) {
+            throw new IllegalArgumentException(
+                    "Image is not loaded completely.");
+        }
+        return size;
+    }
 }

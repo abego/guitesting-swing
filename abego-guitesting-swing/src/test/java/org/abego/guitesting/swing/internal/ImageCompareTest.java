@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class ImageCompareTest {
 
     @Test
-    void differenceMask_differentContent() throws IOException {
+    void differenceMask_differentContent() {
         BufferedImage image1 = getColorsImage();
         BufferedImage image2 = getColors2Image();
 
@@ -97,7 +97,7 @@ public class ImageCompareTest {
     }
 
     @Test
-    void differenceMask_differentSize() throws IOException {
+    void differenceMask_differentSize() {
         BufferedImage image1 = getColorsImage();
         BufferedImage image2 = getColorsLargerImage();
 

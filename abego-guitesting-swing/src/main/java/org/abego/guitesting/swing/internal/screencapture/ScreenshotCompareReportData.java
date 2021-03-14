@@ -93,6 +93,7 @@ class ScreenshotCompareReportData {
         return result.text();
     }
 
+    @Nullable
     public String getNewImageAbsoluteFilePath() {
         return newImageFile != null ? newImageFile.getAbsolutePath() : null;
     }

@@ -32,6 +32,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.getSize;
+
 public final class ImageCompare {
 
     private static final ImageCompare INSTANCE = new ImageCompare();
@@ -48,23 +50,6 @@ public final class ImageCompare {
     public static boolean imagesAreEqual(
             BufferedImage imageA, BufferedImage imageB) {
         return newImageCompare().differenceMask(imageA, imageB) == null;
-    }
-
-    /**
-     * Returns the size of the image.
-     *
-     * @param image a (completely loaded) Image
-     */
-    //TODO move to commons/util
-    private static Dimension getSize(Image image) {
-        Dimension size = new Dimension(
-                image.getWidth(null),
-                image.getHeight(null));
-        if (size.getWidth() < 0 || size.getHeight() < 0) {
-            throw new IllegalArgumentException(
-                    "Image is not loaded completely.");
-        }
-        return size;
     }
 
     /**
