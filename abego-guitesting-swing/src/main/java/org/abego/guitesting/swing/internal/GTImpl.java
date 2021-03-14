@@ -55,6 +55,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.PrintStream;
+import java.net.URL;
 import java.time.Duration;
 import java.util.OptionalLong;
 import java.util.function.BooleanSupplier;
@@ -402,12 +403,17 @@ public final class GTImpl implements GT {
 
     @Override
     public void writeImage(RenderedImage image, File file) {
-        screenCaptureSupport.writeImage(image,file);
+        screenCaptureSupport.writeImage(image, file);
     }
 
     @Override
     public BufferedImage readImage(File file) {
         return screenCaptureSupport.readImage(file);
+    }
+
+    @Override
+    public BufferedImage readImage(URL url) {
+        return screenCaptureSupport.readImage(url);
     }
 
     // ======================================================================

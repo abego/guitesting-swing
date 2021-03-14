@@ -41,6 +41,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     private static void checkIsPngFilename(File file) {
         if (!file.getName().toLowerCase().endsWith(".png")) {
-            throw new GuiTestingException("Only PNG files supported");
+            throw new GuiTestingException("Only 'png' files supported. Got " + file);
         }
     }
 
@@ -292,7 +293,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
             throw new GuiTestingException(
-                    "Error when writing image file " + file.getAbsolutePath(), e);
+                    "Error when writing image to " + file.getAbsolutePath(), e);
         }
     }
 
@@ -301,9 +302,19 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         checkIsPngFilename(file);
         try {
             return ImageIO.read(file);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new GuiTestingException(
-                    "Error when reading image file " + file.getAbsolutePath(), e);
+                    "Error when reading image from " + file.getAbsolutePath(), e);
+        }
+    }
+
+    @Override
+    public BufferedImage readImage(URL url) {
+        try {
+            return ImageIO.read(url);
+        } catch (Exception e) {
+            throw new GuiTestingException(
+                    "Error when reading image from " + url, e);
         }
     }
 

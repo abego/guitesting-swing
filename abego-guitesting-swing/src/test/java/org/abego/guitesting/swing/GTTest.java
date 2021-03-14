@@ -61,6 +61,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
@@ -2323,7 +2324,7 @@ public class GTTest {
     }
 
     @Test
-    void readImage_writeImage(@TempDir File tempDir) throws IOException {
+    void readImage_writeImage(@TempDir File tempDir) {
         File imageFile1 = new File(tempDir, "readImage_writeImage-sample.png");
         FileUtil.copyResourceToFile(MyGT.class, "colors.png", imageFile1);
 
@@ -2337,6 +2338,60 @@ public class GTTest {
         // read and verify
         BufferedImage img2 = gt.readImage(imageFile2);
         assertImageEquals(img, img2, "readImage_writeImage");
+    }
+
+    @Test
+    void readImage_badFile(@TempDir File tempDir) {
+        File badFile = new File(tempDir, "badFile.png");
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
+            gt.readImage(badFile);
+        });
+
+        assertEquals(
+                "Error when reading image from " + badFile,
+                exception.getMessage());
+    }
+
+    @Test
+    void readImage_nonPngFile(@TempDir File tempDir) {
+        File badFile = new File(tempDir, "badFile");
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
+            gt.readImage(badFile);
+        });
+
+        assertEquals(
+                "Only 'png' files supported. Got " + badFile,
+                exception.getMessage());
+    }
+
+    @Test
+    void readImage_URL(@TempDir File tempDir) throws IOException {
+        URL imageURL = MyGT.class.getResource("colors.png");
+        // read
+        BufferedImage img = gt.readImage(imageURL);
+
+        // write
+        File imageFile = new File(tempDir, "readImage_URL-sample.png");
+        gt.writeImage(img, imageFile);
+
+        // read and verify
+        BufferedImage img2 = gt.readImage(imageFile);
+        assertImageEquals(img, img2, "readImage_URL-sample");
+    }
+
+    @Test
+    void readImage_URL_badURL(@TempDir File tempDir) throws IOException {
+        String spec = getClass().getResource("colors.png").toString() + "-invalid";
+        URL badURL = new URL(spec);
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class, () -> {
+            gt.readImage(badURL);
+        });
+
+        assertEquals(
+                "Error when reading image from " + badURL, exception.getMessage());
     }
 
     @Test

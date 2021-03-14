@@ -37,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 
 /**
@@ -231,6 +232,11 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * Returns the {@link Image} read from the given {@code file}.
      */
     BufferedImage readImage(File file);
+
+    /**
+     * Returns the {@link Image} read from the given {@code url}.
+     */
+    BufferedImage readImage(URL url);
 
     /**
      * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
