@@ -33,7 +33,6 @@ import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.ScreenCaptureSupport.ImageDifference;
 import org.abego.guitesting.swing.internal.PauseUI;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -1680,7 +1679,6 @@ public class GTTest {
                 firstTwoLinesOfBlackboard());
     }
 
-    @NonNull
     private String clickCountOnReleased() {
         return "clickCount=" + (isMac() ? "0" : "1");
     }

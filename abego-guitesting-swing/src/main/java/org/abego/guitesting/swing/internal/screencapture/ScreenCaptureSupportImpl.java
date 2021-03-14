@@ -32,7 +32,6 @@ import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.internal.ImageCompare;
 import org.abego.guitesting.swing.internal.SwingUtil;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opentest4j.AssertionFailedError;
 
@@ -44,21 +43,22 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.abego.guitesting.swing.internal.SwingUtil.getCaller;
+import static org.abego.guitesting.swing.internal.SwingUtil.getFullMethodName;
+import static org.abego.guitesting.swing.internal.SwingUtil.urlToFile;
 
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
-    private final static Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
-    private final static Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
+    private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
+    private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
+    private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots";
 
     private final Robot robot;
     private final PollingSupport pollingSupport;
@@ -76,56 +76,6 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     public static ScreenCaptureSupport newScreenCaptureSupport(
             Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
         return new ScreenCaptureSupportImpl(robot, pollingSupport, waitSupport);
-    }
-
-    private static void checkIsPngFilename(File file) {
-        //noinspection StringToUpperCaseOrToLowerCaseWithoutLocale
-        if (!file.getName().toLowerCase().endsWith(".png")) {
-            throw new GuiTestingException("Only 'png' files supported. Got " + file);
-        }
-    }
-
-    @Nullable
-    private static StackTraceElement findCaller(
-            StackTraceElement[] stackTrace,
-            Predicate<StackTraceElement> isCallee) {
-        boolean foundCaller = false;
-        for (StackTraceElement element : stackTrace) {
-            if (isCallee.test(element)) {
-                foundCaller = true;
-            } else {
-                // The first method after a callee method that is not itself
-                // a callee method is the caller we are looking for
-                if (foundCaller) {
-                    return element;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private static StackTraceElement findCaller(
-            Predicate<StackTraceElement> isCallee) {
-        return findCaller(Thread.currentThread().getStackTrace(), isCallee);
-    }
-
-    @NonNull
-    private static Class getClass(@NonNull StackTraceElement stackTraceElement) {
-        try {
-            return Class.forName(stackTraceElement.getClassName());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid class in stackTraceElement", e);
-        }
-    }
-
-    @NonNull
-    private static File urlToFile(String snapshotsDirURL) {
-        try {
-            return new File(new URL(snapshotsDirURL).toURI());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -153,40 +103,40 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         ImageCompare compare = ImageCompare.newImageCompare();
         @Nullable BufferedImage diff = compare.differenceMask(imageA, imageB);
         if (diff != null) {
-            return new ImageDifferenceImpl(true, imageA, imageB, diff);
+            return ImageDifferenceImpl.of(true, imageA, imageB, diff);
         } else {
-            return new ImageDifferenceImpl(false, imageA, imageB, compare.transparentImage(imageA));
+            return ImageDifferenceImpl.of(false, imageA, imageB, compare.transparentImage(imageA));
         }
-    }
-
-    private File getOutputDirectory() {
-        return new File("target/guitesting-reports");
     }
 
     @Override
     public BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB) {
-        ImageCompare compare = ImageCompare.newImageCompare();
-        @Nullable BufferedImage diff = compare.differenceMask(imageA, imageB);
-        return diff != null ? diff : compare.transparentImage(imageA);
+        return imageDifference(imageA, imageB).getDifferenceMask();
     }
 
     @Override
     public BufferedImage waitUntilScreenshotMatchesImage(
             Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
         return waitUntilScreenshotMatchesImageHelper(
-                getCaller("waitUntilScreenshotMatchesImage"), null,
-                component, rectangle, expectedImages);
+                component, rectangle, expectedImages, null, getCaller("waitUntilScreenshotMatchesImage")
+        );
+    }
+
+    private File getOutputDirectory() {
+        return new File("target/guitesting-reports");
     }
 
     private BufferedImage waitUntilScreenshotMatchesImageHelper(
-            StackTraceElement caller, @Nullable File newImageFileForResources,
-            Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+            Component component, @Nullable Rectangle rectangle,
+            BufferedImage[] expectedImages,
+            @Nullable File newImageFile, StackTraceElement caller) {
+
         if (expectedImages.length == 0) {
             throw new IllegalArgumentException("No expectedImages specified");
         }
+
         CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
                 component, rectangle, expectedImages);
-
         try {
             return pollingSupport.poll(
                     () -> csc.capture(),
@@ -198,8 +148,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 throw new AssertionFailedError("Timeout before first screenshot", e);
             }
 
-            File report = writeUnmatchedScreenshotReport(actualImage, expectedImages, e, caller, newImageFileForResources);
-
+            File report = writeUnmatchedScreenshotReport(
+                    actualImage, expectedImages, e, caller, newImageFile);
             throw new AssertionFailedError(
                     "Screenshot does not match expected image (Timeout).\n" +
                             "For details see:\n- " + report.getAbsolutePath(), e);
@@ -213,11 +163,12 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             StackTraceElement caller,
             @Nullable File newImageFileForResources) {
 
-        UnmatchedScreenshotReportData reportData = generateReportData(actualImage, expectedImages, exception, caller, newImageFileForResources);
-        return writeReportFile(reportData);
+        ScreenshotCompareReportData reportData = generateReportData(
+                actualImage, expectedImages, exception, caller, newImageFileForResources);
+        return ScreenshotCompareHtmlReport.of(reportData).writeReportFile();
     }
 
-    private UnmatchedScreenshotReportData generateReportData(
+    private ScreenshotCompareReportData generateReportData(
             BufferedImage actualImage,
             BufferedImage[] expectedImages,
             Exception exception,
@@ -252,63 +203,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                             expectedImageFileName, differenceImageFileName));
         }
 
-        return UnmatchedScreenshotReportData.of(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources);
-    }
-
-    @NonNull
-    private String getFullMethodName(StackTraceElement caller) {
-        return getClass(caller).getName() + "." + caller.getMethodName();
-    }
-
-    private File writeReportFile(UnmatchedScreenshotReportData reportData) {
-
-        File reportFile = new File(reportData.getOutputDirectory(), reportData.getMethodName() + "-failed.html");
-        String actualImagePath = "images/" + reportData.getActualImageFileName();
-        try (PrintStream report = new PrintStream(reportFile, StandardCharsets.UTF_8.name())) {
-            report.println("" +
-                    "<!DOCTYPE html>\n" +
-                    "<html lang=\"en\">\n" +
-                    "<head>\n" +
-                    "    <meta charset=\"UTF-8\">\n" +
-                    "    <title>" + reportData.getMethodName() + " failed</title>\n" +
-                    "</head>\n" +
-                    "<body>\n" +
-                    "<h1>" + reportData.getMethodName() + " failed</h1>\n" +
-                    reportData.getTimestamp() + "\n" +
-                    "<h2>Actual</h2>\n" +
-                    "<img src=\"" + actualImagePath + "\" alt=\"actual image\">\n");
-
-            if (reportData.getNewImageFileForResources() != null) {
-                File actualImageFile = new File(reportData.getOutputDirectory(), actualImagePath);
-                report.println("" +
-                        "<h3>Choices</h3>\n" +
-                        "<h4>To make the image an additional option of the snapshot run the following in a bash terminal:</h4>\n" +
-                        "<pre>\n" +
-                        "cp " + actualImageFile.getAbsolutePath() + " " + reportData.getNewImageFileForResources().getAbsolutePath() + "\n" +
-                        "</pre>\n");
-            }
-
-            int n = reportData.getExpectedAndDifferenceFiles().size();
-            for (int i = 1; i <= n; i++) {
-                ExpectedAndDifferenceFile item = reportData.getExpectedAndDifferenceFiles().get(i - 1);
-                report.println("" +
-                        "<h2>Expected (Option " + i + " of " + n + ")</h2>\n" +
-                        "<img src=\"images/" + item.expectedImageFileName + "\" alt=\"expected image " + i + "\">\n" +
-                        "<h3>Difference</h3>\n" +
-                        "<img src=\"images/" + item.differenceImageFileName + "\" alt=\"difference image " + i + "\">\n");
-            }
-
-            report.println("<h2>Stack</h2>\n<pre>");
-            reportData.getException().printStackTrace(report);
-            report.println("" +
-                    "</pre>\n" +
-                    "</body>\n" +
-                    "</html>");
-            return reportFile;
-        } catch (Exception e) {
-            throw new GuiTestingException(
-                    "Error when writing report file " + reportFile.getAbsolutePath(), e);
-        }
+        return ScreenshotCompareReportData.of(outputDir, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources);
     }
 
     @Override
@@ -342,118 +237,40 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             @Nullable Rectangle rectangle,
             String snapshotName)
             throws GuiTestingException {
-        StackTraceElement caller = getCaller("waitUntilScreenshotMatchesSnapshot");
-        BufferedImage[] snapshotImages = findSnapshotImages(caller, snapshotName);
+        StackTraceElement testMethod = getCaller("waitUntilScreenshotMatchesSnapshot");
+        BufferedImage[] snapshotImages = getImagesOfSnapshot(testMethod, snapshotName);
+        // Calculate the file we would use to store a new screenshot image,
+        // e.g. if no existing snapshot image matches the current screenshot.
+        File newImageFile = getSnapshotImageFile(
+                testMethod, snapshotName, snapshotImages.length);
         if (snapshotImages.length == 0) {
-            // This is the first snapshot
+            // No snapshot image exists
 
             if (getGenerateSnapshotIfMissing()) {
-                return writeInitialSnapshotImage(component, rectangle, snapshotName, caller);
+                return captureAndWriteInitialSnapshotImage(
+                        component, rectangle, snapshotName, newImageFile);
             } else {
-                throw new GuiTestingException(
-                        String.format(
-                                "No images defined for snapshot '%s' of %s",
-                                snapshotName, getFullMethodName(caller)));
+                throw new GuiTestingException(String.format(
+                        "No images defined for snapshot '%s' of %s",
+                        snapshotName, getFullMethodName(testMethod)));
             }
 
         } else {
-            File newImageFileForResources = getSnapshotImageFile(
-                    caller, snapshotName, snapshotImages.length);
-
+            // Snapshot images already exist.
             return waitUntilScreenshotMatchesImageHelper(
-                    caller, newImageFileForResources,
-                    component, rectangle, snapshotImages);
+                    component, rectangle, snapshotImages, newImageFile, testMethod);
         }
-    }
-
-    @NonNull
-    private BufferedImage writeInitialSnapshotImage(Component component, @Nullable Rectangle rectangle, String snapshotName, StackTraceElement caller) {
-        waitSupport.waitFor(getDelayBeforeNewSnapshot());
-        BufferedImage image = captureScreen(component, rectangle);
-        File imageFile = writeSnapshotImage(image, caller, snapshotName, 0);
-        LOGGER.info(String.format("Initial snapshot image written: '%s'", imageFile.getAbsolutePath()));
-        return image;
-    }
-
-    @NonNull
-    private StackTraceElement getCaller(String calleeName) {
-        @Nullable StackTraceElement caller =
-                findCaller(e -> e.getMethodName().equals(calleeName));
-        if (caller == null) {
-            throw new IllegalStateException("Cannot identify calling test method");
-        }
-        return caller;
     }
 
     @Override
     public BufferedImage[] getImagesOfSnapshot(String name) {
-        StackTraceElement caller = getCaller("getImagesOfSnapshot");
-        return findSnapshotImages(caller, name);
-    }
-
-    private File writeSnapshotImage(BufferedImage image, StackTraceElement caller, String snapshotName, int index) {
-        File imageFile = getSnapshotImageFile(caller, snapshotName, index);
-        writeImage(image, imageFile);
-        return imageFile;
-    }
-
-    @NonNull
-    private File getSnapshotImageFile(StackTraceElement caller, String snapshotName, int index) {
-        File dir = getDirectoryForSnapshotImagesInResources(getClass(caller));
-        String imageName = getSnapshotImageName(caller, snapshotName, index);
-        return new File(dir, imageName);
-    }
-
-    private File getDirectoryForSnapshotImagesInResources(Class testClass) {
-        URL url = testClass.getResource("");
-        if (!url.getProtocol().equals("file")) {
-            throw new GuiTestingException("Can write snapshot image only to file system ('file:/...'). Got " + url);
-        }
-        String urlText = url.toString();
-        String testClassesPattern = "/target/test-classes/";
-        if (!urlText.contains(testClassesPattern)) {
-            throw new GuiTestingException(
-                    String.format("Standard Maven directory structure required (%s not found in %s)", testClassesPattern, urlText));
-        }
-        String inTestResourcesDirURL = urlText.replace(
-                testClassesPattern, "/src/test/resources/");
-        File snapshotsDir = urlToFile(inTestResourcesDirURL + "/snap-shots");
-        FileUtil.ensureDirectoryExists(snapshotsDir);
-        return snapshotsDir;
-    }
-
-    private BufferedImage[] findSnapshotImages(StackTraceElement caller, String snapshotName) {
-        List<BufferedImage> result = new ArrayList<>();
-        int i = 0;
-        URL imageURL = null;
-        do {
-            imageURL = getSnapshotImageURL(caller, snapshotName, i);
-            if (imageURL != null) {
-                result.add(readImage(imageURL));
-            }
-            i++;
-        } while (imageURL != null);
-        return result.toArray(new BufferedImage[0]);
-    }
-
-    private URL getSnapshotImageURL(StackTraceElement caller, String snapshotName, int i) {
-        String imageName = getSnapshotImageName(caller, snapshotName, i);
-        return getClass(caller).getResource("snap-shots/" + imageName);
-    }
-
-    @NonNull
-    private String getSnapshotImageName(StackTraceElement caller, String snapshotName, int i) {
-        return getSimpleClassAndMethodName(caller) + "-" + snapshotName + "@" + i + ".png";
-    }
-
-    @NonNull
-    private String getSimpleClassAndMethodName(StackTraceElement caller) {
-        return getClass(caller).getSimpleName() + "." + caller.getMethodName();
+        StackTraceElement testMethod = getCaller("getImagesOfSnapshot");
+        return getImagesOfSnapshot(testMethod, name);
     }
 
     @Override
     public void writeImage(RenderedImage image, File file) {
-        checkIsPngFilename(file);
+        SwingUtil.checkIsPngFilename(file);
         try {
             ImageIO.write(image, "png", file);
         } catch (IOException e) {
@@ -464,7 +281,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public BufferedImage readImage(File file) {
-        checkIsPngFilename(file);
+        SwingUtil.checkIsPngFilename(file);
         try {
             return ImageIO.read(file);
         } catch (Exception e) {
@@ -488,114 +305,70 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         return pollingSupport.timeout();
     }
 
-    private static class ImageDifferenceImpl implements ImageDifference {
-        private final boolean imagesAreDifferent;
-        private final BufferedImage imageA;
-        private final BufferedImage imageB;
-        private final BufferedImage differenceMask;
+    private BufferedImage captureAndWriteInitialSnapshotImage(
+            Component component, @Nullable Rectangle rectangle,
+            String snapshotName, File imageFile) {
 
-        private ImageDifferenceImpl(
-                boolean imagesAreDifferent,
-                BufferedImage imageA,
-                BufferedImage imageB,
-                BufferedImage differenceMask) {
-
-            this.imagesAreDifferent = imagesAreDifferent;
-            this.imageA = imageA;
-            this.imageB = imageB;
-            this.differenceMask = differenceMask;
-        }
-
-        @Override
-        public boolean imagesAreDifferent() {
-            return imagesAreDifferent;
-        }
-
-        @Override
-        public BufferedImage getImageA() {
-            return imageA;
-        }
-
-        @Override
-        public BufferedImage getImageB() {
-            return imageB;
-        }
-
-        @Override
-        public BufferedImage getDifferenceMask() {
-            return differenceMask;
-        }
+        waitSupport.waitFor(getDelayBeforeNewSnapshot());
+        BufferedImage image = captureScreen(component, rectangle);
+        writeImage(image, imageFile);
+        LOGGER.info(String.format("Initial snapshot image written: '%s'", imageFile.getAbsolutePath()));
+        return image;
     }
 
-    private static class ExpectedAndDifferenceFile {
-        final String expectedImageFileName;
-        final String differenceImageFileName;
-
-        private ExpectedAndDifferenceFile(String expectedImageFileName, String differenceImageFileName) {
-            this.expectedImageFileName = expectedImageFileName;
-            this.differenceImageFileName = differenceImageFileName;
-        }
+    private File getSnapshotImageFile(StackTraceElement caller, String snapshotName, int index) {
+        File dir = getDirectoryForSnapshotImageResources(SwingUtil.getClass(caller));
+        String imageName = getSnapshotImageName(caller, snapshotName, index);
+        return new File(dir, imageName);
     }
 
-    private static class UnmatchedScreenshotReportData {
-        private final File outputDirectory;
-        private final String methodName;
-        private final Date timestamp;
-        private final String actualImageFileName;
-        private final List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles;
-        private final Exception exception;
-
-        private final @Nullable File newImageFileForResources;
-
-        private UnmatchedScreenshotReportData(File outputDirectory, String methodName, Date timestamp, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception, @Nullable File newImageFileForResources) {
-            this.outputDirectory = outputDirectory;
-            this.methodName = methodName;
-            this.timestamp = timestamp;
-            this.actualImageFileName = actualImageFileName;
-            this.expectedAndDifferenceFiles = expectedAndDifferenceFiles;
-            this.exception = exception;
-            this.newImageFileForResources = newImageFileForResources;
+    private File getDirectoryForSnapshotImageResources(Class<?> testClass) {
+        URL url = testClass.getResource("");
+        if (!url.getProtocol().equals("file")) {
+            throw new GuiTestingException("Can write snapshot image only to file system ('file:/...'). Got " + url);
         }
-
-        private static UnmatchedScreenshotReportData of(
-                File outputDirectory,
-                String methodName,
-                Date timestamp,
-                String actualImageFileName,
-                List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles,
-                Exception exception,
-                @Nullable File newImageFileForResources) {
-            return new UnmatchedScreenshotReportData(outputDirectory, methodName, timestamp, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFileForResources);
+        String urlText = url.toString();
+        String testClassesPattern = "/target/test-classes/";
+        if (!urlText.contains(testClassesPattern)) {
+            throw new GuiTestingException(
+                    String.format("Standard Maven directory structure required (%s not found in %s)", testClassesPattern, urlText));
         }
+        String inTestResourcesDirURL = urlText.replace(
+                testClassesPattern, "/src/test/resources/");
+        File snapshotsResourcesDir = urlToFile(inTestResourcesDirURL + "/" + SNAP_SHOTS_DIRECTORY_NAME);
+        FileUtil.ensureDirectoryExists(snapshotsResourcesDir);
+        return snapshotsResourcesDir;
+    }
 
-        public File getOutputDirectory() {
-            return outputDirectory;
-        }
+    private BufferedImage[] getImagesOfSnapshot(
+            StackTraceElement testMethod, String snapshotName) {
 
-        public String getMethodName() {
-            return methodName;
-        }
+        List<BufferedImage> result = new ArrayList<>();
+        int i = 0;
+        @Nullable URL imageURL;
+        do {
+            imageURL = getSnapshotImageURL(testMethod, snapshotName, i);
+            if (imageURL != null) {
+                result.add(readImage(imageURL));
+            }
+            i++;
+        } while (imageURL != null);
 
-        public Date getTimestamp() {
-            return timestamp;
-        }
+        return result.toArray(new BufferedImage[0]);
+    }
 
-        public String getActualImageFileName() {
-            return actualImageFileName;
-        }
+    @Nullable
+    private URL getSnapshotImageURL(StackTraceElement caller, String snapshotName, int i) {
+        String imageName = getSnapshotImageName(caller, snapshotName, i);
+        return SwingUtil.getClass(caller).getResource("snap-shots" + "/" + imageName);
+    }
 
-        public List<ExpectedAndDifferenceFile> getExpectedAndDifferenceFiles() {
-            return expectedAndDifferenceFiles;
-        }
+    private String getSnapshotImageName(StackTraceElement caller, String snapshotName, int i) {
+        return getSimpleClassAndMethodName(caller) + "-" + snapshotName + "@" + i + ".png";
+    }
 
-        public Exception getException() {
-            return exception;
-        }
-
-        public File getNewImageFileForResources() {
-            return newImageFileForResources;
-        }
-
+    private String getSimpleClassAndMethodName(StackTraceElement caller) {
+        return SwingUtil.getClass(caller).getSimpleName() + "." + caller.getMethodName();
     }
 
     private class CaptureScreenAndCompare {

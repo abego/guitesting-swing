@@ -41,7 +41,6 @@ import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
-import org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JFrame;
@@ -72,9 +71,14 @@ import static org.abego.guitesting.swing.internal.AssertRetryingSupportImpl.newA
 import static org.abego.guitesting.swing.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.swing.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
 import static org.abego.guitesting.swing.internal.EDTSupportImpl.newEDTSupport;
+import static org.abego.guitesting.swing.internal.FocusSupportImpl.newFocusSupport;
+import static org.abego.guitesting.swing.internal.KeyboardSupportImpl.newKeyboardSupport;
+import static org.abego.guitesting.swing.internal.MouseSupportImpl.newMouseSupport;
+import static org.abego.guitesting.swing.internal.PollingSupportImpl.newPollingSupport;
 import static org.abego.guitesting.swing.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
 import static org.abego.guitesting.swing.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.swing.internal.WindowSupportImpl.newWindowSupport;
+import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.newScreenCaptureSupport;
 
 public final class GTImpl implements GT {
 
@@ -87,13 +91,13 @@ public final class GTImpl implements GT {
     private final DialogAndFrameSupport dialogAndFrameSupport = newDialogAndFrameSupport();
     private final EDTSupport edtSupport = newEDTSupport();
     private final WaitForIdleSupport waitForIdleSupport = newWaitForIdleSupport(robot);
-    private final KeyboardSupport keyboardSupport = KeyboardSupportImpl.newKeyboardSupport(robot, waitForIdleSupport);
-    private final MouseSupport mouseSupport = MouseSupportImpl.newMouseSupport(robot, waitForIdleSupport);
-    private final PollingSupport pollingSupport = PollingSupportImpl.newPollingSupport(timeoutSupport);
+    private final KeyboardSupport keyboardSupport = newKeyboardSupport(robot, waitForIdleSupport);
+    private final MouseSupport mouseSupport = newMouseSupport(robot, waitForIdleSupport);
+    private final PollingSupport pollingSupport = newPollingSupport(timeoutSupport);
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
-    private final FocusSupport focusSupport = FocusSupportImpl.newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
-    private final ScreenCaptureSupport screenCaptureSupport = ScreenCaptureSupportImpl.newScreenCaptureSupport(robot, pollingSupport, waitSupport);
+    private final FocusSupport focusSupport = newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = newScreenCaptureSupport(robot, pollingSupport, waitSupport);
 
     private GTImpl() {
     }
