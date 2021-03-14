@@ -41,6 +41,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
@@ -209,7 +210,7 @@ class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             Exception exception) {
 
         File reportFile = new File(outputDir, methodName + "-failed.html");
-        try (PrintStream report = new PrintStream(reportFile)) {
+        try (PrintStream report = new PrintStream(reportFile, StandardCharsets.UTF_8.name())) {
             report.println("" +
                     "<!DOCTYPE html>\n" +
                     "<html lang=\"en\">\n" +
