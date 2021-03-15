@@ -62,6 +62,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
     private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots"; //NON-NLS
     private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
+    private static final boolean AUTO_ADJUST_JFRAME_RECTANGLE = false;
 
     private final Robot robot;
     private final PollingSupport pollingSupport;
@@ -260,7 +261,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
      * Returns a rectangle suited for a screen capture image of the
      * component.
      *
-     * <p>The bounds of a {@link JFrame} are slightly larger than the
+     * <p>When AUTO_ADJUST_JFRAME_RECTANGLE is true:
+     * The bounds of a {@link JFrame} are slightly larger than the
      * "obvious" area covered on the screen as the bounds also includes the
      * area occupied by the "drop shadow" painted around the frame. As the drop
      * shadow is semi-transparent pixels from the desktop "shine through".
@@ -273,7 +275,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Nullable
     private Rectangle adjustRectangleForScreenCapture(
             Component component, @Nullable Rectangle rectangle) {
-        if (component instanceof JFrame && rectangle == null) {
+        if (component instanceof JFrame && rectangle == null && AUTO_ADJUST_JFRAME_RECTANGLE) {
             rectangle = ((JFrame) component).getRootPane().getBounds();
             rectangle.x = (rectangle.x+1)/2;
             rectangle.height += rectangle.y;
