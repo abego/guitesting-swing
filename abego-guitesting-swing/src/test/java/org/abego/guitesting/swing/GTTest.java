@@ -36,6 +36,7 @@ import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.opentest4j.AssertionFailedError;
@@ -934,6 +935,7 @@ public class GTTest {
     }
 
     @Test
+    @Disabled
     void mouseWheel_ok() {
         MyGT.showFrameForMouseTests();
 
