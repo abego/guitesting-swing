@@ -33,7 +33,7 @@ import static java.time.Duration.ofSeconds;
 
 final class TimeoutSupportImpl implements TimeoutSupport {
 
-    private static final Duration INITIAL_TIMEOUT_DEFAULT = ofSeconds(60);
+    private static final Duration INITIAL_TIMEOUT_DEFAULT = ofSeconds(10);
     private Duration initialTimeout = INITIAL_TIMEOUT_DEFAULT;
     private Duration timeout = initialTimeout;
 
