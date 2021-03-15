@@ -31,7 +31,6 @@ import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.internal.GuiTestingUtil;
-import org.abego.guitesting.swing.internal.ImageCompare;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opentest4j.AssertionFailedError;
 

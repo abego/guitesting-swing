@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.screencapture;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompare.newImageCompare;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

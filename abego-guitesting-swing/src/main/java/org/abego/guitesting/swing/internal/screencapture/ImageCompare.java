@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.screencapture;
 
 import org.eclipse.jdt.annotation.Nullable;
 

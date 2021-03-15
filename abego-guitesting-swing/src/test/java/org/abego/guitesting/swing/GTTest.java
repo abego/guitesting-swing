@@ -79,15 +79,15 @@ import static org.abego.commons.seq.SeqUtil.newSeq;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.isBlueish;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.isGreenish;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.isRedish;
-import static org.abego.guitesting.swing.internal.ImageCompare.imagesAreEqual;
-import static org.abego.guitesting.swing.internal.ImageCompare.newImageCompare;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColors2Image;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsAtScreen1Image;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColors2DifferenceMask;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsDifferenceMask;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsColorsLargerDifferenceMask;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsImage;
-import static org.abego.guitesting.swing.internal.ImageCompareTest.getColorsLargerImage;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompare.imagesAreEqual;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompare.newImageCompare;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColors2Image;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsAtScreen1Image;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColors2DifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColorsDifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColorsLargerDifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsImage;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsLargerImage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -2434,7 +2434,6 @@ public class GTTest {
 
     @Test
     void waitUntilScreenshotMatchesSnapshot_missingScreenshots_generate() {
-        //TODO: find a way to test this
         JFrame frame = MyGT.showFrameWithColors();
         gt.setGenerateSnapshotIfMissing(true);
 

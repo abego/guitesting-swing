@@ -249,7 +249,7 @@ public final class GuiTestingUtil {
      * @param image a (completely loaded) Image
      * @return the size of the image
      */
-    static Dimension getSize(Image image) {
+    public static Dimension getSize(Image image) {
         Dimension size = new Dimension(
                 image.getWidth(null),
                 image.getHeight(null));
