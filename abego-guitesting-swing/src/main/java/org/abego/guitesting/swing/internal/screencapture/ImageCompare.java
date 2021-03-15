@@ -35,21 +35,36 @@ import java.awt.image.PixelGrabber;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.getSize;
 
 public final class ImageCompare {
+    static final int TOLERANCE_PERCENTAGE_DEFAULT = 0;
+    private static final ImageCompare DEFAULT_COMPARE =
+            new ImageCompare(TOLERANCE_PERCENTAGE_DEFAULT);
 
-    private static final ImageCompare INSTANCE = new ImageCompare();
+    private final int tolerancePercentage;
 
-    private ImageCompare() {
+    private ImageCompare(int tolerancePercentage) {
+        this.tolerancePercentage = tolerancePercentage;
     }
 
     public static ImageCompare newImageCompare() {
-        // for now the class has no state, so we don't need to create new
-        // instances but can just use a single instance
-        return INSTANCE;
+        return newImageCompare(TOLERANCE_PERCENTAGE_DEFAULT);
+    }
+
+    public static ImageCompare newImageCompare(int tolerancePercentage) {
+        // for exact compares, with no tolerance, we reuse.
+        // Otherwise we create a new instance each time
+        return tolerancePercentage == TOLERANCE_PERCENTAGE_DEFAULT
+                ? DEFAULT_COMPARE
+                : new ImageCompare(tolerancePercentage);
     }
 
     public static boolean imagesAreEqual(
             BufferedImage imageA, BufferedImage imageB) {
-        return newImageCompare().differenceMask(imageA, imageB) == null;
+        return imagesAreEqual(imageA, imageB, TOLERANCE_PERCENTAGE_DEFAULT);
+    }
+
+    public static boolean imagesAreEqual(
+            BufferedImage imageA, BufferedImage imageB, int tolerancePercentage) {
+        return newImageCompare(tolerancePercentage).differenceMask(imageA, imageB) == null;
     }
 
     /**
@@ -97,6 +112,39 @@ public final class ImageCompare {
                 | ((green << 8) & 0xff00) | ((blue) & 0xff);
     }
 
+    /**
+     * Returns the difference between pixelA and pixelB, in percent, ignoring
+     * the alpha channel.
+     *
+     * <p>The difference between black and white is 100%, the difference between
+     * two equal pixels is 0%.</p>
+     *
+     * @param pixelA in INT_ARGB format
+     * @param pixelB in INT_ARGB format
+     * @return difference between pixelA and pixelB, in percent
+     */
+    private static int getDifferenceInPercent(int pixelA, int pixelB) {
+        int redDiff = ((pixelA >> 16) & 0xff) - ((pixelB >> 16) & 0xff);
+        int greenDiff = ((pixelA >> 8) & 0xff) - ((pixelB >> 8) & 0xff);
+        int blueDiff = ((pixelA) & 0xff) - ((pixelB) & 0xff);
+
+        // "absolute" values
+        if (redDiff < 0) redDiff = -redDiff;
+        if (greenDiff < 0) greenDiff = -greenDiff;
+        if (blueDiff < 0) blueDiff = -blueDiff;
+
+        int totalDiff = redDiff+greenDiff+blueDiff;
+
+        // return a 0 percentage only when there are really no differences,
+        // otherwise a number between 1 and 100.
+        // (765 is the maximum difference possible: 3 * 255)
+        return totalDiff == 0 ? 0 : 1 + totalDiff * 99 / 765;
+    }
+
+    private boolean arePixelsSimilar(int pixelA, int pixelB) {
+        return pixelA == pixelB ||
+                getDifferenceInPercent(pixelA, pixelB) <= tolerancePercentage;
+    }
 
     private static Dimension max(Dimension size1, Dimension size2) {
         return new Dimension(
@@ -115,6 +163,9 @@ public final class ImageCompare {
                 color.getAlpha());
     }
 
+    public int getTolerancePercentage() {
+        return tolerancePercentage;
+    }
 
     /**
      * Returns an image marking the differences between imageA and imageB with
@@ -153,7 +204,7 @@ public final class ImageCompare {
                 boolean hasPixelB = x < sizeB.width && y < sizeB.height;
                 int pixelA = hasPixelA ? pixelsA[y * sizeA.width + x] : 0;
                 int pixelB = hasPixelB ? pixelsB[y * sizeB.width + x] : 0;
-                if (hasPixelA && hasPixelB && pixelA == pixelB) {
+                if (hasPixelA && hasPixelB && arePixelsSimilar(pixelA,pixelB)) {
                     color = whiteTransparentPixel;
                 } else {
                     imagesDiffer = true;

@@ -69,6 +69,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private boolean generateSnapshotIfMissing = true;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
     private String testResourcesDirectoryPath = TEST_RESOURCES_DIRECTORY_PATH_DEFAULT;
+    private int imageCompareTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
 
     private ScreenCaptureSupportImpl(
             Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
@@ -80,6 +81,16 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     public static ScreenCaptureSupport newScreenCaptureSupport(
             Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
         return new ScreenCaptureSupportImpl(robot, pollingSupport, waitSupport);
+    }
+
+    @Override
+    public int getImageCompareTolerancePercentage() {
+        return imageCompareTolerancePercentage;
+    }
+
+    @Override
+    public void setImageCompareTolerancePercentage(int value) {
+        imageCompareTolerancePercentage = value;
     }
 
     @Override
@@ -104,7 +115,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
-        ImageCompare compare = ImageCompare.newImageCompare();
+        ImageCompare compare = newImageCompare();
         @Nullable BufferedImage diff = compare.differenceMask(imageA, imageB);
         if (diff != null) {
             return ImageDifferenceImpl.of(true, imageA, imageB, diff);
@@ -116,10 +127,6 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB) {
         return imageDifference(imageA, imageB).getDifferenceMask();
-    }
-
-    private static String getReadImageErrorMessage(String source) {
-        return String.format("Error when reading image from %s", source); //NON-NLS
     }
 
     @Override
@@ -239,6 +246,14 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             return waitUntilScreenshotMatchesImageHelper(
                     component, rectangle, snapshotImages, newImageFile, testMethod);
         }
+    }
+
+    private ImageCompare newImageCompare() {
+        return ImageCompare.newImageCompare(imageCompareTolerancePercentage);
+    }
+
+    private static String getReadImageErrorMessage(String source) {
+        return String.format("Error when reading image from %s", source); //NON-NLS
     }
 
     /**

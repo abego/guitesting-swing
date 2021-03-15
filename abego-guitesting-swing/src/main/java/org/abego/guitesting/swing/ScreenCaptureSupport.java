@@ -45,6 +45,25 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
 
     /**
+     * Returns how tolerant images are compared, in percent.
+     *
+     * <p>0: each pixel must match exactly,</p>
+     * <p>100: even a white and black pixel are considered equal.</p>
+     *
+     * @return the tolerance when comparing images, in percent
+     */
+    int getImageCompareTolerancePercentage();
+
+    /**
+     * Sets the {@code imageCompareTolerancePercentage} property to {@code value}.
+     *
+     * <p>See {@link #getImageCompareTolerancePercentage()}</p>
+     * @param value the value to set the {@code imageCompareTolerancePercentage}
+     *              property to, in percent
+     */
+    void setImageCompareTolerancePercentage(int value);
+
+    /**
      * Returns an image/screenshot of the rectangle of the screen.
      *
      * @param screenRect a {@link Rectangle} on the screen

@@ -343,6 +343,17 @@ public final class GTImpl implements GT {
     // ScreenCaptureSupport API
     // ======================================================================
 
+    @Override
+    public int getImageCompareTolerancePercentage() {
+        return screenCaptureSupport.getImageCompareTolerancePercentage();
+    }
+
+    @Override
+    public void setImageCompareTolerancePercentage(int value) {
+        screenCaptureSupport.setImageCompareTolerancePercentage(value);
+    }
+
+    @Override
     public BufferedImage captureScreen(Rectangle screenRect) {
         return screenCaptureSupport.captureScreen(screenRect);
     }
