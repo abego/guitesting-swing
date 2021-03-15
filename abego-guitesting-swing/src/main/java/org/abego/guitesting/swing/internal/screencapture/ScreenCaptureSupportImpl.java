@@ -62,12 +62,14 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofMillis(200);
     private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots"; //NON-NLS
+    private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
 
     private final Robot robot;
     private final PollingSupport pollingSupport;
     private final WaitSupport waitSupport;
     private boolean generateSnapshotIfMissing = true;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
+    private String testResourcesDirectoryPath = TEST_RESOURCES_DIRECTORY_PATH_DEFAULT;
 
     private ScreenCaptureSupportImpl(
             Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
@@ -192,6 +194,16 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
+    public String getTestResourcesDirectoryPath() {
+        return testResourcesDirectoryPath;
+    }
+
+    @Override
+    public void setTestResourcesDirectoryPath(String path) {
+        testResourcesDirectoryPath = path;
+    }
+
+    @Override
     public BufferedImage[] getImagesOfSnapshot(String name) {
         StackTraceElement testMethod = getCaller("getImagesOfSnapshot");
         return getImagesOfSnapshot(testMethod, name);
@@ -286,7 +298,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                     String.format("Standard Maven directory structure required (%s not found in %s)", testClassesPattern, urlText)); //NON-NLS
         }
         String inTestResourcesDirURL = urlText.replace(
-                testClassesPattern, "/src/test/resources/"); //NON-NLS
+                testClassesPattern, String.format("/%s/", getTestResourcesDirectoryPath())); //NON-NLS
         File snapshotsResourcesDir = urlToFile(String.format("%s/%s", inTestResourcesDirURL, SNAP_SHOTS_DIRECTORY_NAME)); //NON-NLS
         FileUtil.ensureDirectoryExists(snapshotsResourcesDir);
         return snapshotsResourcesDir;

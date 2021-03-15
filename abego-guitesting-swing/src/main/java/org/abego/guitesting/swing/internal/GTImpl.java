@@ -398,6 +398,16 @@ public final class GTImpl implements GT {
     }
 
     @Override
+    public String getTestResourcesDirectoryPath() {
+        return screenCaptureSupport.getTestResourcesDirectoryPath();
+    }
+
+    @Override
+    public void setTestResourcesDirectoryPath(String path) {
+        screenCaptureSupport.setTestResourcesDirectoryPath(path);
+    }
+
+    @Override
     public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws GuiTestingException {
         return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
     }
