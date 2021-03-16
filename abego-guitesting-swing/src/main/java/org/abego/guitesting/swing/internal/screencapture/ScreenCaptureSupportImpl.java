@@ -62,15 +62,15 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
     private static final String SNAP_SHOTS_DIRECTORY_NAME = "snap-shots"; //NON-NLS
     private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
-    private static final boolean AUTO_ADJUST_JFRAME_RECTANGLE = false;
 
     private final Robot robot;
     private final PollingSupport pollingSupport;
     private final WaitSupport waitSupport;
     private boolean generateSnapshotIfMissing = true;
+    private boolean useInnerJFrameBounds = false;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
     private String testResourcesDirectoryPath = TEST_RESOURCES_DIRECTORY_PATH_DEFAULT;
-    private int imageCompareTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
+    private int imageDifferenceTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
 
     private ScreenCaptureSupportImpl(
             Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
@@ -85,13 +85,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public int getImageCompareTolerancePercentage() {
-        return imageCompareTolerancePercentage;
+    public boolean getUseInnerJFrameBounds() {
+        return useInnerJFrameBounds;
     }
 
     @Override
-    public void setImageCompareTolerancePercentage(int value) {
-        imageCompareTolerancePercentage = value;
+    public void setUseInnerJFrameBounds(boolean value) {
+        this.useInnerJFrameBounds = value;
     }
 
     @Override
@@ -103,6 +103,9 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     public BufferedImage captureScreen(Component component, @Nullable Rectangle rectangle) {
         Rectangle componentRect = new Rectangle(component.getSize());
         if (rectangle == null) {
+            rectangle = adjustRectangleForScreenCapture(component, null);
+        }
+        if (rectangle == null) {
             rectangle = componentRect;
         }
         Rectangle rect = rectangle.intersection(componentRect);
@@ -112,6 +115,16 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public BufferedImage captureScreen(Component component) {
         return captureScreen(component, null);
+    }
+
+    @Override
+    public int getImageDifferenceTolerancePercentage() {
+        return imageDifferenceTolerancePercentage;
+    }
+
+    @Override
+    public void setImageDifferenceTolerancePercentage(int value) {
+        imageDifferenceTolerancePercentage = value;
     }
 
     @Override
@@ -250,7 +263,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     private ImageCompare newImageCompare() {
-        return ImageCompare.newImageCompare(imageCompareTolerancePercentage);
+        return ImageCompare.newImageCompare(imageDifferenceTolerancePercentage);
     }
 
     private static String getReadImageErrorMessage(String source) {
@@ -259,27 +272,23 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     /**
      * Returns a rectangle suited for a screen capture image of the
-     * component.
-     *
-     * <p>When AUTO_ADJUST_JFRAME_RECTANGLE is true:
-     * The bounds of a {@link JFrame} are slightly larger than the
-     * "obvious" area covered on the screen as the bounds also includes the
-     * area occupied by the "drop shadow" painted around the frame. As the drop
-     * shadow is semi-transparent pixels from the desktop "shine through".
-     * Because of this a screenshot of the frame with its bound would also
-     * include pixels not in the control of the frame and may change randomly.
-     * To get more reproducible results we use smaller rectangle for JFrame
-     * screenshot (when no rectangle is explicitly specified). This includes the
-     * root pane and the menu bar.</p>
+     * component, especially taking care of the {@code useInnerJFrameBounds} property.
      */
     @Nullable
     private Rectangle adjustRectangleForScreenCapture(
             Component component, @Nullable Rectangle rectangle) {
-        if (component instanceof JFrame && rectangle == null && AUTO_ADJUST_JFRAME_RECTANGLE) {
+        if (component instanceof JFrame && rectangle == null && getUseInnerJFrameBounds()) {
             rectangle = ((JFrame) component).getRootPane().getBounds();
-            rectangle.x = (rectangle.x+1)/2;
-            rectangle.height += rectangle.y;
-            rectangle.y = 0;
+            rectangle.x = (rectangle.x + 1) / 2;
+            rectangle.height += rectangle.y - 1;
+            rectangle.y = 1;
+            if (GuiTestingUtil.isMacOS()) {
+                // some more adjustments for Macs, to avoid capturing the
+                // "round corners" of the Mac windows (would capture stuff
+                // from behind the window).
+                // (values found experiementally).
+                rectangle.height -= 2;
+            }
         }
         return rectangle;
     }

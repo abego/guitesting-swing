@@ -45,23 +45,40 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
 
     /**
-     * Returns how tolerant images are compared, in percent.
+     * Returns true when the "inner" bounds of a JFrame should be used when
+     * screen capturing a JFrame, false when the "normal" bounds of a JFrame
+     * should be used.
      *
-     * <p>0: each pixel must match exactly,</p>
-     * <p>100: even a white and black pixel are considered equal.</p>
+     * <p>The bounds of a {@link javax.swing.JFrame} are slightly larger than
+     * the "obvious"* area covered on the screen as the bounds also include
+     * the area occupied by the "drop shadow" painted around the frame.
+     * The drop shadow is semi-transparent so pixels from the desktop (or other
+     * things behind the JFrame) may "shine through". Therefore a screenshot of
+     * the frame with its* "normal" bounds would also include pixels not in the
+     * control of the frame and thus screenshots of a JFrame may differ even if
+     * the "inner" part of the JFrame didn't changed.</p>
      *
-     * @return the tolerance when comparing images, in percent
+     * <p>To get more reproducible results one may use a smaller ("inner")
+     * rectangle for JFrame screenshots. This inner rectangle includes the root
+     * pane and the menu bar but not the border or "drop shadow" areas.</p>
+     *
+     * <p>This property has no effect when a rectangle is explicitly specified
+     * when doing a screen capture of a JFrame.</p>
+     *
+     * @return true when the "inner" bounds of a JFrame should be used when
+     * screen capturing a JFrame, false when the "normal" bounds of a JFrame
+     * should be used
      */
-    int getImageCompareTolerancePercentage();
+    boolean getUseInnerJFrameBounds();
 
     /**
-     * Sets the {@code imageCompareTolerancePercentage} property to {@code value}.
+     * Sets the {@code useInnerJFrameBounds} property to the {@code value}.
      *
-     * <p>See {@link #getImageCompareTolerancePercentage()}</p>
-     * @param value the value to set the {@code imageCompareTolerancePercentage}
-     *              property to, in percent
+     * <p>See {@link #getUseInnerJFrameBounds()}.</p>
+     *
+     * @param value the new value of the {@code useInnerJFrameBounds} property
      */
-    void setImageCompareTolerancePercentage(int value);
+    void setUseInnerJFrameBounds(boolean value);
 
     /**
      * Returns an image/screenshot of the rectangle of the screen.
@@ -93,6 +110,26 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @return an image/screenshot of the {@code component}
      */
     BufferedImage captureScreen(Component component);
+
+    /**
+     * Returns how tolerant images are compared, in percent.
+     *
+     * <p>0: each pixel must match exactly,</p>
+     * <p>100: even a white and black pixel are considered equal.</p>
+     *
+     * @return the tolerance when comparing images, in percent
+     */
+    int getImageDifferenceTolerancePercentage();
+
+    /**
+     * Sets the {@code imageDifferenceTolerancePercentage} property to {@code value}.
+     *
+     * <p>See {@link #getImageDifferenceTolerancePercentage()}</p>
+     *
+     * @param value the value to set the {@code imageDifferenceTolerancePercentage}
+     *              property to, in percent
+     */
+    void setImageDifferenceTolerancePercentage(int value);
 
     /**
      * Returns the difference between {@code imageA} and {@code imageB} as an

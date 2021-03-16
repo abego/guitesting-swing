@@ -2248,6 +2248,24 @@ public class GTTest {
     }
 
     @Test
+    void captureScreen_JFrame_normalBounds_and_innerBounds() {
+        JFrame frame = MyGT.showFrameWithTitle();
+        gt.waitForIdle();
+        try {
+            gt.setUseInnerJFrameBounds(false);
+            BufferedImage largerImage = gt.captureScreen(frame);
+
+            gt.setUseInnerJFrameBounds(true);
+            BufferedImage smallerImage = gt.captureScreen(frame);
+
+            assertTrue(smallerImage.getWidth() < largerImage.getWidth() ||
+                    smallerImage.getHeight() < largerImage.getHeight());
+        } finally {
+            gt.setUseInnerJFrameBounds(false);
+        }
+    }
+
+    @Test
     void imageDifference_noDifference() {
         BufferedImage image = getColorsImage();
 

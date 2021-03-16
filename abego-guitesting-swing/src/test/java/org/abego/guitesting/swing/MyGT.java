@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -159,6 +160,13 @@ public class MyGT {
         JPanel panel = createNameInputPanel();
         JFrame result = showInFrame(panel, new Point(50, 50), null);
         result.setName("nameInput");
+        return result;
+    }
+
+    static JFrame showFrameWithTitle() {
+        JLabel label = new JLabel("A placeholder to fill the window");
+        JFrame result = gt2.showInFrameTitled("Demo", label);
+        result.setName("withTitle");
         return result;
     }
 

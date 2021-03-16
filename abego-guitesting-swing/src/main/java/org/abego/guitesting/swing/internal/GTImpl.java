@@ -344,13 +344,13 @@ public final class GTImpl implements GT {
     // ======================================================================
 
     @Override
-    public int getImageCompareTolerancePercentage() {
-        return screenCaptureSupport.getImageCompareTolerancePercentage();
+    public boolean getUseInnerJFrameBounds() {
+        return screenCaptureSupport.getUseInnerJFrameBounds();
     }
 
     @Override
-    public void setImageCompareTolerancePercentage(int value) {
-        screenCaptureSupport.setImageCompareTolerancePercentage(value);
+    public void setUseInnerJFrameBounds(boolean value) {
+        screenCaptureSupport.setUseInnerJFrameBounds(value);
     }
 
     @Override
@@ -366,6 +366,16 @@ public final class GTImpl implements GT {
     @Override
     public BufferedImage captureScreen(Component component) {
         return screenCaptureSupport.captureScreen(component);
+    }
+
+    @Override
+    public int getImageDifferenceTolerancePercentage() {
+        return screenCaptureSupport.getImageDifferenceTolerancePercentage();
+    }
+
+    @Override
+    public void setImageDifferenceTolerancePercentage(int value) {
+        screenCaptureSupport.setImageDifferenceTolerancePercentage(value);
     }
 
     @Override

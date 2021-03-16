@@ -82,7 +82,7 @@ public final class GuiTestingUtil {
     }
 
 
-    static boolean isMacOS() {
+    public static boolean isMacOS() {
         return System.getProperty("os.name").toLowerCase().contains("mac"); //NON-NLS NON-NLS
     }
 
