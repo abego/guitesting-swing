@@ -35,6 +35,8 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.isMacOS;
+
 final class KeyboardSupportImpl implements KeyboardSupport {
 
     private final Robot robot;
@@ -66,7 +68,7 @@ final class KeyboardSupportImpl implements KeyboardSupport {
 
         waitForIdle();
 
-        int shortCutCode = SwingUtil.isMacOS() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        int shortCutCode = isMacOS() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
         keyPress(shortCutCode);
         keyPress(KeyEvent.VK_V);
         keyRelease(KeyEvent.VK_V);

@@ -22,16 +22,19 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.screencapture;
 
-import org.abego.commons.lang.exception.MustNotInstantiateException;
-import org.junit.jupiter.api.Test;
+/**
+ * Holds the pathes to an expectedImage and its corresponding differenceImage
+ * file, relative to the 'outputDirectory'.
+ */
+class ExpectedAndDifferenceFile {
+    final String expectedImageFilePath;
+    final String differenceImageFilePath;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-class SwingUtilTest {
-    @Test
-    void constructor_fails() {
-        assertThrows(MustNotInstantiateException.class, SwingUtil::new);
+    ExpectedAndDifferenceFile(
+            String expectedImageFilePath, String differenceImageFilePath) {
+        this.expectedImageFilePath = expectedImageFilePath;
+        this.differenceImageFilePath = differenceImageFilePath;
     }
 }

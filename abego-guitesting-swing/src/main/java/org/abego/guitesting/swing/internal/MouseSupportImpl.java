@@ -44,7 +44,7 @@ import static java.awt.event.MouseEvent.MOUSE_RELEASED;
 import static java.time.Duration.ofMillis;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.polling.PollingUtil.pollNoFail;
-import static org.abego.guitesting.swing.internal.SwingUtil.toScreenCoordinates;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.toScreenCoordinates;
 
 final class MouseSupportImpl implements MouseSupport {
     private static final int MULTI_CLICK_INTERVAL_MILLIS_DEFAULT = 500;

@@ -25,16 +25,20 @@
 package org.abego.guitesting.swing;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.io.FileUtil;
 import org.abego.commons.io.PrintStreamToBuffer;
 import org.abego.commons.lang.RunOnClose;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.swing.JFrameUtil;
 import org.abego.commons.timeout.TimeoutUncheckedException;
+import org.abego.guitesting.swing.ScreenCaptureSupport.ImageDifference;
 import org.abego.guitesting.swing.internal.PauseUI;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.opentest4j.AssertionFailedError;
 
 import javax.swing.JButton;
@@ -45,8 +49,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,11 +60,16 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.min;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -66,9 +77,18 @@ import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
-import static org.abego.guitesting.swing.internal.SwingUtil.isBlueish;
-import static org.abego.guitesting.swing.internal.SwingUtil.isGreenish;
-import static org.abego.guitesting.swing.internal.SwingUtil.isRedish;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.isBlueish;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.isGreenish;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.isRedish;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompare.imagesAreEqual;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompare.newImageCompare;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColors2Image;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsAtScreen1Image;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColors2DifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColorsDifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsColorsLargerDifferenceMask;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsImage;
+import static org.abego.guitesting.swing.internal.screencapture.ImageCompareTest.getColorsLargerImage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -81,7 +101,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test GT
  */
-class GTTest {
+public class GTTest {
     private final static GT gt = GuiTesting.newGT();
     private static final String meta = isMac() ? "⌘" : "Meta";
 
@@ -104,6 +124,28 @@ class GTTest {
         JTextField tf = new JTextField();
         tf.setName("input");
         JFrameUtil.showInFrame(tf);
+    }
+
+    public static void assertImageEquals(
+            BufferedImage expectedImage, BufferedImage actualImage,
+            String imageBaseName) {
+        @Nullable
+        BufferedImage diffMask = newImageCompare().differenceMask(
+                expectedImage, actualImage);
+        if (diffMask != null) {
+            String prefix = String.format("%s-%d-",
+                    imageBaseName, System.currentTimeMillis());
+            gt.writeImage(expectedImage, new File(prefix + "expected.png"));
+            gt.writeImage(actualImage, new File(prefix + "actual.png"));
+            gt.writeImage(diffMask, new File(prefix + "difference.png"));
+            fail("Images are not equal. Check working directory for png files.");
+        }
+    }
+
+    private static Rectangle getBoundsOnScreen(Component component) {
+        Point origin = new Point();
+        SwingUtilities.convertPointToScreen(origin, component);
+        return new Rectangle(origin, component.getSize());
     }
 
     private Supplier<String> firstTwoLinesOfBlackboard() {
@@ -245,7 +287,7 @@ class GTTest {
                     "[Timeout]  ==> expected: <Success> but was: <java.lang.IllegalStateException>",
                     e.getMessage());
         }
-        assertTrue(countVar[0] > 1); // must have done several trys/polls
+        assertTrue(countVar[0] > 1); // must have done several try/poll calls
     }
 
     @Test
@@ -895,6 +937,7 @@ class GTTest {
     }
 
     @Test
+    @Disabled
     void mouseWheel_ok() {
         MyGT.showFrameForMouseTests();
 
@@ -1149,12 +1192,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1168,12 +1211,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1187,12 +1230,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1206,12 +1249,12 @@ class GTTest {
 
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(50,50),absolute(100,100),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(60,70),absolute(110,120),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1392,7 +1435,6 @@ class GTTest {
         MyGT.assertEqualsRetrying("fxoobazbarqux", textComponent::getText);
     }
 
-
     @Test
     void clickRight_Component_withClickCount_ok() {
         JFrame frame = MyGT.showFrameForMouseTests();
@@ -1403,12 +1445,12 @@ class GTTest {
         gt.clickRight(comp, 40, 15, 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1422,12 +1464,12 @@ class GTTest {
         gt.clickRight(comp, new Point(40, 15), 1);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1441,12 +1483,12 @@ class GTTest {
         gt.clickRight(comp, 40, 15);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1460,20 +1502,17 @@ class GTTest {
         gt.clickRight(comp, new Point(40, 15));
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(10,10),absolute(160,160),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
     @Test
     void clickRight_Component_centered_withClickCount_ok() {
-        //TODO: this test sometimes fails, especially when executed after test
-        // waitUntilInFocus_ok. It looks like the first click is lost sometimes.
-        // 2021-03-07: enabled test again, to check if problem still exists
 
         JFrame frame = MyGT.showFrameForMouseTests();
 
@@ -1502,12 +1541,12 @@ class GTTest {
         gt.clickRight(comp);
 
         MyGT.assertEqualsRetrying(
-                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers="+meta+"+Button3,clickCount=1",
+                "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_PRESSED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_RELEASED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                        "MOUSE_CLICKED,(40,15),absolute(190,165),button=3,modifiers=" + meta + "+Button3,clickCount=1",
                 MyGT.blackboard()::text);
     }
 
@@ -1616,8 +1655,8 @@ class GTTest {
 
         gt.dragRight(80, 90, 200, 220);
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1626,8 +1665,8 @@ class GTTest {
 
         gt.dragRight(new Point(80, 90), new Point(200, 220));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(30,40),absolute(80,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(150,170),absolute(200,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
 
     @Test
@@ -1641,7 +1680,6 @@ class GTTest {
                 firstTwoLinesOfBlackboard());
     }
 
-    @NonNull
     private String clickCountOnReleased() {
         return "clickCount=" + (isMac() ? "0" : "1");
     }
@@ -1652,10 +1690,9 @@ class GTTest {
 
         gt.dragRight(frame, new Point(130, 40), new Point(50, 170));
 
-        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers="+meta+"+Button3,clickCount=1\n" +
-                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers="+meta+"+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
+        MyGT.assertEqualsRetrying("MOUSE_PRESSED,(130,40),absolute(180,90),button=3,modifiers=" + meta + "+Button3,clickCount=1\n" +
+                "MOUSE_RELEASED,(50,170),absolute(100,220),button=3,modifiers=" + meta + "+Button3," + clickCountOnReleased(), firstTwoLinesOfBlackboard());
     }
-
 
     @Test
     void waitWhile_ok() {
@@ -1727,7 +1764,6 @@ class GTTest {
         MyGT.assertEqualsRetrying("pause ended", MyGT.blackboard()::text);
     }
 
-
     @Test
     void poll_ok() {
         // endTime in 100ms, ends before timeout
@@ -1743,7 +1779,6 @@ class GTTest {
         assertThrows(TimeoutUncheckedException.class,
                 () -> gt.poll(Date::new, d -> false));
     }
-
 
     @Test
     void pollNoFail_ok() {
@@ -1778,7 +1813,6 @@ class GTTest {
         assertThrows(TimeoutUncheckedException.class,
                 () -> gt.poll(Date::new, d -> false, Duration.ofSeconds(1)));
     }
-
 
     @Test
     void pollNoFail_explicitTimeout_ok() {
@@ -1818,27 +1852,11 @@ class GTTest {
     void createScreenCapture_ok() {
         JFrame frame = MyGT.showFrameWithColors();
 
-        // We repeat the code from getPixelColor_ok. After that code we are
-        // sure the frame is correctly displayed. Without this "delay" the
-        // createScreenCapture sometimes took a screenshot of an "appearing"
-        // frame, e.g. with "gray" and not yet black colors.
-        int left = frame.getLocation().x;
-        int top = frame.getLocation().y;
-        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
-        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
-        // The frame is now displayed completely and in "full colors".
+        assertFrameWithColorsIsDisplayedRetrying(frame);
 
         BufferedImage image = gt.createScreenCapture(frame.getBounds());
 
-        assertEquals(Color.white, new Color(image.getRGB(20, 20)));
-        assertEquals(Color.black, new Color(image.getRGB(50, 50)));
-
-        // The other color we cannot directly compare as createScreenCapture
-        // does not always reproduces the "native" colors. So we just check
-        // the "color-ish"
-        assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
-        assertTrue(isGreenish(new Color(image.getRGB(20, 90))));
-        assertTrue(isRedish(new Color(image.getRGB(90, 20))));
+        assertMatchesColorsImage(image);
     }
 
     @Test
@@ -1871,7 +1889,6 @@ class GTTest {
         gt.setAutoDelay(3);
         assertEquals(3, gt.getAutoDelay());
     }
-
 
     @Test
     void reset_ok() {
@@ -1965,7 +1982,6 @@ class GTTest {
         assertThrows(TimeoutUncheckedException.class, () ->
                 gt.runWithTimeout(Duration.ofMillis(1), () -> gt.poll(() -> true, v -> false)));
     }
-
 
     @Test
     void waitForIdle_ok() {
@@ -2153,7 +2169,7 @@ class GTTest {
 
 
         PrintStreamToBuffer out = newPrintStreamToBuffer();
-        try (RunOnClose r = systemOutRedirect(out)) {
+        try (RunOnClose ignored = systemOutRedirect(out)) {
             gt.dumpAllComponents();
         }
 
@@ -2182,7 +2198,6 @@ class GTTest {
         }
 
 
-
     }
 
     @Test
@@ -2203,4 +2218,297 @@ class GTTest {
         assertSame(gt, gt._wait());
         assertSame(gt, gt._window());
     }
+
+    @Test
+    void captureScreen_Rectangle() {
+        JFrame frame = MyGT.showFrameWithColors();
+
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        Component component = frame.getContentPane();
+        Rectangle result = getBoundsOnScreen(component);
+
+        BufferedImage image = gt.captureScreen(result);
+
+        assertMatchesColorsImage(image);
+    }
+
+    @Test
+    void captureScreen_Component() {
+        JFrame frame = MyGT.showFrameWithColors();
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        BufferedImage image = gt.captureScreen(frame.getContentPane());
+
+        assertMatchesColorsImage(image);
+    }
+
+    @Test
+    void captureScreen_Component_Rectangle() {
+        JFrame frame = MyGT.showFrameWithColors();
+        assertFrameWithColorsIsDisplayedRetrying(frame);
+
+        BufferedImage image = gt.captureScreen(
+                frame.getContentPane(),
+                new Rectangle(100, 100));
+
+        assertMatchesColorsImage(image);
+    }
+
+    @Test
+    void captureScreen_JFrame_normalBounds_and_innerBounds() {
+        JFrame frame = MyGT.showFrameWithTitle();
+        gt.waitForIdle();
+        try {
+            gt.setUseInnerJFrameBounds(false);
+            BufferedImage largerImage = gt.captureScreen(frame);
+
+            gt.setUseInnerJFrameBounds(true);
+            BufferedImage smallerImage = gt.captureScreen(frame);
+
+            assertTrue(smallerImage.getWidth() < largerImage.getWidth() ||
+                    smallerImage.getHeight() < largerImage.getHeight());
+        } finally {
+            gt.setUseInnerJFrameBounds(false);
+        }
+    }
+
+    @Test
+    void imageDifference_noDifference() {
+        BufferedImage image = getColorsImage();
+
+        ImageDifference diff = gt.imageDifference(image, image);
+
+        assertFalse(diff.imagesAreDifferent());
+        assertImageEquals(image, diff.getImageA(), "imageA");
+        assertImageEquals(image, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColorsDifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
+    }
+
+    @Test
+    void imageDifference_withDifference_sameSize() {
+        BufferedImage image1 = getColorsImage();
+        BufferedImage image2 = getColors2Image();
+
+        ImageDifference diff = gt.imageDifference(image1, image2);
+
+        assertTrue(diff.imagesAreDifferent());
+        assertImageEquals(image1, diff.getImageA(), "imageA");
+        assertImageEquals(image2, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColors2DifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
+    }
+
+    @Test
+    void imageDifference_withDifference_differentSize() {
+        BufferedImage image1 = getColorsImage();
+        BufferedImage image2 = getColorsLargerImage();
+
+        ImageDifference diff = gt.imageDifference(image1, image2);
+
+        assertTrue(diff.imagesAreDifferent());
+        assertImageEquals(image1, diff.getImageA(), "imageA");
+        assertImageEquals(image2, diff.getImageB(), "imageB");
+        assertImageEquals(
+                getColorsColorsLargerDifferenceMask(),
+                diff.getDifferenceMask(),
+                "differenceMask");
+    }
+
+
+    private void assertFrameWithColorsIsDisplayedRetrying(JFrame frame) {
+        int left = frame.getLocation().x;
+        int top = frame.getLocation().y;
+
+        gt.assertEqualsRetrying(Color.white, () -> gt.getPixelColor(left + 20, top + 20));
+        gt.assertEqualsRetrying(Color.black, () -> gt.getPixelColor(left + 50, top + 50));
+    }
+
+    private void assertMatchesColorsImage(BufferedImage image) {
+        assertEquals(Color.white, new Color(image.getRGB(20, 20)));
+        assertEquals(Color.black, new Color(image.getRGB(50, 50)));
+
+        // The other color we cannot directly compare as createScreenCapture
+        // does not always reproduces the "native" colors. So we just check
+        // the "color-ish"
+        assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
+        assertTrue(isGreenish(new Color(image.getRGB(20, 90))));
+        assertTrue(isRedish(new Color(image.getRGB(90, 20))));
+    }
+
+    @Test
+    void readImage_writeImage(@TempDir File tempDir) {
+        File imageFile1 = new File(tempDir, "readImage_writeImage-sample.png");
+        FileUtil.copyResourceToFile(MyGT.class, "colors.png", imageFile1);
+
+        // read
+        BufferedImage img = gt.readImage(imageFile1);
+
+        // write
+        File imageFile2 = new File(tempDir, "readImage_writeImage-sample2.png");
+        gt.writeImage(img, imageFile2);
+
+        // read and verify
+        BufferedImage img2 = gt.readImage(imageFile2);
+        assertImageEquals(img, img2, "readImage_writeImage");
+    }
+
+    @Test
+    void readImage_badFile(@TempDir File tempDir) {
+        File badFile = new File(tempDir, "badFile.png");
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badFile));
+
+        assertEquals(
+                "Error when reading image from " + badFile,
+                exception.getMessage());
+    }
+
+    @Test
+    void readImage_nonPngFile(@TempDir File tempDir) {
+        File badFile = new File(tempDir, "badFile");
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badFile));
+
+        assertEquals(
+                "Only 'png' files supported. Got " + badFile,
+                exception.getMessage());
+    }
+
+    @Test
+    void readImage_URL(@TempDir File tempDir) {
+        URL imageURL = MyGT.class.getResource("colors.png");
+        // read
+        BufferedImage img = gt.readImage(imageURL);
+
+        // write
+        File imageFile = new File(tempDir, "readImage_URL-sample.png");
+        gt.writeImage(img, imageFile);
+
+        // read and verify
+        BufferedImage img2 = gt.readImage(imageFile);
+        assertImageEquals(img, img2, "readImage_URL-sample");
+    }
+
+    @Test
+    void readImage_URL_badURL() throws IOException {
+        String spec = getClass().getResource("colors.png").toString() + "-invalid";
+        URL badURL = new URL(spec);
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badURL));
+
+        assertEquals(
+                "Error when reading image from " + badURL, exception.getMessage());
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesImage_match() {
+        JFrame frame = MyGT.showFrameWithColors();
+        BufferedImage expectedImage = getColorsImage();
+        BufferedImage expectedImage2 = getColorsAtScreen1Image();
+
+        BufferedImage actualImage =
+                gt.waitUntilScreenshotMatchesImage(
+                        frame.getContentPane(), expectedImage, expectedImage2);
+
+        assertTrue(
+                imagesAreEqual(expectedImage, actualImage)
+                        || imagesAreEqual(expectedImage2, actualImage));
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesImage_timeout() {
+        JFrame frame = MyGT.showFrameWithColors();
+        BufferedImage notReallyExpectedImage = getColors2Image();
+        BufferedImage notReallyExpectedImage2 = getColorsLargerImage();
+        gt.setTimeout(Duration.ofSeconds(3));
+
+        AssertionFailedError error = assertThrows(AssertionFailedError.class,
+                () -> gt.waitUntilScreenshotMatchesImage(
+                        frame.getContentPane(),
+                        notReallyExpectedImage, notReallyExpectedImage2));
+
+        assertIsUnmatchedScreenshotError(error);
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate() {
+        JFrame frame = MyGT.showFrameWithColors();
+        Container component = frame.getContentPane();
+        gt.setGenerateSnapshotIfMissing(false);
+
+        assertEquals(0, gt.getImagesOfSnapshot().length);
+
+        // Not using assertThrows here but the "old" technique
+        // to make sure the proper method name is used for the snapshot
+        try {
+            gt.waitUntilScreenshotMatchesSnapshot(component);
+            fail("Exception expected");
+
+        } catch (GuiTestingException error) {
+            assertEquals(
+                    "No images defined for snapshot 'snapshot' of org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate",
+                    error.getMessage());
+        }
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_missingScreenshots_generate() {
+        JFrame frame = MyGT.showFrameWithColors();
+        gt.setGenerateSnapshotIfMissing(true);
+
+        BufferedImage actualImage =
+                gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
+
+        BufferedImage expectedImage = getColorsImage();
+        BufferedImage expectedImage2 = getColorsAtScreen1Image();
+        assertTrue(
+                imagesAreEqual(expectedImage, actualImage)
+                        || imagesAreEqual(expectedImage2, actualImage));
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot() {
+        JFrame frame = MyGT.showFrameWithColors();
+        gt.setTimeout(Duration.ofSeconds(3));
+
+        assertEquals(1, gt.getImagesOfSnapshot().length);
+
+        // Not using assertThrows here but the "old" technique
+        // to make sure the proper method name is used for the snapshot
+        try {
+            gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
+            fail("Exception expected");
+
+        } catch (AssertionFailedError error) {
+            assertIsUnmatchedScreenshotError(error);
+        }
+    }
+
+    private void assertIsUnmatchedScreenshotError(AssertionFailedError error) {
+        // Check the error message.
+        // E.g.the error message contains a reference to the "report file", i.e.
+        // that file must exist.
+        String errorMessage = error.getMessage();
+        Pattern expectedMessagePattern = Pattern.compile(
+                "Screenshot does not match expected image \\(Timeout\\)\\.\\s+" +
+                        "For details see:\\s+- (.+)", Pattern.DOTALL);
+        Matcher matcher = expectedMessagePattern.matcher(errorMessage);
+        if (!matcher.find()) {
+            fail("Wrong error message: " + errorMessage);
+        }
+        File reportFile = new File(matcher.group(1));
+        if (!reportFile.isFile()) {
+            fail("Report file missing: " + reportFile.getAbsolutePath());
+        }
+    }
+
 }

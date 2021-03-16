@@ -32,9 +32,11 @@ import org.abego.guitesting.swing.DialogAndFrameSupport;
 import org.abego.guitesting.swing.EDTSupport;
 import org.abego.guitesting.swing.FocusSupport;
 import org.abego.guitesting.swing.GT;
+import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
+import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
@@ -51,7 +53,10 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.PrintStream;
+import java.net.URL;
 import java.time.Duration;
 import java.util.OptionalLong;
 import java.util.function.BooleanSupplier;
@@ -66,9 +71,14 @@ import static org.abego.guitesting.swing.internal.AssertRetryingSupportImpl.newA
 import static org.abego.guitesting.swing.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.swing.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
 import static org.abego.guitesting.swing.internal.EDTSupportImpl.newEDTSupport;
+import static org.abego.guitesting.swing.internal.FocusSupportImpl.newFocusSupport;
+import static org.abego.guitesting.swing.internal.KeyboardSupportImpl.newKeyboardSupport;
+import static org.abego.guitesting.swing.internal.MouseSupportImpl.newMouseSupport;
+import static org.abego.guitesting.swing.internal.PollingSupportImpl.newPollingSupport;
 import static org.abego.guitesting.swing.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
 import static org.abego.guitesting.swing.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.swing.internal.WindowSupportImpl.newWindowSupport;
+import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.newScreenCaptureSupport;
 
 public final class GTImpl implements GT {
 
@@ -81,12 +91,13 @@ public final class GTImpl implements GT {
     private final DialogAndFrameSupport dialogAndFrameSupport = newDialogAndFrameSupport();
     private final EDTSupport edtSupport = newEDTSupport();
     private final WaitForIdleSupport waitForIdleSupport = newWaitForIdleSupport(robot);
-    private final KeyboardSupport keyboardSupport = KeyboardSupportImpl.newKeyboardSupport(robot, waitForIdleSupport);
-    private final MouseSupport mouseSupport = MouseSupportImpl.newMouseSupport(robot, waitForIdleSupport);
-    private final PollingSupport pollingSupport = PollingSupportImpl.newPollingSupport(timeoutSupport);
+    private final KeyboardSupport keyboardSupport = newKeyboardSupport(robot, waitForIdleSupport);
+    private final MouseSupport mouseSupport = newMouseSupport(robot, waitForIdleSupport);
+    private final PollingSupport pollingSupport = newPollingSupport(timeoutSupport);
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
-    private final FocusSupport focusSupport = FocusSupportImpl.newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
+    private final FocusSupport focusSupport = newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = newScreenCaptureSupport(robot, pollingSupport, waitSupport);
 
     private GTImpl() {
     }
@@ -325,6 +336,126 @@ public final class GTImpl implements GT {
     @Override
     public void setAutoDelay(int ms) {
         robot.setAutoDelay(ms);
+    }
+
+
+    // ======================================================================
+    // ScreenCaptureSupport API
+    // ======================================================================
+
+    @Override
+    public boolean getUseInnerJFrameBounds() {
+        return screenCaptureSupport.getUseInnerJFrameBounds();
+    }
+
+    @Override
+    public void setUseInnerJFrameBounds(boolean value) {
+        screenCaptureSupport.setUseInnerJFrameBounds(value);
+    }
+
+    @Override
+    public BufferedImage captureScreen(Rectangle screenRect) {
+        return screenCaptureSupport.captureScreen(screenRect);
+    }
+
+    @Override
+    public BufferedImage captureScreen(Component component, @Nullable Rectangle rectangle) {
+        return screenCaptureSupport.captureScreen(component, rectangle);
+    }
+
+    @Override
+    public BufferedImage captureScreen(Component component) {
+        return screenCaptureSupport.captureScreen(component);
+    }
+
+    @Override
+    public int getImageDifferenceTolerancePercentage() {
+        return screenCaptureSupport.getImageDifferenceTolerancePercentage();
+    }
+
+    @Override
+    public void setImageDifferenceTolerancePercentage(int value) {
+        screenCaptureSupport.setImageDifferenceTolerancePercentage(value);
+    }
+
+    @Override
+    public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
+        return screenCaptureSupport.imageDifference(imageA, imageB);
+    }
+
+    @Override
+    public BufferedImage imageDifferenceMask(BufferedImage imageA, BufferedImage imageB) {
+        return screenCaptureSupport.imageDifferenceMask(imageA, imageB);
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
+        return screenCaptureSupport.waitUntilScreenshotMatchesImage(component, rectangle, expectedImages);
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesImage(Component component, BufferedImage... expectedImages) {
+        return screenCaptureSupport.waitUntilScreenshotMatchesImage(component, expectedImages);
+    }
+
+    @Override
+    public boolean getGenerateSnapshotIfMissing() {
+        return screenCaptureSupport.getGenerateSnapshotIfMissing();
+    }
+
+    @Override
+    public void setGenerateSnapshotIfMissing(boolean value) {
+        screenCaptureSupport.setGenerateSnapshotIfMissing(value);
+    }
+
+    @Override
+    public Duration getDelayBeforeNewSnapshot() {
+        return screenCaptureSupport.getDelayBeforeNewSnapshot();
+    }
+
+    @Override
+    public void setDelayBeforeNewSnapshot(Duration duration) {
+        screenCaptureSupport.setDelayBeforeNewSnapshot(duration);
+    }
+
+    @Override
+    public String getTestResourcesDirectoryPath() {
+        return screenCaptureSupport.getTestResourcesDirectoryPath();
+    }
+
+    @Override
+    public void setTestResourcesDirectoryPath(String path) {
+        screenCaptureSupport.setTestResourcesDirectoryPath(path);
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws GuiTestingException {
+        return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
+    }
+
+    @Override
+    public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws GuiTestingException {
+        return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, snapshotName);
+    }
+
+    @Override
+    public BufferedImage[] getImagesOfSnapshot(String name) {
+        return screenCaptureSupport.getImagesOfSnapshot(name);
+    }
+
+    @Override
+    public void writeImage(RenderedImage image, File file) {
+        screenCaptureSupport.writeImage(image, file);
+    }
+
+    @Override
+    public BufferedImage readImage(File file) {
+        return screenCaptureSupport.readImage(file);
+    }
+
+    @Override
+    public BufferedImage readImage(URL url) {
+        return screenCaptureSupport.readImage(url);
     }
 
     // ======================================================================

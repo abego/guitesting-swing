@@ -24,55 +24,14 @@
 
 package org.abego.guitesting.swing.internal;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+import org.junit.jupiter.api.Test;
 
-import org.abego.guitesting.swing.TimeoutSupport;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.Duration;
-
-import static java.time.Duration.ofSeconds;
-
-final class TimeoutSupportImpl implements TimeoutSupport {
-
-    private static final Duration INITIAL_TIMEOUT_DEFAULT = ofSeconds(10);
-    private Duration initialTimeout = INITIAL_TIMEOUT_DEFAULT;
-    private Duration timeout = initialTimeout;
-
-    private TimeoutSupportImpl() {
-    }
-
-    static TimeoutSupport newTimeoutSupport() {
-        return new TimeoutSupportImpl();
-    }
-
-    @Override
-    public Duration timeout() {
-        return timeout;
-    }
-
-    @Override
-    public Duration initialTimeout() {
-        return initialTimeout;
-    }
-
-    @Override
-    public void setInitialTimeout(Duration duration) {
-        initialTimeout = duration;
-    }
-
-    @Override
-    public void setTimeout(Duration duration) {
-        timeout = duration;
-    }
-
-    @Override
-    public void runWithTimeout(Duration timeout, Runnable runnable) {
-
-        Duration oldTimeout = timeout();
-        try {
-            setTimeout(timeout);
-            runnable.run();
-        } finally {
-            setTimeout(oldTimeout);
-        }
+class GuiTestingUtilTest {
+    @Test
+    void constructor_fails() {
+        assertThrows(MustNotInstantiateException.class, GuiTestingUtil::new);
     }
 }

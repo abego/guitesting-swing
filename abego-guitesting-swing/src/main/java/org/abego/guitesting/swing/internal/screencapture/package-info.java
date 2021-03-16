@@ -22,19 +22,13 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing;
-
 /**
- * The library specific (unchecked) Exception.
+ * The implementation package of "screencapture"- related code,
+ * not intended to be access directly by client code.
+ * <p>
+ * Stuff inside this package may change any time without prior notice.
  */
-@SuppressWarnings("serial")
-public class GuiTestingException extends RuntimeException {
+@NonNullByDefault
+package org.abego.guitesting.swing.internal.screencapture;
 
-    public GuiTestingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public GuiTestingException(String message) {
-        super(message);
-    }
-}
+import org.eclipse.jdt.annotation.NonNullByDefault;

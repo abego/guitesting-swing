@@ -40,6 +40,9 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.text.MessageFormat;
 
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.iconFromResource;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.screenBounds;
+
 
 public final class PauseUI {
 
@@ -134,7 +137,7 @@ public final class PauseUI {
 
         private void initComponents() {
             button.setName(CONTINUE_BUTTON_NAME);
-            button.setIcon(SwingUtil.iconFromResource(PauseUI.class, "continue.png")); //NON-NLS
+            button.setIcon(iconFromResource(PauseUI.class, "continue.png")); //NON-NLS
             button.setToolTipText("Click here to continue"); //NON-NLS
             button.addActionListener(e -> {
                 getWaitWindow().setVisible(false);
@@ -161,7 +164,7 @@ public final class PauseUI {
         }
 
         private Point locationOnScreen() {
-            Rectangle bounds = SwingUtil.screenBounds();
+            Rectangle bounds = screenBounds();
             return new Point(0, bounds.height - getHeight());
         }
     }

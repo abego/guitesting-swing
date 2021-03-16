@@ -110,6 +110,7 @@ public interface GT extends
         MouseSupport,
         PollingSupport,
         RobotAPI,
+        ScreenCaptureSupport,
         TimeoutSupport,
         WaitForIdleSupport,
         WaitSupport,
@@ -330,6 +331,15 @@ public interface GT extends
      * @return this object as RobotAPI
      */
     default RobotAPI _robotAPI() {
+        return this;
+    }
+
+    /**
+     * Provides access to screen capture related methods.
+     *
+     * @return this object as ScreenCaptureSupport
+     */
+    default ScreenCaptureSupport _screenCapture() {
         return this;
     }
 
