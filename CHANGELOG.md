@@ -1,11 +1,25 @@
 # CHANGELOG
 
+## 0.11.0
+
+### New
+
+- add ScreenCaptureSupport
+- add assertSuccessRetrying
+
+### Improvements
+
+- more robust tests
+- improved code coverage
+- Fix typos
+- Documentation
+
 ## 0.10.1
 
 ### Documentation
 
 - update release process documentation
- 
+
 ## 0.10.0
 
 ### Changes
