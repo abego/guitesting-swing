@@ -133,10 +133,12 @@ public class GTTest {
         BufferedImage diffMask = newImageCompare().differenceMask(
                 expectedImage, actualImage);
         if (diffMask != null) {
-            gt.writeImage(expectedImage, new File(imageBaseName + "-expected.png"));
-            gt.writeImage(actualImage, new File(imageBaseName + "-actual.png"));
-            gt.writeImage(diffMask, new File(imageBaseName + "-difference.png"));
-            fail("Images are not equal");
+            String prefix = String.format("%s-%d-",
+                    imageBaseName, System.currentTimeMillis());
+            gt.writeImage(expectedImage, new File(prefix + "expected.png"));
+            gt.writeImage(actualImage, new File(prefix + "actual.png"));
+            gt.writeImage(diffMask, new File(prefix + "difference.png"));
+            fail("Images are not equal. Check working directory for png files.");
         }
     }
 
