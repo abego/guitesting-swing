@@ -64,12 +64,12 @@ add the following to the <dependencies> element in your pom.xml file.
 <dependency>
     <groupId>org.abego.guitesting</groupId>
     <artifactId>abego-guitesting-swing</artifactId>
-    <version>0.10.1</version>
+    <version>0.11.0</version>
 </dependency>
 ```
 
 
-__Download:__ https://github.com/abego/guitesting-swing/releases/tag/v0.10.1
+__Download:__ https://github.com/abego/guitesting-swing/releases/tag/v0.11.0
 
 ## Development
 
