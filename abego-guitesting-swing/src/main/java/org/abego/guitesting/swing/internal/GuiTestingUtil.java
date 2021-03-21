@@ -27,6 +27,8 @@ package org.abego.guitesting.swing.internal;
 import org.abego.commons.lang.exception.MustNotInstantiateException;
 import org.abego.guitesting.swing.GuiTestingException;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -39,6 +41,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.function.Predicate;
 
@@ -140,7 +143,7 @@ public final class GuiTestingUtil {
      * that is not itself a callee
      */
     @Nullable
-    public static StackTraceElement findCaller(
+    private static StackTraceElement findCaller(
             StackTraceElement[] stackTrace,
             Predicate<StackTraceElement> isCallee) {
         boolean foundCaller = false;
@@ -158,31 +161,23 @@ public final class GuiTestingUtil {
         return null;
     }
 
-    /**
-     * Returns the StackTraceElement of the first caller of a callee
-     * that is not itself a callee (in the current thread's stacktrace).
-     *
-     * @param isCallee returns true when the StackTraceElement passed in is a
-     *                 `callee`, false otherwise.
-     * @return the StackTraceElement of the first caller of a callee
-     * that is not itself a callee
-     */
-    @Nullable
-    public static StackTraceElement findCaller(
-            Predicate<StackTraceElement> isCallee) {
-        return findCaller(Thread.currentThread().getStackTrace(), isCallee);
+    public static StackTraceElement getNameDefiningCall(String calleeName) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        @Nullable StackTraceElement call = getTestMethodCallOrNull(stackTrace);
+        return call != null ? call : getCall(calleeName, stackTrace);
     }
 
     /**
-     * Returns the StackTraceElement of the first caller of a method with
-     * the given calleeName (in the current thread's stacktrace).
+     * Returns the StackTraceElement of the first call of a method with
+     * the given calleeName in the given stacktrace.
      *
      * @param calleeName the name of the method being called.
      * @return the StackTraceElement of the caller
      */
-    public static StackTraceElement getCaller(String calleeName) {
+    private static StackTraceElement getCall(
+            String calleeName, StackTraceElement[] stackTrace) {
         @Nullable StackTraceElement caller =
-                findCaller(e -> e.getMethodName().equals(calleeName));
+                findCaller(stackTrace, e -> e.getMethodName().equals(calleeName));
         if (caller == null) {
             throw new IllegalStateException(String.format("Cannot find method calling %s", calleeName)); //NON-NLS
         }
@@ -258,4 +253,43 @@ public final class GuiTestingUtil {
         }
         return size;
     }
+
+    @Nullable
+    private static StackTraceElement getTestMethodCallOrNull(StackTraceElement[] stackTrace) {
+        for (StackTraceElement element : stackTrace) {
+            try {
+                Class<?> type = Class.forName(element.getClassName());
+                String methodName = element.getMethodName();
+                @Nullable
+                Method m = findTestMethodOrNull(type, methodName);
+                if (m != null)
+                    return element;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static Method findTestMethodOrNull(Class<?> type, String name) {
+        return itemWithOrNull(type.getDeclaredMethods(),
+                m -> m.getName().equals(name) && isTestMethod(m));
+    }
+
+    private static boolean isTestMethod(Method m) {
+        return m.getAnnotationsByType(Test.class).length > 0
+                || m.getAnnotationsByType(ParameterizedTest.class).length > 0;
+    }
+
+    @Nullable
+    private static <T> T itemWithOrNull(T[] array, Predicate<T> predicate) {
+        for (T item : array) {
+            if (predicate.test(item)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 }

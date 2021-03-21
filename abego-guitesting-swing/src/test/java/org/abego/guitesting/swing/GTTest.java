@@ -39,6 +39,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opentest4j.AssertionFailedError;
 
 import javax.swing.JButton;
@@ -121,8 +123,13 @@ public class GTTest {
     }
 
     private static void openSampleWindow() {
+        openSampleWindow("foo");
+    }
+
+    private static void openSampleWindow(String text) {
         JTextField tf = new JTextField();
         tf.setName("input");
+        tf.setText(text);
         JFrameUtil.showInFrame(tf);
     }
 
@@ -159,6 +166,7 @@ public class GTTest {
     @AfterEach
     void tearDown() {
         gt.cleanup();
+        gt.setGenerateSnapshotIfMissing(true);
 
         MyGT.cleanupMyGT();
     }
@@ -2491,6 +2499,33 @@ public class GTTest {
         } catch (AssertionFailedError error) {
             assertIsUnmatchedScreenshotError(error);
         }
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_indirectCall() {
+
+        openSampleWindow();
+
+        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+
+        gt.setGenerateSnapshotIfMissing(false);
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"foo", "bar", "baz"})
+    void waitUntilScreenshotMatchesSnapshot_parameterizedTest(String text) {
+
+        openSampleWindow(text);
+
+        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+
+        gt.setGenerateSnapshotIfMissing(false);
+        callWaitUntilSnapshotMatchesSnapshot(tf, text);
+    }
+
+    private void callWaitUntilSnapshotMatchesSnapshot(JTextField tf, String name) {
+        gt.waitUntilScreenshotMatchesSnapshot(tf, name);
     }
 
     private void assertIsUnmatchedScreenshotError(AssertionFailedError error) {

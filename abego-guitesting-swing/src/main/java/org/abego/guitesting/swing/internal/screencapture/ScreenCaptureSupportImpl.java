@@ -52,8 +52,8 @@ import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.checkIsPngFilename;
-import static org.abego.guitesting.swing.internal.GuiTestingUtil.getCaller;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.getFullMethodName;
+import static org.abego.guitesting.swing.internal.GuiTestingUtil.getNameDefiningCall;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.toScreenCoordinates;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
 
@@ -184,7 +184,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
         rectangle = adjustRectangleForScreenCapture(component, rectangle);
         return waitUntilScreenshotMatchesImageHelper(
-                component, rectangle, expectedImages, null, getCaller("waitUntilScreenshotMatchesImage")
+                component, rectangle, expectedImages, null, getNameDefiningCall("waitUntilScreenshotMatchesImage")
         );
     }
 
@@ -225,7 +225,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public BufferedImage[] getImagesOfSnapshot(String name) {
-        StackTraceElement testMethod = getCaller("getImagesOfSnapshot");
+        StackTraceElement testMethod = getNameDefiningCall("getImagesOfSnapshot");
         return getImagesOfSnapshot(testMethod, name);
     }
 
@@ -235,7 +235,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             @Nullable Rectangle rectangle,
             String snapshotName)
             throws GuiTestingException {
-        StackTraceElement testMethod = getCaller("waitUntilScreenshotMatchesSnapshot");
+        StackTraceElement testMethod = getNameDefiningCall("waitUntilScreenshotMatchesSnapshot");
         rectangle = adjustRectangleForScreenCapture(component, rectangle);
 
         BufferedImage[] snapshotImages = getImagesOfSnapshot(testMethod, snapshotName);
