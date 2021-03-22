@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -40,6 +41,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -52,6 +54,18 @@ public final class GuiTestingUtil {
 
     GuiTestingUtil() {
         throw new MustNotInstantiateException();
+    }
+
+    public static String getReadImageErrorMessage(String source) {
+        return String.format("Error when reading image from %s", source); //NON-NLS
+    }
+
+    public static BufferedImage readImage(URL url) {
+        try {
+            return ImageIO.read(url);
+        } catch (Exception e) {
+            throw new GuiTestingException(getReadImageErrorMessage(url.toString()), e);
+        }
     }
 
     /**
@@ -224,18 +238,6 @@ public final class GuiTestingUtil {
         if (!file.getName().toLowerCase().endsWith(".png")) {
             throw new GuiTestingException(String.format("Only 'png' files supported. Got %s", file)); //NON-NLS
         }
-    }
-
-    /**
-     * Returns the fully qualified name of the method identified
-     * by the stackTraceElement.
-     *
-     * @param stackTraceElement the {@link StackTraceElement} to check.
-     * @return the fully qualified name of the method identified
-     * by the stackTraceElement
-     */
-    public static String getFullMethodName(StackTraceElement stackTraceElement) {
-        return getClass(stackTraceElement).getName() + "." + stackTraceElement.getMethodName();
     }
 
     /**

@@ -264,6 +264,38 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     void setTestResourcesDirectoryPath(String path);
 
     /**
+     * Returns the absolute name of the snapshot the will be created in that
+     * current context, taking `name` and the calling method(s) into account.
+     *
+     * <p>
+     * <em>(When {@code name} is {@code null} assume {@code name}
+     * is {@code "snapshot"}.)</em>
+     * <ul>
+     *     <li>
+     *          A {@code name} starting with {@code '/'} defines an absolute
+     *          name and is returned "as is", otherwise
+     *     </li>
+     *     <li>
+     *         when (directly or indirectly) called from a JUnit 5 {@code @Test}
+     *         or {@code @ParameterizedTest} method {@code testMethodName} in a
+     *         class {@code a.b.c.TestClass} the snapshot name is
+     *         {@code "/a/b/c/TestClass.testMethodName-%s"}, with {@code name}
+     *         as {@code %s}, otherwise
+     *     </li>
+     *     <li>
+     *         when directly called from a method {@code methodName} in a
+     *         class {@code a.b.c.CallingClass} the snapshot name is
+     *         {@code "/a/b/c/CallingClass.methodName-%s"}, with {@code name}
+     *         as {@code %s}.
+     *     </li>
+     * </ul>
+     *
+     * @param name the (relative or absolute) name of the snapshot, or {@code null}
+     * @return the absolute name of the snapshot
+     */
+    String getSnapshotName(@Nullable String name);
+
+    /**
      * Returns the images of the snapshot with the given name.
      *
      * @param name the name of the snapshot

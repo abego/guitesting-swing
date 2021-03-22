@@ -37,7 +37,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -72,6 +74,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.lang.Integer.min;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -2222,6 +2225,7 @@ public class GTTest {
         assertSame(gt, gt._mouse());
         assertSame(gt, gt._poll());
         assertSame(gt, gt._robotAPI());
+        assertSame(gt, gt._screenCapture());
         assertSame(gt, gt._timeout());
         assertSame(gt, gt._wait());
         assertSame(gt, gt._window());
@@ -2463,7 +2467,7 @@ public class GTTest {
 
         } catch (GuiTestingException error) {
             assertEquals(
-                    "No images defined for snapshot 'snapshot' of org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate",
+                    "No images defined for /org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate-snapshot",
                     error.getMessage());
         }
     }
@@ -2506,7 +2510,7 @@ public class GTTest {
 
         openSampleWindow();
 
-        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+        gt.waitForComponentNamed(JTextField.class, "input");
 
         gt.setGenerateSnapshotIfMissing(false);
 
@@ -2522,6 +2526,44 @@ public class GTTest {
 
         gt.setGenerateSnapshotIfMissing(false);
         callWaitUntilSnapshotMatchesSnapshot(tf, text);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> waitUntilScreenshotMatchesSnapshot_TestFactory() {
+        return Stream.of("foo", "bar", "baz")
+                .map(text -> DynamicTest.dynamicTest(text, () -> {
+                    openSampleWindow(text);
+
+                    JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+
+                    gt.setGenerateSnapshotIfMissing(false);
+                    String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
+                    gt.waitUntilScreenshotMatchesSnapshot(tf, name);
+                    gt.cleanup();
+                }));
+    }
+
+    @Test
+    void getSnapshotName() {
+        // relative name
+        String name = gt.getSnapshotName("foo");
+
+        assertEquals("/org/abego/guitesting/swing/GTTest.getSnapshotName-foo", name);
+
+        // absolute name
+        String name2 = gt.getSnapshotName("/foo/bar/baz");
+
+        assertEquals("/foo/bar/baz", name2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"foo", "bar", "baz"})
+    void getSnapshotName_ParameterizedTest(String text) {
+        String name = gt.getSnapshotName(text);
+
+        assertEquals(
+                "/org/abego/guitesting/swing/GTTest.getSnapshotName_ParameterizedTest-" + text,
+                name);
     }
 
     private void callWaitUntilSnapshotMatchesSnapshot(JTextField tf, String name) {

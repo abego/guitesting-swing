@@ -429,6 +429,11 @@ public final class GTImpl implements GT {
     }
 
     @Override
+    public String getSnapshotName(@Nullable String name) {
+        return screenCaptureSupport.getSnapshotName(name);
+    }
+
+    @Override
     public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, @Nullable Rectangle rectangle, String snapshotName) throws GuiTestingException {
         return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, rectangle, snapshotName);
     }
