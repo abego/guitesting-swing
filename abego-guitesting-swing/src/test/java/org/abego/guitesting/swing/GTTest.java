@@ -46,9 +46,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.opentest4j.AssertionFailedError;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import java.awt.Color;
@@ -2566,6 +2571,28 @@ public class GTTest {
                 name);
     }
 
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_indirectCall() {
+
+        openSampleWindow();
+
+        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+
+        gt.setGenerateSnapshotIfMissing(false);
+
+        callWaitUntilSnapshotMatchesSnapshot(tf, null);
+    }
+
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_rectangle() {
+
+        openSampleWindow();
+
+        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+
+        gt.waitUntilScreenshotMatchesSnapshot(tf, new Rectangle(15, 10));
+    }
+
     private void callWaitUntilSnapshotMatchesSnapshot(JTextField tf, String name) {
         gt.waitUntilScreenshotMatchesSnapshot(tf, name);
     }
@@ -2588,4 +2615,20 @@ public class GTTest {
         }
     }
 
+    @Test
+    void waitUntilAllMenuRelatedScreenshotsMatchSnapshot() {
+        showMenuSampleWindow();
+
+        JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
+        gt.waitUntilAllMenuRelatedScreenshotsMatchSnapshot(menubar);
+    }
+
+    @Test
+    void waitUntilPopupMenuScreenshotMatchesSnapshot() {
+        showMenuSampleWindow();
+
+        JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
+        JMenu menu = menubar.getMenu(0);
+        gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
+    }
 }

@@ -44,6 +44,10 @@ import org.abego.guitesting.swing.WindowBaseSupport;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,6 +56,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -441,6 +446,53 @@ public final class GTImpl implements GT {
     @Override
     public BufferedImage waitUntilScreenshotMatchesSnapshot(Component component, String snapshotName) throws GuiTestingException {
         return screenCaptureSupport.waitUntilScreenshotMatchesSnapshot(component, snapshotName);
+    }
+
+    @Override
+    public BufferedImage waitUntilPopupMenuScreenshotMatchesSnapshot(JMenu menu, String snapshotName) {
+        menu.setPopupMenuVisible(true);
+        try {
+            JPopupMenu jPopupMenu = waitForComponentWith(
+                    JPopupMenu.class, c -> c.getInvoker() == menu);
+            return waitUntilScreenshotMatchesSnapshot(jPopupMenu, snapshotName);
+        } finally {
+            menu.setPopupMenuVisible(false);
+        }
+    }
+
+
+    @Override
+    public void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
+            JMenuBar menubar, String snapshotName) {
+        waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar");
+        keyPress(KeyEvent.VK_ALT);
+        try {
+            waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics");
+            for (int i = 0; i < menubar.getMenuCount(); i++) {
+                JMenu menu = menubar.getMenu(i);
+                String menuSnapshotName = snapshotName + "-menu" + i;
+                waitUntilMenuScreenshotsMatchSnapshot(menu, menuSnapshotName);
+            }
+        } finally {
+            keyRelease(KeyEvent.VK_ALT);
+        }
+    }
+
+    private void waitUntilMenuScreenshotsMatchSnapshot(
+            JMenu menu, String snapshotName) {
+        waitUntilPopupMenuScreenshotMatchesSnapshot(menu, snapshotName);
+        for (int i = 0; i < menu.getItemCount(); i++) {
+            JMenuItem menuItem = menu.getItem(i);
+            if (menuItem instanceof JMenu) {
+                JMenu subMenu = (JMenu) menuItem;
+                menu.setPopupMenuVisible(true);
+                try {
+                    waitUntilMenuScreenshotsMatchSnapshot(subMenu, snapshotName + "." + i);
+                } finally {
+                    menu.setPopupMenuVisible(false);
+                }
+            }
+        }
     }
 
     @Override

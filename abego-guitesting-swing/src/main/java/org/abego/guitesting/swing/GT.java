@@ -29,8 +29,11 @@ import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.Timeoutable;
 import org.opentest4j.AssertionFailedError;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import java.awt.Component;
 import java.awt.Window;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -199,6 +202,76 @@ public interface GT extends
                     messageOrClassName(e)),
                     e);
         }
+    }
+
+
+    /**
+     * Waits until the screenshot of the Popup Menu associated with
+     * the {@code menu} matches one of the images defined for
+     * the snapshot with the given {@code snapshotName}, and returns the image.
+     *
+     * <p>When the snapshot does not yet have images the behaviour depends on
+     * the property {@code generateSnapshotIfMissing}
+     * (see {@link #getGenerateSnapshotIfMissing()}):</p>
+     * <ul>
+     *     <li>{@code generateSnapshotIfMissing == true}: after a delay of {@link #getDelayBeforeNewSnapshot()}
+     *     a screenshot of the {@code component} is stored as the first image
+     *     of this snapshot and the method returns normally.</li>
+     *     <li>{@code generateSnapshotIfMissing == false}: the method throws
+     *     a {@link GuiTestingException}</li>
+     * </ul>
+     *
+     * <p>When the snapshot has images but the {@code component} does not match
+     * any of these images, even after the duration defined by
+     * {@link #timeout()}, the method throws a {@link GuiTestingException}.
+     *
+     * @param menu         the {@link Component} to compare with the images of
+     *                     the snapshot
+     * @param snapshotName the name of the snapshot.
+     * @return the screenshot image
+     */
+    @Timeoutable
+    BufferedImage waitUntilPopupMenuScreenshotMatchesSnapshot(
+            JMenu menu, String snapshotName);
+
+    @Timeoutable
+    default BufferedImage waitUntilPopupMenuScreenshotMatchesSnapshot(
+            JMenu menu) {
+        return waitUntilPopupMenuScreenshotMatchesSnapshot(
+                menu, getSnapshotName(null));
+    }
+
+    /**
+     * Waits until the screenshots of all components related to the given
+     * {@code menubar} matches one of the images defined for
+     * the snapshot with the given {@code snapshotName}.
+     *
+     * <p>Screenshots for the menubar, the menubar with visible accelerators,
+     * each popup menu of each menu in the menubar as well as their sub menus
+     * (recursively) are considered.</p>
+     *
+     * @param menubar      the {@link JMenuBar} to check
+     * @param snapshotName the name of the snapshot.
+     */
+    @Timeoutable
+    void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
+            JMenuBar menubar, String snapshotName);
+
+    /**
+     * Waits until the screenshots of all components related to the given
+     * {@code menubar} matches one of the images defined for the default
+     * snapshot.
+     *
+     * <p>For details see
+     * {@link #waitUntilAllMenuRelatedScreenshotsMatchSnapshot(JMenuBar, String)}</p>
+     *
+     * @param menubar the {@link JMenuBar} to check
+     */
+    @Timeoutable
+    default void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
+            JMenuBar menubar) {
+        waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
+                menubar, getSnapshotName(null));
     }
 
     // ======================================================================
