@@ -35,6 +35,9 @@ import java.util.function.Predicate;
 public interface ComponentSupport extends ComponentBaseSupport {
 
     @Timeoutable
+    <T extends Component> T waitForComponent(Class<T> componentClass);
+
+    @Timeoutable
     <T extends Component> T waitForComponentWith(
             Class<T> componentClass,
             Predicate<T> condition);

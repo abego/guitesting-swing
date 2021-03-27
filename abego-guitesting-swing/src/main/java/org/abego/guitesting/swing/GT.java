@@ -170,6 +170,12 @@ public interface GT extends
 
     @Override
     @Timeoutable
+    default <T extends Component> T waitForComponent(Class<T> componentClass) {
+        return waitForComponentWith(componentClass, c -> true);
+    }
+
+    @Override
+    @Timeoutable
     default <T extends Component> T waitForComponentWith(Class<T> componentClass,
                                                          Predicate<T> condition) {
         Seq<T> seq = poll(
