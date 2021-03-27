@@ -2510,17 +2510,6 @@ public class GTTest {
         }
     }
 
-    @Test
-    void waitUntilScreenshotMatchesSnapshot_indirectCall() {
-
-        openSampleWindow();
-
-        gt.waitForComponentNamed(JTextField.class, "input");
-
-        gt.setGenerateSnapshotIfMissing(false);
-
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"foo", "bar", "baz"})
     void waitUntilScreenshotMatchesSnapshot_parameterizedTest(String text) {
@@ -2630,5 +2619,45 @@ public class GTTest {
         JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
         JMenu menu = menubar.getMenu(0);
         gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
+    }
+
+    private static void showMenuSampleWindow() {
+        invokeLater(() -> {
+            JFrame frame = new JFrame("Menu Sample");
+            JMenuBar menubar = newSampleMenuBar();
+            frame.setJMenuBar(menubar);
+            frame.setSize(new Dimension(200, 100));
+            frame.setLocation(100, 100);
+            frame.setVisible(true);
+        });
+    }
+
+    private static JMenuBar newSampleMenuBar() {
+        JMenu menu1 = new JMenu("Menu 1");
+        menu1.setMnemonic(KeyEvent.VK_M);
+        JMenuItem menuItem = new JMenuItem("Menu item 1.1");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_1, ActionEvent.CTRL_MASK));
+        menuItem.setMnemonic(KeyEvent.VK_E);
+        menu1.add(menuItem);
+        menu1.add(new JMenuItem("Menu item 1.2"));
+        menu1.addSeparator();
+        JCheckBoxMenuItem cbBoxMenuItem = new JCheckBoxMenuItem("Menu item 1.3");
+        cbBoxMenuItem.setSelected(true);
+        menu1.add(cbBoxMenuItem);
+        JMenu submenu = new JMenu("Submenu 1.4");
+        submenu.add(new JMenuItem("Menu item 1.4.1"));
+        submenu.add(new JMenuItem("Menu item 1.4.2"));
+        menu1.add(submenu);
+        menu1.add(new JMenuItem("Menu item 1.5"));
+
+        JMenu menu2 = new JMenu("Menu 2");
+        menu2.add(new JMenuItem("Menu item 2.1"));
+        menu2.add(new JMenuItem("Menu item 2.2"));
+
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(menu1);
+        menuBar.add(menu2);
+        return menuBar;
     }
 }
