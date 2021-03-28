@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 0.12.0
+
+### New
+
+- add waitForComponent(Class<T>)
+
+### Improvements
+
+- ScreenCaptureSupport:
+  - improved automatic snapshot naming
+  - "absolute" snapshot name support
+  - better support for menu screenshots
+
 ## 0.11.0
 
 ### New
