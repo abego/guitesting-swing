@@ -36,6 +36,7 @@ import org.abego.guitesting.swing.internal.PauseUI;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -115,66 +116,14 @@ public class GTTest {
     private final static GT gt = GuiTesting.newGT();
     private static final String meta = isMac() ? "⌘" : "Meta";
 
-    private static boolean isMac() {
-        return System.getProperty("os.name").toLowerCase().contains("mac");
-    }
-
-    private static String head(int count, String text) {
-        String[] lines = text.split("\\r?\\n");
-        String[] headLines = Arrays.copyOfRange(lines, 0, min(count, lines.length));
-        return String.join("\n", headLines);
-    }
-
-    private static void async(Runnable runnable) {
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-
-    private static void openSampleWindow() {
-        openSampleWindow("foo");
-    }
-
-    private static void openSampleWindow(String text) {
-        JTextField tf = new JTextField();
-        tf.setName("input");
-        tf.setText(text);
-        JFrameUtil.showInFrame(tf);
-    }
-
-    public static void assertImageEquals(
-            BufferedImage expectedImage, BufferedImage actualImage,
-            String imageBaseName) {
-        @Nullable
-        BufferedImage diffMask = newImageCompare().differenceMask(
-                expectedImage, actualImage);
-        if (diffMask != null) {
-            String prefix = String.format("%s-%d-",
-                    imageBaseName, System.currentTimeMillis());
-            gt.writeImage(expectedImage, new File(prefix + "expected.png"));
-            gt.writeImage(actualImage, new File(prefix + "actual.png"));
-            gt.writeImage(diffMask, new File(prefix + "difference.png"));
-            fail("Images are not equal. Check working directory for png files.");
-        }
-    }
-
-    private static Rectangle getBoundsOnScreen(Component component) {
-        Point origin = new Point();
-        SwingUtilities.convertPointToScreen(origin, component);
-        return new Rectangle(origin, component.getSize());
-    }
-
-    private Supplier<String> firstTwoLinesOfBlackboard() {
-        return () -> head(2, MyGT.blackboard().text());
-    }
-
-    private Supplier<String> firstFiveLinesOfBlackboard() {
-        return () -> head(5, MyGT.blackboard().text());
+    @BeforeEach
+    void setUp() {
+        gt.setGenerateSnapshotIfMissing(false);
     }
 
     @AfterEach
     void tearDown() {
         gt.cleanup();
-        gt.setGenerateSnapshotIfMissing(true);
 
         MyGT.cleanupMyGT();
     }
@@ -2460,7 +2409,6 @@ public class GTTest {
     void waitUntilScreenshotMatchesSnapshot_missingScreenshots_dontGenerate() {
         JFrame frame = MyGT.showFrameWithColors();
         Container component = frame.getContentPane();
-        gt.setGenerateSnapshotIfMissing(false);
 
         assertEquals(0, gt.getImagesOfSnapshot().length);
 
@@ -2518,7 +2466,6 @@ public class GTTest {
 
         JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
-        gt.setGenerateSnapshotIfMissing(false);
         callWaitUntilSnapshotMatchesSnapshot(tf, text);
     }
 
@@ -2530,7 +2477,6 @@ public class GTTest {
 
                     JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
-                    gt.setGenerateSnapshotIfMissing(false);
                     String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
                     gt.waitUntilScreenshotMatchesSnapshot(tf, name);
                     gt.cleanup();
@@ -2563,19 +2509,17 @@ public class GTTest {
     @Test
     void waitUntilScreenshotMatchesSnapshot_indirectCall() {
 
-        openSampleWindow();
+        openSampleWindow("foo");
 
         JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
-        gt.setGenerateSnapshotIfMissing(false);
-
-        callWaitUntilSnapshotMatchesSnapshot(tf, null);
+        callWaitUntilSnapshotMatchesSnapshot(tf);
     }
 
     @Test
     void waitUntilScreenshotMatchesSnapshot_rectangle() {
 
-        openSampleWindow();
+        openSampleWindow("foo");
 
         JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
@@ -2584,6 +2528,10 @@ public class GTTest {
 
     private void callWaitUntilSnapshotMatchesSnapshot(JTextField tf, String name) {
         gt.waitUntilScreenshotMatchesSnapshot(tf, name);
+    }
+
+    private void callWaitUntilSnapshotMatchesSnapshot(JTextField tf) {
+        gt.waitUntilScreenshotMatchesSnapshot(tf);
     }
 
     private void assertIsUnmatchedScreenshotError(AssertionFailedError error) {
@@ -2637,7 +2585,7 @@ public class GTTest {
         menu1.setMnemonic(KeyEvent.VK_M);
         JMenuItem menuItem = new JMenuItem("Menu item 1.1");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_1, ActionEvent.CTRL_MASK));
+                KeyEvent.VK_1, InputEvent.CTRL_MASK));
         menuItem.setMnemonic(KeyEvent.VK_E);
         menu1.add(menuItem);
         menu1.add(new JMenuItem("Menu item 1.2"));
@@ -2660,4 +2608,61 @@ public class GTTest {
         menuBar.add(menu2);
         return menuBar;
     }
+
+    private static boolean isMac() {
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
+
+    private static String head(int count, String text) {
+        String[] lines = text.split("\\r?\\n");
+        String[] headLines = Arrays.copyOfRange(lines, 0, min(count, lines.length));
+        return String.join("\n", headLines);
+    }
+
+    private static void async(Runnable runnable) {
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+    private static void openSampleWindow() {
+        openSampleWindow("");
+    }
+
+    private static void openSampleWindow(String text) {
+        JTextField tf = new JTextField();
+        tf.setName("input");
+        tf.setText(text);
+        JFrameUtil.showInFrame(tf);
+    }
+
+    public static void assertImageEquals(
+            BufferedImage expectedImage, BufferedImage actualImage,
+            String imageBaseName) {
+        @Nullable
+        BufferedImage diffMask = newImageCompare().differenceMask(
+                expectedImage, actualImage);
+        if (diffMask != null) {
+            String prefix = String.format("%s-%d-",
+                    imageBaseName, System.currentTimeMillis());
+            gt.writeImage(expectedImage, new File(prefix + "expected.png"));
+            gt.writeImage(actualImage, new File(prefix + "actual.png"));
+            gt.writeImage(diffMask, new File(prefix + "difference.png"));
+            fail("Images are not equal. Check working directory for png files.");
+        }
+    }
+
+    private static Rectangle getBoundsOnScreen(Component component) {
+        Point origin = new Point();
+        SwingUtilities.convertPointToScreen(origin, component);
+        return new Rectangle(origin, component.getSize());
+    }
+
+    private Supplier<String> firstTwoLinesOfBlackboard() {
+        return () -> head(2, MyGT.blackboard().text());
+    }
+
+    private Supplier<String> firstFiveLinesOfBlackboard() {
+        return () -> head(5, MyGT.blackboard().text());
+    }
+
 }
