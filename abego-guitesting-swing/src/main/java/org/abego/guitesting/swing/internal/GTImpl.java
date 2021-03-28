@@ -468,7 +468,8 @@ public final class GTImpl implements GT {
             waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"); //NON-NLS
             for (int i = 0; i < menubar.getMenuCount(); i++) {
                 JMenu menu = menubar.getMenu(i);
-                String menuSnapshotName = snapshotName + "-menu" + i;
+                //noinspection StringConcatenation
+                String menuSnapshotName = snapshotName + "-menu-" + i; //NON-NLS
                 waitUntilMenuScreenshotsMatchSnapshot(menu, menuSnapshotName);
             }
         });
