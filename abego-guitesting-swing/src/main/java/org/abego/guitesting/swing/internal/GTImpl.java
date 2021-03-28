@@ -450,49 +450,28 @@ public final class GTImpl implements GT {
 
     @Override
     public BufferedImage waitUntilPopupMenuScreenshotMatchesSnapshot(JMenu menu, String snapshotName) {
-        menu.setPopupMenuVisible(true);
-        try {
+        return withPopupMenuVisibleGet(menu, () -> {
             JPopupMenu jPopupMenu = waitForComponentWith(
                     JPopupMenu.class, c -> c.getInvoker() == menu);
             return waitUntilScreenshotMatchesSnapshot(jPopupMenu, snapshotName);
-        } finally {
-            menu.setPopupMenuVisible(false);
-        }
+        });
     }
-
 
     @Override
     public void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
             JMenuBar menubar, String snapshotName) {
-        waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar");
-        keyPress(KeyEvent.VK_ALT);
-        try {
-            waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics");
+        //noinspection StringConcatenation
+        waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar"); //NON-NLS
+
+        withAltKeyPressedRun(()->{
+            //noinspection StringConcatenation
+            waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"); //NON-NLS
             for (int i = 0; i < menubar.getMenuCount(); i++) {
                 JMenu menu = menubar.getMenu(i);
                 String menuSnapshotName = snapshotName + "-menu" + i;
                 waitUntilMenuScreenshotsMatchSnapshot(menu, menuSnapshotName);
             }
-        } finally {
-            keyRelease(KeyEvent.VK_ALT);
-        }
-    }
-
-    private void waitUntilMenuScreenshotsMatchSnapshot(
-            JMenu menu, String snapshotName) {
-        waitUntilPopupMenuScreenshotMatchesSnapshot(menu, snapshotName);
-        for (int i = 0; i < menu.getItemCount(); i++) {
-            JMenuItem menuItem = menu.getItem(i);
-            if (menuItem instanceof JMenu) {
-                JMenu subMenu = (JMenu) menuItem;
-                menu.setPopupMenuVisible(true);
-                try {
-                    waitUntilMenuScreenshotsMatchSnapshot(subMenu, snapshotName + "." + i);
-                } finally {
-                    menu.setPopupMenuVisible(false);
-                }
-            }
-        }
+        });
     }
 
     @Override
@@ -513,6 +492,50 @@ public final class GTImpl implements GT {
     @Override
     public BufferedImage readImage(URL url) {
         return screenCaptureSupport.readImage(url);
+    }
+
+    private void waitUntilMenuScreenshotsMatchSnapshot(
+            JMenu menu, String menuSnapshotName) {
+        waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName);
+        for (int i = 0; i < menu.getItemCount(); i++) {
+            JMenuItem menuItem = menu.getItem(i);
+            if (menuItem instanceof JMenu) {
+                JMenu subMenu = (JMenu) menuItem;
+                menu.setPopupMenuVisible(true);
+                try {
+                    //noinspection StringConcatenation
+                    waitUntilMenuScreenshotsMatchSnapshot(subMenu, menuSnapshotName + "." + i);
+                } finally {
+                    menu.setPopupMenuVisible(false);
+                }
+            }
+        }
+    }
+
+    private void withAltKeyPressedRun(Runnable runnable) {
+        keyPress(KeyEvent.VK_ALT);
+        try {
+            runnable.run();
+        } finally {
+            keyRelease(KeyEvent.VK_ALT);
+
+            // On Windows releasing the ALT key may leave the menu in
+            // a "selected" state.
+            // Also the "show mnemonics" mode is not cleared.
+            //
+            // "Press and release ALT key" again fixes the problem.
+            keyPress(KeyEvent.VK_ALT);
+            keyRelease(KeyEvent.VK_ALT);
+        }
+    }
+
+    private static <T> T withPopupMenuVisibleGet(JMenu menu, Supplier<T> supplier) {
+        menu.setPopupMenuVisible(true);
+        try {
+            return supplier.get();
+        } finally {
+            menu.setPopupMenuVisible(false);
+        }
     }
 
     // ======================================================================
