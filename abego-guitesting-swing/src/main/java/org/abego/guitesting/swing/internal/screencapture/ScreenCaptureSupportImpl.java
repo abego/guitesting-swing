@@ -423,6 +423,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
          */
         private final String absoluteSnapshotName;
         private final String testResourcesDirectoryPath;
+        private final URL urlToTestClass;
 
         SnapshotInfo(
                 @Nullable String snapshotName,
@@ -431,7 +432,15 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             this.absoluteSnapshotName =
                     resolveSnapshotName(snapshotName, calleeName);
             this.testResourcesDirectoryPath = testResourcesDirectoryPath;
+            this.urlToTestClass = urlToTestClass(calleeName);
         }
+
+        private static URL urlToTestClass(String calleeName) {
+            StackTraceElement method = getNameDefiningCall(calleeName);
+            Class<?> type = GuiTestingUtil.getClass(method);
+            return type.getResource("");
+        }
+
 
         String getNoSnapshotImagesFoundMessage() {
             return String.format(
@@ -492,23 +501,32 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         }
 
         private File getTestResourcesDirectory() {
-            URL url = ScreenCaptureSupportImpl.class.getResource("/");
+            //noinspection StringConcatenation
+            String testResourcesDirectoryURL =
+                    getMavenProjectDirectoryURL() + "/" + testResourcesDirectoryPath; //NON-NLS
+
+            File testResourcesDir = urlToFile(testResourcesDirectoryURL); //NON-NLS
+            FileUtil.ensureDirectoryExists(testResourcesDir);
+            return testResourcesDir;
+        }
+
+        private String getMavenProjectDirectoryURL() {
             //noinspection CallToSuspiciousStringMethod
-            if (!url.getProtocol().equals("file")) { //NON-NLS
-                throw new GuiTestingException(String.format("Can write snapshot image only to file system ('file:/...'). Got %s", url)); //NON-NLS
+            if (!urlToTestClass.getProtocol().equals("file")) { //NON-NLS
+                throw new GuiTestingException(
+                        String.format("Can write snapshot image only to file system ('file:/...'). Got %s", //NON-NLS
+                                urlToTestClass)); //NON-NLS
             }
-            String urlText = url.toString();
+
+            String urlText = urlToTestClass.toString();
             String testClassesPattern = "/target/test-classes/"; //NON-NLS
-            if (!urlText.contains(testClassesPattern)) {
+            int i = urlText.indexOf(testClassesPattern);
+            if (i < 0) {
                 throw new GuiTestingException(
                         String.format("Standard Maven directory structure required (%s not found in %s)", //NON-NLS
                                 testClassesPattern, urlText));
             }
-            String inTestResourcesDirURL = urlText.replace(
-                    testClassesPattern, String.format("/%s/", testResourcesDirectoryPath)); //NON-NLS
-            File resourcesDir = urlToFile(inTestResourcesDirURL); //NON-NLS
-            FileUtil.ensureDirectoryExists(resourcesDir);
-            return resourcesDir;
+            return urlText.substring(0, i);
         }
 
 
