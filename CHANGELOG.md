@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.13.0
+
+### New
+
+- force early timeout of "wait..." methods by interrupting their Thread.
+
 ## 0.12.0
 
 ### New
