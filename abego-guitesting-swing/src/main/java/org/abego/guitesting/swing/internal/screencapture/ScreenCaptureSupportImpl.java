@@ -147,6 +147,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     public void writeImage(RenderedImage image, File file) {
         checkIsPngFilename(file);
         try {
+            FileUtil.ensureDirectoryExists(file.getParentFile());
+
             ImageIO.write(image, "png", file); //NON-NLS
         } catch (IOException e) {
             throw new GuiTestingException(
