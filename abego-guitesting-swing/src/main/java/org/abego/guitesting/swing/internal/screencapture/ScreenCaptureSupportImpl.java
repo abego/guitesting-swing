@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -95,12 +96,19 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public BufferedImage captureScreen(Rectangle screenRect) {
-        return robot.createScreenCapture(screenRect);
+    public BufferedImage captureScreen(@Nullable Rectangle screenRect) {
+        return robot.createScreenCapture(screenRect != null
+                ? screenRect
+                : new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
     }
 
     @Override
-    public BufferedImage captureScreen(Component component, @Nullable Rectangle rectangle) {
+    public BufferedImage captureScreen(
+            @Nullable Component component, @Nullable Rectangle rectangle) {
+        if (component == null) {
+            return captureScreen(rectangle);
+        }
+
         Rectangle componentRect = new Rectangle(component.getSize());
         if (rectangle == null) {
             rectangle = adjustRectangleForScreenCapture(component, null);
@@ -113,7 +121,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public BufferedImage captureScreen(Component component) {
+    public BufferedImage captureScreen(@Nullable Component component) {
         return captureScreen(component, null);
     }
 

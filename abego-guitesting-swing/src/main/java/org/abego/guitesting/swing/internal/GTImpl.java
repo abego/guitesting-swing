@@ -359,17 +359,17 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public BufferedImage captureScreen(Rectangle screenRect) {
+    public BufferedImage captureScreen(@Nullable Rectangle screenRect) {
         return screenCaptureSupport.captureScreen(screenRect);
     }
 
     @Override
-    public BufferedImage captureScreen(Component component, @Nullable Rectangle rectangle) {
+    public BufferedImage captureScreen(@Nullable Component component, @Nullable Rectangle rectangle) {
         return screenCaptureSupport.captureScreen(component, rectangle);
     }
 
     @Override
-    public BufferedImage captureScreen(Component component) {
+    public BufferedImage captureScreen(@Nullable Component component) {
         return screenCaptureSupport.captureScreen(component);
     }
 

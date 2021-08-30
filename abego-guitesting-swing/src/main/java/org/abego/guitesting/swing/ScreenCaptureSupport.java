@@ -83,33 +83,38 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns an image/screenshot of the rectangle of the screen.
      *
-     * @param screenRect a {@link Rectangle} on the screen
+     * @param screenRect a {@link Rectangle} on the screen, or {@code null} when
+     *                   the full screen size should be used.
      * @return an image of the rectangle of the screen.
      */
-    BufferedImage captureScreen(Rectangle screenRect);
+    BufferedImage captureScreen(@Nullable Rectangle screenRect);
 
     /**
      * Returns an image/screenshot of the {@code component}, or of the
      * {@code rectangle} of the {@code component}, if {@code rectangle}
      * is not {@code null}.
      *
-     * @param component the {@link Component} to take a screenshot of.
+     * @param component the {@link Component} to take a screenshot of or,
+     *                  {@code null} when taking a screenshot of the full
+     *                  screen.
      * @param rectangle the area of the component to take a screenshot of
      *                  (in coordinates relative to the component), or
      *                  {@code null} when a screenshot of the full component
      *                  should be returned.
      * @return an image of the {@code component} or a part of it
      */
-    BufferedImage captureScreen(Component component,
+    BufferedImage captureScreen(@Nullable Component component,
                                 @Nullable Rectangle rectangle);
 
     /**
      * Returns an image/screenshot of the {@code component}.
      *
-     * @param component the {@link Component} to take a screenshot of.
+     * @param component the {@link Component} to take a screenshot of,
+     *                  {@code null} when taking a screenshot of the full
+     *                  screen.
      * @return an image/screenshot of the {@code component}
      */
-    BufferedImage captureScreen(Component component);
+    BufferedImage captureScreen(@Nullable Component component);
 
     /**
      * Returns how tolerant images are compared, in percent.
