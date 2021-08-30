@@ -450,6 +450,11 @@ public final class GTImpl implements GT {
 
     @Override
     public BufferedImage waitUntilPopupMenuScreenshotMatchesSnapshot(JMenu menu, String snapshotName) {
+        if (menu.getMenuComponentCount() == 0) {
+            // When a menu has no items take a snapshot of the menu itself
+            return waitUntilScreenshotMatchesSnapshot(menu, snapshotName);
+        }
+
         return withPopupMenuVisibleGet(menu, () -> {
             JPopupMenu jPopupMenu = waitForComponentWith(
                     JPopupMenu.class, c -> c.getInvoker() == menu);

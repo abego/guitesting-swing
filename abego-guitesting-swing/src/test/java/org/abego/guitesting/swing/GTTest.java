@@ -2569,17 +2569,6 @@ public class GTTest {
         gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
     }
 
-    private static void showMenuSampleWindow() {
-        invokeLater(() -> {
-            JFrame frame = new JFrame("Menu Sample");
-            JMenuBar menubar = newSampleMenuBar();
-            frame.setJMenuBar(menubar);
-            frame.setSize(new Dimension(200, 100));
-            frame.setLocation(100, 100);
-            frame.setVisible(true);
-        });
-    }
-
     private static JMenuBar newSampleMenuBar() {
         JMenu menu1 = new JMenu("Menu 1");
         menu1.setMnemonic(KeyEvent.VK_M);
@@ -2603,9 +2592,12 @@ public class GTTest {
         menu2.add(new JMenuItem("Menu item 2.1"));
         menu2.add(new JMenuItem("Menu item 2.2"));
 
+        JMenu menu3 = new JMenu("Empty"); // empty menu
+
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(menu1);
         menuBar.add(menu2);
+        menuBar.add(menu3);
         return menuBar;
     }
 
