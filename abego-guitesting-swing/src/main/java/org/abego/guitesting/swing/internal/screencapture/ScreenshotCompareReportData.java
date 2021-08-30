@@ -34,6 +34,7 @@ import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
 
 class ScreenshotCompareReportData {
     private final File outputDirectory;
+    private final ScreenCaptureSupportImpl.SnapshotInfo snapshotInfo;
     private final String methodName;
     private final String actualImageFileName;
     private final List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles;
@@ -42,9 +43,10 @@ class ScreenshotCompareReportData {
 
     private final @Nullable File newImageFile;
 
-    private ScreenshotCompareReportData(File outputDirectory, String methodName, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception, @Nullable File newImageFile, String timestamp) {
+    private ScreenshotCompareReportData(File outputDirectory, ScreenCaptureSupportImpl.SnapshotInfo snapshotInfo, String actualImageFileName, List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles, Exception exception, @Nullable File newImageFile, String timestamp) {
         this.outputDirectory = outputDirectory;
-        this.methodName = methodName;
+        this.snapshotInfo = snapshotInfo;
+        this.methodName = snapshotInfo.getSnapshotSimpleName();
         this.actualImageFileName = actualImageFileName;
         this.expectedAndDifferenceFiles = expectedAndDifferenceFiles;
         this.exception = exception;
@@ -54,13 +56,13 @@ class ScreenshotCompareReportData {
 
     static ScreenshotCompareReportData of(
             File outputDirectory,
-            String methodName,
+            ScreenCaptureSupportImpl.SnapshotInfo snapshotInfo,
             String actualImageFileName,
             List<ExpectedAndDifferenceFile> expectedAndDifferenceFiles,
             Exception exception,
             @Nullable File newImageFile,
             String timestamp) {
-        return new ScreenshotCompareReportData(outputDirectory, methodName, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFile, timestamp);
+        return new ScreenshotCompareReportData(outputDirectory, snapshotInfo, actualImageFileName, expectedAndDifferenceFiles, exception, newImageFile, timestamp);
     }
 
     public File getOutputDirectory() {
@@ -96,6 +98,10 @@ class ScreenshotCompareReportData {
     @Nullable
     public String getNewImageAbsoluteFilePath() {
         return newImageFile != null ? newImageFile.getAbsolutePath() : null;
+    }
+
+    public String getExpectedImageAbsoluteFilePath(int i) {
+        return snapshotInfo.getSnapshotImageFile(i).getAbsolutePath();
     }
 
 }

@@ -417,7 +417,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
         return ScreenshotCompareReportData.of(
                 outputDir,
-                snapshotInfo.getSnapshotSimpleName(),
+                snapshotInfo,
                 String.format("%s/%s", imagesDirName, snapshotInfo.getActualImageFileName()), //NON-NLS
                 expectedAndDifferenceFiles,
                 exception,

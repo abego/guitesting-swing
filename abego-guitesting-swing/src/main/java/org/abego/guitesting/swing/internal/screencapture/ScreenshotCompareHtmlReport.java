@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.screencapture;
 
 import org.abego.guitesting.swing.GuiTestingException;
+import org.abego.guitesting.swing.internal.GuiTestingUtil;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -39,6 +40,12 @@ public class ScreenshotCompareHtmlReport {
 
     public static ScreenshotCompareHtmlReport of(ScreenshotCompareReportData reportData) {
         return new ScreenshotCompareHtmlReport(reportData);
+    }
+
+    private static String copyFileStatement(String source, String target) {
+        return GuiTestingUtil.isMacOS()
+                ? "cp -rf " + source + " " + target
+                : "copy /Y " + source + " " + target;
     }
 
     @SuppressWarnings({"StringConcatenation", "HardCodedStringLiteral"})
@@ -60,12 +67,10 @@ public class ScreenshotCompareHtmlReport {
                     "<img src=\"" + reportData.getActualImageFilePath() + "\" alt=\"actual image\">\n");
 
             if (reportData.getNewImageAbsoluteFilePath() != null) {
-                report.println("" +
-                        "<h3>Choices</h3>\n" +
-                        "<h4>To make the image an additional option of the snapshot run the following in a bash terminal:</h4>\n" +
-                        "<pre>\n" +
-                        "cp " + reportData.getActualImageAbsoluteFilePath() + " " + reportData.getNewImageAbsoluteFilePath() + "\n" +
-                        "</pre>\n");
+                printCopyFileStatement(report,
+                        "To make the image an additional option of the snapshot run the following in a command line terminal:",
+                        reportData.getActualImageAbsoluteFilePath(),
+                        reportData.getNewImageAbsoluteFilePath());
             }
 
             int n = reportData.getExpectedAndDifferenceFiles().size();
@@ -76,6 +81,10 @@ public class ScreenshotCompareHtmlReport {
                         "<img src=\"" + item.expectedImageFilePath + "\" alt=\"expected image " + i + "\">\n" +
                         "<h3>Difference</h3>\n" +
                         "<img src=\"" + item.differenceImageFilePath + "\" alt=\"difference image " + i + "\">\n");
+                printCopyFileStatement(report,
+                        "To replace/overwrite the expected image with the actual image run the following in a command line terminal:",
+                        reportData.getActualImageAbsoluteFilePath(),
+                        reportData.getExpectedImageAbsoluteFilePath(i - 1));
                 i++;
             }
 
@@ -90,6 +99,17 @@ public class ScreenshotCompareHtmlReport {
             throw new GuiTestingException(
                     "Error when writing report file " + reportFile.getAbsolutePath(), e);
         }
+    }
+
+    private void printCopyFileStatement(PrintStream report, String caption, String source, String target) {
+        String copyStmt = copyFileStatement(source, target);
+        report.println("" +
+                "<h4>" + caption + "</h4>\n" +
+                "<pre>\n" +
+                copyStmt + "\n" +
+                "</pre>\n" +
+                "<button onclick=\"navigator.clipboard.writeText('" + copyStmt + "');\">Copy to clipboard</button>\n"
+        );
     }
 
 
