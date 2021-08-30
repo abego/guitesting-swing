@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 0.14.0
+
+### Improvements
+
+- Improved screen capture HTML report:
+  - platform-specific command to overwrite/create expected images ( Windows: "copy", Mac:"cp")
+  - button to copy the command to overwrite/create expected images into the clipboard.
+- use gt.captureScreen(null) to capture the full screen
+
+### Bug Fixes
+
+- (Timeout)Exception when snapshotting a menu that has no menu items
+- ScreenCaptureSupport.writeImage fails when directory does not exist
+
 ## 0.13.0
 
 ### New
