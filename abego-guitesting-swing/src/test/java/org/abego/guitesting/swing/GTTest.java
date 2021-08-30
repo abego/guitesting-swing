@@ -85,6 +85,7 @@ import java.util.stream.Stream;
 import static java.lang.Integer.min;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.PrintStreamToBuffer.newPrintStreamToBuffer;
+import static org.abego.commons.lang.ObjectUtil.valueOrFail;
 import static org.abego.commons.lang.SystemUtil.systemOutRedirect;
 import static org.abego.commons.lang.ThreadUtil.sleep;
 import static org.abego.commons.seq.SeqUtil.newSeq;
@@ -2348,9 +2349,20 @@ public class GTTest {
                 exception.getMessage());
     }
 
+    private static void showMenuSampleWindow() {
+        invokeLater(() -> {
+            JFrame frame = new JFrame("Menu Sample");
+            JMenuBar menubar = newSampleMenuBar();
+            frame.setJMenuBar(menubar);
+            frame.setSize(new Dimension(200, 100));
+            frame.setLocation(100, 100);
+            frame.setVisible(true);
+        });
+    }
+
     @Test
     void readImage_URL(@TempDir File tempDir) {
-        URL imageURL = MyGT.class.getResource("colors.png");
+        URL imageURL = valueOrFail(getClass().getResource("colors.png"));
         // read
         BufferedImage img = gt.readImage(imageURL);
 
@@ -2361,18 +2373,6 @@ public class GTTest {
         // read and verify
         BufferedImage img2 = gt.readImage(imageFile);
         assertImageEquals(img, img2, "readImage_URL-sample");
-    }
-
-    @Test
-    void readImage_URL_badURL() throws IOException {
-        String spec = getClass().getResource("colors.png").toString() + "-invalid";
-        URL badURL = new URL(spec);
-
-        GuiTestingException exception = assertThrows(GuiTestingException.class,
-                () -> gt.readImage(badURL));
-
-        assertEquals(
-                "Error when reading image from " + badURL, exception.getMessage());
     }
 
     @Test
@@ -2599,6 +2599,27 @@ public class GTTest {
         menuBar.add(menu2);
         menuBar.add(menu3);
         return menuBar;
+    }
+
+    @Test
+    void readImage_URL_badURL() throws IOException {
+        String spec = valueOrFail(getClass().getResource("colors.png")) + "-invalid";
+        URL badURL = new URL(spec);
+
+        GuiTestingException exception = assertThrows(GuiTestingException.class,
+                () -> gt.readImage(badURL));
+
+        assertEquals(
+                "Error when reading image from " + badURL, exception.getMessage());
+    }
+
+    @Test
+    void waitUntilEMPTYPopupMenuScreenshotMatchesSnapshot() {
+        showMenuSampleWindow();
+
+        JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
+        JMenu menu = menubar.getMenu(2);
+        gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
     }
 
     private static boolean isMac() {
