@@ -72,7 +72,8 @@ final class SnapshotIssueSupport {
         return new SnapshotIssueSupport(guitestingReportsDir, testResourcesDir);
     }
 
-    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
+    public Seq<? extends SnapshotIssue> findSnapshotIssues() {
+        items.clear();
 
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
@@ -91,8 +92,12 @@ final class SnapshotIssueSupport {
                 return super.visitFile(file, attrs);
             }
         };
+
         try {
-            walkFileTree(guitestingReportsDir.toPath(), visitor);
+            Path root = guitestingReportsDir.toPath();
+            if (root.toFile().isDirectory()) {
+                walkFileTree(root, visitor);
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

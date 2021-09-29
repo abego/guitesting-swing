@@ -60,9 +60,10 @@ import static org.abego.guitesting.swing.internal.util.Util.scrolling;
 class SnapshotReviewPane extends JPanel {
 
     // @formatter:off
-    private static final Color EXPECTED_BORDER_COLOR = Color.GREEN;
-    private static final Color ACTUAL_BORDER_COLOR = Color.RED;
-    private static final Color DIFFERENCE_BORDER_COLOR = Color.GRAY;
+    private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
+    private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
+    private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
+    private static final int BORDER_SIZE = 3;
 
     private final DefaultListModel<? extends SnapshotIssue> issuesListModel;
     private final JList<? extends SnapshotIssue> issuesList;
@@ -132,9 +133,9 @@ class SnapshotReviewPane extends JPanel {
     private JComponent topBar() {
         return bordered()
                 .top(flowLeft(
-                        labelWithBorder(" Expected ", EXPECTED_BORDER_COLOR, 2), //NON-NLS
-                        labelWithBorder(" Actual ", ACTUAL_BORDER_COLOR, 2), //NON-NLS
-                        labelWithBorder(" Difference ", DIFFERENCE_BORDER_COLOR, 2), //NON-NLS
+                        labelWithBorder(" Expected ", EXPECTED_BORDER_COLOR, BORDER_SIZE), //NON-NLS
+                        labelWithBorder(" Actual ", ACTUAL_BORDER_COLOR, BORDER_SIZE), //NON-NLS
+                        labelWithBorder(" Difference ", DIFFERENCE_BORDER_COLOR, BORDER_SIZE), //NON-NLS
                         labelForName))
                 .bottom(flowLeft(
                         button(overwriteSnapshotAction),
@@ -188,7 +189,7 @@ class SnapshotReviewPane extends JPanel {
     }
 
     private void setLabelWithImageAndBorder(JLabel label, File file, Color borderColor) {
-        label.setBorder(Util.lineBorder(borderColor, 2));
+        label.setBorder(Util.lineBorder(borderColor, BORDER_SIZE));
         label.setIcon(loadIcon(file));
     }
 

@@ -50,6 +50,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -436,7 +437,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public Seq<? extends SnapshotIssue> getSnapshotIssues() {
         return newSnapshotIssueSupport(getSnapshotReportDirectory(),
-                new File(getTestResourcesDirectoryPath())).getSnapshotIssues();
+                new File(getTestResourcesDirectoryPath())).findSnapshotIssues();
     }
 
     static class SnapshotInfo {
@@ -461,7 +462,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         private static URL urlToTestClass(String calleeName) {
             StackTraceElement method = getNameDefiningCall(calleeName);
             Class<?> type = GuiTestingUtil.getClass(method);
-            return type.getResource("");
+            return Objects.requireNonNull(type.getResource(""));
         }
 
 

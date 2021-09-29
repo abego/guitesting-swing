@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.SnapshotReview;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -46,6 +47,7 @@ final class SnapshotReviewTest {
     }
 
     @Test
+    @Disabled
     void showIssuesSnapshotReview(@TempDir File tempDir) {
         File reportsDir = mkdir(tempDir, "reports");
         File testresourcesDir = mkdir(tempDir, "test_resources");
@@ -60,10 +62,6 @@ final class SnapshotReviewTest {
 //       // gt.waitUntilScreenshotMatchesSnapshot(label, "orange");
 //        label.setBackground(Color.BLUE);
 //        gt.waitUntilScreenshotMatchesSnapshot(label, "blue");
-        Seq<? extends SnapshotIssue> issues = gt.getSnapshotIssues();
-        for (SnapshotIssue issue : issues) {
-            System.out.println(issue.getLabel());
-        }
 //        gt.setTestResourcesDirectoryPath(testresourcesDir.getAbsolutePath());
 //        gt.setSnapshotReportDirectory(reportsDir);
 //
