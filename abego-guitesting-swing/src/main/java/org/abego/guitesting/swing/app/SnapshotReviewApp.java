@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.app;
 
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
+import org.eclipse.jdt.annotation.Nullable;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -33,26 +34,30 @@ import java.util.logging.Logger;
 
 public class SnapshotReviewApp {
     private static final Logger LOGGER = Logger.getLogger(SnapshotReviewApp.class.getName());
+    private static final String[] testResourcesDirectoryOptions = new String[]{
+            "src/test/resources",
+            "test_resources",
+            "test_src/resources",
+    };
     private final GT gt = GuiTesting.newGT();
 
     private SnapshotReviewApp(String[] args) {
         int argc = args.length;
+        @Nullable String testResourcesDirectory = argc > 0 ? args[0] : null;
+        @Nullable String snapshotReportDirectory = argc > 1 ? args[1] : null;
 
         // When no testResourcesDirectory is explicitly specified in the
-        // arguments and the default one does not exist check if we find
-        // something when we assume test sources are places below "test_src".
-        if (argc == 0 && !getTestResourcesDirectory().isDirectory()) {
-            File dir = new File("test_src/resources");
-            if (dir.isDirectory()) {
-                gt.setTestResourcesDirectoryPath(dir.getAbsolutePath());
-            }
+        // arguments and the default one does not exist check if one of the
+        // testResourcesDirectoryOptions exists. If yes, use it.
+        if (testResourcesDirectory == null && !getTestResourcesDirectory().isDirectory()) {
+            testResourcesDirectory = findExistingTestResourcesDirectory();
         }
 
-        if (argc > 1) {
-            gt.setTestResourcesDirectoryPath(args[0]);
+        if (testResourcesDirectory != null) {
+            gt.setTestResourcesDirectoryPath(testResourcesDirectory);
         }
-        if (argc > 2) {
-            gt.setSnapshotReportDirectory(new File(args[1]));
+        if (snapshotReportDirectory != null) {
+            gt.setSnapshotReportDirectory(new File(snapshotReportDirectory));
         }
 
         LOGGER.log(Level.INFO,
@@ -64,6 +69,17 @@ public class SnapshotReviewApp {
 
     public static SnapshotReviewApp newSnapshotReviewApp(String[] args) {
         return new SnapshotReviewApp(args);
+    }
+
+    @Nullable
+    private String findExistingTestResourcesDirectory() {
+        for (String path : testResourcesDirectoryOptions) {
+            File dir = new File(path);
+            if (dir.isDirectory()) {
+                return dir.getAbsolutePath();
+            }
+        }
+        return null;
     }
 
     public void run() {
