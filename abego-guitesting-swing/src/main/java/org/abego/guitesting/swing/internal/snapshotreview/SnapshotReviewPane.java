@@ -161,6 +161,14 @@ class SnapshotReviewPane extends JPanel {
             imagesContainer.add(labelsForImages[2]);
             imagesContainer.revalidate();
             repaint();
+        } else {
+            labelForName.setText("");
+
+            // When no item is selected but there are items in the list
+            // automatically select the first item
+            if (issuesListModel.size() > 0) {
+                invokeLater(()->issuesList.setSelectedIndex(0));
+            }
         }
     }
 
