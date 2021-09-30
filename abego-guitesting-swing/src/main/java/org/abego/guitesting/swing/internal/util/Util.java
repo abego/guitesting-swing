@@ -24,9 +24,12 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -42,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.function.Consumer;
@@ -66,6 +70,11 @@ public class Util {
         return MyAction.newAction(text, accelerator, action);
     }
 
+    public static Action newAction(
+            String text, KeyStroke accelerator, ImageIcon smallIcon, Consumer<ActionEvent> action) {
+        return MyAction.newAction(text, accelerator, smallIcon, action);
+    }
+
     public static JLabel labelWithBorder(String title, Color color, int borderSize) {
         JLabel label = new JLabel(title);
         label.setBorder(BorderFactory.createLineBorder(color, borderSize));
@@ -74,6 +83,10 @@ public class Util {
 
     public static JLabel label() {
         return new JLabel();
+    }
+
+    public static JLabel label(String text) {
+        return new JLabel(text);
     }
 
     public static JButton button(Action action) {
@@ -109,26 +122,49 @@ public class Util {
         return BorderFactory.createLineBorder(borderColor, thickness);
     }
 
-    public static ImageIcon loadIcon(File file) {
+    public static ImageIcon icon(File file) {
         try {
-            return new ImageIcon(file.toPath().toUri().toURL());
+            return icon(file.toPath().toUri().toURL());
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    @SuppressWarnings("serial")
+    public static ImageIcon icon(URL url) {
+        return new ImageIcon(url);
+    }
+
     private static class MyAction extends AbstractAction {
+        private static final long serialVersionUID = 0L;
         private final Consumer<ActionEvent> action;
 
-        private MyAction(String text, KeyStroke accelerator, Consumer<ActionEvent> eventHandler) {
+        private MyAction(
+                String text,
+                KeyStroke accelerator,
+                @Nullable Icon smallIcon,
+                Consumer<ActionEvent> eventHandler) {
+
             super(text, null);
             this.action = eventHandler;
             putValue(ACCELERATOR_KEY, accelerator);
+            if (smallIcon != null) {
+                putValue(SMALL_ICON, smallIcon);
+            }
         }
 
-        public static Action newAction(String text, KeyStroke accelerator, Consumer<ActionEvent> action) {
-            return new MyAction(text, accelerator, action);
+        public static Action newAction(
+                String text,
+                KeyStroke accelerator,
+                Consumer<ActionEvent> action) {
+            return new MyAction(text, accelerator, null, action);
+        }
+
+        public static Action newAction(
+                String text,
+                KeyStroke accelerator,
+                ImageIcon smallIcon,
+                Consumer<ActionEvent> action) {
+            return new MyAction(text, accelerator, smallIcon, action);
         }
 
         @Override

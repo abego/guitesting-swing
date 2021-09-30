@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.Util;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -53,7 +54,7 @@ import static org.abego.guitesting.swing.internal.util.Util.copyFile;
 import static org.abego.guitesting.swing.internal.util.Util.flowLeft;
 import static org.abego.guitesting.swing.internal.util.Util.label;
 import static org.abego.guitesting.swing.internal.util.Util.labelWithBorder;
-import static org.abego.guitesting.swing.internal.util.Util.loadIcon;
+import static org.abego.guitesting.swing.internal.util.Util.icon;
 import static org.abego.guitesting.swing.internal.util.Util.newAction;
 import static org.abego.guitesting.swing.internal.util.Util.scrolling;
 
@@ -72,9 +73,9 @@ class SnapshotReviewPane extends JPanel {
     private final Action nextScreenshotAction = newAction("Next (↓)", KeyStroke.getKeyStroke("DOWN"), e -> changeSelectedIndex(1)); //NON-NLS
     private final JLabel labelForName = label();
     private final JComponent imagesContainer = flowLeft();
-    private final Action addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), e -> addAltenativeSnapshot()); //NON-NLS
-    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), e -> overwriteSnapshot()); //NON-NLS
-    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), e -> ignoreCurrentIssue()); //NON-NLS
+    private final Action addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAltenativeSnapshot()); //NON-NLS
+    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"),Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
+    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(),e -> ignoreCurrentIssue()); //NON-NLS
     private final JButton ignoreButton = button(ignoreCurrentIssueAction);
     private final JLabel[] labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
 
@@ -87,6 +88,8 @@ class SnapshotReviewPane extends JPanel {
         this.issuesListModel = newIssueListModel(issues);
         this.issuesList = new JList<>(issuesListModel);
 
+        imagesContainer.setBackground(Color.white);
+        imagesContainer.setOpaque(true);
         initComponents();
         layoutComponents();
         invokeLater(() -> {
@@ -120,6 +123,7 @@ class SnapshotReviewPane extends JPanel {
                 .center(scrolling(imagesContainer))
                 .bottom(bordered()
                         .top(flowLeft(
+                                label("Issues                "), //NON-NLS
                                 button(previousScreenshotAction),
                                 button(nextScreenshotAction)))
                         .bottom(scrolling(issuesList)));
@@ -198,7 +202,7 @@ class SnapshotReviewPane extends JPanel {
 
     private void setLabelWithImageAndBorder(JLabel label, File file, Color borderColor) {
         label.setBorder(Util.lineBorder(borderColor, BORDER_SIZE));
-        label.setIcon(loadIcon(file));
+        label.setIcon(icon(file));
     }
 
     private void overwriteSnapshot() {
