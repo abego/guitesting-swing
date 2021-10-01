@@ -96,7 +96,7 @@
                                 implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>
                                 <Main-Class>org.abego.guitesting.swing.app.GuiTestingSwingApp</Main-Class>
-                                <SplashScreen-Image>org/abego/guitesting/swing/splashscreen.png</SplashScreen-Image>
+                                <SplashScreen-Image>org/abego/guitesting/swing/splashscreen.jpg</SplashScreen-Image>
                             </manifestEntries>
                         </transformer>
                     </transformers>
