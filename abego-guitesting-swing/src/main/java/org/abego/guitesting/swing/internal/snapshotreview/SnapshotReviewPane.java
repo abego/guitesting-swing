@@ -28,12 +28,11 @@ import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.Util;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -42,56 +41,59 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.io.File;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.util.Objects;
 
+import static java.lang.Math.max;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.commons.lang.IntUtil.limit;
+import static org.abego.guitesting.swing.internal.util.Util.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.Util.bordered;
 import static org.abego.guitesting.swing.internal.util.Util.button;
 import static org.abego.guitesting.swing.internal.util.Util.copyFile;
 import static org.abego.guitesting.swing.internal.util.Util.flowLeft;
 import static org.abego.guitesting.swing.internal.util.Util.label;
 import static org.abego.guitesting.swing.internal.util.Util.labelWithBorder;
-import static org.abego.guitesting.swing.internal.util.Util.icon;
 import static org.abego.guitesting.swing.internal.util.Util.newAction;
+import static org.abego.guitesting.swing.internal.util.Util.newListCellRenderer;
+import static org.abego.guitesting.swing.internal.util.Util.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.Util.scrolling;
+import static org.abego.guitesting.swing.internal.util.Util.transparentButton;
 
 class SnapshotReviewPane extends JPanel {
 
-    // @formatter:off
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
     private static final int BORDER_SIZE = 3;
+    private static final int VISIBLE_ISSUES_COUNT = 8;
 
     private final DefaultListModel<? extends SnapshotIssue> issuesListModel;
     private final JList<? extends SnapshotIssue> issuesList;
-
     private final Action previousScreenshotAction = newAction("Previous (↑)", KeyStroke.getKeyStroke("UP"), e -> changeSelectedIndex(-1)); //NON-NLS
     private final Action nextScreenshotAction = newAction("Next (↓)", KeyStroke.getKeyStroke("DOWN"), e -> changeSelectedIndex(1)); //NON-NLS
-    private final JLabel labelForName = label();
+    private final JLabel selectedIssueDescriptionLabel = label();
     private final JComponent imagesContainer = flowLeft();
     private final Action addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAltenativeSnapshot()); //NON-NLS
-    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"),Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
-    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(),e -> ignoreCurrentIssue()); //NON-NLS
+    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
+    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
     private final JButton ignoreButton = button(ignoreCurrentIssueAction);
     private final JLabel[] labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
-
     private int expectedImageIndex;
-    private final Action rotateImageLeftAction = newAction("Rotate Images Left (←)", KeyStroke.getKeyStroke("LEFT"), e -> rotateImagesLeft()); //NON-NLS
-    private final Action rotateImageRightAction = newAction("Rotate Images Right (→)", KeyStroke.getKeyStroke("RIGHT"), e -> rotateImagesRight()); //NON-NLS
-    // @formatter:on
+    private final Action rotateImageAction = newAction("", KeyStroke.getKeyStroke("RIGHT"), "Rotate Images (→)", Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS
+    @Nullable
+    private SnapshotImages snapshotImages;
 
     SnapshotReviewPane(Seq<? extends SnapshotIssue> issues) {
-        this.issuesListModel = newIssueListModel(issues);
+        this.issuesListModel = Util.newDefaultListModel(issues);
         this.issuesList = new JList<>(issuesListModel);
 
-        imagesContainer.setBackground(Color.white);
-        imagesContainer.setOpaque(true);
         initComponents();
+        styleComponents();
         layoutComponents();
+
         invokeLater(() -> {
             // select the first issue in the list (if there is any)
             issuesList.setSelectedIndex(0);
@@ -101,20 +103,19 @@ class SnapshotReviewPane extends JPanel {
         });
     }
 
-    private static DefaultListModel<? extends SnapshotIssue> newIssueListModel(
-            Seq<? extends SnapshotIssue> issues) {
+    private void initComponents() {
+        Util.addAll(imagesContainer, labelsForImages);
 
-        DefaultListModel<SnapshotIssue> listModel = new DefaultListModel<>();
-        for (SnapshotIssue i : issues) {
-            listModel.addElement(i);
-        }
-        return listModel;
+        issuesList.setVisibleRowCount(VISIBLE_ISSUES_COUNT);
+        issuesList.setCellRenderer(
+                newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
+        issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
+        onComponentResized(imagesContainer, e -> onImagesAreaChanges());
     }
 
-    private void initComponents() {
-        issuesList.setVisibleRowCount(8);
-        issuesList.setCellRenderer(new IssueListCellRenderer());
-        issuesList.addListSelectionListener(e -> onSelectionChanged());
+    private void styleComponents() {
+        imagesContainer.setBackground(Color.white);
+        imagesContainer.setOpaque(true);
     }
 
     private void layoutComponents() {
@@ -132,7 +133,28 @@ class SnapshotReviewPane extends JPanel {
         add(content);
     }
 
-    private void onSelectionChanged() {invokeLater(this::updateImages);}
+    //TODO: derive the code for the "on...Changed" methods from the
+    //  @DependsOn annotations
+    private void onLabelsForImagesChanged() {
+        invokeLater(this::updateImagesContainer);
+    }
+
+    private void onSelectedIssueChanged() {
+        invokeLater(() -> {
+            updateLabelsForImages();
+            updateImagesContainer();
+            updateSelectedIssueDescriptionLabel();
+            ensureSelectionIfPossible();
+        });
+    }
+
+    private void onImagesAreaChanges() {
+        invokeLater(this::updateLabelsForImages);
+    }
+
+    private void onExpectedImageIndexChanged() {
+        invokeLater(this::updateLabelsForImages);
+    }
 
     private JComponent topBar() {
         return bordered()
@@ -140,73 +162,98 @@ class SnapshotReviewPane extends JPanel {
                         labelWithBorder(" Expected ", EXPECTED_BORDER_COLOR, BORDER_SIZE), //NON-NLS
                         labelWithBorder(" Actual ", ACTUAL_BORDER_COLOR, BORDER_SIZE), //NON-NLS
                         labelWithBorder(" Difference ", DIFFERENCE_BORDER_COLOR, BORDER_SIZE), //NON-NLS
-                        labelForName))
-                .bottom(flowLeft(
+                        transparentButton(rotateImageAction)))
+                .center(flowLeft(DEFAULT_FLOW_GAP, 0,
                         button(overwriteSnapshotAction),
                         button(addAltenativeSnapshotAction),
-                        ignoreButton,
-                        button(rotateImageLeftAction),
-                        button(rotateImageRightAction)));
+                        ignoreButton))
+                .bottom(flowLeft(selectedIssueDescriptionLabel));
     }
 
-    private void updateImages() {
-        @Nullable
-        SnapshotIssue selectedIssue = getSelectedIssueOrNull();
+    @DependsOn({"selectedIssue"})
+    private void updateImagesContainer() {
+        boolean hasSelection = getSelectedIssue() != null;
+        Util.setVisible(hasSelection, labelsForImages);
+    }
 
-        imagesContainer.removeAll();
-        if (selectedIssue != null) {
-            expectedImageIndex = 0;
-            //noinspection StringConcatenation
-            labelForName.setText(" Snapshot: " + selectedIssue.getLabel()); //NON-NLS
-
-            setImagesInLabels(selectedIssue);
-            imagesContainer.add(labelsForImages[0]);
-            imagesContainer.add(labelsForImages[1]);
-            imagesContainer.add(labelsForImages[2]);
-            imagesContainer.revalidate();
-            repaint();
-        } else {
-            labelForName.setText("");
-
-            // When no item is selected but there are items in the list
-            // automatically select the first item
-            if (issuesListModel.size() > 0) {
-                invokeLater(()->issuesList.setSelectedIndex(0));
-            }
+    /**
+     * When no item is selected but there are items in the list
+     * automatically select the first item.
+     */
+    @DependsOn("selectedIssue")
+    private void ensureSelectionIfPossible() {
+        if (getSelectedIssue() == null && issuesListModel.size() > 0) {
+            invokeLater(() -> issuesList.setSelectedIndex(0));
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @DependsOn("selectedIssueDescription")
+    private void updateSelectedIssueDescriptionLabel() {
+        selectedIssueDescriptionLabel.setText(getSelectedIssueDescription());
+    }
+
+    @DependsOn({"snapshotImages", "expectedImageIndex"})
+    private void updateLabelsForImages() {
+        @Nullable SnapshotImages images = getSnapshotImages();
+        if (images != null) {
+            setIconAndLinedBorder(
+                    labelsForImages[(expectedImageIndex) % 3],
+                    images.getExpectedImage(),
+                    EXPECTED_BORDER_COLOR);
+            setIconAndLinedBorder(
+                    labelsForImages[(expectedImageIndex + 1) % 3],
+                    images.getActualImage(),
+                    ACTUAL_BORDER_COLOR);
+            setIconAndLinedBorder(
+                    labelsForImages[(expectedImageIndex + 2) % 3],
+                    images.getDifferenceImage(),
+                    DIFFERENCE_BORDER_COLOR);
+
+            onLabelsForImagesChanged();
+        }
+    }
+
+    @DependsOn("selectedIssue")
+    private String getSelectedIssueDescription() {
+        @Nullable
+        SnapshotIssue issue = getSelectedIssue();
+        return issue != null ? issue.getLabel() : " ";//NON-NLS
+    }
+
+
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    @DependsOn({"selectedIssue", "imagesArea"})
     @Nullable
-    private SnapshotIssue getSelectedIssueOrNull() {
-        return issuesList.getSelectedValue();
+    private SnapshotImages getSnapshotImages() {
+        @Nullable SnapshotIssue issue = getSelectedIssue();
+        if (issue == null) {
+            return null;
+        }
+        @Nullable SnapshotImages images = snapshotImages;
+        if (images == null
+                || images.getIssue() != issue
+                || !Objects.equals(getImagesArea(), images.getArea())) {
+            images = new SnapshotImages(issue, getImagesArea(), e -> {});
+            snapshotImages = images;
+        }
+        return images;
     }
 
-    private void setImagesInLabels(@NonNull SnapshotIssue currentIssue) {
-        setLabelForExpectedImage(labelsForImages[(expectedImageIndex) % 3], currentIssue);
-        setLabelForActualImage(labelsForImages[(expectedImageIndex + 1) % 3], currentIssue);
-        setLabelForDiffImage(labelsForImages[(expectedImageIndex + 2) % 3], currentIssue);
+    @Nullable
+    private Dimension getImagesArea() {
+        Rectangle visibleRect = imagesContainer.getVisibleRect();
+        int w = visibleRect.width - 4 * Util.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
+        int h = visibleRect.height - 2 * Util.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+        return new Dimension(max(0, w), max(0, h));
     }
 
-    private void setLabelForExpectedImage(JLabel label, SnapshotIssue selectedIssue) {
-        setLabelWithImageAndBorder(label, toFile(selectedIssue.getExpectedImage()), EXPECTED_BORDER_COLOR);
-    }
-
-    private void setLabelForActualImage(JLabel label, SnapshotIssue selectedIssue) {
-        setLabelWithImageAndBorder(label, toFile(selectedIssue.getActualImage()), ACTUAL_BORDER_COLOR);
-    }
-
-    private void setLabelForDiffImage(JLabel label, SnapshotIssue selectedIssue) {
-        setLabelWithImageAndBorder(label, toFile(selectedIssue.getDifferenceImage()), DIFFERENCE_BORDER_COLOR);
-    }
-
-    private void setLabelWithImageAndBorder(JLabel label, File file, Color borderColor) {
+    private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
+        label.setIcon(icon);
         label.setBorder(Util.lineBorder(borderColor, BORDER_SIZE));
-        label.setIcon(icon(file));
     }
 
     private void overwriteSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssueOrNull();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
@@ -216,21 +263,11 @@ class SnapshotReviewPane extends JPanel {
     }
 
     private void removeIssue(SnapshotIssue issue) {
-        invokeLater(() -> {
-            int i = issuesList.getSelectedIndex();
-            issuesListModel.removeElement(issue);
-            if (issuesListModel.size() > 0) {
-                issuesList.setSelectedIndex(i);
-            } else {
-                imagesContainer.removeAll();
-                imagesContainer.revalidate();
-                repaint();
-            }
-        });
+        invokeLater(() -> issuesListModel.removeElement(issue));
     }
 
     private void addAltenativeSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssueOrNull();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
@@ -240,54 +277,28 @@ class SnapshotReviewPane extends JPanel {
     }
 
     private void ignoreCurrentIssue() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssueOrNull();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             removeIssue(currentIssue);
         }
     }
 
-    private void rotateImagesLeft() {rotateImagesHelper(2);}
-
-    private void rotateImagesHelper(int increment) {
-        expectedImageIndex = (expectedImageIndex + increment) % 3;
-        setImagesInLabels();
+    private void rotateImages() {
+        expectedImageIndex = (expectedImageIndex + 1) % 3;
+        onExpectedImageIndexChanged();
     }
 
-    private void setImagesInLabels() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssueOrNull();
-        if (currentIssue != null) {
-            setImagesInLabels(currentIssue);
-            revalidate();
-            repaint();
-        }
+    @SuppressWarnings("ConstantConditions") // to remove "nullable" warning
+    @Nullable
+    private SnapshotIssue getSelectedIssue() {
+        return issuesList.getSelectedValue();
     }
-
-    private void rotateImagesRight() {rotateImagesHelper(1);}
 
     private void changeSelectedIndex(int diff) {
         int size = issuesListModel.size();
         if (size > 0) {
             int newIndex = limit(issuesList.getSelectedIndex() + diff, size - 1);
             issuesList.setSelectedIndex(newIndex);
-        }
-    }
-
-    private static class IssueListCellRenderer extends DefaultListCellRenderer {
-
-        @Override
-        public Component getListCellRendererComponent(
-                JList list,
-                Object value,
-                int index,
-                boolean isSelected,
-                boolean cellHasFocus) {
-
-            JLabel listCellRendererComponent =
-                    (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (value instanceof SnapshotIssue) {
-                listCellRendererComponent.setText(((SnapshotIssue) value).getLabel());
-            }
-            return listCellRendererComponent;
         }
     }
 }

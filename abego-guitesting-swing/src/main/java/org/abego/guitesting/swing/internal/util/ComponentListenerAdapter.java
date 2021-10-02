@@ -22,41 +22,25 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.util;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
-import javax.swing.ImageIcon;
-import java.net.URL;
-
-import static org.abego.guitesting.swing.internal.util.Util.icon;
-
-public class Icons {
-    public static ImageIcon overwriteIcon() {
-        return iconFromResource("overwrite.png");
+public class ComponentListenerAdapter implements ComponentListener {
+    @Override
+    public void componentResized(ComponentEvent e) {
     }
 
-    public static ImageIcon alternativeIcon() {
-        return iconFromResource("alternative.png");
+    @Override
+    public void componentMoved(ComponentEvent e) {
     }
 
-    public static ImageIcon ignoreIcon() {
-        return iconFromResource("ignore.png");
+    @Override
+    public void componentShown(ComponentEvent e) {
     }
 
-    public static ImageIcon rotateLeftIcon() {
-        return iconFromResource("rotate-left-24.png");
-    }
-
-    public static ImageIcon rotateRightIcon() {
-        return iconFromResource("rotate-right-24.png");
-    }
-
-    private static ImageIcon iconFromResource(String name) {
-        URL resource = Icons.class.getResource(name);
-        if (resource == null) {
-            throw new IllegalArgumentException(
-                    String.format("Image not found: %s", name)); //NON-NLS
-        }
-        return icon(resource);
+    @Override
+    public void componentHidden(ComponentEvent e) {
     }
 }
