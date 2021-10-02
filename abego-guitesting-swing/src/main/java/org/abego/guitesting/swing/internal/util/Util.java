@@ -36,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -80,6 +81,11 @@ public class Util {
     }
 
     public static Action newAction(
+            String text, KeyStroke accelerator, String description, Consumer<ActionEvent> action) {
+        return ActionWithEventHandler.newAction(text, accelerator, description, null, action);
+    }
+
+    public static Action newAction(
             String text, KeyStroke accelerator, String description, ImageIcon smallIcon, Consumer<ActionEvent> action) {
         return ActionWithEventHandler.newAction(text, accelerator, description, smallIcon, action);
     }
@@ -102,14 +108,6 @@ public class Util {
         return button(b -> {}, action);
     }
 
-    public static JButton transparentButton(Action action) {
-        return button(button -> {
-            button.setOpaque(false);
-            button.setContentAreaFilled(false);
-            button.setBorderPainted(false);
-        }, action);
-    }
-
     public static JButton button(Consumer<JButton> initCode, Action action) {
         JButton button = new JButton(action);
         Object accelearator = action.getValue(Action.ACCELERATOR_KEY);
@@ -123,6 +121,23 @@ public class Util {
         return button;
     }
 
+    public static JButton borderlessButton(Action action) {
+        return button(b->{b.setBorder(new EmptyBorder(0,0,0,0));}, action);
+    }
+
+    public static JButton transparentButton(Action action) {
+        return transparentButton(b -> {}, action);
+    }
+
+    public static JButton transparentButton(Consumer<JButton> initCode, Action action) {
+        return button(button -> {
+            button.setOpaque(false);
+            button.setContentAreaFilled(false);
+            button.setBorderPainted(false);
+            initCode.accept(button);
+        }, action);
+    }
+
     public static JComponent scrolling(JComponent component) {
         return new JScrollPane(component);
     }
@@ -132,20 +147,20 @@ public class Util {
         return newBorderedPanel();
     }
 
-    public static JComponent flow(int align, int hgap, int vgap, JComponent... components) {
-        JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
-        for (JComponent component : components) {
-            result.add(component);
-        }
-        return result;
+    public static JComponent flowLeft(JComponent... components) {
+        return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
     }
 
     public static JComponent flowLeft(int hgap, int vgap, JComponent... components) {
         return flow(FlowLayout.LEFT, hgap, vgap, components);
     }
 
-    public static JComponent flowLeft(JComponent... components) {
-        return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
+    public static JComponent flow(int align, int hgap, int vgap, JComponent... components) {
+        JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
+        for (JComponent component : components) {
+            result.add(component);
+        }
+        return result;
     }
 
     public static Border lineBorder(Color borderColor, int thickness) {
@@ -172,6 +187,7 @@ public class Util {
             }
         });
     }
+
     public static void setVisible(boolean value, JComponent... components) {
         for (JComponent component : components) {
             component.setVisible(value);
