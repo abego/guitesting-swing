@@ -27,17 +27,14 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
-
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
 import java.util.function.Consumer;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.abego.commons.io.FileUtil.toFile;
-import static org.abego.guitesting.swing.ScreenCaptureSupport.*;
+import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import static org.abego.guitesting.swing.internal.util.Util.icon;
 
 final class SnapshotImages {
@@ -117,10 +114,10 @@ final class SnapshotImages {
             maxHeight = max(maxHeight, image.getIconHeight());
         }
         double scaleFactor = 1.0;
-        if (maxHeight > area.getHeight()) {
+        if (area.getHeight() > 0 && maxHeight > area.getHeight()) {
             scaleFactor = area.getHeight() / maxHeight;
         }
-        if (totalWidth > area.getWidth()) {
+        if (area.getWidth() > 0 && totalWidth > area.getWidth()) {
             scaleFactor = min(scaleFactor,  area.getWidth() / totalWidth);
         }
         return scaleFactor;
