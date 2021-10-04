@@ -42,7 +42,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.border.MatteBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -54,7 +53,6 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.Util.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.Util.LIGHTER_GRAY;
 import static org.abego.guitesting.swing.internal.util.Util.bordered;
 import static org.abego.guitesting.swing.internal.util.Util.checkBox;
 import static org.abego.guitesting.swing.internal.util.Util.copyFile;
@@ -68,6 +66,7 @@ import static org.abego.guitesting.swing.internal.util.Util.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.Util.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.Util.scrolling;
 import static org.abego.guitesting.swing.internal.util.Util.separatorBar;
+import static org.abego.guitesting.swing.internal.util.Util.vlist;
 
 class SnapshotReviewPane extends JPanel {
 
@@ -123,28 +122,30 @@ class SnapshotReviewPane extends JPanel {
 
         // init Components
         ignoreButton = iconButton(ignoreCurrentIssueAction);
-        //TODO: factory in Util, with "initCode"
-        issuesList = new JList<>(issuesListModel);
-        issuesList.setVisibleRowCount(VISIBLE_ISSUES_COUNT);
-        issuesList.setCellRenderer(
-                newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
+        issuesList = vlist(issuesListModel, l -> {
+            l.setVisibleRowCount(VISIBLE_ISSUES_COUNT);
+            l.setCellRenderer(
+                    newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
+        });
         labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
         labelsForLegend = new JLabel[]{
                 labelWithBorder(" Expected ", EXPECTED_BORDER_COLOR, LEGEND_BORDER_SIZE),//NON-NLS
                 labelWithBorder(" Actual ", ACTUAL_BORDER_COLOR, LEGEND_BORDER_SIZE), //NON-NLS
                 labelWithBorder(" Difference ", DIFFERENCE_BORDER_COLOR, LEGEND_BORDER_SIZE) //NON-NLS)
         };
-        imagesContainer = flowLeft(labelsForImages);
+        imagesContainer = flowLeft(c -> {
+            c.setOpaque(true);
+            c.setBackground(Color.white);
+        }, labelsForImages);
         imagesLegendContainer = flowLeft(DEFAULT_FLOW_GAP, 0, labelsForLegend);
 
         selectedIssueDescriptionLabel = label();
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
-        styleComponents();
+
         layoutComponents();
 
         // Notifications/DependsOn support
         initNotifications();
-
 
         // More initialization
         invokeLater(() -> {
@@ -156,14 +157,9 @@ class SnapshotReviewPane extends JPanel {
         });
     }
 
-    private void styleComponents() {
-        imagesContainer.setBackground(Color.white);
-        imagesContainer.setOpaque(true);
-    }
-
     private void layoutComponents() {
         JComponent content = bordered()
-                .top(topBar())
+                .top(topPart())
                 .center(scrolling(imagesContainer))
                 .bottom(bottomPart());
 
@@ -176,7 +172,7 @@ class SnapshotReviewPane extends JPanel {
         onComponentResized(imagesContainer, e -> onImagesContainerVisibleRectChanged());
     }
 
-    private JComponent topBar() {
+    private JComponent topPart() {
         return bordered()
                 .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
                 .bottom(flowLeft(DEFAULT_FLOW_GAP, 0,

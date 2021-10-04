@@ -31,11 +31,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -175,6 +177,10 @@ public class Util {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
     }
 
+    public static JComponent flowLeft(Consumer<JPanel> initCode, JComponent... components) {
+        return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, initCode, components);
+    }
+
     public static JComponent flowLeftWithBottomLine(JComponent... components) {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP,
                 l -> l.setBorder(new MatteBorder(0, 0, 1, 0, LIGHTER_GRAY)),
@@ -235,6 +241,13 @@ public class Util {
             component.setVisible(value);
         }
     }
+
+    public static <T>  JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
+        JList<T>  list = new JList<>(listModel);
+        initCode.accept(list);
+        return list;
+    }
+
 
     public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
         DefaultListModel<T> listModel = new DefaultListModel<>();
