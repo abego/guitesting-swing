@@ -29,7 +29,7 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.BorderedPanel;
 import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
-import org.abego.guitesting.swing.internal.util.Util;
+import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -45,28 +45,29 @@ import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Objects;
 
 import static java.lang.Math.max;
+import static javax.swing.BorderFactory.createLineBorder;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.commons.lang.IntUtil.limit;
-import static org.abego.guitesting.swing.internal.util.Util.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.Util.bordered;
-import static org.abego.guitesting.swing.internal.util.Util.checkBox;
-import static org.abego.guitesting.swing.internal.util.Util.copyFile;
-import static org.abego.guitesting.swing.internal.util.Util.flowLeft;
-import static org.abego.guitesting.swing.internal.util.Util.flowLeftWithBottomLine;
-import static org.abego.guitesting.swing.internal.util.Util.iconButton;
-import static org.abego.guitesting.swing.internal.util.Util.label;
-import static org.abego.guitesting.swing.internal.util.Util.labelWithBorder;
-import static org.abego.guitesting.swing.internal.util.Util.newAction;
-import static org.abego.guitesting.swing.internal.util.Util.newListCellRenderer;
-import static org.abego.guitesting.swing.internal.util.Util.onComponentResized;
-import static org.abego.guitesting.swing.internal.util.Util.scrolling;
-import static org.abego.guitesting.swing.internal.util.Util.separatorBar;
-import static org.abego.guitesting.swing.internal.util.Util.vlist;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.checkBox;
+import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.scrolling;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 
 class SnapshotReviewPane extends JPanel {
 
@@ -108,7 +109,7 @@ class SnapshotReviewPane extends JPanel {
 
     SnapshotReviewPane(Seq<? extends SnapshotIssue> issues) {
         // init State
-        issuesListModel = Util.newDefaultListModel(issues);
+        issuesListModel = SwingUtil.newDefaultListModel(issues);
         shrinkToFit = true;
 
         // init Actions
@@ -129,9 +130,9 @@ class SnapshotReviewPane extends JPanel {
         });
         labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
         labelsForLegend = new JLabel[]{
-                labelWithBorder(" Expected ", EXPECTED_BORDER_COLOR, LEGEND_BORDER_SIZE),//NON-NLS
-                labelWithBorder(" Actual ", ACTUAL_BORDER_COLOR, LEGEND_BORDER_SIZE), //NON-NLS
-                labelWithBorder(" Difference ", DIFFERENCE_BORDER_COLOR, LEGEND_BORDER_SIZE) //NON-NLS)
+                legendLabel(" Expected ", EXPECTED_BORDER_COLOR),//NON-NLS
+                legendLabel(" Actual ", ACTUAL_BORDER_COLOR), //NON-NLS
+                legendLabel(" Difference ", DIFFERENCE_BORDER_COLOR) //NON-NLS)
         };
         imagesContainer = flowLeft(c -> {
             c.setOpaque(true);
@@ -170,6 +171,14 @@ class SnapshotReviewPane extends JPanel {
     private void initNotifications() {
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
         onComponentResized(imagesContainer, e -> onImagesContainerVisibleRectChanged());
+    }
+
+    private static JLabel legendLabel(String title, Color color) {
+        JLabel label = new JLabel(title);
+        label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
+        label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
+        label.setForeground(Color.GRAY);
+        return label;
     }
 
     private JComponent topPart() {
@@ -349,7 +358,7 @@ class SnapshotReviewPane extends JPanel {
 
     private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
         label.setIcon(icon);
-        label.setBorder(Util.lineBorder(borderColor, BORDER_SIZE));
+        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
     }
 
     @Nullable
@@ -357,8 +366,8 @@ class SnapshotReviewPane extends JPanel {
     private Dimension getImagesArea() {
         if (getShrinkToFit()) {
             Rectangle visibleRect = imagesContainer.getVisibleRect();
-            int w = visibleRect.width - 4 * Util.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
-            int h = visibleRect.height - 2 * Util.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+            int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
+            int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
             return new Dimension(max(0, w), max(0, h));
         } else {
             return null;
@@ -368,7 +377,7 @@ class SnapshotReviewPane extends JPanel {
     @DependsOn({"selectedIssue"})
     private void updateImagesContainer() {
         boolean hasSelection = getSelectedIssue() != null;
-        Util.setVisible(hasSelection, labelsForImages);
+        SwingUtil.setVisible(hasSelection, labelsForImages);
     }
 
     public boolean getShrinkToFit() {

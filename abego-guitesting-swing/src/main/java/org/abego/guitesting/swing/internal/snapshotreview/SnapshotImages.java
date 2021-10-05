@@ -35,7 +35,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import static org.abego.guitesting.swing.internal.util.Util.icon;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 final class SnapshotImages {
     private final SnapshotIssue issue;

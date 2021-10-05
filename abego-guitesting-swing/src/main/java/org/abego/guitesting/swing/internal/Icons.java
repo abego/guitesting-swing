@@ -28,7 +28,7 @@ package org.abego.guitesting.swing.internal;
 import javax.swing.ImageIcon;
 import java.net.URL;
 
-import static org.abego.guitesting.swing.internal.util.Util.icon;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 public class Icons {
     public static ImageIcon overwriteIcon() {
