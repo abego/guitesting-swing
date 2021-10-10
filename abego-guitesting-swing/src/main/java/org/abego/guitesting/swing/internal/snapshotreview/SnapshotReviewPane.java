@@ -53,11 +53,10 @@ import static java.lang.Math.max;
 import static javax.swing.BorderFactory.createLineBorder;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
-import static org.abego.commons.lang.IntUtil.limit;
+import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.checkBox;
-import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
+import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
@@ -80,11 +79,13 @@ class SnapshotReviewPane extends JPanel {
 
     // Actions
     private final Action addAltenativeSnapshotAction;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Action ignoreCurrentIssueAction;
     private final Action nextScreenshotAction;
     private final Action overwriteSnapshotAction;
     private final Action previousScreenshotAction;
     private final Action rotateImageAction;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Action toggleShrinkToFitAction;
 
     // Components (for more see #layoutComponent)
@@ -94,7 +95,6 @@ class SnapshotReviewPane extends JPanel {
     private final JComponent imagesLegendContainer;
     private final JComponent imagesContainer;
     private final JButton ignoreButton;
-    @DependsOn("shrinkToFit")
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
     private final JList<? extends SnapshotIssue> issuesList;
 
@@ -115,9 +115,9 @@ class SnapshotReviewPane extends JPanel {
         // init Actions
         addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAltenativeSnapshot()); //NON-NLS
         ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
-        nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> changeSelectedIndex(1)); //NON-NLS
+        nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS
         overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
-        previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> changeSelectedIndex(-1)); //NON-NLS
+        previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
         rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
@@ -145,7 +145,7 @@ class SnapshotReviewPane extends JPanel {
 
         layoutComponents();
 
-        // Notifications/DependsOn support
+        // Notifications support
         initNotifications();
 
         // More initialization
@@ -156,6 +156,22 @@ class SnapshotReviewPane extends JPanel {
             // make sure we have a focus
             ignoreButton.requestFocusInWindow();
         });
+    }
+
+    private void selectPreviousIssue() {
+        SwingUtil.changeSelectedIndex(issuesList, -1);
+    }
+
+    private void selectNextIssue() {
+        SwingUtil.changeSelectedIndex(issuesList,1);
+    }
+
+    private static JLabel legendLabel(String title, Color color) {
+        JLabel label = new JLabel(title);
+        label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
+        label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
+        label.setForeground(Color.GRAY);
+        return label;
     }
 
     private void layoutComponents() {
@@ -171,14 +187,6 @@ class SnapshotReviewPane extends JPanel {
     private void initNotifications() {
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
         onComponentResized(imagesContainer, e -> onImagesContainerVisibleRectChanged());
-    }
-
-    private static JLabel legendLabel(String title, Color color) {
-        JLabel label = new JLabel(title);
-        label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
-        label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
-        label.setForeground(Color.GRAY);
-        return label;
     }
 
     private JComponent topPart() {
@@ -211,19 +219,16 @@ class SnapshotReviewPane extends JPanel {
      * When no item is selected but there are items in the list
      * automatically select the first item.
      */
-    @DependsOn("selectedIssue")
     private void ensureSelectionIfPossible() {
         if (getSelectedIssue() == null && issuesListModel.size() > 0) {
             invokeLater(() -> issuesList.setSelectedIndex(0));
         }
     }
 
-    @DependsOn("selectedIssueDescription")
     private void updateSelectedIssueDescriptionLabel() {
         selectedIssueDescriptionLabel.setText(getSelectedIssueDescription());
     }
 
-    @DependsOn("selectedIssue")
     private String getSelectedIssueDescription() {
         @Nullable
         SnapshotIssue issue = getSelectedIssue();
@@ -272,7 +277,6 @@ class SnapshotReviewPane extends JPanel {
         onExpectedImageIndexChanged();
     }
 
-    @DependsOn({"snapshotImages", "expectedImageIndex"})
     private void updateLabelsForImages() {
         @Nullable SnapshotImages images = getSnapshotImages();
         if (images != null) {
@@ -293,7 +297,6 @@ class SnapshotReviewPane extends JPanel {
         }
     }
 
-    @DependsOn("expectedImageIndex")
     private void updateLabelsForLegend() {
         imagesLegendContainer.removeAll();
         imagesLegendContainer.add(labelsForLegend[(3 - expectedImageIndex) % 3]);
@@ -302,8 +305,6 @@ class SnapshotReviewPane extends JPanel {
         imagesLegendContainer.validate();
     }
 
-    //TODO: automatically derive the code for the "on...Changed" methods from the
-    //  @DependsOn annotations
 
     private void onSelectedIssueChanged() {
         invokeLater(() -> {
@@ -338,8 +339,6 @@ class SnapshotReviewPane extends JPanel {
         });
     }
 
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    @DependsOn({"selectedIssue", "imagesArea"})
     @Nullable
     private SnapshotImages getSnapshotImages() {
         @Nullable SnapshotIssue issue = getSelectedIssue();
@@ -362,7 +361,6 @@ class SnapshotReviewPane extends JPanel {
     }
 
     @Nullable
-    @DependsOn({"shrinkToFit ? imagesContainer.visibleRect"})
     private Dimension getImagesArea() {
         if (getShrinkToFit()) {
             Rectangle visibleRect = imagesContainer.getVisibleRect();
@@ -374,7 +372,6 @@ class SnapshotReviewPane extends JPanel {
         }
     }
 
-    @DependsOn({"selectedIssue"})
     private void updateImagesContainer() {
         boolean hasSelection = getSelectedIssue() != null;
         SwingUtil.setVisible(hasSelection, labelsForImages);
@@ -389,11 +386,4 @@ class SnapshotReviewPane extends JPanel {
         onShrinkToFitChanged();
     }
 
-    private void changeSelectedIndex(int diff) {
-        int size = issuesListModel.size();
-        if (size > 0) {
-            int newIndex = limit(issuesList.getSelectedIndex() + diff, size - 1);
-            issuesList.setSelectedIndex(newIndex);
-        }
-    }
 }

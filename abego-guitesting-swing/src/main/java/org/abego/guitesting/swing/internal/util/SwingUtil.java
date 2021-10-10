@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -52,16 +54,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.BorderedPanel.newBorderedPanel;
-import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.newJCheckBoxWithUpdate;
 import static org.abego.guitesting.swing.internal.util.ListCellRendererForTextProvider.newListCellRendererForTextProvider;
 
-public class SwingUtil {
+public final class SwingUtil {
     public static final int DEFAULT_FLOW_GAP = 5;
     public final static Color LIGHTER_GRAY = new Color(0xd0d0d0);
 
+    SwingUtil() {
+        throw new MustNotInstantiateException();
+    }
+
+    //region Action related
     public static Action newAction(
             String text,
             KeyStroke accelerator,
@@ -95,7 +101,9 @@ public class SwingUtil {
         return ActionWithEventHandler.newAction(
                 text, accelerator, description, null, action);
     }
+    //endregion
 
+    //region Icon related
     public static ImageIcon icon(File file) {
         try {
             return icon(file.toPath().toUri().toURL());
@@ -107,13 +115,17 @@ public class SwingUtil {
     public static ImageIcon icon(URL url) {
         return new ImageIcon(url);
     }
+    //endregion
 
+    //region Border related
     public static Border lineBorder(Color borderColor, int thickness) {
         return BorderFactory.createLineBorder(borderColor, thickness);
     }
+    //endregion
 
-    public static void setVisible(boolean value, JComponent... components) {
-        for (JComponent component : components) {
+    //region Component related
+    public static void setVisible(boolean value, Component... components) {
+        for (Component component : components) {
             component.setVisible(value);
         }
     }
@@ -128,13 +140,29 @@ public class SwingUtil {
             }
         });
     }
+    //endregion
 
+    //region Container related
     public static void addAll(Container container, Component... components) {
         for (Component c : components) {
             container.add(c);
         }
     }
+    //endregion
 
+    //region JComponent related
+    public static void handleAccelerator(JComponent component, Action action) {
+        Object accelerator = action.getValue(Action.ACCELERATOR_KEY);
+        if (accelerator instanceof KeyStroke) {
+            Object key = new Object();
+            component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                    (KeyStroke) accelerator, key);
+            component.getActionMap().put(key, action);
+        }
+    }
+    //endregion
+
+    //region JLabel related
     public static JLabel label(String text, Consumer<JLabel> initCode) {
         JLabel label = new JLabel(text);
         initCode.accept(label);
@@ -148,7 +176,9 @@ public class SwingUtil {
     public static JLabel label() {
         return new JLabel();
     }
+    //endregion
 
+    //region JButton related
     public static JButton button(Action action, Consumer<JButton> initCode) {
         JButton button = new JButton(action);
         handleAccelerator(button, action);
@@ -174,20 +204,55 @@ public class SwingUtil {
             });
         });
     }
+    //endregion
 
-    public static JCheckBoxUpdateable checkBox(
-            Supplier<Boolean> selectedCondition, Action action) {
-
-        JCheckBoxUpdateable checkBox =
-                newJCheckBoxWithUpdate(selectedCondition, action);
-        handleAccelerator(checkBox, action);
-        return checkBox;
+    //region JList related
+    public static <T> JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
+        JList<T> list = new JList<>(listModel);
+        initCode.accept(list);
+        return list;
     }
 
-    public static JComponent scrolling(JComponent component) {
+    public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
+        DefaultListModel<T> listModel = new DefaultListModel<>();
+        for (T i : items) {
+            listModel.addElement(i);
+        }
+        return listModel;
+    }
+
+    public static <T> ListCellRenderer<T> newListCellRenderer(
+            Class<T> valueType, Function<T, String> textProvider) {
+        return newListCellRendererForTextProvider(valueType, textProvider);
+    }
+
+    public static void changeSelectedIndex(JList<?> list, int diff) {
+        int size = list.getModel().getSize();
+        if (size > 0) {
+            int newIndex = limit(list.getSelectedIndex() + diff, size - 1);
+            list.setSelectedIndex(newIndex);
+        }
+    }
+    //endregion
+
+    //region JScollPane related
+    public static JScrollPane scrolling(JComponent component) {
         return new JScrollPane(component);
     }
+    //endregion
 
+    //region Special JComponents
+    public static JComponent separatorBar() {
+        JPanel jPanel = new JPanel(null);
+        jPanel.setPreferredSize(new Dimension(1, 22));
+        jPanel.setBackground(LIGHTER_GRAY);
+        jPanel.setOpaque(true);
+
+        return jPanel;
+    }
+    //endregion
+
+    //region Layout related
     public static BorderedPanel bordered() {
         return newBorderedPanel();
     }
@@ -220,43 +285,6 @@ public class SwingUtil {
                 l -> l.setBorder(new MatteBorder(0, 0, 1, 0, LIGHTER_GRAY)),
                 components);
     }
+    //endregion
 
-    public static JComponent separatorBar() {
-        JPanel jPanel = new JPanel(null);
-        jPanel.setPreferredSize(new Dimension(1, 22));
-        jPanel.setBackground(LIGHTER_GRAY);
-        jPanel.setOpaque(true);
-
-        return jPanel;
-    }
-
-    public static <T> JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
-        JList<T> list = new JList<>(listModel);
-        initCode.accept(list);
-        return list;
-    }
-
-
-    public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
-        DefaultListModel<T> listModel = new DefaultListModel<>();
-        for (T i : items) {
-            listModel.addElement(i);
-        }
-        return listModel;
-    }
-
-    public static <T> ListCellRenderer<T> newListCellRenderer(
-            Class<T> valueType, Function<T, String> textProvider) {
-        return newListCellRendererForTextProvider(valueType, textProvider);
-    }
-
-    private static void handleAccelerator(JComponent component, Action action) {
-        Object accelerator = action.getValue(Action.ACCELERATOR_KEY);
-        if (accelerator instanceof KeyStroke) {
-            Object key = new Object();
-            component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    (KeyStroke) accelerator, key);
-            component.getActionMap().put(key, action);
-        }
-    }
 }
