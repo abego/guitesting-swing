@@ -90,6 +90,7 @@ import static org.abego.guitesting.swing.internal.WaitForIdleSupportImpl.newWait
 import static org.abego.guitesting.swing.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.swing.internal.WindowSupportImpl.newWindowSupport;
 import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.newScreenCaptureSupport;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public final class GTImpl implements GT {
 
@@ -487,7 +488,7 @@ public final class GTImpl implements GT {
             allTests.add(()-> waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(menubar,snapshotName,index));
         }
 
-        Assertions.assertAll(allTests);
+        assertAll(allTests);
     }
 
     private void waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(
@@ -520,18 +521,27 @@ public final class GTImpl implements GT {
 
     private void waitUntilMenuScreenshotsMatchSnapshot(
             JMenu menu, String menuSnapshotName) {
-        waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName);
+        List<Executable> allTests = new ArrayList<>();
+
+        allTests.add(()->waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName));
         for (int i = 0; i < menu.getItemCount(); i++) {
-            JMenuItem menuItem = menu.getItem(i);
-            if (menuItem instanceof JMenu) {
-                JMenu subMenu = (JMenu) menuItem;
-                menu.setPopupMenuVisible(true);
-                try {
-                    //noinspection StringConcatenation
-                    waitUntilMenuScreenshotsMatchSnapshot(subMenu, menuSnapshotName + "." + i);
-                } finally {
-                    menu.setPopupMenuVisible(false);
-                }
+            int index = i;
+            allTests.add(()-> waitUntilMenuScreenshotMatchSnapshotHelper(
+                    menu, menuSnapshotName, index));
+        }
+        assertAll(allTests);
+    }
+
+    private void waitUntilMenuScreenshotMatchSnapshotHelper(JMenu menu, String menuSnapshotName, int i) {
+        JMenuItem menuItem = menu.getItem(i);
+        if (menuItem instanceof JMenu) {
+            JMenu subMenu = (JMenu) menuItem;
+            menu.setPopupMenuVisible(true);
+            try {
+                //noinspection StringConcatenation
+                waitUntilMenuScreenshotsMatchSnapshot(subMenu, menuSnapshotName + "." + i);
+            } finally {
+                menu.setPopupMenuVisible(false);
             }
         }
     }
