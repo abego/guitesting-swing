@@ -34,10 +34,11 @@ import java.util.logging.Logger;
 
 public class SnapshotReviewApp {
     private static final Logger LOGGER = Logger.getLogger(SnapshotReviewApp.class.getName());
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private static final String[] testResourcesDirectoryOptions = new String[]{
-            "src/test/resources",
-            "test_resources",
-            "test_src/resources",
+            "src/test/resources", //NON-NLS
+            "test_resources", //NON-NLS
+            "test_src/resources", //NON-NLS
     };
     private final GT gt = GuiTesting.newGT();
 

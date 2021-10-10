@@ -66,6 +66,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
     private final Robot robot;
     private final PollingSupport pollingSupport;

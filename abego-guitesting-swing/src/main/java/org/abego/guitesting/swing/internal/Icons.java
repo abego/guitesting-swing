@@ -32,31 +32,31 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 public class Icons {
     public static ImageIcon overwriteIcon() {
-        return iconFromResource("overwrite2-16.png");
+        return iconFromResource("overwrite2-16.png"); //NON-NLS
     }
 
     public static ImageIcon alternativeIcon() {
-        return iconFromResource("alternative2-16.png");
+        return iconFromResource("alternative2-16.png"); //NON-NLS
     }
 
     public static ImageIcon ignoreIcon() {
-        return iconFromResource("red-x-16.png");
+        return iconFromResource("red-x-16.png"); //NON-NLS
     }
 
     public static ImageIcon rotateLeftIcon() {
-        return iconFromResource("rotate-left-16.png");
+        return iconFromResource("rotate-left-16.png"); //NON-NLS
     }
 
     public static ImageIcon rotateRightIcon() {
-        return iconFromResource("rotate-right-16.png");
+        return iconFromResource("rotate-right-16.png"); //NON-NLS
     }
 
     public static ImageIcon nextIssueIcon() {
-        return iconFromResource("triangle-down-16.png");
+        return iconFromResource("triangle-down-16.png"); //NON-NLS
     }
 
     public static ImageIcon previousIssueIcon() {
-        return iconFromResource("triangle-up-16.png");
+        return iconFromResource("triangle-up-16.png"); //NON-NLS
     }
 
     private static ImageIcon iconFromResource(String name) {

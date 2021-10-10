@@ -39,7 +39,7 @@
     <inceptionYear>2019</inceptionYear>
     <organization>
         <name>abego Software GmbH, Germany</name>
-        <url>http://abego-software.de</url>
+        <url>https://abego-software.de</url>
     </organization>
     <licenses>
         <license>
@@ -54,7 +54,7 @@
             <name>Udo Borkowski</name>
             <email>ub@abego.org</email>
             <organization>abego Software GmbH, Germany</organization>
-            <organizationUrl>http://abego-software.de</organizationUrl>
+            <organizationUrl>https://abego-software.de</organizationUrl>
         </developer>
     </developers>
 
