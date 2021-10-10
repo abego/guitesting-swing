@@ -49,10 +49,10 @@ final class SnapshotReviewTest {
     @Test
     @Disabled
     void showIssuesSnapshotReview(@TempDir File tempDir) {
-        File reportsDir = mkdir(tempDir, "reports");
-        File testresourcesDir = mkdir(tempDir, "test_resources");
-
         GT gt = GuiTesting.newGT();
+//        File reportsDir = mkdir(tempDir, "reports");
+//        File testresourcesDir = mkdir(tempDir, "test_resources");
+//
 //        JLabel label = new JLabel();
 //        label.setPreferredSize(new Dimension(80,30));
 //        label.setOpaque(true);
