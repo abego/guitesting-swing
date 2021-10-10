@@ -316,6 +316,9 @@ class SnapshotReviewPane extends JPanel {
             updateImagesContainer();
             updateSelectedIssueDescriptionLabel();
             ensureSelectionIfPossible();
+            if (issuesList.getSelectedIndex() >= 0) {
+                issuesList.ensureIndexIsVisible(issuesList.getSelectedIndex());
+            }
         });
     }
 
