@@ -56,6 +56,7 @@ import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
@@ -109,7 +110,8 @@ class SnapshotReviewPane extends JPanel {
 
     SnapshotReviewPane(Seq<? extends SnapshotIssue> issues) {
         // init State
-        issuesListModel = SwingUtil.newDefaultListModel(issues);
+        issuesListModel = newDefaultListModel(
+                issues.sortedBy(SnapshotIssue::getLabel));
         shrinkToFit = true;
 
         // init Actions
