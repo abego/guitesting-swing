@@ -44,6 +44,8 @@ import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
 import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewImpl;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -65,6 +67,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -467,19 +471,31 @@ public final class GTImpl implements GT {
     @Override
     public void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
             JMenuBar menubar, String snapshotName) {
-        //noinspection StringConcatenation
-        waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar"); //NON-NLS
 
-        withAltKeyPressedRun(() -> {
-            //noinspection StringConcatenation
-            waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"); //NON-NLS
-            for (int i = 0; i < menubar.getMenuCount(); i++) {
-                JMenu menu = menubar.getMenu(i);
-                //noinspection StringConcatenation
-                String menuSnapshotName = snapshotName + "-menu-" + i; //NON-NLS
-                waitUntilMenuScreenshotsMatchSnapshot(menu, menuSnapshotName);
-            }
-        });
+        List<Executable> allTests = new ArrayList<>();
+
+        //noinspection StringConcatenation
+        allTests.add(()->
+                waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar")); //NON-NLS
+
+        //noinspection StringConcatenation
+        allTests.add(()-> withAltKeyPressedRun(() ->
+                waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"))); //NON-NLS
+
+        for (int i = 0; i < menubar.getMenuCount(); i++) {
+            int index = i;
+            allTests.add(()-> waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(menubar,snapshotName,index));
+        }
+
+        Assertions.assertAll(allTests);
+    }
+
+    private void waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(
+            JMenuBar menubar, String snapshotName, int index) {
+        //noinspection StringConcatenation
+        withAltKeyPressedRun(() ->
+                waitUntilMenuScreenshotsMatchSnapshot(
+                        menubar.getMenu(index), snapshotName + "-menu-" + index));//NON-NLS
     }
 
     @Override
