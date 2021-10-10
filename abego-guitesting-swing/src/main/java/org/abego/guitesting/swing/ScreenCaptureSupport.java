@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing;
 
+import org.abego.commons.seq.Seq;
+import org.abego.commons.seq.SeqUtil;
 import org.abego.commons.timeout.TimeoutSupplier;
 import org.abego.commons.timeout.Timeoutable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -42,7 +44,9 @@ import java.time.Duration;
  * Support for screen captures/screenshots of the screen or {@link Component}s.
  */
 public interface ScreenCaptureSupport extends TimeoutSupplier {
+    //TODO: make this a default method, not a constant?
     String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
+
 
     /**
      * Returns true when the "inner" bounds of a JFrame should be used when
@@ -262,9 +266,9 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     /**
      * Sets the path to the test resources directory to {@code path}.
-
+     *
      * @param path the new path to the test resources directory (relative to the
-     * Maven project directory)
+     *             Maven project directory)
      */
     void setTestResourcesDirectoryPath(String path);
 
@@ -463,6 +467,14 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
     }
 
+    default Seq<? extends SnapshotIssue> getSnapshotIssues() {
+        return SeqUtil.emptySeq();
+    }
+
+    File getSnapshotReportDirectory();
+
+    void setSnapshotReportDirectory(File directory);
+
     /**
      * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
      */
@@ -505,4 +517,21 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         BufferedImage getDifferenceMask();
     }
 
+    interface SnapshotIssue {
+        String getSnapshotName();
+
+        int getIndex();
+
+        String getLabel();
+
+        URL getActualImage();
+
+        URL getExpectedImage();
+
+        URL getDifferenceImage();
+
+        URL getOverwriteURL();
+
+        URL getAddAlternativeURL();
+    }
 }

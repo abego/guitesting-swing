@@ -275,6 +275,7 @@ public final class GuiTestingUtil {
 
     @Nullable
     private static Method findTestMethodOrNull(Class<?> type, String name) {
+        //noinspection CallToSuspiciousStringMethod
         return itemWithOrNull(type.getDeclaredMethods(),
                 m -> m.getName().equals(name) && isTestMethod(m));
     }

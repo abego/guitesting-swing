@@ -43,9 +43,10 @@ public class ScreenshotCompareHtmlReport {
     }
 
     private static String copyFileStatement(String source, String target) {
+        //noinspection StringConcatenation
         return GuiTestingUtil.isMacOS()
-                ? "cp -rf " + source + " " + target
-                : "copy /Y " + source + " " + target;
+                ? "cp -rf " + source + " " + target //NON-NLS
+                : "copy /Y " + source + " " + target; //NON-NLS
     }
 
     @SuppressWarnings({"StringConcatenation", "HardCodedStringLiteral"})
@@ -103,12 +104,13 @@ public class ScreenshotCompareHtmlReport {
 
     private void printCopyFileStatement(PrintStream report, String caption, String source, String target) {
         String copyStmt = copyFileStatement(source, target);
+        //noinspection StringConcatenation
         report.println("" +
-                "<h4>" + caption + "</h4>\n" +
-                "<pre>\n" +
+                "<h4>" + caption + "</h4>\n" + //NON-NLS
+                "<pre>\n" + //NON-NLS
                 copyStmt + "\n" +
-                "</pre>\n" +
-                "<button onclick=\"navigator.clipboard.writeText('" + copyStmt + "');\">Copy to clipboard</button>\n"
+                "</pre>\n" + //NON-NLS
+                "<button onclick=\"navigator.clipboard.writeText('" + copyStmt + "');\">Copy to clipboard</button>\n" //NON-NLS
         );
     }
 

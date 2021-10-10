@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.screencapture;
 
 import org.abego.commons.io.FileUtil;
+import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.PollingSupport;
@@ -49,6 +50,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -58,15 +60,18 @@ import static org.abego.guitesting.swing.internal.GuiTestingUtil.getNameDefining
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.getReadImageErrorMessage;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.toScreenCoordinates;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
+import static org.abego.guitesting.swing.internal.screencapture.SnapshotIssueSupport.newSnapshotIssueSupport;
 
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
+    static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
-
     private final Robot robot;
     private final PollingSupport pollingSupport;
     private final WaitSupport waitSupport;
+    private File snapshotReportDirectory = new File("target/guitesting-reports");
     private boolean generateSnapshotIfMissing = true;
     private boolean useInnerJFrameBounds = false;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
@@ -329,6 +334,16 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         return resolveSnapshotName(name, "getSnapshotName");
     }
 
+    @Override
+    public File getSnapshotReportDirectory() {
+        return snapshotReportDirectory;
+    }
+
+    @Override
+    public void setSnapshotReportDirectory(File directory) {
+        snapshotReportDirectory = directory;
+    }
+
     private BufferedImage captureAndWriteInitialSnapshotImage(
             Component component, @Nullable Rectangle rectangle,
             File imageFile) {
@@ -338,11 +353,6 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         writeImage(image, imageFile);
         LOGGER.info(String.format("Initial snapshot image written: '%s'", imageFile.getAbsolutePath())); //NON-NLS
         return image;
-    }
-
-
-    private File getOutputDirectory() {
-        return new File("target/guitesting-reports");
     }
 
     private File writeUnmatchedScreenshotReport(
@@ -387,7 +397,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             SnapshotInfo snapshotInfo,
             @Nullable File newImageFileForResources) {
 
-        File outputDir = getOutputDirectory();
+        File outputDir = getSnapshotReportDirectory();
         String timestamp = Instant.now().toString();
 
         String imagesDirName = "images"; //NON-NLS
@@ -425,8 +435,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 timestamp); //NON-NLS
     }
 
+    @Override
+    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
+        return newSnapshotIssueSupport(getSnapshotReportDirectory(),
+                new File(getTestResourcesDirectoryPath())).findSnapshotIssues();
+    }
+
     static class SnapshotInfo {
-        private static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
 
         /**
          * The (absolute) snapshot name, with "/" as delimiters
@@ -448,7 +463,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         private static URL urlToTestClass(String calleeName) {
             StackTraceElement method = getNameDefiningCall(calleeName);
             Class<?> type = GuiTestingUtil.getClass(method);
-            return type.getResource("");
+            return Objects.requireNonNull(type.getResource(""));
         }
 
 

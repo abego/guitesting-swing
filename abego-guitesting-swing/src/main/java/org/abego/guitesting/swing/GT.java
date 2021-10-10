@@ -274,6 +274,8 @@ public interface GT extends
                 menubar, getSnapshotName(null));
     }
 
+    SnapshotReview newSnapshotReview();
+
     // ======================================================================
     // Reset
     // ======================================================================

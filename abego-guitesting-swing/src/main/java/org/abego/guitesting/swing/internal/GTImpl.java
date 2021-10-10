@@ -37,10 +37,12 @@ import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
+import org.abego.guitesting.swing.SnapshotReview;
 import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
+import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewImpl;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JFrame;
@@ -468,7 +470,7 @@ public final class GTImpl implements GT {
         //noinspection StringConcatenation
         waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar"); //NON-NLS
 
-        withAltKeyPressedRun(()->{
+        withAltKeyPressedRun(() -> {
             //noinspection StringConcatenation
             waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"); //NON-NLS
             for (int i = 0; i < menubar.getMenuCount(); i++) {
@@ -542,6 +544,31 @@ public final class GTImpl implements GT {
         } finally {
             menu.setPopupMenuVisible(false);
         }
+    }
+
+
+    @Override
+    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
+        return screenCaptureSupport.getSnapshotIssues();
+    }
+
+    @Override
+    public File getSnapshotReportDirectory() {
+        return screenCaptureSupport.getSnapshotReportDirectory();
+    }
+
+    @Override
+    public void setSnapshotReportDirectory(File directory) {
+        screenCaptureSupport.setSnapshotReportDirectory(directory);
+    }
+
+    // ======================================================================
+    // SnapshotReview
+    // ======================================================================
+
+    @Override
+    public SnapshotReview newSnapshotReview() {
+        return SnapshotReviewImpl.newSnapshotReview(this);
     }
 
     // ======================================================================
