@@ -38,8 +38,7 @@ public final class BorderedPanel extends JPanel {
     }
 
     public BorderedPanel left(JComponent component) {
-        add(component, BorderLayout.LINE_START);
-        return this;
+        return west(component);
     }
 
     public BorderedPanel west(JComponent component) {
@@ -48,18 +47,16 @@ public final class BorderedPanel extends JPanel {
     }
 
     public BorderedPanel right(JComponent component) {
-        add(component, BorderLayout.LINE_END);
-        return this;
+        return east(component);
     }
 
     public BorderedPanel east(JComponent component) {
         add(component, BorderLayout.LINE_END);
-        return this;
+        return right(component);
     }
 
     public BorderedPanel top(JComponent component) {
-        add(component, BorderLayout.PAGE_START);
-        return this;
+        return north(component);
     }
 
     public BorderedPanel north(JComponent component) {
@@ -68,8 +65,7 @@ public final class BorderedPanel extends JPanel {
     }
 
     public BorderedPanel bottom(JComponent component) {
-        add(component, BorderLayout.PAGE_END);
-        return this;
+        return south(component);
     }
 
     public BorderedPanel south(JComponent component) {
