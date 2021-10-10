@@ -24,10 +24,8 @@
 
 package org.abego.guitesting.swing.internal.screencapture;
 
-import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
-import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.SnapshotReview;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
