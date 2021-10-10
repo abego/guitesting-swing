@@ -2473,13 +2473,16 @@ public class GTTest {
     Stream<DynamicTest> waitUntilScreenshotMatchesSnapshot_TestFactory() {
         return Stream.of("foo", "bar", "baz")
                 .map(text -> DynamicTest.dynamicTest(text, () -> {
-                    openSampleWindow(text);
+                    try {
+                        openSampleWindow(text);
 
-                    JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+                        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
-                    String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
-                    gt.waitUntilScreenshotMatchesSnapshot(tf, name);
-                    gt.cleanup();
+                        String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
+                        gt.waitUntilScreenshotMatchesSnapshot(tf, name);
+                    } finally {
+                        gt.cleanup();
+                    }
                 }));
     }
 
