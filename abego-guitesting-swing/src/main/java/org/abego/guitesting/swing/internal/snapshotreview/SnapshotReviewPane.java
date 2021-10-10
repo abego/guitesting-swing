@@ -349,7 +349,7 @@ class SnapshotReviewPane extends JPanel {
         if (images == null
                 || !Objects.equals(images.getIssue(), issue)
                 || !Objects.equals(getImagesArea(), images.getArea())) {
-            images = new SnapshotImages(issue, getImagesArea(), e -> {});
+            images = new SnapshotImages(issue, getImagesArea());
             snapshotImages = images;
         }
         return images;

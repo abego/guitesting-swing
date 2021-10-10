@@ -40,8 +40,6 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 final class SnapshotImages {
     private final SnapshotIssue issue;
     private final @Nullable Dimension area;
-    //TODO: do we need this?
-    private final Consumer<SnapshotImages> onImagesLoadedCallback;
     private final ImageIcon rawExpectedImage;
     private final ImageIcon rawActualImage;
     private final ImageIcon rawDifferenceImage;
@@ -50,11 +48,9 @@ final class SnapshotImages {
     private final ImageIcon differenceImage;
     SnapshotImages(
             SnapshotIssue issue,
-            @Nullable Dimension area,
-            Consumer<SnapshotImages> onImagesLoadedCallback) {
+            @Nullable Dimension area) {
         this.issue = issue;
         this.area = area;
-        this.onImagesLoadedCallback = onImagesLoadedCallback;
 
         rawExpectedImage = icon(toFile(issue.getExpectedImage()));
         rawActualImage = icon(toFile(issue.getActualImage()));
