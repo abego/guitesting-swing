@@ -52,7 +52,7 @@ public final class BorderedPanel extends JPanel {
 
     public BorderedPanel east(JComponent component) {
         add(component, BorderLayout.LINE_END);
-        return right(component);
+        return this;
     }
 
     public BorderedPanel top(JComponent component) {
