@@ -59,21 +59,6 @@ final class ActionWithEventHandler extends AbstractAction {
     public static Action newAction(
             String text,
             KeyStroke accelerator,
-            Consumer<ActionEvent> action) {
-        return new ActionWithEventHandler(text, accelerator, null, null,action);
-    }
-
-    public static Action newAction(
-            String text,
-            KeyStroke accelerator,
-            @Nullable ImageIcon smallIcon,
-            Consumer<ActionEvent> action) {
-        return new ActionWithEventHandler(text, accelerator, null, smallIcon, action);
-    }
-
-    public static Action newAction(
-            String text,
-            KeyStroke accelerator,
             @Nullable String description,
             @Nullable ImageIcon smallIcon,
             Consumer<ActionEvent> action) {
