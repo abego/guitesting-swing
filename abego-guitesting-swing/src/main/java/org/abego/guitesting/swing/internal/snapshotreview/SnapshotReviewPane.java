@@ -158,20 +158,20 @@ class SnapshotReviewPane extends JPanel {
         });
     }
 
-    private void selectPreviousIssue() {
-        SwingUtil.changeSelectedIndex(issuesList, -1);
-    }
-
-    private void selectNextIssue() {
-        SwingUtil.changeSelectedIndex(issuesList,1);
-    }
-
     private static JLabel legendLabel(String title, Color color) {
         JLabel label = new JLabel(title);
         label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
         label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
         label.setForeground(Color.GRAY);
         return label;
+    }
+
+    private void selectPreviousIssue() {
+        SwingUtil.changeSelectedIndex(issuesList, -1);
+    }
+
+    private void selectNextIssue() {
+        SwingUtil.changeSelectedIndex(issuesList, 1);
     }
 
     private void layoutComponents() {
@@ -252,7 +252,11 @@ class SnapshotReviewPane extends JPanel {
     }
 
     private void removeIssue(SnapshotIssue issue) {
-        invokeLater(() -> issuesListModel.removeElement(issue));
+        invokeLater(() -> {
+            int selectedIndex = issuesList.getSelectedIndex();
+            issuesListModel.removeElement(issue);
+            issuesList.setSelectedIndex(selectedIndex);
+        });
     }
 
     private void addAltenativeSnapshot() {
