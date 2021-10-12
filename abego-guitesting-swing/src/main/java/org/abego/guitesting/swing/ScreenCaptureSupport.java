@@ -256,21 +256,43 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      */
     void setDelayBeforeNewSnapshot(Duration duration);
 
+
     /**
-     * Returns the path to the test resources directory, relative to the
-     * Maven project directory.
+     * Returns the test resources directory
      *
+     * @return the test resources directory
+     */
+    File getTestResourcesDirectory();
+
+    /**
+     * Returns the path to the test resources directory
+     *
+     * @deprecated use {@link #getTestResourcesDirectory()} instead
      * @return the path to the test resources directory
      */
-    String getTestResourcesDirectoryPath();
+    @Deprecated
+    default String getTestResourcesDirectoryPath() {
+        return getTestResourcesDirectory().getPath();
+    }
 
+    /**
+     * Sets the test resources directory to {@code directory}.
+     *
+     * @param directory the new test resources directory
+     */
+    void setTestResourcesDirectory(File directory);
+    
     /**
      * Sets the path to the test resources directory to {@code path}.
      *
+     * @deprecated use {@link #setTestResourcesDirectory(File)} ()} instead
      * @param path the new path to the test resources directory (relative to the
      *             Maven project directory)
      */
-    void setTestResourcesDirectoryPath(String path);
+    @Deprecated
+    default void setTestResourcesDirectoryPath(String path) {
+        setTestResourcesDirectory(new File(path));
+    }
 
     /**
      * Returns the absolute name of the snapshot the will be created in that

@@ -431,13 +431,13 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public String getTestResourcesDirectoryPath() {
-        return screenCaptureSupport.getTestResourcesDirectoryPath();
+    public File getTestResourcesDirectory() {
+        return screenCaptureSupport.getTestResourcesDirectory();
     }
 
     @Override
-    public void setTestResourcesDirectoryPath(String path) {
-        screenCaptureSupport.setTestResourcesDirectoryPath(path);
+    public void setTestResourcesDirectory(File directory) {
+        screenCaptureSupport.setTestResourcesDirectory(directory);
     }
 
     @Override

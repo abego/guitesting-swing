@@ -75,7 +75,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private boolean generateSnapshotIfMissing = true;
     private boolean useInnerJFrameBounds = false;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
-    private String testResourcesDirectoryPath = TEST_RESOURCES_DIRECTORY_PATH_DEFAULT;
+    private File testResourcesDirectory = new File(TEST_RESOURCES_DIRECTORY_PATH_DEFAULT);
     private int imageDifferenceTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
 
     private ScreenCaptureSupportImpl(
@@ -226,13 +226,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public String getTestResourcesDirectoryPath() {
-        return testResourcesDirectoryPath;
+    public File getTestResourcesDirectory() {
+        return testResourcesDirectory;
     }
 
     @Override
-    public void setTestResourcesDirectoryPath(String path) {
-        testResourcesDirectoryPath = path;
+    public void setTestResourcesDirectory(File directory) {
+        testResourcesDirectory = directory;
     }
 
     private static String resolveSnapshotName(
