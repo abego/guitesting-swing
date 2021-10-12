@@ -30,6 +30,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import static org.abego.commons.io.FileUtil.ensureDirectoryExists;
+
 public class FileUtil {
     public static File mkdirs(File parentDir, String directoryName) {
         File dir = new File(parentDir, directoryName);
@@ -42,6 +44,7 @@ public class FileUtil {
 
     public static void copyFile(File source, File destination) {
         try {
+            ensureDirectoryExists(destination.getParentFile());
             Files.copy(
                     source.toPath(),
                     destination.toPath(),

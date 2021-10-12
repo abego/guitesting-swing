@@ -24,38 +24,85 @@
 
 package org.abego.guitesting.swing.internal.screencapture;
 
+import org.abego.commons.io.FileUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.SnapshotReview;
-import org.junit.jupiter.api.Disabled;
+import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import javax.swing.JFrame;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
 import java.io.File;
+
+import static org.abego.guitesting.swing.SnapshotReview.SNAPSHOT_REVIEW_FRAME_NAME;
+import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
 
 final class SnapshotReviewTest {
     @Test
-    @Disabled
     void showIssuesSnapshotReview(@TempDir File tempDir) {
+        File reportsDir = mkdirs(tempDir, "reports");
+        File testResourcesDir = mkdirs(tempDir, "test-resources");
+
+        FileUtil.copyResourcesToDirectoryFlat(new File(reportsDir, "images"),
+                "/org/abego/guitesting/swing/internal/review-sample/images/",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-actualImage.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-differenceImage@0.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-differenceImage@1.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-expectedImage@0.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-expectedImage@1.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-actualImage.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-differenceImage@0.png",
+                "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-expectedImage@0.png");
+
+        GT gtForReview = GuiTesting.newGT();
+        gtForReview.setSnapshotReportDirectory(reportsDir);
+        gtForReview.setTestResourcesDirectory(testResourcesDir);
+
+        SnapshotReview review = gtForReview.newSnapshotReview();
+        review.showIssues(frame -> frame.setSize(800, 360));
+
         GT gt = GuiTesting.newGT();
-//        File reportsDir = mkdir(tempDir, "reports");
-//        File testresourcesDir = mkdir(tempDir, "test_resources");
-//
-//        JLabel label = new JLabel();
-//        label.setPreferredSize(new Dimension(80,30));
-//        label.setOpaque(true);
-//        label.setBackground(Color.ORANGE);
-//        label.setText("foo");
-//        gt.showInFrame(label);
-//       // gt.waitUntilScreenshotMatchesSnapshot(label, "orange");
-//        label.setBackground(Color.BLUE);
-//        gt.waitUntilScreenshotMatchesSnapshot(label, "blue");
-//        gt.setTestResourcesDirectoryPath(testresourcesDir.getAbsolutePath());
-//        gt.setSnapshotReportDirectory(reportsDir);
-//
-        SnapshotReview review = gt.newSnapshotReview();
-        review.showIssues();
-        gt.pause();
+        // move the mouse out of way
+        // (e.g. to avoid it over a toolbar button and "hover highlights" it)
+        gt.mouseMove(new Point(0,0));
+
+        JFrame frame = gt.waitForWindowNamed(
+                JFrame.class, SNAPSHOT_REVIEW_FRAME_NAME);
+
+        // rotate
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start");
+        gt.typeKeycode(KeyEvent.VK_RIGHT);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate1");
+        gt.typeKeycode(KeyEvent.VK_RIGHT);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate2");
+        gt.typeKeycode(KeyEvent.VK_RIGHT);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start");
+
+        // select next issue
+        gt.typeKeycode(KeyEvent.VK_DOWN);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+
+        // Un-"Shrink to fit"
+        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "noShrink");
+        // "Shrink to fit"
+        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+
+        // ignore item (ESC)
+        gt.typeKeycode(KeyEvent.VK_ESCAPE);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "deleted");
+
+        // Alternative
+        gt.typeKeycode(KeyEvent.VK_A);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "alternative");
+
+        // Overwrite
+        gt.typeKeycode(KeyEvent.VK_O);
+        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "overwrite");
     }
 
 
