@@ -31,6 +31,15 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public class FileUtil {
+    public static File mkdirs(File parentDir, String directoryName) {
+        File dir = new File(parentDir, directoryName);
+        if (!dir.mkdirs()) {
+            throw new IllegalStateException(String.format(
+                    "Error creating directory: %s", directoryName)); //NON-NLS
+        }
+        return dir;
+    }
+
     public static void copyFile(File source, File destination) {
         try {
             Files.copy(

@@ -34,16 +34,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 
 final class SnapshotReviewTest {
-    //TODO: to commons
-    private static File mkdir(File parentDir, String directoryName) {
-        File dir = new File(parentDir, directoryName);
-        if (!dir.mkdirs()) {
-            throw new IllegalStateException("Error creating directory: " +
-                    directoryName);
-        }
-        return dir;
-    }
-
     @Test
     @Disabled
     void showIssuesSnapshotReview(@TempDir File tempDir) {
