@@ -31,7 +31,7 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.SnapshotReview;
 
 import javax.swing.JFrame;
-import java.awt.Frame;
+import java.util.function.Consumer;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
@@ -54,7 +54,7 @@ public class SnapshotReviewImpl implements SnapshotReview {
 	}
 
 	@Override
-	public void showIssues() {
+	public void showIssues(Consumer<JFrame> framePreShowCode) {
 
 		Seq<? extends SnapshotIssue> issues = gt.getSnapshotIssues();
 
@@ -62,8 +62,9 @@ public class SnapshotReviewImpl implements SnapshotReview {
 			SnapshotReviewPane pane = new SnapshotReviewPane(issues);
 			//noinspection StringConcatenation
 			JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
+			frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
 			frame.setContentPane(pane);
-			frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+			framePreShowCode.accept(frame);
 			frame.setVisible(true);
 		});
 	}

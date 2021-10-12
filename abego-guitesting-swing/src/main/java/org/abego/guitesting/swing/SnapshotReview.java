@@ -24,7 +24,16 @@
 
 package org.abego.guitesting.swing;
 
-public interface SnapshotReview {
+import javax.swing.JFrame;
+import java.awt.Frame;
+import java.util.function.Consumer;
 
-    void showIssues();
+public interface SnapshotReview {
+    String SNAPSHOT_REVIEW_FRAME_NAME = "snapshot-review-frame";
+
+    default void showIssues() {
+        showIssues(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));
+    }
+
+    void showIssues(Consumer<JFrame> framePreShowCode);
 }
