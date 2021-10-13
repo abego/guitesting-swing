@@ -53,4 +53,12 @@ public class FileUtil {
             throw new UncheckedIOException(e);
         }
     }
+
+    /**
+     * Creates an empty file
+     */
+    public static void emptyFile(File file) {
+        ensureDirectoryExists(file.getParentFile());
+        org.abego.commons.io.FileUtil.writeText(file,"");
+    }
 }

@@ -39,13 +39,16 @@ import java.io.File;
 
 import static org.abego.guitesting.swing.SnapshotReview.SNAPSHOT_REVIEW_FRAME_NAME;
 import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class SnapshotReviewTest {
     @Test
     void showIssuesSnapshotReview(@TempDir File tempDir) {
         File reportsDir = mkdirs(tempDir, "reports");
         File testResourcesDir = mkdirs(tempDir, "test-resources");
+        File myResourcesDir = new File(testResourcesDir.getAbsolutePath() + "/org/abego/guitesting/swing/snap-shots");
 
+        // fill the "reports" directory.
         FileUtil.copyResourcesToDirectoryFlat(new File(reportsDir, "images"),
                 "/org/abego/guitesting/swing/internal/review-sample/images/",
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-actualImage.png",
@@ -56,6 +59,12 @@ final class SnapshotReviewTest {
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-actualImage.png",
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-differenceImage@0.png",
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-expectedImage@0.png");
+
+        // fill the testResources directory (with dummy file)
+        org.abego.guitesting.swing.internal.util.FileUtil.emptyFile(new File(myResourcesDir,
+                "GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot@0.png"));
+        org.abego.guitesting.swing.internal.util.FileUtil.emptyFile(new File(myResourcesDir,
+                "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@0.png"));
 
         GT gtForReview = GuiTesting.newGT();
         gtForReview.setSnapshotReportDirectory(reportsDir);
@@ -103,6 +112,15 @@ final class SnapshotReviewTest {
         // Overwrite
         gt.typeKeycode(KeyEvent.VK_O);
         gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "overwrite");
+
+        // check for the overwritten file
+        assertEquals(239, new File(myResourcesDir,
+                "GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot@0.png").length());
+        // check for the alternative file
+        assertEquals(0, new File(myResourcesDir,
+                "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@0.png").length());
+        assertEquals(239, new File(myResourcesDir,
+                "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@1.png").length());
     }
 
 
