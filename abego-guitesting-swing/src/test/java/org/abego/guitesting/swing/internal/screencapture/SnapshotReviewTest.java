@@ -39,6 +39,7 @@ import java.io.File;
 
 import static org.abego.guitesting.swing.SnapshotReview.SNAPSHOT_REVIEW_FRAME_NAME;
 import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class SnapshotReviewTest {
@@ -75,52 +76,69 @@ final class SnapshotReviewTest {
 
         GT gt = GuiTesting.newGT();
         // move the mouse out of way
-        // (e.g. to avoid it over a toolbar button and "hover highlights" it)
-        gt.mouseMove(new Point(0,0));
+        // (e.g. to avoid it is over a toolbar button and "hover highlights" it)
+        gt.mouseMove(new Point(0, 0));
 
         JFrame frame = gt.waitForWindowNamed(
                 JFrame.class, SNAPSHOT_REVIEW_FRAME_NAME);
 
-        // rotate
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start");
-        gt.typeKeycode(KeyEvent.VK_RIGHT);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate1");
-        gt.typeKeycode(KeyEvent.VK_RIGHT);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate2");
-        gt.typeKeycode(KeyEvent.VK_RIGHT);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start");
+        assertAll(
+                () -> gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start"),
 
-        // select next issue
-        gt.typeKeycode(KeyEvent.VK_DOWN);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+                // rotate
+                () -> {
+                    gt.typeKeycode(KeyEvent.VK_RIGHT);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate1");
+                },
+                () -> {
+                    gt.typeKeycode(KeyEvent.VK_RIGHT);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "rotate2");
+                },
+                () -> {
+                    gt.typeKeycode(KeyEvent.VK_RIGHT);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "start");
+                },
+                () -> {
+                    // select next issue
+                    gt.typeKeycode(KeyEvent.VK_DOWN);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+                },
+                () -> {
+                    // Un-"Shrink to fit"
+                    gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "noShrink");
+                },
+                () -> {
+                    // "Shrink to fit"
+                    gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+                },
+                () -> {
+                    // ignore item (ESC)
+                    gt.typeKeycode(KeyEvent.VK_ESCAPE);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "deleted");
+                },
+                () -> {
+                    // Alternative
+                    gt.typeKeycode(KeyEvent.VK_A);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "alternative");
+                },
+                () -> {
+                    // Overwrite
+                    gt.typeKeycode(KeyEvent.VK_O);
+                    gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "overwrite");
+                },
 
-        // Un-"Shrink to fit"
-        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "noShrink");
-        // "Shrink to fit"
-        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
+                // check for the overwritten file
+                () -> assertEquals(239, new File(myResourcesDir,
+                        "GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot@0.png").length()),
 
-        // ignore item (ESC)
-        gt.typeKeycode(KeyEvent.VK_ESCAPE);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "deleted");
-
-        // Alternative
-        gt.typeKeycode(KeyEvent.VK_A);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "alternative");
-
-        // Overwrite
-        gt.typeKeycode(KeyEvent.VK_O);
-        gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "overwrite");
-
-        // check for the overwritten file
-        assertEquals(239, new File(myResourcesDir,
-                "GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot@0.png").length());
-        // check for the alternative file
-        assertEquals(0, new File(myResourcesDir,
-                "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@0.png").length());
-        assertEquals(239, new File(myResourcesDir,
-                "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@1.png").length());
+                // check for the alternative file
+                () -> assertEquals(0, new File(myResourcesDir,
+                        "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@0.png").length()),
+                () -> assertEquals(239, new File(myResourcesDir,
+                        "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@1.png").length())
+        );
     }
 
 
