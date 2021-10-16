@@ -234,7 +234,18 @@ class SnapshotReviewPane extends JPanel {
     private String getSelectedIssueDescription() {
         @Nullable
         SnapshotIssue issue = getSelectedIssue();
-        return issue != null ? issue.getLabel() : " ";//NON-NLS
+        if (issue == null) {
+            return " ";
+        }
+
+        // display the "simple" name of the snapshot first,
+        // followed by the package and class part,
+        // separated by a "-".
+        String s = issue.getLabel();
+        int iDot = s.lastIndexOf('.');
+        return iDot >= 0
+                ? s.substring(iDot+1) + " - " + s.substring(0, iDot)
+                : s;
     }
 
     private void overwriteSnapshot() {
