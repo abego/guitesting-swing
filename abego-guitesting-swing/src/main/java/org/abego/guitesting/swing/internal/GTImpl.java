@@ -594,7 +594,7 @@ public final class GTImpl implements GT {
 
     @Override
     public SnapshotReview newSnapshotReview() {
-        return SnapshotReviewImpl.newSnapshotReview(this);
+        return SnapshotReviewImpl.newSnapshotReview(this::getSnapshotIssues);
     }
 
     // ======================================================================

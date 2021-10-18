@@ -32,42 +32,47 @@ import org.abego.guitesting.swing.SnapshotReview;
 
 import javax.swing.JFrame;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
-public class SnapshotReviewImpl implements SnapshotReview {
+public class SnapshotReviewImpl<T extends SnapshotIssue> implements SnapshotReview {
 
-	private final GT gt;
+    private final Supplier<Seq<T>> issuesSupplier;
 
-	private SnapshotReviewImpl(GT gt) {
-		this.gt = gt;
-	}
+    private SnapshotReviewImpl(Supplier<Seq<T>> issuesSupplier) {
+        this.issuesSupplier = issuesSupplier;
+    }
 
-	public static void main(String[] args) {
-		GT gt = GuiTesting.newGT();
+    public static void main(String[] args) {
+        GT gt = GuiTesting.newGT();
 
-		gt.newSnapshotReview().showIssues();
-	}
+        gt.newSnapshotReview().showIssues();
+    }
 
-	public static SnapshotReview newSnapshotReview(GT gt) {
-		return new SnapshotReviewImpl(gt);
-	}
+    public static <T extends SnapshotIssue> SnapshotReview newSnapshotReview(
+            Supplier<Seq<T>> issuesSupplier) {
+        return new SnapshotReviewImpl<>(issuesSupplier);
+    }
 
-	@Override
-	public void showIssues(Consumer<JFrame> framePreShowCode) {
+    @Override
+    public void showIssues(Consumer<JFrame> framePreShowCode) {
 
-		Seq<? extends SnapshotIssue> issues = gt.getSnapshotIssues();
+        Seq<T> issues = getSnapshotIssues();
 
-		invokeLater(() -> {
-			SnapshotReviewPane pane = new SnapshotReviewPane(issues);
-			//noinspection StringConcatenation
-			JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
-			frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
-			frame.setContentPane(pane);
-			framePreShowCode.accept(frame);
-			frame.setVisible(true);
-		});
-	}
+        invokeLater(() -> {
+            SnapshotReviewPane<T> pane = new SnapshotReviewPane<>(issues);
+            //noinspection StringConcatenation
+            JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
+            frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
+            frame.setContentPane(pane);
+            framePreShowCode.accept(frame);
+            frame.setVisible(true);
+        });
+    }
 
+    private Seq<T> getSnapshotIssues() {
+        return issuesSupplier.get();
+    }
 
 }
