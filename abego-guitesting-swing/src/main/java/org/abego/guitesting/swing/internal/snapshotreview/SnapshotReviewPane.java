@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.BorderedPanel;
 import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
+import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -69,7 +70,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.scrolling;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 
-class SnapshotReviewPane extends JPanel {
+class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
 
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
@@ -97,10 +98,10 @@ class SnapshotReviewPane extends JPanel {
     private final JComponent imagesContainer;
     private final JButton ignoreButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
-    private final JList<? extends SnapshotIssue> issuesList;
+    private final JList<T> issuesList;
 
     // UI State
-    private final DefaultListModel<? extends SnapshotIssue> issuesListModel;
+    private final DefaultListModel<T> issuesListModel;
 
     // State
     private int expectedImageIndex;
@@ -108,7 +109,7 @@ class SnapshotReviewPane extends JPanel {
     @Nullable
     private SnapshotImages snapshotImages;
 
-    SnapshotReviewPane(Seq<? extends SnapshotIssue> issues) {
+    SnapshotReviewPane(Seq<T> issues) {
         // init State
         issuesListModel = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
@@ -233,38 +234,67 @@ class SnapshotReviewPane extends JPanel {
 
     private String getSelectedIssueDescription() {
         @Nullable
-        SnapshotIssue issue = getSelectedIssue();
+        T issue = getSelectedIssue();
         if (issue == null) {
             return " ";
         }
 
+        StringBuilder result = new StringBuilder();
+
+        int variantsCount = getVariantsCount(issue);
+        if (variantsCount > 1) {
+            result.append("[");
+            result.append(getVariantsIndex(issue) + 1);
+            result.append(" of ");
+            result.append(variantsCount);
+            result.append("] ");
+        }
         // display the "simple" name of the snapshot first,
         // followed by the package and class part,
         // separated by a "-".
         String s = issue.getLabel();
         int iDot = s.lastIndexOf('.');
-        return iDot >= 0
-                ? s.substring(iDot+1) + " - " + s.substring(0, iDot)
-                : s;
+        if (iDot >= 0) {
+            result.append(s, iDot + 1, s.length());
+            result.append(" - ");
+            result.append(s, 0, iDot);
+        } else {
+            result.append(s);
+        }
+        return result.toString();
     }
 
     private void overwriteSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        @Nullable T currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
                     toFile(currentIssue.getOverwriteURL()));
-            removeIssue(currentIssue);
+            removeIssueAndVariants(currentIssue);
         }
     }
 
     @SuppressWarnings("ConstantConditions") // to remove "nullable" warning
     @Nullable
-    private SnapshotIssue getSelectedIssue() {
+    private T getSelectedIssue() {
         return issuesList.getSelectedValue();
     }
 
-    private void removeIssue(SnapshotIssue issue) {
+    private void removeIssueAndVariants(T issue) {
+        String name = issue.getSnapshotName();
+        invokeLater(() -> {
+            int selectedIndex = issuesList.getSelectedIndex();
+            for (int i = issuesListModel.size()-1; i >= 0; i--) {
+                T issueInModel = issuesListModel.get(i);
+                if (issueInModel.getSnapshotName().equals(name)) {
+                    issuesListModel.removeElementAt(i);
+                }
+            }
+            issuesList.setSelectedIndex(selectedIndex);
+        });
+    }
+
+    private void removeIssue(T issue) {
         invokeLater(() -> {
             int selectedIndex = issuesList.getSelectedIndex();
             issuesListModel.removeElement(issue);
@@ -272,18 +302,31 @@ class SnapshotReviewPane extends JPanel {
         });
     }
 
+    private int getVariantsCount(T issue) {
+        return getVariants(issue).size();
+    }
+
+    private int getVariantsIndex(T issue) {
+        return getVariants(issue).indexOf(issue);
+    }
+
+    private Seq<T> getVariants(T issue) {
+        return SeqUtil2.newSeq(issuesListModel.elements()).filter(
+                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
+    }
+
     private void addAltenativeSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        @Nullable T currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
                     toFile(currentIssue.getAddAlternativeURL()));
-            removeIssue(currentIssue);
+            removeIssueAndVariants(currentIssue);
         }
     }
 
     private void ignoreCurrentIssue() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        @Nullable T currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             removeIssue(currentIssue);
         }
