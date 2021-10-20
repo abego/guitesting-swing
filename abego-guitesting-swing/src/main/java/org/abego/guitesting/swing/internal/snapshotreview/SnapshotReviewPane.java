@@ -57,27 +57,31 @@ import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
-import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.borderedWithTopLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.scrolling;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
+import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 
+//TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
 
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
+    private static final Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
     private static final int BORDER_SIZE = 3;
     private static final int LEGEND_BORDER_SIZE = 2;
     private static final int VISIBLE_ISSUES_COUNT = 8;
+    private static final int BULLET_SIZE = 24;
 
     // Actions
     private final Action addAltenativeSnapshotAction;
@@ -96,6 +100,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private final JLabel selectedIssueDescriptionLabel;
     private final JComponent imagesLegendContainer;
     private final JComponent imagesContainer;
+    private final JComponent variantsIndicator;
     private final JButton ignoreButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
     private final JList<T> issuesList;
@@ -131,21 +136,28 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
             l.setCellRenderer(
                     newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
         });
-        labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
+        issuesList.setBorder(null);
         labelsForLegend = new JLabel[]{
                 legendLabel(" Expected ", EXPECTED_BORDER_COLOR),//NON-NLS
                 legendLabel(" Actual ", ACTUAL_BORDER_COLOR), //NON-NLS
                 legendLabel(" Difference ", DIFFERENCE_BORDER_COLOR) //NON-NLS)
         };
+        labelsForImages = new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
         imagesContainer = flowLeft(c -> {
             c.setOpaque(true);
             c.setBackground(Color.white);
+            c.setBorder(null);
         }, labelsForImages);
         imagesLegendContainer = flowLeft(DEFAULT_FLOW_GAP, 0, labelsForLegend);
 
         selectedIssueDescriptionLabel = label();
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
-
+        variantsIndicator = flowLeft(DEFAULT_FLOW_GAP,0);
+        // make the panel so small only one bullet fits into the row,
+        // so the bullets are stacked vertically
+        variantsIndicator.setPreferredSize(new Dimension(BULLET_SIZE, 0));
+        variantsIndicator.setOpaque(true);
+        variantsIndicator.setBackground(Color.white);
         layoutComponents();
 
         // Notifications support
@@ -166,6 +178,9 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
         label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
         label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
         label.setForeground(Color.GRAY);
+        //noinspection StringConcatenation
+        label.setToolTipText(
+                title.trim() + " images (see below) have a border in this color and are located at this position in the sequence."); //NON-NLS
         return label;
     }
 
@@ -180,7 +195,8 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private void layoutComponents() {
         JComponent content = bordered()
                 .top(topPart())
-                .center(scrolling(imagesContainer))
+                .left(variantsIndicator)
+                .center(scrollingNoBorder(imagesContainer))
                 .bottom(bottomPart());
 
         setLayout(new BorderLayout());
@@ -195,7 +211,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private JComponent topPart() {
         return bordered()
                 .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
-                .bottom(flowLeft(DEFAULT_FLOW_GAP, 0,
+                .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
                         iconButton(overwriteSnapshotAction),
                         iconButton(addAltenativeSnapshotAction),
                         ignoreButton,
@@ -209,13 +225,13 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
 
     @NonNull
     private BorderedPanel bottomPart() {
-        return bordered()
-                .top(bordered()
+        return borderedWithTopLine()
+                .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
                         .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
                         .right(flowLeft(DEFAULT_FLOW_GAP, 0,
                                 iconButton(previousScreenshotAction),
                                 iconButton(nextScreenshotAction))))
-                .bottom(scrolling(issuesList));
+                .bottom(scrollingNoBorder(issuesList));
     }
 
     /**
@@ -245,7 +261,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
         if (variantsCount > 1) {
             result.append("[");
             result.append(getVariantsIndex(issue) + 1);
-            result.append(" of ");
+            result.append(" of "); //NON-NLS
             result.append(variantsCount);
             result.append("] ");
         }
@@ -253,6 +269,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
         // followed by the package and class part,
         // separated by a "-".
         String s = issue.getLabel();
+        //noinspection MagicCharacter
         int iDot = s.lastIndexOf('.');
         if (iDot >= 0) {
             result.append(s, iDot + 1, s.length());
@@ -284,8 +301,9 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
         String name = issue.getSnapshotName();
         invokeLater(() -> {
             int selectedIndex = issuesList.getSelectedIndex();
-            for (int i = issuesListModel.size()-1; i >= 0; i--) {
+            for (int i = issuesListModel.size() - 1; i >= 0; i--) {
                 T issueInModel = issuesListModel.get(i);
+                //noinspection CallToSuspiciousStringMethod
                 if (issueInModel.getSnapshotName().equals(name)) {
                     issuesListModel.removeElementAt(i);
                 }
@@ -311,6 +329,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     }
 
     private Seq<T> getVariants(T issue) {
+        //noinspection CallToSuspiciousStringMethod
         return SeqUtil2.newSeq(issuesListModel.elements()).filter(
                 i -> i.getSnapshotName().equals(issue.getSnapshotName()));
     }
@@ -370,6 +389,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
         invokeLater(() -> {
             updateLabelsForImages();
             updateImagesContainer();
+            updateVariantsIndicator();
             updateSelectedIssueDescriptionLabel();
             ensureSelectionIfPossible();
             if (issuesList.getSelectedIndex() >= 0) {
@@ -436,8 +456,26 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     }
 
     private void updateImagesContainer() {
-        boolean hasSelection = getSelectedIssue() != null;
-        SwingUtil.setVisible(hasSelection, labelsForImages);
+        SwingUtil.setVisible(getSelectedIssue() != null, labelsForImages);
+    }
+
+    private void updateVariantsIndicator() {
+        @Nullable T selectedIssue = getSelectedIssue();
+        variantsIndicator.setVisible(selectedIssue != null);
+        if (selectedIssue != null) {
+            variantsIndicator.removeAll();
+            int n = getVariantsCount(selectedIssue);
+            int sel = getVariantsIndex(selectedIssue);
+            for (int i = 0; n > 1 && i < n; i++) {
+                Font font = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
+                variantsIndicator.add(label(i == sel ? "●" : "○", c -> {
+                    c.setFont(font);
+                    c.setPreferredSize(new Dimension(BULLET_SIZE, BULLET_SIZE));
+                }));
+            }
+            variantsIndicator.repaint();
+            variantsIndicator.revalidate();
+        }
     }
 
     public boolean getShrinkToFit() {

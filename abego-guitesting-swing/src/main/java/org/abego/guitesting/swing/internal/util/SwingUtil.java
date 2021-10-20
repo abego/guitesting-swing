@@ -236,8 +236,18 @@ public final class SwingUtil {
     //endregion
 
     //region JScollPane related
+    public static JScrollPane scrolling(JComponent component, Consumer<JScrollPane> initCode) {
+        JScrollPane jScrollPane = new JScrollPane(component);
+        initCode.accept(jScrollPane);
+        return jScrollPane;
+    }
+
     public static JScrollPane scrolling(JComponent component) {
-        return new JScrollPane(component);
+        return scrolling(component, c -> {});
+    }
+
+    public static JScrollPane scrollingNoBorder(JComponent component) {
+        return scrolling(component, c -> c.setBorder(null));
     }
     //endregion
 
@@ -254,25 +264,42 @@ public final class SwingUtil {
 
     //region Layout related
     public static BorderedPanel bordered() {
-        return newBorderedPanel();
+        return bordered(c -> {});
     }
 
-    public static JComponent flow(int align, int hgap, int vgap, Consumer<JPanel> initCode, JComponent... components) {
+    public static BorderedPanel bordered(Consumer<JComponent> initCode) {
+        BorderedPanel borderedPanel = newBorderedPanel();
+        initCode.accept(borderedPanel);
+        return borderedPanel;
+    }
+
+    public static BorderedPanel borderedWithTopLine() {
+        return borderedWithTopLine(c->{});
+    }
+    public static BorderedPanel borderedWithTopLine(Consumer<JComponent> initCode) {
+        BorderedPanel bordered = bordered(b -> b.setBorder(
+                new MatteBorder(1, 0, 0, 0, LIGHTER_GRAY)));
+        initCode.accept(bordered);
+        return bordered;
+    }
+
+    public static JComponent flow(int align, int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
+        result.setOpaque(false);
         initCode.accept(result);
         addAll(result, components);
         return result;
     }
 
-    public static JComponent flowLeft(int hgap, int vgap, Consumer<JPanel> initCode, JComponent... components) {
+    public static JComponent flowLeft(int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         return flow(FlowLayout.LEADING, hgap, vgap, initCode, components);
     }
 
-    public static JComponent flowLeft(int hgap, int vgap, JComponent... components) {
+    public static JComponent flowLeft(int hgap, int vgap, Component... components) {
         return flowLeft(hgap, vgap, p -> {}, components);
     }
 
-    public static JComponent flowLeft(Consumer<JPanel> initCode, JComponent... components) {
+    public static JComponent flowLeft(Consumer<JComponent> initCode, Component... components) {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, initCode, components);
     }
 
@@ -280,11 +307,16 @@ public final class SwingUtil {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
     }
 
-    public static JComponent flowLeftWithBottomLine(JComponent... components) {
-        return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP,
+    public static JComponent flowLeftWithBottomLine(int hgap, int vgap, Component... components) {
+        return flowLeft(hgap, vgap,
                 l -> l.setBorder(new MatteBorder(0, 0, 1, 0, LIGHTER_GRAY)),
                 components);
     }
+
+    public static JComponent flowLeftWithBottomLine(Component... components) {
+        return flowLeftWithBottomLine(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
+    }
+
     //endregion
 
 }
