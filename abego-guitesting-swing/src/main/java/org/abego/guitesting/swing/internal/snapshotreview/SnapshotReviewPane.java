@@ -82,6 +82,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private static final int LEGEND_BORDER_SIZE = 2;
     private static final int VISIBLE_ISSUES_COUNT = 8;
     private static final int BULLET_SIZE = 24;
+    private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
 
     // Actions
     private final Action addAltenativeSnapshotAction;
@@ -152,10 +153,10 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
 
         selectedIssueDescriptionLabel = label();
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
-        variantsIndicator = flowLeft(DEFAULT_FLOW_GAP,0);
+        variantsIndicator = flowLeft(DEFAULT_FLOW_GAP, 0);
         // make the panel so small only one bullet fits into the row,
         // so the bullets are stacked vertically
-        variantsIndicator.setPreferredSize(new Dimension(BULLET_SIZE, 0));
+        variantsIndicator.setPreferredSize(new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
         variantsIndicator.setOpaque(true);
         variantsIndicator.setBackground(Color.white);
         layoutComponents();
@@ -461,17 +462,13 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
 
     private void updateVariantsIndicator() {
         @Nullable T selectedIssue = getSelectedIssue();
-        variantsIndicator.setVisible(selectedIssue != null);
+        variantsIndicator.removeAll();
         if (selectedIssue != null) {
-            variantsIndicator.removeAll();
             int n = getVariantsCount(selectedIssue);
             int sel = getVariantsIndex(selectedIssue);
             for (int i = 0; n > 1 && i < n; i++) {
-                Font font = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
-                variantsIndicator.add(label(i == sel ? "●" : "○", c -> {
-                    c.setFont(font);
-                    c.setPreferredSize(new Dimension(BULLET_SIZE, BULLET_SIZE));
-                }));
+                variantsIndicator.add(
+                        label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
             }
             variantsIndicator.repaint();
             variantsIndicator.revalidate();
