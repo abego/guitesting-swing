@@ -68,7 +68,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
-class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
+class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
 
     /**
@@ -94,6 +94,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private final Action toggleShrinkToFitAction;
 
     // Components (for more see #layoutComponent)
+    private final JPanel content = new JPanel();
     private final JLabel[] labelsForLegend;
     private final JLabel selectedIssueDescriptionLabel;
     private final JComponent imagesLegendContainer;
@@ -107,7 +108,7 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
     private final DefaultListModel<T> issuesListModel;
 
 
-    SnapshotReviewPane(Seq<T> issues) {
+    SnapshotReviewWidget(Seq<T> issues) {
         // init State
         issuesListModel = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
@@ -186,8 +187,13 @@ class SnapshotReviewPane<T extends SnapshotIssue> extends JPanel {
                 .center(scrollingNoBorder(expectedActualDifferenceImageViewerWidget.getComponent()))
                 .bottom(bottomPart());
 
-        setLayout(new BorderLayout());
-        add(content);
+        getComponent().setLayout(new BorderLayout());
+        getComponent().add(content);
+    }
+
+    @Override
+    public JComponent getComponent() {
+        return content;
     }
 
     private void initNotifications() {
