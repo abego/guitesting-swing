@@ -1,0 +1,40 @@
+definitions:
+  name: SnapshotReviewWidget
+  generics:
+    - T extends SnapshotIssue
+  implements:
+    - Widget
+  components:
+    - name: titleBar
+      props:
+        - name: color
+          type: Color
+          default: 0xE2E6Ec
+    - name: legend
+      props:
+        - name: borderSize
+          type: int
+          default: 2
+    - name: issuesList
+      type: JList<T>
+      props:
+        - name: visibleRowCount
+          type: int
+          default: 8
+  config:
+    - name: BULLET_SIZE
+      type: int
+      default: 24
+    - name: BULLET_FONT
+      type: Font
+      default: Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE
+  actions:
+    - name: addAltenativeSnapshot
+    - name: overwriteSnapshot
+    - name: ignoreCurrentIssue
+    - name: nextScreenshot
+    - name: previousScreenshot
+    - name: rotateImage
+    - name: toggleShrinkToFit
+
+

@@ -44,10 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 
-import static javax.swing.BorderFactory.createLineBorder;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewerWidget.newExpectedActualDifferenceWidget;
@@ -70,16 +67,12 @@ import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.check
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
-
     /**
      * Defines the visual appearance of individual components, how they look like.
      */
     static class Style {
         private static final Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
-        private static final int LEGEND_BORDER_SIZE = 2;
         private static final int VISIBLE_ISSUES_COUNT = 8;
-        private static final int BULLET_SIZE = 24;
-        private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
     }
 
     // Actions
@@ -95,18 +88,19 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     // Components (for more see #layoutComponent)
     private final JPanel content = new JPanel();
-    private final JLabel[] labelsForLegend;
-    private final JLabel selectedIssueDescriptionLabel;
-    private final JComponent imagesLegendContainer;
-    private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget;
-    private final JComponent variantsIndicator;
+    private final JLabel selectedIssueDescriptionLabel = label();
+    private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget
+            = newExpectedActualDifferenceWidget();
+    //TODO demonstrate the difference between a style derived from a different
+    //  component style and from a "central" style definition.
+    private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
+    private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
     private final JButton ignoreButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
     private final JList<T> issuesList;
 
     // UI State
     private final DefaultListModel<T> issuesListModel;
-
 
     SnapshotReviewWidget(Seq<T> issues) {
         // init State
@@ -122,7 +116,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
-        expectedActualDifferenceImageViewerWidget = newExpectedActualDifferenceWidget();
         // init Components
         ignoreButton = iconButton(ignoreCurrentIssueAction);
         issuesList = vlist(issuesListModel, l -> {
@@ -131,21 +124,10 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                     newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
         });
         issuesList.setBorder(null);
-        labelsForLegend = new JLabel[]{
-                legendLabel(" Expected ", expectedActualDifferenceImageViewerWidget.getExpectedBorderColor()),//NON-NLS
-                legendLabel(" Actual ", expectedActualDifferenceImageViewerWidget.getActualBorderColor()), //NON-NLS
-                legendLabel(" Difference ", expectedActualDifferenceImageViewerWidget.getDifferenceBorderColor()) //NON-NLS)
-        };
-        imagesLegendContainer = flowLeft(DEFAULT_FLOW_GAP, 0, labelsForLegend);
 
-        selectedIssueDescriptionLabel = label();
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
-        variantsIndicator = flowLeft(DEFAULT_FLOW_GAP, 0);
-        // make the panel so small only one bullet fits into the row,
-        // so the bullets are stacked vertically
-        variantsIndicator.setPreferredSize(new Dimension(Style.BULLET_SIZE, Integer.MAX_VALUE));
-        variantsIndicator.setOpaque(true);
-        variantsIndicator.setBackground(Color.white);
+
+        styleComponents();
         layoutComponents();
 
         // Notifications support
@@ -161,15 +143,10 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         });
     }
 
-    private static JLabel legendLabel(String title, Color color) {
-        JLabel label = new JLabel(title);
-        label.setBorder(createLineBorder(color, Style.LEGEND_BORDER_SIZE));
-        label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
-        label.setForeground(Color.GRAY);
-        //noinspection StringConcatenation
-        label.setToolTipText(
-                title.trim() + " images (see below) have a border in this color and are located at this position in the sequence."); //NON-NLS
-        return label;
+    private void styleComponents() {
+        imagesLegendWidget.setExpectedBorderColor(expectedActualDifferenceImageViewerWidget.getExpectedBorderColor());
+        imagesLegendWidget.setActualBorderColor(expectedActualDifferenceImageViewerWidget.getActualBorderColor());
+        imagesLegendWidget.setDifferenceBorderColor(expectedActualDifferenceImageViewerWidget.getDifferenceBorderColor());
     }
 
     private void selectPreviousIssue() {
@@ -183,7 +160,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void layoutComponents() {
         JComponent content = bordered()
                 .top(topPart())
-                .left(variantsIndicator)
+                .left(variantsIndicatorWidget.getComponent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageViewerWidget.getComponent()))
                 .bottom(bottomPart());
 
@@ -208,7 +185,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                         iconButton(addAltenativeSnapshotAction),
                         ignoreButton,
                         separatorBar(),
-                        imagesLegendContainer,
+                        imagesLegendWidget.getComponent(),
                         iconButton(rotateImageAction),
                         separatorBar(),
                         shrinkToFitCheckBox,
@@ -242,17 +219,17 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     private String getSelectedIssueDescription() {
         @Nullable
-        T issue = getSelectedIssue();
-        if (issue == null) {
+        VariantsInfo<T> info = getVariantsInfo();
+        if (info == null) {
             return " ";
         }
 
         StringBuilder result = new StringBuilder();
 
-        int variantsCount = getVariantsCount(issue);
+        int variantsCount = info.getVariantsCount();
         if (variantsCount > 1) {
             result.append("[");
-            result.append(getVariantsIndex(issue) + 1);
+            result.append(info.getVariantsIndex() + 1);
             result.append(" of "); //NON-NLS
             result.append(variantsCount);
             result.append("] ");
@@ -260,7 +237,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         // display the "simple" name of the snapshot first,
         // followed by the package and class part,
         // separated by a "-".
-        String s = issue.getLabel();
+        String s = info.getIssue().getLabel();
         //noinspection MagicCharacter
         int iDot = s.lastIndexOf('.');
         if (iDot >= 0) {
@@ -312,12 +289,30 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         });
     }
 
-    private int getVariantsCount(T issue) {
-        return getVariants(issue).size();
-    }
+    @Nullable
+    private VariantsInfo<T> getVariantsInfo() {
+        T issue = getSelectedIssue();
+        if (issue == null) {
+            return null;
+        }
 
-    private int getVariantsIndex(T issue) {
-        return getVariants(issue).indexOf(issue);
+        Seq<T> variants = getVariants(issue);
+        return new VariantsInfo<T>() {
+            @Override
+            public T getIssue() {
+                return issue;
+            }
+
+            @Override
+            public int getVariantsCount() {
+                return variants.size();
+            }
+
+            @Override
+            public int getVariantsIndex() {
+                return variants.indexOf(issue);
+            }
+        };
     }
 
     private Seq<T> getVariants(T issue) {
@@ -356,19 +351,10 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         onExpectedImageIndexChanged();
     }
 
-    private void updateLabelsForLegend() {
-        imagesLegendContainer.removeAll();
-        imagesLegendContainer.add(labelsForLegend[(3 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.add(labelsForLegend[(4 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.add(labelsForLegend[(5 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.validate();
-    }
-
-
     private void onSelectedIssueChanged() {
         invokeLater(() -> {
             expectedActualDifferenceImageViewerWidget.setSnapshotIssue(getSelectedIssue());
-            updateVariantsIndicator();
+            variantsIndicatorWidget.setVariantsInfo(getVariantsInfo());
             updateSelectedIssueDescriptionLabel();
             ensureSelectionIfPossible();
             if (issuesList.getSelectedIndex() >= 0) {
@@ -377,29 +363,12 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         });
     }
 
-
     private void onExpectedImageIndexChanged() {
-        invokeLater(this::updateLabelsForLegend);
+        invokeLater(() -> imagesLegendWidget.setExpectedImageIndex(getExpectedImageIndex()));
     }
 
     private void onShrinkToFitChanged() {
         invokeLater(shrinkToFitCheckBox::update);
-    }
-
-
-    private void updateVariantsIndicator() {
-        @Nullable T selectedIssue = getSelectedIssue();
-        variantsIndicator.removeAll();
-        if (selectedIssue != null) {
-            int n = getVariantsCount(selectedIssue);
-            int sel = getVariantsIndex(selectedIssue);
-            for (int i = 0; n > 1 && i < n; i++) {
-                variantsIndicator.add(
-                        label(i == sel ? "●" : "○", c -> c.setFont(Style.BULLET_FONT)));
-            }
-            variantsIndicator.repaint();
-            variantsIndicator.revalidate();
-        }
     }
 
     private boolean getShrinkToFit() {
