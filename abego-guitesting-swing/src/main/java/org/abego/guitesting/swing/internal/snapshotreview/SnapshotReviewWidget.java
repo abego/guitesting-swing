@@ -91,8 +91,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JLabel selectedIssueDescriptionLabel = label();
     private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget
             = newExpectedActualDifferenceWidget();
-    //TODO demonstrate the difference between a style derived from a different
-    //  component style and from a "central" style definition.
     private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
     private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
     private final JButton ignoreButton;
@@ -144,6 +142,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void styleComponents() {
+        //TODO demonstrate the difference between a style derived from a different
+        //  component style and from a "central" style definition.
         imagesLegendWidget.setExpectedBorderColor(expectedActualDifferenceImageViewerWidget.getExpectedBorderColor());
         imagesLegendWidget.setActualBorderColor(expectedActualDifferenceImageViewerWidget.getActualBorderColor());
         imagesLegendWidget.setDifferenceBorderColor(expectedActualDifferenceImageViewerWidget.getDifferenceBorderColor());
