@@ -41,6 +41,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -55,7 +56,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.abego.commons.lang.IntUtil.limit;
-import static org.abego.guitesting.swing.internal.util.BorderedPanel.newBorderedPanel;
 import static org.abego.guitesting.swing.internal.util.ListCellRendererForTextProvider.newListCellRendererForTextProvider;
 
 public final class SwingUtil {
@@ -245,27 +245,6 @@ public final class SwingUtil {
     //endregion
 
     //region Layout related
-    public static BorderedPanel bordered() {
-        return bordered(c -> {});
-    }
-
-    public static BorderedPanel bordered(Consumer<JComponent> initCode) {
-        BorderedPanel borderedPanel = newBorderedPanel();
-        initCode.accept(borderedPanel);
-        return borderedPanel;
-    }
-
-    public static BorderedPanel borderedWithTopLine() {
-        return borderedWithTopLine(c -> {});
-    }
-
-    public static BorderedPanel borderedWithTopLine(Consumer<JComponent> initCode) {
-        BorderedPanel bordered = bordered(b -> b.setBorder(
-                new MatteBorder(1, 0, 0, 0, LIGHTER_GRAY)));
-        initCode.accept(bordered);
-        return bordered;
-    }
-
     public static JComponent flow(int align, int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
         result.setOpaque(false);

@@ -38,22 +38,21 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import java.awt.BorderLayout;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewerWidget.newExpectedActualDifferenceWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.newVariantsInfoImpl;
+import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
@@ -70,16 +69,17 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     // Components (for more see #layoutComponent)
     private final JLabel selectedIssueDescriptionLabel = label();
-    private final JButton overwriteButton;
-    private final JButton addAlternativeButton;
-    private final JButton ignoreButton;
+    private final JButton overwriteButton = toolbarButton();
+    private final JButton addAlternativeButton = toolbarButton();
+    private final JButton ignoreButton = toolbarButton();
     private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
-    private final JButton rotateButton;
+    private final JButton rotateButton = toolbarButton();
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
     private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
     private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget
             = newExpectedActualDifferenceWidget();
     private final SnapshotIssuesListWidget<T> snapshotIssuesListWidget;
+    //TODO use a JComponent/Container
     private final JPanel content = new JPanel();
 
     // UI State
@@ -98,11 +98,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
-        overwriteButton = toolbarButton();
-        addAlternativeButton = toolbarButton();
-        ignoreButton = toolbarButton();
-        rotateButton = toolbarButton();
-
         snapshotIssuesListWidget = SnapshotIssuesListWidget.newSnapshotIssuesListWidget(issuesListModel);
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
 
@@ -133,7 +128,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void layoutComponents() {
-        JComponent content = bordered()
+        bordered(content)
                 .top(bordered()
                         .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
                         .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
@@ -145,13 +140,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                                 rotateButton,
                                 separatorBar(),
                                 shrinkToFitCheckBox,
-                                separatorBar())))
+                                separatorBar()))
+                        .component())
                 .left(variantsIndicatorWidget.getComponent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageViewerWidget.getComponent()))
                 .bottom(snapshotIssuesListWidget.getComponent());
-
-        getComponent().setLayout(new BorderLayout());
-        getComponent().add(content);
     }
 
     @Override

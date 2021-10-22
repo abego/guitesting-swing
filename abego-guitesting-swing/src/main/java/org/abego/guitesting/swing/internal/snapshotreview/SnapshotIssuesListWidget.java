@@ -39,9 +39,9 @@ import java.awt.Color;
 import java.util.function.Consumer;
 
 import static javax.swing.SwingUtilities.invokeLater;
+import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
+import static org.abego.guitesting.swing.internal.util.Bordered.borderedWithTopLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.borderedWithTopLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -74,13 +74,15 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
         issuesList.setCellRenderer(
                 newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
 
-        content = borderedWithTopLine()
+        content = borderedWithTopLine(c -> {})
                 .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
                         .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
                         .right(flowLeft(DEFAULT_FLOW_GAP, 0,
                                 previousScreenshotButton,
-                                nextScreenshotButton)))
-                .bottom(scrollingNoBorder(issuesList));
+                                nextScreenshotButton))
+                        .component())
+                .bottom(scrollingNoBorder(issuesList))
+                .component();
 
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged2());
         // TODO: use different trigger (e.g. when displayed?)
