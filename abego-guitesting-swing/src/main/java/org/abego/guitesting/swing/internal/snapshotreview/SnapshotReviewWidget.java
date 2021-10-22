@@ -167,6 +167,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             return " ";
         }
 
+        //TODO use some "template engine" like code
         StringBuilder result = new StringBuilder();
 
         int variantsCount = info.getVariantsCount();
@@ -203,28 +204,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         }
     }
 
-    private void removeIssueAndVariants(T issue) {
-        String name = issue.getSnapshotName();
-        invokeLater(() -> {
-            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
-            for (int i = issuesListModel.size() - 1; i >= 0; i--) {
-                T issueInModel = issuesListModel.get(i);
-                //noinspection CallToSuspiciousStringMethod
-                if (issueInModel.getSnapshotName().equals(name)) {
-                    issuesListModel.removeElementAt(i);
-                }
-            }
-            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
-        });
-    }
-
-    private void removeIssue(T issue) {
-        invokeLater(() -> {
-            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
-            issuesListModel.removeElement(issue);
-            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
-        });
-    }
 
     private void addAltenativeSnapshot() {
         @Nullable T currentIssue = getSelectedIssue();
@@ -243,8 +222,31 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         }
     }
 
+    private void removeIssue(T issue) {
+        invokeLater(() -> {
+            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
+            issuesListModel.removeElement(issue);
+            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
+        });
+    }
+
     private void rotateImages() {
         setExpectedImageIndex((getExpectedImageIndex() + 1) % 3);
+    }
+
+    private void removeIssueAndVariants(T issue) {
+        String name = issue.getSnapshotName();
+        invokeLater(() -> {
+            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
+            for (int i = issuesListModel.size() - 1; i >= 0; i--) {
+                T issueInModel = issuesListModel.get(i);
+                //noinspection CallToSuspiciousStringMethod
+                if (issueInModel.getSnapshotName().equals(name)) {
+                    issuesListModel.removeElementAt(i);
+                }
+            }
+            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
+        });
     }
 
     private int getExpectedImageIndex() {
