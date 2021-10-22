@@ -31,6 +31,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.KeyStroke;
@@ -42,7 +43,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GA
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.borderedWithTopLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
@@ -52,8 +53,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
     private final static Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
     private final DefaultListModel<T> issuesListModel;
-    private final Action nextScreenshotAction;
     private final Action previousScreenshotAction;
+    private final Action nextScreenshotAction;
+    private final JButton previousScreenshotButton;
+    private final JButton nextScreenshotButton;
     private final JList<T> issuesList;
     private final JComponent content;
 
@@ -61,6 +64,12 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
         this.issuesListModel = issuesListModel;
         nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS
         previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
+        previousScreenshotButton = toolbarButton();
+        nextScreenshotButton = toolbarButton();
+
+        previousScreenshotButton.setAction(previousScreenshotAction);
+        nextScreenshotButton.setAction(nextScreenshotAction);
+
         issuesList = vlist(issuesListModel);
         issuesList.setCellRenderer(
                 newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
@@ -69,8 +78,8 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
                 .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
                         .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
                         .right(flowLeft(DEFAULT_FLOW_GAP, 0,
-                                iconButton(previousScreenshotAction),
-                                iconButton(nextScreenshotAction))))
+                                previousScreenshotButton,
+                                nextScreenshotButton)))
                 .bottom(scrollingNoBorder(issuesList));
 
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged2());

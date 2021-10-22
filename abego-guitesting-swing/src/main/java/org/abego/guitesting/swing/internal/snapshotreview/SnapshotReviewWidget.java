@@ -48,7 +48,7 @@ import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
@@ -58,7 +58,6 @@ import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.check
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
-
 
     // Actions
     private final Action addAltenativeSnapshotAction;
@@ -70,18 +69,18 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final Action toggleShrinkToFitAction;
 
     // Components (for more see #layoutComponent)
-    private final JPanel content = new JPanel();
     private final JLabel selectedIssueDescriptionLabel = label();
-    private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget
-            = newExpectedActualDifferenceWidget();
-    private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
-    private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
     private final JButton overwriteButton;
     private final JButton addAlternativeButton;
-    private final JButton rotateButton;
     private final JButton ignoreButton;
+    private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
+    private final JButton rotateButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
+    private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
+    private final ExpectedActualDifferenceImageViewerWidget expectedActualDifferenceImageViewerWidget
+            = newExpectedActualDifferenceWidget();
     private final SnapshotIssuesListWidget<T> snapshotIssuesListWidget;
+    private final JPanel content = new JPanel();
 
     // UI State
     private final DefaultListModel<T> issuesListModel;
@@ -99,13 +98,18 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
-        overwriteButton = iconButton(overwriteSnapshotAction);
-        addAlternativeButton = iconButton(addAltenativeSnapshotAction);
-        ignoreButton = iconButton(ignoreCurrentIssueAction);
-        rotateButton = iconButton(rotateImageAction);
+        overwriteButton = toolbarButton();
+        addAlternativeButton = toolbarButton();
+        ignoreButton = toolbarButton();
+        rotateButton = toolbarButton();
 
         snapshotIssuesListWidget = SnapshotIssuesListWidget.newSnapshotIssuesListWidget(issuesListModel);
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
+
+        overwriteButton.setAction(overwriteSnapshotAction);
+        addAlternativeButton.setAction(addAltenativeSnapshotAction);
+        ignoreButton.setAction(ignoreCurrentIssueAction);
+        rotateButton.setAction(rotateImageAction);
 
         styleComponents();
         layoutComponents();
@@ -298,16 +302,15 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         return newVariantsInfoImpl(issue, getVariants(issue));
     }
 
-    @Nullable
-    private T getSelectedIssue() {
-        return snapshotIssuesListWidget.getSelectedIssue();
-    }
-
     private Seq<T> getVariants(T issue) {
         //noinspection CallToSuspiciousStringMethod
         return SeqUtil2.newSeq(issuesListModel.elements()).filter(
                 i -> i.getSnapshotName().equals(issue.getSnapshotName()));
     }
 
+    @Nullable
+    private T getSelectedIssue() {
+        return snapshotIssuesListWidget.getSelectedIssue();
+    }
 
 }

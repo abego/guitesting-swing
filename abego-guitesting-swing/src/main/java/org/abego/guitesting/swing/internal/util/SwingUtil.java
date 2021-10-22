@@ -40,7 +40,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.Color;
 import java.awt.Component;
@@ -179,30 +178,8 @@ public final class SwingUtil {
     //endregion
 
     //region JButton related
-    public static JButton button(Action action, Consumer<JButton> initCode) {
-        JButton button = new JButton(action);
-        handleAccelerator(button, action);
-        initCode.accept(button);
-        return button;
-    }
-
-    public static JButton iconButton(Action action) {
-        return button(action, b -> {
-            b.setText(null);
-            b.setBorder(new EmptyBorder(3, 3, 3, 3));
-            b.setBackground(LIGHTER_GRAY);
-            b.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    b.setOpaque(true);
-                    b.repaint();
-                }
-
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    b.setOpaque(false);
-                    b.repaint();
-                }
-            });
-        });
+    public static JButton toolbarButton() {
+        return JToolbarButton.newJToolbarButton();
     }
     //endregion
 
