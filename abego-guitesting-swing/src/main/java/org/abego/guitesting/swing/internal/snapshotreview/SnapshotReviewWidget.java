@@ -27,11 +27,8 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.Icons;
-import org.abego.guitesting.swing.internal.util.BorderedPanel;
 import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
-import org.abego.guitesting.swing.internal.util.SwingUtil;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -39,49 +36,35 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
-import java.awt.Color;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewerWidget.newExpectedActualDifferenceWidget;
+import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.newVariantsInfoImpl;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.bordered;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.borderedWithTopLine;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.iconButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
-    /**
-     * Defines the visual appearance of individual components, how they look like.
-     */
-    static class Style {
-        private static final Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
-        private static final int VISIBLE_ISSUES_COUNT = 8;
-    }
 
     // Actions
     private final Action addAltenativeSnapshotAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action ignoreCurrentIssueAction;
-    private final Action nextScreenshotAction;
     private final Action overwriteSnapshotAction;
-    private final Action previousScreenshotAction;
     private final Action rotateImageAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action toggleShrinkToFitAction;
@@ -98,7 +81,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JButton rotateButton;
     private final JButton ignoreButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
-    private final JList<T> issuesList;
+    private final SnapshotIssuesListWidget<T> snapshotIssuesListWidget;
 
     // UI State
     private final DefaultListModel<T> issuesListModel;
@@ -111,9 +94,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         // init Actions
         addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAltenativeSnapshot()); //NON-NLS
         ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
-        nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS
         overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
-        previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
         rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
@@ -122,13 +103,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         addAlternativeButton = iconButton(addAltenativeSnapshotAction);
         ignoreButton = iconButton(ignoreCurrentIssueAction);
         rotateButton = iconButton(rotateImageAction);
-        issuesList = vlist(issuesListModel, l -> {
-            l.setVisibleRowCount(Style.VISIBLE_ISSUES_COUNT);
-            l.setCellRenderer(
-                    newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
-        });
-        issuesList.setBorder(null);
 
+        snapshotIssuesListWidget = SnapshotIssuesListWidget.newSnapshotIssuesListWidget(issuesListModel);
         shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
 
         styleComponents();
@@ -139,9 +115,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
         // More initialization
         invokeLater(() -> {
-            // select the first issue in the list (if there is any)
-            issuesList.setSelectedIndex(0);
-
             // make sure we have a focus
             ignoreButton.requestFocusInWindow();
         });
@@ -155,20 +128,23 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         imagesLegendWidget.setDifferenceBorderColor(expectedActualDifferenceImageViewerWidget.getDifferenceBorderColor());
     }
 
-    private void selectPreviousIssue() {
-        SwingUtil.changeSelectedIndex(issuesList, -1);
-    }
-
-    private void selectNextIssue() {
-        SwingUtil.changeSelectedIndex(issuesList, 1);
-    }
-
     private void layoutComponents() {
         JComponent content = bordered()
-                .top(topPart())
+                .top(bordered()
+                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
+                        .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
+                                overwriteButton,
+                                addAlternativeButton,
+                                ignoreButton,
+                                separatorBar(),
+                                imagesLegendWidget.getComponent(),
+                                rotateButton,
+                                separatorBar(),
+                                shrinkToFitCheckBox,
+                                separatorBar())))
                 .left(variantsIndicatorWidget.getComponent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageViewerWidget.getComponent()))
-                .bottom(bottomPart());
+                .bottom(snapshotIssuesListWidget.getComponent());
 
         getComponent().setLayout(new BorderLayout());
         getComponent().add(content);
@@ -180,44 +156,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void initNotifications() {
-        issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
-    }
-
-    private JComponent topPart() {
-        return bordered()
-                .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
-                .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
-                        overwriteButton,
-                        addAlternativeButton,
-                        ignoreButton,
-                        separatorBar(),
-                        imagesLegendWidget.getComponent(),
-                        rotateButton,
-                        separatorBar(),
-                        shrinkToFitCheckBox,
-                        separatorBar()));
-    }
-
-    @NonNull
-    //TODO: separate widget?
-    private BorderedPanel bottomPart() {
-        return borderedWithTopLine()
-                .top(bordered(l -> l.setBackground(Style.TITLE_BAR_COLOR))
-                        .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
-                        .right(flowLeft(DEFAULT_FLOW_GAP, 0,
-                                iconButton(previousScreenshotAction),
-                                iconButton(nextScreenshotAction))))
-                .bottom(scrollingNoBorder(issuesList));
-    }
-
-    /**
-     * When no item is selected but there are items in the list
-     * automatically select the first item.
-     */
-    private void ensureSelectionIfPossible() {
-        if (getSelectedIssue() == null && issuesListModel.size() > 0) {
-            invokeLater(() -> issuesList.setSelectedIndex(0));
-        }
+        snapshotIssuesListWidget.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
     }
 
     private void updateSelectedIssueDescriptionLabel() {
@@ -267,16 +206,10 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         }
     }
 
-    @SuppressWarnings("ConstantConditions") // to remove "nullable" warning
-    @Nullable
-    private T getSelectedIssue() {
-        return issuesList.getSelectedValue();
-    }
-
     private void removeIssueAndVariants(T issue) {
         String name = issue.getSnapshotName();
         invokeLater(() -> {
-            int selectedIndex = issuesList.getSelectedIndex();
+            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
             for (int i = issuesListModel.size() - 1; i >= 0; i--) {
                 T issueInModel = issuesListModel.get(i);
                 //noinspection CallToSuspiciousStringMethod
@@ -284,48 +217,16 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                     issuesListModel.removeElementAt(i);
                 }
             }
-            issuesList.setSelectedIndex(selectedIndex);
+            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
         });
     }
 
     private void removeIssue(T issue) {
         invokeLater(() -> {
-            int selectedIndex = issuesList.getSelectedIndex();
+            int selectedIndex = snapshotIssuesListWidget.getSelectedIndex();
             issuesListModel.removeElement(issue);
-            issuesList.setSelectedIndex(selectedIndex);
+            snapshotIssuesListWidget.setSelectedIndex(selectedIndex);
         });
-    }
-
-    @Nullable
-    private VariantsInfo<T> getVariantsInfo() {
-        T issue = getSelectedIssue();
-        if (issue == null) {
-            return null;
-        }
-
-        Seq<T> variants = getVariants(issue);
-        return new VariantsInfo<T>() {
-            @Override
-            public T getIssue() {
-                return issue;
-            }
-
-            @Override
-            public int getVariantsCount() {
-                return variants.size();
-            }
-
-            @Override
-            public int getVariantsIndex() {
-                return variants.indexOf(issue);
-            }
-        };
-    }
-
-    private Seq<T> getVariants(T issue) {
-        //noinspection CallToSuspiciousStringMethod
-        return SeqUtil2.newSeq(issuesListModel.elements()).filter(
-                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
     }
 
     private void addAltenativeSnapshot() {
@@ -363,10 +264,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             expectedActualDifferenceImageViewerWidget.setSnapshotIssue(getSelectedIssue());
             variantsIndicatorWidget.setVariantsInfo(getVariantsInfo());
             updateSelectedIssueDescriptionLabel();
-            ensureSelectionIfPossible();
-            if (issuesList.getSelectedIndex() >= 0) {
-                issuesList.ensureIndexIsVisible(issuesList.getSelectedIndex());
-            }
         });
     }
 
@@ -390,5 +287,27 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         setShrinkToFit(!getShrinkToFit());
         onShrinkToFitChanged();
     }
+
+    @Nullable
+    private VariantsInfo<T> getVariantsInfo() {
+        T issue = getSelectedIssue();
+        if (issue == null) {
+            return null;
+        }
+
+        return newVariantsInfoImpl(issue, getVariants(issue));
+    }
+
+    @Nullable
+    private T getSelectedIssue() {
+        return snapshotIssuesListWidget.getSelectedIssue();
+    }
+
+    private Seq<T> getVariants(T issue) {
+        //noinspection CallToSuspiciousStringMethod
+        return SeqUtil2.newSeq(issuesListModel.elements()).filter(
+                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
+    }
+
 
 }

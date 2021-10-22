@@ -209,8 +209,13 @@ public final class SwingUtil {
     //region JList related
     public static <T> JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
         JList<T> list = new JList<>(listModel);
+        list.setBorder(null);
         initCode.accept(list);
         return list;
+    }
+
+    public static <T> JList<T> vlist(ListModel<T> listModel) {
+        return vlist(listModel, l -> {});
     }
 
     public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
@@ -235,7 +240,7 @@ public final class SwingUtil {
     }
     //endregion
 
-    //region JScollPane related
+    //region JScrollPane related
     public static JScrollPane scrolling(JComponent component, Consumer<JScrollPane> initCode) {
         JScrollPane jScrollPane = new JScrollPane(component);
         initCode.accept(jScrollPane);
@@ -274,8 +279,9 @@ public final class SwingUtil {
     }
 
     public static BorderedPanel borderedWithTopLine() {
-        return borderedWithTopLine(c->{});
+        return borderedWithTopLine(c -> {});
     }
+
     public static BorderedPanel borderedWithTopLine(Consumer<JComponent> initCode) {
         BorderedPanel bordered = bordered(b -> b.setBorder(
                 new MatteBorder(1, 0, 0, 0, LIGHTER_GRAY)));

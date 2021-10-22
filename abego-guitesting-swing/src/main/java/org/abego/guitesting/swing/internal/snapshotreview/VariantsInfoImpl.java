@@ -24,12 +24,34 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.commons.seq.Seq;
+import org.abego.guitesting.swing.ScreenCaptureSupport;
 
-public interface VariantsInfo<T extends SnapshotIssue> {
-    T getIssue();
+class VariantsInfoImpl<T extends ScreenCaptureSupport.SnapshotIssue> implements VariantsInfo<T> {
+    private final T issue;
+    private final Seq<T> variants;
 
-    int getVariantsCount();
+    private VariantsInfoImpl(T issue, Seq<T> variants) {
+        this.issue = issue;
+        this.variants = variants;
+    }
 
-    int getVariantsIndex();
+    @Override
+    public T getIssue() {
+        return issue;
+    }
+
+    @Override
+    public int getVariantsCount() {
+        return variants.size();
+    }
+
+    @Override
+    public int getVariantsIndex() {
+        return variants.indexOf(issue);
+    }
+
+    public static  <T extends ScreenCaptureSupport.SnapshotIssue> VariantsInfoImpl<T> newVariantsInfoImpl(T issue, Seq<T> variants) {
+        return new VariantsInfoImpl<>(issue, variants);
+    }
 }
