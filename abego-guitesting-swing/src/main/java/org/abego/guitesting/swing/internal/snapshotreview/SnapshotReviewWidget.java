@@ -93,6 +93,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             = newExpectedActualDifferenceWidget();
     private final ImagesLegendWidget imagesLegendWidget = ImagesLegendWidget.newImagesLegendWidget();
     private final VariantsIndicatorWidget<T> variantsIndicatorWidget = new VariantsIndicatorWidget<>();
+    private final JButton overwriteButton;
+    private final JButton addAlternativeButton;
+    private final JButton rotateButton;
     private final JButton ignoreButton;
     private final JCheckBoxUpdateable shrinkToFitCheckBox;
     private final JList<T> issuesList;
@@ -115,7 +118,10 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
+        overwriteButton = iconButton(overwriteSnapshotAction);
+        addAlternativeButton = iconButton(addAltenativeSnapshotAction);
         ignoreButton = iconButton(ignoreCurrentIssueAction);
+        rotateButton = iconButton(rotateImageAction);
         issuesList = vlist(issuesListModel, l -> {
             l.setVisibleRowCount(Style.VISIBLE_ISSUES_COUNT);
             l.setCellRenderer(
@@ -181,18 +187,19 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         return bordered()
                 .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
                 .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
-                        iconButton(overwriteSnapshotAction),
-                        iconButton(addAltenativeSnapshotAction),
+                        overwriteButton,
+                        addAlternativeButton,
                         ignoreButton,
                         separatorBar(),
                         imagesLegendWidget.getComponent(),
-                        iconButton(rotateImageAction),
+                        rotateButton,
                         separatorBar(),
                         shrinkToFitCheckBox,
                         separatorBar()));
     }
 
     @NonNull
+    //TODO: separate widget?
     private BorderedPanel bottomPart() {
         return borderedWithTopLine()
                 .top(bordered(l -> l.setBackground(Style.TITLE_BAR_COLOR))
