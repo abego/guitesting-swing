@@ -121,8 +121,8 @@ class ExpectedActualDifferenceImageView implements Widget {
     // dependsOn (snapshotIssue != null ? (shrinkToFit ? content.visibleRect : null) : null)
     // ? expectedImageIndex,final expectedBorderColor,final actualBorderColor, final differenceBorderColor: null
     private void updateLabelsForImages() {
-        @Nullable SnapshotImages images = getSnapshotImages();
         invokeLater(() -> {
+            @Nullable SnapshotImages images = getSnapshotImages();
             if (images != null) {
                 setIconAndLinedBorder(
                         labelsForImages[(expectedImageIndex) % 3],
