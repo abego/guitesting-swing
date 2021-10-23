@@ -24,7 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.ScreenCaptureSupport;
+import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -36,7 +36,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GA
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
-class VariantsIndicatorWidget<T extends ScreenCaptureSupport.SnapshotIssue> implements Widget {
+class VariantsIndicator<T extends SnapshotIssue> implements Widget {
     private static final int BULLET_SIZE = 24;
     private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
 
@@ -44,13 +44,17 @@ class VariantsIndicatorWidget<T extends ScreenCaptureSupport.SnapshotIssue> impl
     private VariantsInfo<T> variantsInfo;
     private final JComponent content;
 
-    VariantsIndicatorWidget() {
+    private VariantsIndicator() {
         content = flowLeft(DEFAULT_FLOW_GAP, 0);
         // make the panel so small only one bullet fits into the row,
         // so the bullets are stacked vertically
         content.setPreferredSize(new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
         content.setOpaque(true);
         content.setBackground(Color.white);
+    }
+
+    public static <T extends SnapshotIssue> VariantsIndicator<T> variantsIndicator() {
+        return new VariantsIndicator<>();
     }
 
     @Override

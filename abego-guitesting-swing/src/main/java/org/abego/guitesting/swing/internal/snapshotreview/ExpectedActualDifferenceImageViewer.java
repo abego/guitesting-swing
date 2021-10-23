@@ -41,7 +41,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
-class ExpectedActualDifferenceImageViewerWidget implements Widget {
+class ExpectedActualDifferenceImageViewer implements Widget {
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
@@ -54,14 +54,14 @@ class ExpectedActualDifferenceImageViewerWidget implements Widget {
         c.setBackground(Color.white);
         c.setBorder(null);
     }, labelsForImages);
-    @Nullable
-    private SnapshotImages snapshotImages;
+
+    private @Nullable SnapshotImages snapshotImages;
     private boolean shrinkToFit = true;
     private int expectedImageIndex;
     private ScreenCaptureSupport.@Nullable SnapshotIssue snapshotIssue;
 
-    public static ExpectedActualDifferenceImageViewerWidget newExpectedActualDifferenceWidget() {
-        return new ExpectedActualDifferenceImageViewerWidget();
+    public static ExpectedActualDifferenceImageViewer expectedActualDifferenceImageViewer() {
+        return new ExpectedActualDifferenceImageViewer();
     }
 
     public ScreenCaptureSupport.@Nullable SnapshotIssue getSnapshotIssue() {
@@ -103,7 +103,7 @@ class ExpectedActualDifferenceImageViewerWidget implements Widget {
         return imagesContainer;
     }
 
-    private ExpectedActualDifferenceImageViewerWidget() {
+    private ExpectedActualDifferenceImageViewer() {
         onComponentResized(imagesContainer, e -> onImagesContainerVisibleRectChanged());
     }
 
@@ -142,8 +142,7 @@ class ExpectedActualDifferenceImageViewerWidget implements Widget {
         label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
     }
 
-    @Nullable
-    private Dimension getImagesArea() {
+    private @Nullable Dimension getImagesArea() {
         if (getShrinkToFit()) {
             Rectangle visibleRect = imagesContainer.getVisibleRect();
             int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
@@ -158,8 +157,7 @@ class ExpectedActualDifferenceImageViewerWidget implements Widget {
         invokeLater(this::updateImagesContainer);
     }
 
-    @Nullable
-    private SnapshotImages getSnapshotImages() {
+    private @Nullable SnapshotImages getSnapshotImages() {
         ScreenCaptureSupport.@Nullable SnapshotIssue issue = getSnapshotIssue();
         if (issue == null) {
             return null;

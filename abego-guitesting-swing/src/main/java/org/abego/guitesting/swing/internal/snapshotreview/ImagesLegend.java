@@ -33,7 +33,7 @@ import static javax.swing.BorderFactory.createLineBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
-class ImagesLegendWidget implements Widget {
+class ImagesLegend implements Widget {
 
     private static final int LEGEND_BORDER_SIZE = 2;
 
@@ -47,8 +47,8 @@ class ImagesLegendWidget implements Widget {
     private JLabel actualLabel = legendLabel(" Actual ", getActualBorderColor());//NON-NLS
     private JLabel differenceLabel = legendLabel(" Difference ", getDifferenceBorderColor());//NON-NLS
 
-    public static ImagesLegendWidget newImagesLegendWidget() {
-        return new ImagesLegendWidget();
+    public static ImagesLegend imagesLegend() {
+        return new ImagesLegend();
     }
 
     public int getExpectedImageIndex() {
@@ -94,7 +94,7 @@ class ImagesLegendWidget implements Widget {
         return imagesLegendContainer;
     }
 
-    private ImagesLegendWidget() {
+    private ImagesLegend() {
         labelsForLegend = new JLabel[]{
                 expectedLabel, actualLabel, differenceLabel
         };

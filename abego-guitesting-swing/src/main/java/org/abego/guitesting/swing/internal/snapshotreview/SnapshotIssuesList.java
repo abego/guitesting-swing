@@ -50,7 +50,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.vlist;
 
-class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
+class SnapshotIssuesList<T extends SnapshotIssue> implements Widget {
     private final static Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
     private final DefaultListModel<T> issuesListModel;
     private final Action previousScreenshotAction;
@@ -60,7 +60,7 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
     private final JList<T> issuesList;
     private final JComponent content;
 
-    private SnapshotIssuesListWidget(DefaultListModel<T> issuesListModel) {
+    private SnapshotIssuesList(DefaultListModel<T> issuesListModel) {
         this.issuesListModel = issuesListModel;
         nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS
         previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
@@ -92,9 +92,9 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
         });
     }
 
-    public static <T extends SnapshotIssue> SnapshotIssuesListWidget<T> newSnapshotIssuesListWidget(
+    public static <T extends SnapshotIssue> SnapshotIssuesList<T> snapshotIssuesList(
             DefaultListModel<T> issuesListModel) {
-        return new SnapshotIssuesListWidget<>(issuesListModel);
+        return new SnapshotIssuesList<>(issuesListModel);
     }
 
     public int getSelectedIndex() {
@@ -110,7 +110,7 @@ class SnapshotIssuesListWidget<T extends SnapshotIssue> implements Widget {
         return issuesList.getSelectedValue();
     }
 
-    public void addSelectedIssueChangeListener(Consumer<SnapshotIssuesListWidget<T>> listener) {
+    public void addSelectedIssueChangeListener(Consumer<SnapshotIssuesList<T>> listener) {
         issuesList.addListSelectionListener(e -> listener.accept(this));
     }
 

@@ -61,7 +61,7 @@ public class SnapshotReviewImpl<T extends SnapshotIssue> implements SnapshotRevi
         Seq<T> issues = getSnapshotIssues();
 
         invokeLater(() -> {
-            SnapshotReviewWidget<T> widget = new SnapshotReviewWidget<>(issues);
+            SnapshotReviewWidget<T> widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
             //noinspection StringConcatenation
             JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
             frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
