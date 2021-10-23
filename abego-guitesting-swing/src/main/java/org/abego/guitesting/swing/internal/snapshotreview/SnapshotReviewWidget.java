@@ -43,7 +43,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewer.expectedActualDifferenceImageViewer;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
-import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.newVariantsInfoImpl;
+import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.checkBoxUpdateable;
@@ -58,6 +58,9 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
+
+    // State/Model
+    private final DefaultListModel<T> remainingIssues;
 
     // Actions
     private final Action addAltenativeSnapshotAction;
@@ -80,15 +83,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final ExpectedActualDifferenceImageViewer expectedActualDifferenceImageViewer
             = expectedActualDifferenceImageViewer();
     private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
-    //TODO use a JComponent/Container
-    private final JPanel content = new JPanel();
-
-    // UI State
-    private final DefaultListModel<T> issuesListModel;
+    private final JComponent content = new JPanel();
 
     private SnapshotReviewWidget(Seq<T> issues) {
         // init State
-        issuesListModel = newDefaultListModel(
+        remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
 
         // init Actions
@@ -99,7 +98,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
-        snapshotIssuesVList.setListModel(issuesListModel);
+        snapshotIssuesVList.setListModel(remainingIssues);
         shrinkToFitCheckBox.setSelectedCondition(this::getShrinkToFit);
 
         overwriteButton.setAction(overwriteSnapshotAction);
@@ -231,7 +230,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void removeIssue(T issue) {
         invokeLater(() -> {
             int selectedIndex = snapshotIssuesVList.getSelectedIndex();
-            issuesListModel.removeElement(issue);
+            remainingIssues.removeElement(issue);
             snapshotIssuesVList.setSelectedIndex(selectedIndex);
         });
     }
@@ -244,11 +243,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         String name = issue.getSnapshotName();
         invokeLater(() -> {
             int selectedIndex = snapshotIssuesVList.getSelectedIndex();
-            for (int i = issuesListModel.size() - 1; i >= 0; i--) {
-                T issueInModel = issuesListModel.get(i);
+            for (int i = remainingIssues.size() - 1; i >= 0; i--) {
+                T issueInModel = remainingIssues.get(i);
                 //noinspection CallToSuspiciousStringMethod
                 if (issueInModel.getSnapshotName().equals(name)) {
-                    issuesListModel.removeElementAt(i);
+                    remainingIssues.removeElementAt(i);
                 }
             }
             snapshotIssuesVList.setSelectedIndex(selectedIndex);
@@ -300,12 +299,12 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             return null;
         }
 
-        return newVariantsInfoImpl(issue, getVariants(issue));
+        return variantsInfo(issue, getVariants(issue));
     }
 
     private Seq<T> getVariants(T issue) {
         //noinspection CallToSuspiciousStringMethod
-        return SeqUtil2.newSeq(issuesListModel.elements()).filter(
+        return SeqUtil2.newSeq(remainingIssues.elements()).filter(
                 i -> i.getSnapshotName().equals(issue.getSnapshotName()));
     }
 
