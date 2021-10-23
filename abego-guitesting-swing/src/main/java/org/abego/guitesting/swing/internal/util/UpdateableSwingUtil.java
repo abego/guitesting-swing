@@ -26,22 +26,8 @@ package org.abego.guitesting.swing.internal.util;
 
 import org.abego.commons.lang.exception.MustNotInstantiateException;
 
-import javax.swing.Action;
-import java.util.function.Supplier;
-
-import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.newJCheckBoxWithUpdate;
-
 public final class UpdateableSwingUtil {
     UpdateableSwingUtil() {
         throw new MustNotInstantiateException();
-    }
-
-    public static JCheckBoxUpdateable checkBox(
-            Supplier<Boolean> selectedCondition, Action action) {
-
-        JCheckBoxUpdateable checkBox =
-                newJCheckBoxWithUpdate(selectedCondition, action);
-        SwingUtil.handleAccelerator(checkBox, action);
-        return checkBox;
     }
 }

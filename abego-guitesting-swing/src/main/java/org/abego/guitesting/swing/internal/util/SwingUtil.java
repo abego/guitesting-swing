@@ -184,17 +184,6 @@ public final class SwingUtil {
     //endregion
 
     //region JList related
-    public static <T> JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
-        JList<T> list = new JList<>(listModel);
-        list.setBorder(null);
-        initCode.accept(list);
-        return list;
-    }
-
-    public static <T> JList<T> vlist(ListModel<T> listModel) {
-        return vlist(listModel, l -> {});
-    }
-
     public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
         DefaultListModel<T> listModel = new DefaultListModel<>();
         for (T i : items) {

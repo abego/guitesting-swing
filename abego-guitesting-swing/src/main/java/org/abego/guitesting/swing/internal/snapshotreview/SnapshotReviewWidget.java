@@ -25,7 +25,6 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
-import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
@@ -43,10 +42,11 @@ import javax.swing.KeyStroke;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewer.expectedActualDifferenceImageViewer;
-import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesList.snapshotIssuesList;
+import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.newVariantsInfoImpl;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
+import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.checkBoxUpdateable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -55,7 +55,6 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListM
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
-import static org.abego.guitesting.swing.internal.util.UpdateableSwingUtil.checkBox;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
@@ -76,11 +75,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JButton ignoreButton = toolbarButton();
     private final ImagesLegend imagesLegend = ImagesLegend.imagesLegend();
     private final JButton rotateButton = toolbarButton();
-    private final JCheckBoxUpdateable shrinkToFitCheckBox;
+    private final JCheckBoxUpdateable shrinkToFitCheckBox = checkBoxUpdateable();
     private final VariantsIndicator<T> variantsIndicator = VariantsIndicator.variantsIndicator();
     private final ExpectedActualDifferenceImageViewer expectedActualDifferenceImageViewer
             = expectedActualDifferenceImageViewer();
-    private final SnapshotIssuesList<T> snapshotIssuesList;
+    private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
     //TODO use a JComponent/Container
     private final JPanel content = new JPanel();
 
@@ -100,13 +99,14 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
-        snapshotIssuesList = snapshotIssuesList(issuesListModel);
-        shrinkToFitCheckBox = checkBox(this::getShrinkToFit, toggleShrinkToFitAction);
+        snapshotIssuesVList.setListModel(issuesListModel);
+        shrinkToFitCheckBox.setSelectedCondition(this::getShrinkToFit);
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAltenativeSnapshotAction);
         ignoreButton.setAction(ignoreCurrentIssueAction);
         rotateButton.setAction(rotateImageAction);
+        shrinkToFitCheckBox.setAction(toggleShrinkToFitAction);
 
         styleComponents();
         layoutComponents();
@@ -150,7 +150,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                         .component())
                 .left(variantsIndicator.getComponent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageViewer.getComponent()))
-                .bottom(snapshotIssuesList.getComponent());
+                .bottom(snapshotIssuesVList.getComponent());
     }
 
     @Override
@@ -159,7 +159,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void initNotifications() {
-        snapshotIssuesList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
+        snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
     }
 
     private void updateSelectedIssueDescriptionLabel() {
@@ -230,9 +230,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     private void removeIssue(T issue) {
         invokeLater(() -> {
-            int selectedIndex = snapshotIssuesList.getSelectedIndex();
+            int selectedIndex = snapshotIssuesVList.getSelectedIndex();
             issuesListModel.removeElement(issue);
-            snapshotIssuesList.setSelectedIndex(selectedIndex);
+            snapshotIssuesVList.setSelectedIndex(selectedIndex);
         });
     }
 
@@ -243,7 +243,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void removeIssueAndVariants(T issue) {
         String name = issue.getSnapshotName();
         invokeLater(() -> {
-            int selectedIndex = snapshotIssuesList.getSelectedIndex();
+            int selectedIndex = snapshotIssuesVList.getSelectedIndex();
             for (int i = issuesListModel.size() - 1; i >= 0; i--) {
                 T issueInModel = issuesListModel.get(i);
                 //noinspection CallToSuspiciousStringMethod
@@ -251,7 +251,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                     issuesListModel.removeElementAt(i);
                 }
             }
-            snapshotIssuesList.setSelectedIndex(selectedIndex);
+            snapshotIssuesVList.setSelectedIndex(selectedIndex);
         });
     }
 
@@ -311,7 +311,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     @Nullable
     private T getSelectedIssue() {
-        return snapshotIssuesList.getSelectedIssue();
+        return snapshotIssuesVList.getSelectedIssue();
     }
 
 }

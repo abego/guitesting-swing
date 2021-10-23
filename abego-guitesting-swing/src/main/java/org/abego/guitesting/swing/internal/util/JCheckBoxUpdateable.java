@@ -29,22 +29,41 @@ import javax.swing.JCheckBox;
 import java.util.function.Supplier;
 
 public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
-    private final Supplier<Boolean> selectedCondition;
+    private Supplier<Boolean> selectedCondition;
 
-    private JCheckBoxUpdateable(Supplier<Boolean> selectedCondition, Action action) {
-        setAction(action);
+    private JCheckBoxUpdateable() {
+        this.selectedCondition = () -> false;
+        update();
+    }
+
+    public static JCheckBoxUpdateable checkBoxUpdateable() {
+        return new JCheckBoxUpdateable();
+    }
+
+    public Supplier<Boolean> getSelectedCondition() {
+        return selectedCondition;
+    }
+
+    public void setSelectedCondition(Supplier<Boolean> selectedCondition) {
         this.selectedCondition = selectedCondition;
         update();
     }
 
-    public static JCheckBoxUpdateable newJCheckBoxWithUpdate(Supplier<Boolean> selectedCondition, Action action) {
-        return new JCheckBoxUpdateable(selectedCondition, action);
+    public void setSelected(boolean value) {
+        throw new UnsupportedOperationException(
+                "Cannot explicitly set selected value (is defined by `selectedCondition`)"); //NON-NLS
+    }
+
+    @Override
+    public void setAction(Action action) {
+        super.setAction(action);
+        SwingUtil.handleAccelerator(this, action);
     }
 
     public void update() {
-        boolean newValue = selectedCondition.get();
-        if (isSelected() != newValue) {
-            setSelected(newValue);
+        boolean selectedValue = getSelectedCondition().get();
+        if (isSelected() != selectedValue) {
+            super.setSelected(selectedValue);
         }
     }
 }
