@@ -41,7 +41,7 @@ import javax.swing.KeyStroke;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
-import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageViewer.expectedActualDifferenceImageViewer;
+import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
@@ -80,8 +80,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxUpdateable shrinkToFitCheckBox = checkBoxUpdateable();
     private final VariantsIndicator<T> variantsIndicator = VariantsIndicator.variantsIndicator();
-    private final ExpectedActualDifferenceImageViewer expectedActualDifferenceImageViewer
-            = expectedActualDifferenceImageViewer();
+    private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
+            = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
 
@@ -127,9 +127,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void styleComponents() {
         //TODO demonstrate the difference between a style derived from a different
         //  component style and from a "central" style definition.
-        imagesLegend.setExpectedBorderColor(expectedActualDifferenceImageViewer.getExpectedBorderColor());
-        imagesLegend.setActualBorderColor(expectedActualDifferenceImageViewer.getActualBorderColor());
-        imagesLegend.setDifferenceBorderColor(expectedActualDifferenceImageViewer.getDifferenceBorderColor());
+        imagesLegend.setExpectedBorderColor(expectedActualDifferenceImageView.getExpectedBorderColor());
+        imagesLegend.setActualBorderColor(expectedActualDifferenceImageView.getActualBorderColor());
+        imagesLegend.setDifferenceBorderColor(expectedActualDifferenceImageView.getDifferenceBorderColor());
     }
 
     private void layoutComponents() {
@@ -148,7 +148,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                                 separatorBar()))
                         .component())
                 .left(variantsIndicator.getComponent())
-                .center(scrollingNoBorder(expectedActualDifferenceImageViewer.getComponent()))
+                .center(scrollingNoBorder(expectedActualDifferenceImageView.getComponent()))
                 .bottom(snapshotIssuesVList.getComponent());
     }
 
@@ -228,11 +228,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void removeIssue(T issue) {
-        invokeLater(() -> {
-            int selectedIndex = snapshotIssuesVList.getSelectedIndex();
-            remainingIssues.removeElement(issue);
-            snapshotIssuesVList.setSelectedIndex(selectedIndex);
-        });
+        remainingIssues.removeElement(issue);
     }
 
     private void rotateImages() {
@@ -241,50 +237,46 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     private void removeIssueAndVariants(T issue) {
         String name = issue.getSnapshotName();
-        invokeLater(() -> {
-            int selectedIndex = snapshotIssuesVList.getSelectedIndex();
-            for (int i = remainingIssues.size() - 1; i >= 0; i--) {
-                T issueInModel = remainingIssues.get(i);
-                //noinspection CallToSuspiciousStringMethod
-                if (issueInModel.getSnapshotName().equals(name)) {
-                    remainingIssues.removeElementAt(i);
-                }
+        for (int i = remainingIssues.size() - 1; i >= 0; i--) {
+            T issueInModel = remainingIssues.get(i);
+            //noinspection CallToSuspiciousStringMethod
+            if (issueInModel.getSnapshotName().equals(name)) {
+                remainingIssues.removeElementAt(i);
             }
-            snapshotIssuesVList.setSelectedIndex(selectedIndex);
-        });
+        }
     }
 
     private int getExpectedImageIndex() {
-        return expectedActualDifferenceImageViewer.getExpectedImageIndex();
+        return expectedActualDifferenceImageView.getExpectedImageIndex();
     }
 
     private void setExpectedImageIndex(int value) {
-        expectedActualDifferenceImageViewer.setExpectedImageIndex(value);
+        expectedActualDifferenceImageView.setExpectedImageIndex(value);
         onExpectedImageIndexChanged();
     }
 
     private void onSelectedIssueChanged() {
         invokeLater(() -> {
-            expectedActualDifferenceImageViewer.setSnapshotIssue(getSelectedIssue());
+            expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
             variantsIndicator.setVariantsInfo(getVariantsInfo());
             updateSelectedIssueDescriptionLabel();
         });
     }
 
     private void onExpectedImageIndexChanged() {
-        invokeLater(() -> imagesLegend.setExpectedImageIndex(getExpectedImageIndex()));
+        imagesLegend.setExpectedImageIndex(getExpectedImageIndex());
     }
 
     private void onShrinkToFitChanged() {
-        invokeLater(shrinkToFitCheckBox::update);
+        shrinkToFitCheckBox.update();
     }
 
     private boolean getShrinkToFit() {
-        return expectedActualDifferenceImageViewer.getShrinkToFit();
+        return expectedActualDifferenceImageView.getShrinkToFit();
     }
 
     private void setShrinkToFit(boolean value) {
-        expectedActualDifferenceImageViewer.setShrinkToFit(value);
+        expectedActualDifferenceImageView.setShrinkToFit(value);
     }
 
     private void toggleShrinkToFit() {

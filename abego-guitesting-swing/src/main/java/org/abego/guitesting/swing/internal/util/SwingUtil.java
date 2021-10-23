@@ -204,6 +204,13 @@ public final class SwingUtil {
             list.setSelectedIndex(newIndex);
         }
     }
+
+    public static void ensureSelectionIsVisible(JList<?> list) {
+        int selectedIndex = list.getSelectedIndex();
+        if (selectedIndex >= 0) {
+            list.ensureIndexIsVisible(selectedIndex);
+        }
+    }
     //endregion
 
     //region JScrollPane related

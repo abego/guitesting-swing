@@ -28,6 +28,8 @@ import javax.swing.Action;
 import javax.swing.JCheckBox;
 import java.util.function.Supplier;
 
+import static javax.swing.SwingUtilities.invokeLater;
+
 public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
     private Supplier<Boolean> selectedCondition;
 
@@ -61,9 +63,11 @@ public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
     }
 
     public void update() {
-        boolean selectedValue = getSelectedCondition().get();
-        if (isSelected() != selectedValue) {
-            super.setSelected(selectedValue);
-        }
+        invokeLater(() -> {
+            boolean selectedValue = getSelectedCondition().get();
+            if (isSelected() != selectedValue) {
+                super.setSelected(selectedValue);
+            }
+        });
     }
 }

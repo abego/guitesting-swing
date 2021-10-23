@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -37,15 +38,17 @@ class ImagesLegend implements Widget {
 
     private static final int LEGEND_BORDER_SIZE = 2;
 
-    private final JLabel[] labelsForLegend;
-    private final JComponent imagesLegendContainer;
+    private final JLabel expectedLabel = legendLabel(" Expected ");//NON-NLS
+    private final JLabel actualLabel = legendLabel(" Actual ");//NON-NLS
+    private final JLabel differenceLabel = legendLabel(" Difference ");//NON-NLS
+    private final JLabel[] labels = new JLabel[]{
+            expectedLabel, actualLabel, differenceLabel
+    };
+    private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
     private int expectedImageIndex = 0;
     private Color expectedBorderColor = Color.green;
     private Color actualBorderColor = Color.red;
     private Color differenceBorderColor = Color.black;
-    private JLabel expectedLabel = legendLabel(" Expected ", getExpectedBorderColor());//NON-NLS
-    private JLabel actualLabel = legendLabel(" Actual ", getActualBorderColor());//NON-NLS
-    private JLabel differenceLabel = legendLabel(" Difference ", getDifferenceBorderColor());//NON-NLS
 
     public static ImagesLegend imagesLegend() {
         return new ImagesLegend();
@@ -57,7 +60,7 @@ class ImagesLegend implements Widget {
 
     public void setExpectedImageIndex(int expectedImageIndex) {
         this.expectedImageIndex = expectedImageIndex;
-        onLabelsForLegendChanged();
+        onExpectedImageIndexChanged();
     }
 
     public Color getExpectedBorderColor() {
@@ -70,10 +73,18 @@ class ImagesLegend implements Widget {
         onExpectedBorderColorChanged();
     }
 
+    public Color getActualBorderColor() {
+        return actualBorderColor;
+    }
+
     public void setActualBorderColor(Color color) {
         this.actualBorderColor = color;
 
         onActualBorderColorChanged();
+    }
+
+    public Color getDifferenceBorderColor() {
+        return differenceBorderColor;
     }
 
     public void setDifferenceBorderColor(Color color) {
@@ -82,39 +93,18 @@ class ImagesLegend implements Widget {
         onDifferenceBorderColorChanged();
     }
 
-    public Color getActualBorderColor() {
-        return actualBorderColor;
-    }
-
-    public Color getDifferenceBorderColor() {
-        return differenceBorderColor;
-    }
-
     public JComponent getComponent() {
-        return imagesLegendContainer;
+        return content;
     }
 
     private ImagesLegend() {
-        labelsForLegend = new JLabel[]{
-                expectedLabel, actualLabel, differenceLabel
-        };
-        imagesLegendContainer = flowLeft(DEFAULT_FLOW_GAP, 0);
-
-        onLabelsForLegendChanged();
+        onExpectedImageIndexChanged();
         onExpectedBorderColorChanged();
         onActualBorderColorChanged();
         onDifferenceBorderColorChanged();
     }
 
-    private void onLabelsForLegendChanged() {
-        imagesLegendContainer.removeAll();
-        imagesLegendContainer.add(labelsForLegend[(3 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.add(labelsForLegend[(4 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.add(labelsForLegend[(5 - getExpectedImageIndex()) % 3]);
-        imagesLegendContainer.validate();
-    }
-
-    private static JLabel legendLabel(String title, Color color) {
+    private static JLabel legendLabel(String title) {
         JLabel label = new JLabel(title);
         label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
         label.setForeground(Color.GRAY);
@@ -122,6 +112,16 @@ class ImagesLegend implements Widget {
         label.setToolTipText(
                 title.trim() + " images (see below) have a border in this color and are located at this position in the sequence."); //NON-NLS
         return label;
+    }
+
+    private void onExpectedImageIndexChanged() {
+        SwingUtilities.invokeLater(() -> {
+            content.removeAll();
+            content.add(labels[(3 - getExpectedImageIndex()) % 3]);
+            content.add(labels[(4 - getExpectedImageIndex()) % 3]);
+            content.add(labels[(5 - getExpectedImageIndex()) % 3]);
+            content.validate();
+        });
     }
 
     private void onExpectedBorderColorChanged() {
