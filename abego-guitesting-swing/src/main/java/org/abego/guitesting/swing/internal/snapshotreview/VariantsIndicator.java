@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -74,18 +75,19 @@ class VariantsIndicator<T extends SnapshotIssue> implements Widget {
     }
 
     private void updateContent() {
-        content.removeAll();
-
-        @Nullable VariantsInfo<T> info = getVariantsInfo();
-        if (info != null) {
-            int n = info.getVariantsCount();
-            int sel = info.getVariantsIndex();
-            for (int i = 0; n > 1 && i < n; i++) {
-                content.add(
-                        label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
+        invokeLater(() -> {
+            content.removeAll();
+            @Nullable VariantsInfo<T> info = getVariantsInfo();
+            if (info != null) {
+                int n = info.getVariantsCount();
+                int sel = info.getVariantsIndex();
+                for (int i = 0; n > 1 && i < n; i++) {
+                    content.add(
+                            label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
+                }
+                content.repaint();
+                content.revalidate();
             }
-            content.repaint();
-            content.revalidate();
-        }
+        });
     }
 }

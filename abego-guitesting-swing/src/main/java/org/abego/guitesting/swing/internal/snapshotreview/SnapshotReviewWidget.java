@@ -162,7 +162,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void updateSelectedIssueDescriptionLabel() {
-        selectedIssueDescriptionLabel.setText(getSelectedIssueDescription());
+        invokeLater(() ->
+                selectedIssueDescriptionLabel.setText(getSelectedIssueDescription()));
     }
 
     private String getSelectedIssueDescription() {
@@ -256,11 +257,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void onSelectedIssueChanged() {
-        invokeLater(() -> {
-            expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
-            variantsIndicator.setVariantsInfo(getVariantsInfo());
-            updateSelectedIssueDescriptionLabel();
-        });
+        expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
+        variantsIndicator.setVariantsInfo(getVariantsInfo());
+        updateSelectedIssueDescriptionLabel();
     }
 
     private void onExpectedImageIndexChanged() {
