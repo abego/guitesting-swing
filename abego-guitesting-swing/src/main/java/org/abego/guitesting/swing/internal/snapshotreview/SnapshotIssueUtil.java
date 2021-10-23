@@ -24,12 +24,29 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.ScreenCaptureSupport;
 
-interface VariantsInfo<T extends SnapshotIssue> {
-    T getIssue();
+final class SnapshotIssueUtil {
+    SnapshotIssueUtil() {
+        throw new IllegalArgumentException("Must not instantiate"); //NON-NLS
+    }
 
-    int getVariantsCount();
-
-    int getVariantsIndex();
+    /**
+     * Returns the "simple" name of the snapshot first (the part behind the last
+     * '.'), followed by the package and class part, separated by a " - ".
+     */
+    public static <T extends ScreenCaptureSupport.SnapshotIssue> String labelWithLastPartFirst(T issue) {
+        StringBuilder result = new StringBuilder();
+        String s = issue.getLabel();
+        //noinspection MagicCharacter
+        int iDot = s.lastIndexOf('.');
+        if (iDot >= 0) {
+            result.append(s, iDot + 1, s.length());
+            result.append(" - ");
+            result.append(s, 0, iDot);
+        } else {
+            result.append(s);
+        }
+        return result.toString();
+    }
 }

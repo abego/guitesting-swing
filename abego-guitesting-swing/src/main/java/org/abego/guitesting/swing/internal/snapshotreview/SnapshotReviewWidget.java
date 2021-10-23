@@ -184,19 +184,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             result.append(variantsCount);
             result.append("] ");
         }
-        // display the "simple" name of the snapshot first,
-        // followed by the package and class part,
-        // separated by a "-".
-        String s = info.getIssue().getLabel();
-        //noinspection MagicCharacter
-        int iDot = s.lastIndexOf('.');
-        if (iDot >= 0) {
-            result.append(s, iDot + 1, s.length());
-            result.append(" - ");
-            result.append(s, 0, iDot);
-        } else {
-            result.append(s);
-        }
+        result.append(SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue()));
         return result.toString();
     }
 
@@ -209,7 +197,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             removeIssueAndVariants(currentIssue);
         }
     }
-
 
     private void addAltenativeSnapshot() {
         @Nullable T currentIssue = getSelectedIssue();

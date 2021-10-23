@@ -26,6 +26,6 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import javax.swing.JComponent;
 
-public interface Widget {
+interface Widget {
     JComponent getComponent();
 }

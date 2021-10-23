@@ -75,8 +75,8 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
 
         issuesList = new JList<>();
         issuesList.setBorder(null);
-        issuesList.setCellRenderer(
-                newListCellRenderer(SnapshotIssue.class, SnapshotIssue::getLabel));
+        issuesList.setCellRenderer(newListCellRenderer(
+                SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst));
 
         content = borderedWithTopLine(c -> {})
                 .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
