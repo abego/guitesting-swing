@@ -65,7 +65,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final DefaultListModel<T> remainingIssues;
     //endregion
     //region Actions
-    private final Action addAltenativeSnapshotAction;
+    private final Action addAlternativeSnapshotAction;
     private final Action overwriteSnapshotAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action ignoreCurrentIssueAction;
@@ -95,7 +95,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
                 issues.sortedBy(SnapshotIssue::getLabel));
 
         // init Actions
-        addAltenativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAltenativeSnapshot()); //NON-NLS
+        addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
         ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
         overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
         rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
@@ -106,7 +106,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         shrinkToFitCheckBox.setSelectedCondition(this::getShrinkToFit);
 
         overwriteButton.setAction(overwriteSnapshotAction);
-        addAlternativeButton.setAction(addAltenativeSnapshotAction);
+        addAlternativeButton.setAction(addAlternativeSnapshotAction);
         ignoreButton.setAction(ignoreCurrentIssueAction);
         rotateButton.setAction(rotateImageAction);
         shrinkToFitCheckBox.setAction(toggleShrinkToFitAction);
@@ -205,7 +205,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         }
     }
 
-    private void addAltenativeSnapshot() {
+    private void addAlternativeSnapshot() {
         @Nullable T currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
