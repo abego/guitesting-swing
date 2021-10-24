@@ -44,6 +44,7 @@ import java.awt.Color;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
+import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegend.imagesLegend;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsIndicator.variantsIndicator;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
@@ -78,7 +79,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JButton overwriteButton = toolbarButton();
     private final JButton addAlternativeButton = toolbarButton();
     private final JButton ignoreButton = toolbarButton();
-    private final ImagesLegend imagesLegend = ImagesLegend.imagesLegend();
+    private final ImagesLegend imagesLegend = imagesLegend();
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxUpdateable shrinkToFitCheckBox = checkBoxUpdateable();
     private final VariantsIndicator<T> variantsIndicator = variantsIndicator();
