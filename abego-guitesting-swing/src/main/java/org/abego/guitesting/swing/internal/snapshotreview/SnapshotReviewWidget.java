@@ -180,14 +180,12 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             return null;
         }
 
-        return variantsInfo(issue, getVariants(issue));
+        //noinspection CallToSuspiciousStringMethod
+        Seq<T> variants = SeqUtil2.newSeq(remainingIssues.elements())
+                .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
+        return variantsInfo(issue, variants);
     }
 
-    private Seq<T> getVariants(T issue) {
-        //noinspection CallToSuspiciousStringMethod
-        return SeqUtil2.newSeq(remainingIssues.elements()).filter(
-                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
-    }
     //endregion
     //region Widget related
     @Override
