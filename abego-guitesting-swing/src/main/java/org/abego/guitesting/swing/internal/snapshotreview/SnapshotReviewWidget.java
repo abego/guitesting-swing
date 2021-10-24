@@ -39,6 +39,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import java.awt.Color;
+
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
@@ -58,6 +60,9 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 //TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
+    private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
+    private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
+    private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
 
     // State/Model
     private final DefaultListModel<T> remainingIssues;
@@ -125,11 +130,12 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void styleComponents() {
-        //TODO demonstrate the difference between a style derived from a different
-        //  component style and from a "central" style definition.
-        imagesLegend.setExpectedBorderColor(expectedActualDifferenceImageView.getExpectedBorderColor());
-        imagesLegend.setActualBorderColor(expectedActualDifferenceImageView.getActualBorderColor());
-        imagesLegend.setDifferenceBorderColor(expectedActualDifferenceImageView.getDifferenceBorderColor());
+        imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
+        imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
+        imagesLegend.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
+        expectedActualDifferenceImageView.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
+        expectedActualDifferenceImageView.setActualBorderColor(ACTUAL_BORDER_COLOR);
+        expectedActualDifferenceImageView.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
     }
 
     private void layoutComponents() {

@@ -43,11 +43,12 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResi
 
 //TODO: review the dependency management (...Changes, on..., update...)
 class ExpectedActualDifferenceImageView implements Widget {
-    private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
-    private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
-    private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
     private static final int BORDER_SIZE = 3;
     private static final int MIN_IMAGE_SIZE = 16;
+
+    private Color expectedBorderColor = Color.green;
+    private Color actualBorderColor = Color.red;
+    private Color differenceBorderColor = Color.black;
 
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
@@ -93,11 +94,26 @@ class ExpectedActualDifferenceImageView implements Widget {
         updateLabelsForImages();
     }
 
-    public Color getExpectedBorderColor() {return EXPECTED_BORDER_COLOR;}
+    public Color getExpectedBorderColor() {return expectedBorderColor;}
 
-    public Color getActualBorderColor() {return ACTUAL_BORDER_COLOR;}
+    public void setExpectedBorderColor(Color expectedBorderColor) {
+        this.expectedBorderColor = expectedBorderColor;
+        updateLabelsForImages();
+    }
 
-    public Color getDifferenceBorderColor() {return DIFFERENCE_BORDER_COLOR;}
+    public Color getActualBorderColor() {return actualBorderColor;}
+
+    public void setActualBorderColor(Color actualBorderColor) {
+        this.actualBorderColor = actualBorderColor;
+        updateLabelsForImages();
+    }
+
+    public Color getDifferenceBorderColor() {return differenceBorderColor;}
+
+    public void setDifferenceBorderColor(Color differenceBorderColor) {
+        this.differenceBorderColor = differenceBorderColor;
+        updateLabelsForImages();
+    }
 
     @Override
     public JComponent getComponent() {
@@ -119,7 +135,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     // dependsOn (snapshotIssue != null ? (shrinkToFit ? content.visibleRect : null) : null)
-    // ? expectedImageIndex,final expectedBorderColor,final actualBorderColor, final differenceBorderColor: null
+    // ? expectedImageIndex, expectedBorderColor, actualBorderColor,  differenceBorderColor: null
     private void updateLabelsForImages() {
         invokeLater(() -> {
             @Nullable SnapshotImages images = getSnapshotImages();

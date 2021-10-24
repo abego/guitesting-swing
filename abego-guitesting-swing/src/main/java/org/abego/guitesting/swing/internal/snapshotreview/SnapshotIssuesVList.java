@@ -78,7 +78,7 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
         issuesList.setCellRenderer(newListCellRenderer(
                 SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst));
 
-        content = borderedWithTopLine(c -> {})
+        content = borderedWithTopLine()
                 .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
                         .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
                         .right(flowLeft(DEFAULT_FLOW_GAP, 0,

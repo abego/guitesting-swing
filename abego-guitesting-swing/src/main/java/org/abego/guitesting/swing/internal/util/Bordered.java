@@ -48,11 +48,10 @@ public final class Bordered {
     }
 
     //TODO: move method?!
-    public static Bordered borderedWithTopLine(Consumer<JComponent> initCode) {
+    public static Bordered borderedWithTopLine() {
         return bordered(b -> {
             b.setBorder(
                     new MatteBorder(1, 0, 0, 0, LIGHTER_GRAY));
-            initCode.accept(b);
         });
     }
 
