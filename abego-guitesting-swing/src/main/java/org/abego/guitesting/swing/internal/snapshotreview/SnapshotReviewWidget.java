@@ -45,6 +45,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
+import static org.abego.guitesting.swing.internal.snapshotreview.VariantsIndicator.variantsIndicator;
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
@@ -58,16 +59,12 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBord
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
-//TODO: better split between init, style (e.g. border), layout, binding/updating
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
-    private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
-    private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
-    private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
 
-    // State/Model
+    //region State/Model
     private final DefaultListModel<T> remainingIssues;
-
-    // Actions
+    //endregion
+    //region Actions
     private final Action addAltenativeSnapshotAction;
     private final Action overwriteSnapshotAction;
     @SuppressWarnings("FieldCanBeLocal")
@@ -75,8 +72,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final Action rotateImageAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action toggleShrinkToFitAction;
-
-    // Components (for more see #layoutComponent)
+    //endregion
+    //region Components
     private final JLabel selectedIssueDescriptionLabel = label();
     private final JButton overwriteButton = toolbarButton();
     private final JButton addAlternativeButton = toolbarButton();
@@ -84,12 +81,14 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final ImagesLegend imagesLegend = ImagesLegend.imagesLegend();
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxUpdateable shrinkToFitCheckBox = checkBoxUpdateable();
-    private final VariantsIndicator<T> variantsIndicator = VariantsIndicator.variantsIndicator();
+    private final VariantsIndicator<T> variantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
             = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
 
+    //endregion
+    //region Construction
     private SnapshotReviewWidget(Seq<T> issues) {
         // init State
         remainingIssues = newDefaultListModel(
@@ -116,7 +115,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         layoutComponents();
 
         // Notifications support
-        initNotifications();
+        initBindings();
 
         // More initialization
         invokeLater(() -> {
@@ -129,49 +128,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         return new SnapshotReviewWidget<>(issues);
     }
 
-    private void styleComponents() {
-        imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
-        imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
-        imagesLegend.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
-        expectedActualDifferenceImageView.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
-        expectedActualDifferenceImageView.setActualBorderColor(ACTUAL_BORDER_COLOR);
-        expectedActualDifferenceImageView.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
-    }
-
-    private void layoutComponents() {
-        bordered(content)
-                .top(bordered()
-                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
-                        .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
-                                overwriteButton,
-                                addAlternativeButton,
-                                ignoreButton,
-                                separatorBar(),
-                                imagesLegend.getComponent(),
-                                rotateButton,
-                                separatorBar(),
-                                shrinkToFitCheckBox,
-                                separatorBar()))
-                        .component())
-                .left(variantsIndicator.getComponent())
-                .center(scrollingNoBorder(expectedActualDifferenceImageView.getComponent()))
-                .bottom(snapshotIssuesVList.getComponent());
-    }
-
-    @Override
-    public JComponent getComponent() {
-        return content;
-    }
-
-    private void initNotifications() {
-        snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
-    }
-
-    private void updateSelectedIssueDescriptionLabel() {
-        invokeLater(() ->
-                selectedIssueDescriptionLabel.setText(getSelectedIssueDescription()));
-    }
-
+    //endregion
+    //region Properties
     private String getSelectedIssueDescription() {
         @Nullable
         VariantsInfo<T> info = getVariantsInfo();
@@ -179,21 +137,64 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             return " ";
         }
 
-        //TODO use some "template engine" like code
-        StringBuilder result = new StringBuilder();
-
+        String label = SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue());
         int variantsCount = info.getVariantsCount();
-        if (variantsCount > 1) {
-            result.append("[");
-            result.append(info.getVariantsIndex() + 1);
-            result.append(" of "); //NON-NLS
-            result.append(variantsCount);
-            result.append("] ");
-        }
-        result.append(SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue()));
-        return result.toString();
+        return (variantsCount > 1)
+                ? String.format("[%d of %d] %s", //NON-NLS
+                info.getVariantsIndex() + 1, variantsCount, label)
+                : label;
     }
 
+    private int getExpectedImageIndex() {
+        return expectedActualDifferenceImageView.getExpectedImageIndex();
+    }
+
+    private void setExpectedImageIndex(int value) {
+        expectedActualDifferenceImageView.setExpectedImageIndex(value);
+        onExpectedImageIndexChanged();
+    }
+
+    private boolean getShrinkToFit() {
+        return expectedActualDifferenceImageView.getShrinkToFit();
+    }
+
+    private void setShrinkToFit(boolean value) {
+        expectedActualDifferenceImageView.setShrinkToFit(value);
+    }
+
+    private void toggleShrinkToFit() {
+        setShrinkToFit(!getShrinkToFit());
+        onShrinkToFitChanged();
+    }
+
+    @Nullable
+    private T getSelectedIssue() {
+        return snapshotIssuesVList.getSelectedIssue();
+    }
+
+    @Nullable
+    private VariantsInfo<T> getVariantsInfo() {
+        T issue = getSelectedIssue();
+        if (issue == null) {
+            return null;
+        }
+
+        return variantsInfo(issue, getVariants(issue));
+    }
+
+    private Seq<T> getVariants(T issue) {
+        //noinspection CallToSuspiciousStringMethod
+        return SeqUtil2.newSeq(remainingIssues.elements()).filter(
+                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
+    }
+    //endregion
+    //region Widget related
+    @Override
+    public JComponent getComponent() {
+        return content;
+    }
+    //endregion
+    //region Action related
     private void overwriteSnapshot() {
         @Nullable T currentIssue = getSelectedIssue();
         if (currentIssue != null) {
@@ -225,10 +226,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         remainingIssues.removeElement(issue);
     }
 
-    private void rotateImages() {
-        setExpectedImageIndex((getExpectedImageIndex() + 1) % 3);
-    }
-
     private void removeIssueAndVariants(T issue) {
         String name = issue.getSnapshotName();
         for (int i = remainingIssues.size() - 1; i >= 0; i--) {
@@ -240,13 +237,14 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         }
     }
 
-    private int getExpectedImageIndex() {
-        return expectedActualDifferenceImageView.getExpectedImageIndex();
+    private void rotateImages() {
+        setExpectedImageIndex((getExpectedImageIndex() + 1) % 3);
     }
 
-    private void setExpectedImageIndex(int value) {
-        expectedActualDifferenceImageView.setExpectedImageIndex(value);
-        onExpectedImageIndexChanged();
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
     }
 
     private void onSelectedIssueChanged() {
@@ -263,38 +261,47 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         shrinkToFitCheckBox.update();
     }
 
-    private boolean getShrinkToFit() {
-        return expectedActualDifferenceImageView.getShrinkToFit();
+    private void updateSelectedIssueDescriptionLabel() {
+        invokeLater(() ->
+                selectedIssueDescriptionLabel.setText(getSelectedIssueDescription()));
     }
 
-    private void setShrinkToFit(boolean value) {
-        expectedActualDifferenceImageView.setShrinkToFit(value);
+    //endregion
+    //region Style related
+    private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
+    private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
+    private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
+
+    private void styleComponents() {
+        imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
+        imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
+        imagesLegend.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
+        expectedActualDifferenceImageView.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
+        expectedActualDifferenceImageView.setActualBorderColor(ACTUAL_BORDER_COLOR);
+        expectedActualDifferenceImageView.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
     }
 
-    private void toggleShrinkToFit() {
-        setShrinkToFit(!getShrinkToFit());
-        onShrinkToFitChanged();
+    //endregion
+    //region Layout related
+    private void layoutComponents() {
+        bordered(content)
+                .top(bordered()
+                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
+                        .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
+                                overwriteButton,
+                                addAlternativeButton,
+                                ignoreButton,
+                                separatorBar(),
+                                imagesLegend.getComponent(),
+                                rotateButton,
+                                separatorBar(),
+                                shrinkToFitCheckBox,
+                                separatorBar()))
+                        .component())
+                .left(variantsIndicator.getComponent())
+                .center(scrollingNoBorder(expectedActualDifferenceImageView.getComponent()))
+                .bottom(snapshotIssuesVList.getComponent());
     }
 
-    @Nullable
-    private VariantsInfo<T> getVariantsInfo() {
-        T issue = getSelectedIssue();
-        if (issue == null) {
-            return null;
-        }
-
-        return variantsInfo(issue, getVariants(issue));
-    }
-
-    private Seq<T> getVariants(T issue) {
-        //noinspection CallToSuspiciousStringMethod
-        return SeqUtil2.newSeq(remainingIssues.elements()).filter(
-                i -> i.getSnapshotName().equals(issue.getSnapshotName()));
-    }
-
-    @Nullable
-    private T getSelectedIssue() {
-        return snapshotIssuesVList.getSelectedIssue();
-    }
-
+    //endregion
 }
