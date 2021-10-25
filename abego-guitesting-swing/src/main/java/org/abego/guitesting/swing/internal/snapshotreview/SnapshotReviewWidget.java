@@ -26,7 +26,6 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.eclipse.jdt.annotation.Nullable;

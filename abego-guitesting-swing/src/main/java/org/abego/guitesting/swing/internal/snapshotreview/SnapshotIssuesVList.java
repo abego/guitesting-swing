@@ -24,9 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.commons.lang.IntUtil;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.Icons;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
