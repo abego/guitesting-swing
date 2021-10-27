@@ -26,8 +26,9 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
+import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
+import org.abego.guitesting.swing.internal.util.Prop;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -40,6 +41,7 @@ import javax.swing.KeyStroke;
 
 import java.awt.Color;
 
+import static java.lang.Boolean.TRUE;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
@@ -49,7 +51,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.VariantsIndicat
 import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
-import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.checkBoxUpdateable;
+import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -63,6 +65,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     //region State/Model
     private final DefaultListModel<T> remainingIssues;
+    private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE);
     //endregion
     //region Actions
     private final Action addAlternativeSnapshotAction;
@@ -80,7 +83,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final JButton ignoreButton = toolbarButton();
     private final ImagesLegend imagesLegend = imagesLegend();
     private final JButton rotateButton = toolbarButton();
-    private final JCheckBoxUpdateable shrinkToFitCheckBox = checkBoxUpdateable();
+    private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxUpdateable();
     private final VariantsIndicator<T> variantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
             = expectedActualDifferenceImageView();
@@ -103,7 +106,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
         // init Components
         snapshotIssuesVList.setListModel(remainingIssues);
-        shrinkToFitCheckBox.setSelectedCondition(this::getShrinkToFit);
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
@@ -155,16 +157,15 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private boolean getShrinkToFit() {
-        return expectedActualDifferenceImageView.getShrinkToFit();
+        return shrinkToFitProp.get();
     }
 
     private void setShrinkToFit(boolean value) {
-        expectedActualDifferenceImageView.setShrinkToFit(value);
+        shrinkToFitProp.set(value);
     }
 
     private void toggleShrinkToFit() {
         setShrinkToFit(!getShrinkToFit());
-        onShrinkToFitChanged();
     }
 
     @Nullable
@@ -242,6 +243,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
+        shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
+        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
+
         snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
     }
 
@@ -253,10 +257,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     private void onExpectedImageIndexChanged() {
         imagesLegend.setExpectedImageIndex(getExpectedImageIndex());
-    }
-
-    private void onShrinkToFitChanged() {
-        shrinkToFitCheckBox.update();
     }
 
     private void updateSelectedIssueDescriptionLabel() {

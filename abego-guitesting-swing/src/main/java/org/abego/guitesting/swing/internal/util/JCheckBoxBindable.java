@@ -24,21 +24,17 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.event.EventObserver;
-import org.abego.event.EventService;
-import org.abego.event.EventServices;
-import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.Nullable;
-
 import javax.swing.Action;
 import javax.swing.JCheckBox;
 
 import static java.lang.Boolean.FALSE;
 import static javax.swing.SwingUtilities.invokeLater;
+import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
 
 public final class JCheckBoxBindable extends JCheckBox {
-    private Prop<Boolean> selected = Prop.newProp(FALSE);
-    private @Nullable EventObserver<PropertyChanged> observer;
+
+    private PropBindable<Boolean> selectedProp =
+            newPropBindable(FALSE, f -> updateSelectedUI());
 
     private JCheckBoxBindable() {
         addItemListener(i -> updateSelectedProp());
@@ -56,28 +52,21 @@ public final class JCheckBoxBindable extends JCheckBox {
         SwingUtil.handleAccelerator(this, action);
     }
 
-    public void setSelectedBinding(Prop<Boolean> binding) {
-        EventService eventService = EventServices.getDefault();
-        if (observer != null) {
-            eventService.removeObserver(observer);
-        }
-        selected = binding;
-        observer = eventService.addPropertyObserver(binding,
-                c -> updateSelectedUI());
-        updateSelectedUI();
+    public void bindSelectedTo(Prop<Boolean> prop) {
+        selectedProp.bindTo(prop);
     }
 
     private void updateSelectedUI() {
-        setSelected(selected.get());
+        invokeLater(() -> {
+            setSelected(selectedProp.get());
+        });
     }
 
     private void updateSelectedProp() {
-        invokeLater(() -> {
-            boolean isSelected = isSelected();
-            if (selected.get() != isSelected) {
-                selected.set(isSelected);
-            }
-        });
+        boolean isSelected = isSelected();
+        if (selectedProp.get() != isSelected) {
+            selectedProp.set(isSelected);
+        }
     }
 
 }

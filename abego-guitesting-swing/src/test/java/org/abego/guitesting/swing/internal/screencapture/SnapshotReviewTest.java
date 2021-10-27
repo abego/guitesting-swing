@@ -28,7 +28,7 @@ import org.abego.commons.io.FileUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.SnapshotReview;
-import org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable;
+import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -95,10 +95,10 @@ final class SnapshotReviewTest {
         gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
 
         // Un-"Shrink to fit"
-        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+        gt.componentWith(JCheckBoxBindable.class, c -> true).doClick();
         gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "noShrink");
         // "Shrink to fit"
-        gt.componentWith(JCheckBoxUpdateable.class, c -> true).doClick();
+        gt.componentWith(JCheckBoxBindable.class, c -> true).doClick();
         gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
 
         // ignore item (ESC)

@@ -25,6 +25,8 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.Prop;
+import org.abego.guitesting.swing.internal.util.PropBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -35,13 +37,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 
+import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
+import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
-//TODO: review the dependency management (...Changes, on..., update...)
 class ExpectedActualDifferenceImageView implements Widget {
     private static final int BORDER_SIZE = 3;
     private static final int MIN_IMAGE_SIZE = 16;
@@ -49,6 +52,9 @@ class ExpectedActualDifferenceImageView implements Widget {
     private Color expectedBorderColor = Color.green;
     private Color actualBorderColor = Color.red;
     private Color differenceBorderColor = Color.black;
+
+    private PropBindable<Boolean> shrinkToFitProp =
+            newPropBindable(FALSE, f -> updateLabelsForImages());
 
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
@@ -59,7 +65,6 @@ class ExpectedActualDifferenceImageView implements Widget {
         c.setBorder(null);
     }, labelsForImages);
 
-    private boolean shrinkToFit = true;
     private int expectedImageIndex = 0;
     private @Nullable SnapshotIssue snapshotIssue;
 
@@ -77,12 +82,15 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     public boolean getShrinkToFit() {
-        return shrinkToFit;
+        return shrinkToFitProp.get();
     }
 
-    public void setShrinkToFit(boolean shrinkToFit) {
-        this.shrinkToFit = shrinkToFit;
-        updateLabelsForImages();
+    public void setShrinkToFit(boolean value) {
+        this.shrinkToFitProp.set(value);
+    }
+
+    public void bindShrinkToFitTo(Prop<Boolean> prop) {
+        shrinkToFitProp.bindTo(prop);
     }
 
     public int getExpectedImageIndex() {
