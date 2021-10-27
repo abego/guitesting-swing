@@ -60,6 +60,11 @@
             <version>${abego-commons-swing.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.abego.event</groupId>
+            <artifactId>abego-event-swing</artifactId>
+            <version>${abego-event-swing.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit-jupiter.version}</version>
