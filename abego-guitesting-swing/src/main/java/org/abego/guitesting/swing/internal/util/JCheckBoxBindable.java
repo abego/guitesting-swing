@@ -34,7 +34,7 @@ import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBinda
 public final class JCheckBoxBindable extends JCheckBox {
 
     private PropBindable<Boolean> selectedProp =
-            newPropBindable(FALSE, f -> updateSelectedUI());
+            newPropBindable(FALSE, this, "selected", f -> updateSelectedUI());
 
     private JCheckBoxBindable() {
         addItemListener(i -> updateSelectedProp());
