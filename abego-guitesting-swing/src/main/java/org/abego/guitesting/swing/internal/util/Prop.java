@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.commons.var.Var;
+import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -32,23 +33,39 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
  * when its value changed (via {@link org.abego.event.EventServices} default).
+ * <p>
+ * By default the source of the PropertyChanged event will be the Prop object
+ * and the property name "value". In addition a second PropertyChanged event
+ * may be generated with an other source object and property name. The
+ * "other source" typically is the object containing the Prop object and the
+ * property name the name of the Prob within its container.
  */
 public class Prop<T> implements Var<T> {
+    private final EventService eventService = EventServices.getDefault();
+    private final @Nullable Object otherSource;
+    private final @Nullable String otherPropertyName;
     private @Nullable T value;
 
-    private Prop() {
-    }
 
-    private Prop(@NonNull T value) {
+    private Prop(@Nullable T value,
+                 @Nullable Object otherSource,
+                 @Nullable String otherPropertyName) {
         this.value = value;
+        this.otherSource = otherSource;
+        this.otherPropertyName = otherPropertyName;
     }
 
     public static <T> Prop<T> newProp() {
-        return new Prop<T>();
+        return new Prop<T>(null, null, null);
     }
 
-    public static <T> Prop<T> newProp(@NonNull T value) {
-        return new Prop<T>(value);
+    public static <T> Prop<T> newProp(T value) {
+        return new Prop<T>(value, null, null);
+    }
+
+    public static <T> Prop<T> newProp(
+            T value, Object otherSource, String otherPropertyName) {
+        return new Prop<T>(value, otherSource, otherPropertyName);
     }
 
     @Override
@@ -64,7 +81,10 @@ public class Prop<T> implements Var<T> {
     public void set(@NonNull T value) {
         if (!value.equals(this.value)) {
             this.value = value;
-            EventServices.getDefault().postPropertyChanged(this, "value"); //NON-NLS
+            eventService.postPropertyChanged(this, "value"); //NON-NLS
+            if (otherSource != null && otherPropertyName != null) {
+                eventService.postPropertyChanged(otherSource, otherPropertyName);
+            }
         }
     }
 
