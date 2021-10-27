@@ -65,7 +65,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     //region State/Model
     private final DefaultListModel<T> remainingIssues;
-    private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE);
+    private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE, this, "shrinkToFit");
     //endregion
     //region Actions
     private final Action addAlternativeSnapshotAction;
