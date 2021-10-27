@@ -24,36 +24,30 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.event.EventObserver;
+import org.abego.event.EventService;
+import org.abego.event.EventServices;
+import org.abego.event.PropertyChanged;
+import org.eclipse.jdt.annotation.Nullable;
+
 import javax.swing.Action;
 import javax.swing.JCheckBox;
-import java.util.function.Supplier;
 
+import static java.lang.Boolean.FALSE;
 import static javax.swing.SwingUtilities.invokeLater;
 
-public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
-    private Supplier<Boolean> selectedCondition;
+public final class JCheckBoxBindable extends JCheckBox {
+    private Prop<Boolean> selected = Prop.newProp(FALSE);
+    private @Nullable EventObserver<PropertyChanged> observer;
 
-    private JCheckBoxUpdateable() {
-        this.selectedCondition = () -> false;
-        update();
+    private JCheckBoxBindable() {
+        addItemListener(i -> updateSelectedProp());
+
+        updateSelectedProp();
     }
 
-    public static JCheckBoxUpdateable checkBoxUpdateable() {
-        return new JCheckBoxUpdateable();
-    }
-
-    public Supplier<Boolean> getSelectedCondition() {
-        return selectedCondition;
-    }
-
-    public void setSelectedCondition(Supplier<Boolean> selectedCondition) {
-        this.selectedCondition = selectedCondition;
-        update();
-    }
-
-    public void setSelected(boolean value) {
-        throw new UnsupportedOperationException(
-                "Cannot explicitly set selected value (is defined by `selectedCondition`)"); //NON-NLS
+    public static JCheckBoxBindable checkBoxUpdateable() {
+        return new JCheckBoxBindable();
     }
 
     @Override
@@ -62,12 +56,28 @@ public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
         SwingUtil.handleAccelerator(this, action);
     }
 
-    public void update() {
+    public void setSelectedBinding(Prop<Boolean> binding) {
+        EventService eventService = EventServices.getDefault();
+        if (observer != null) {
+            eventService.removeObserver(observer);
+        }
+        selected = binding;
+        observer = eventService.addPropertyObserver(binding,
+                c -> updateSelectedUI());
+        updateSelectedUI();
+    }
+
+    private void updateSelectedUI() {
+        setSelected(selected.get());
+    }
+
+    private void updateSelectedProp() {
         invokeLater(() -> {
-            boolean selectedValue = getSelectedCondition().get();
-            if (isSelected() != selectedValue) {
-                super.setSelected(selectedValue);
+            boolean isSelected = isSelected();
+            if (selected.get() != isSelected) {
+                selected.set(isSelected);
             }
         });
     }
+
 }
