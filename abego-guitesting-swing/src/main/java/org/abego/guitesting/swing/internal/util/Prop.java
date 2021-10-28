@@ -25,66 +25,137 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.commons.var.Var;
+import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
+import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
  * when its value changed (via {@link org.abego.event.EventServices} default).
  * <p>
- * By default the source of the PropertyChanged event will be the Prop object
+ * The source of the PropertyChanged event will be the Prop object
  * and the property name "value". In addition a second PropertyChanged event
- * may be generated with an other source object and property name. The
+ * may be generated with another source object and property name. The
  * "other source" typically is the object containing the Prop object and the
- * property name the name of the Prob within its container.
+ * property name the name of the Prop within that container.
  */
 public class Prop<T> implements Var<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
+    private final @Nullable Function<DependencyCollector, T> valueComputation;
     private @Nullable T value;
+    private @Nullable List<EventObserver<PropertyChanged>> observers;
 
 
     private Prop(@Nullable T value,
+                 @Nullable Function<DependencyCollector, T> valueComputation,
                  @Nullable Object otherSource,
                  @Nullable String otherPropertyName) {
+        if (value != null && valueComputation != null) {
+            throw new IllegalArgumentException("Must not speficy both a value and a valueComputation");
+        }
         this.value = value;
+        this.valueComputation = valueComputation;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
     }
 
     public static <T> Prop<T> newProp() {
-        return new Prop<T>(null, null, null);
+        return new Prop<T>(null, null, null, null);
     }
 
     public static <T> Prop<T> newProp(T value) {
-        return new Prop<T>(value, null, null);
+        return new Prop<T>(value, null, null, null);
     }
 
     public static <T> Prop<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
-        return new Prop<T>(value, otherSource, otherPropertyName);
+        return new Prop<T>(value, null, otherSource, otherPropertyName);
+    }
+
+    public static <T> Prop<T> newProp(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return new Prop<T>(null, valueComputation, otherSource, otherPropertyName);
     }
 
     @Override
     public @NonNull T get() {
         @Nullable T v = value;
         if (v == null) {
-            throw new IllegalStateException("Var has no value"); //NON-NLS
+            if (valueComputation != null) {
+                v = recompute();
+            }
+            if (v == null) {
+                throw new IllegalStateException("Var has no value"); //NON-NLS
+            } else {
+                postPropertyChanged();
+            }
         }
         return v;
     }
 
     @Override
     public void set(@NonNull T value) {
-        if (!value.equals(this.value)) {
-            this.value = value;
-            eventService.postPropertyChanged(this, "value"); //NON-NLS
-            if (otherSource != null && otherPropertyName != null) {
-                eventService.postPropertyChanged(otherSource, otherPropertyName);
+        if (value.equals(this.value)) {
+            return;
+        }
+        if (valueComputation != null) {
+            throw new IllegalStateException("Cannot set value on computed property");
+        }
+        this.value = value;
+        postPropertyChanged();
+    }
+
+    @NonNull
+    private T recompute() {
+        return recomputeAndOnChangeDo(()->{});
+    }
+
+    @NonNull
+    private T recomputeAndPostEvent() {
+        return recomputeAndOnChangeDo(this::postPropertyChanged);
+    }
+
+    @NonNull
+    private T recomputeAndOnChangeDo(Runnable onChangeCode) {
+        if (observers != null) {
+                for (EventObserver<PropertyChanged> o : observers) {
+                eventService.removeObserver(o);
             }
+            this.observers = null;
+        }
+
+        List<EventObserver<PropertyChanged>> observers = new ArrayList<>();
+        DependencyCollector dependencyCollector = new DependencyCollector() {
+            @Override
+            public void dependsOnProperty(Object source, String propertyName) {
+                observers.add(eventService.addPropertyObserver(
+                        source, propertyName, e -> recomputeAndPostEvent()));
+            }
+        };
+        T v = valueComputation.apply(dependencyCollector);
+        if (!observers.isEmpty()) {
+            this.observers = observers;
+        }
+        if (!v.equals(value)) {
+            value = v;
+            onChangeCode.run();
+        }
+        return v;
+    }
+
+    private void postPropertyChanged() {
+        eventService.postPropertyChanged(this, "value"); //NON-NLS
+        if (otherSource != null && otherPropertyName != null) {
+            eventService.postPropertyChanged(otherSource, otherPropertyName);
         }
     }
 

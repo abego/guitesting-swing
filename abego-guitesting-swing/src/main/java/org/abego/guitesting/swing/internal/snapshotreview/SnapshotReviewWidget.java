@@ -26,7 +26,10 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
+import org.abego.guitesting.swing.internal.util.JLabelBindable;
+import org.abego.guitesting.swing.internal.util.PropBindable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.Prop;
 import org.eclipse.jdt.annotation.Nullable;
@@ -35,7 +38,6 @@ import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -52,9 +54,10 @@ import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImp
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
+import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
+import static org.abego.guitesting.swing.internal.util.Prop.newProp;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
@@ -65,7 +68,8 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     //region State/Model
     private final DefaultListModel<T> remainingIssues;
-    private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE, this, "shrinkToFit");
+    private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
+    private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     //endregion
     //region Actions
     private final Action addAlternativeSnapshotAction;
@@ -77,7 +81,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final Action toggleShrinkToFitAction;
     //endregion
     //region Components
-    private final JLabel selectedIssueDescriptionLabel = label();
+    private final JLabelBindable selectedIssueDescriptionLabel = labelBindable();
     private final JButton overwriteButton = toolbarButton();
     private final JButton addAlternativeButton = toolbarButton();
     private final JButton ignoreButton = toolbarButton();
@@ -89,6 +93,13 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
+    //TODO: remove
+    DependencyCollector dummyDependencyCollector = new DependencyCollector() {
+        @Override
+        public void dependsOnProperty(Object source, String propertyName) {
+            //TODO: remove
+        }
+    };
 
     //endregion
     //region Construction
@@ -132,9 +143,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     //endregion
     //region Properties
-    private String getSelectedIssueDescription() {
+    private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
-        VariantsInfo<T> info = getVariantsInfo();
+        VariantsInfo<T> info = getVariantsInfo(dependencyCollector);
         if (info == null) {
             return " ";
         }
@@ -170,12 +181,13 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     @Nullable
     private T getSelectedIssue() {
+        //TODO: use the Prop approach
         return snapshotIssuesVList.getSelectedIssue();
     }
 
     @Nullable
-    private VariantsInfo<T> getVariantsInfo() {
-        T issue = getSelectedIssue();
+    private VariantsInfo<T> getVariantsInfo(DependencyCollector dependencyCollector) {
+        T issue = getSelectedIssue(dependencyCollector);
         if (issue == null) {
             return null;
         }
@@ -186,12 +198,18 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         return variantsInfo(issue, variants);
     }
 
+    private T getSelectedIssue(DependencyCollector dependencyCollector) {
+        dependencyCollector.dependsOnProperty(this,"selectedIssue");
+        return getSelectedIssue();
+    }
+
     //endregion
     //region Widget related
     @Override
     public JComponent getComponent() {
         return content;
     }
+
     //endregion
     //region Action related
     private void overwriteSnapshot() {
@@ -245,23 +263,19 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void initBindings() {
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
+        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
 
         snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
     }
 
+    //TODO: with the Prop approach this should go away?
     private void onSelectedIssueChanged() {
         expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
-        variantsIndicator.setVariantsInfo(getVariantsInfo());
-        updateSelectedIssueDescriptionLabel();
+        variantsIndicator.setVariantsInfo(getVariantsInfo(dummyDependencyCollector));
     }
 
     private void onExpectedImageIndexChanged() {
         imagesLegend.setExpectedImageIndex(getExpectedImageIndex());
-    }
-
-    private void updateSelectedIssueDescriptionLabel() {
-        invokeLater(() ->
-                selectedIssueDescriptionLabel.setText(getSelectedIssueDescription()));
     }
 
     //endregion
