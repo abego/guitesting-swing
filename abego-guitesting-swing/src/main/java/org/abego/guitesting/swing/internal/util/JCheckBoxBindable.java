@@ -38,8 +38,7 @@ public final class JCheckBoxBindable extends JCheckBox {
 
     private JCheckBoxBindable() {
         addItemListener(i -> updateSelectedProp());
-
-        updateSelectedProp();
+        updateSelectedUI();
     }
 
     public static JCheckBoxBindable checkBoxUpdateable() {
