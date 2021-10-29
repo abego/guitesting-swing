@@ -76,7 +76,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     //region State/Model
     private final DefaultListModel<T> remainingIssues;
     private final PropNullable<@Nullable T> selectedIssue = newPropNullable(null, this, "selectedIssue");
-    private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE, this, "shrinkToFit");
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     //endregion
@@ -102,13 +101,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
             = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
-    //TODO: remove
-    DependencyCollector dummyDependencyCollector = new DependencyCollector() {
-        @Override
-        public void dependsOnProperty(Object source, String propertyName) {
-            //TODO: remove
-        }
-    };
 
     //endregion
     //region Construction
@@ -193,6 +185,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         return selectedIssue.get();
     }
 
+    private T getSelectedIssue(DependencyCollector dependencyCollector) {
+        dependencyCollector.dependsOnProperty(selectedIssue);
+        return selectedIssue.get();
+    }
+
     @Nullable
     private VariantsInfo<T> getVariantsInfo(DependencyCollector dependencyCollector) {
         T issue = getSelectedIssue(dependencyCollector);
@@ -204,11 +201,6 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         Seq<T> variants = SeqUtil2.newSeq(remainingIssues.elements())
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
         return variantsInfo(issue, variants);
-    }
-
-    private T getSelectedIssue(DependencyCollector dependencyCollector) {
-        dependencyCollector.dependsOnProperty(this,"selectedIssue");
-        return getSelectedIssue();
     }
 
     //endregion
@@ -274,12 +266,13 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
         //TODO remove when all stuff is using the new Binding
         eventService.addPropertyObserver(selectedIssue,"value", e->onSelectedIssueChanged());
+        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
     }
 
     //TODO: with the Prop approach this should go away?
     private void onSelectedIssueChanged() {
         expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
-        variantsIndicator.setVariantsInfo(getVariantsInfo(dummyDependencyCollector));
+        variantsIndicator.setVariantsInfo(getVariantsInfo(DependencyCollector.DoNothing));
     }
 
     private void onExpectedImageIndexChanged() {

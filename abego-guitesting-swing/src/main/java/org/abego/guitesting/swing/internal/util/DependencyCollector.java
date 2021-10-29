@@ -25,13 +25,28 @@
 package org.abego.guitesting.swing.internal.util;
 
 public interface DependencyCollector {
+    DependencyCollector DoNothing = new DependencyCollector() {
+        @Override
+        public void dependsOnProperty(Object source, String propertyName) {
+            // do nothing
+        }
+    };
+
     default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
 
     default void dependsOnProperty(Prop<?> property) {
         dependsOnProperty(property, "value");
     }
 
+    default void dependsOnProperty(PropNullable<?> property) {
+        dependsOnProperty(property, "value");
+    }
+
     default void dependsOnProperty(PropBindable<?> property) {
+        dependsOnProperty(property, "value");
+    }
+
+    default void dependsOnProperty(PropNullableBindable<?> property) {
         dependsOnProperty(property, "value");
     }
 }
