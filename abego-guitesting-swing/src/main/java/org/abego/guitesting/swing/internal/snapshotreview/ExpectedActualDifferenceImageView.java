@@ -27,6 +27,8 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Prop;
 import org.abego.guitesting.swing.internal.util.PropBindable;
+import org.abego.guitesting.swing.internal.util.PropNullable;
+import org.abego.guitesting.swing.internal.util.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -42,6 +44,7 @@ import static java.lang.Math.max;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
@@ -53,9 +56,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     private Color actualBorderColor = Color.red;
     private Color differenceBorderColor = Color.black;
 
-    private PropBindable<Boolean> shrinkToFitProp =
-            newPropBindable(FALSE, f -> updateLabelsForImages());
-
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
     //TODO: extra class? HList?
@@ -66,32 +66,47 @@ class ExpectedActualDifferenceImageView implements Widget {
     }, labelsForImages);
 
     private int expectedImageIndex = 0;
-    private @Nullable SnapshotIssue snapshotIssue;
 
     public static ExpectedActualDifferenceImageView expectedActualDifferenceImageView() {
         return new ExpectedActualDifferenceImageView();
     }
 
-    public @Nullable SnapshotIssue getSnapshotIssue() {
-        return snapshotIssue;
-    }
+    //region shrinkToFit
+    private final PropBindable<Boolean> shrinkToFitProp =
+            newPropBindable(FALSE, this, "shrinkToFit", f -> updateLabelsForImages());
 
-    public void setSnapshotIssue(@Nullable SnapshotIssue snapshotIssue) {
-        this.snapshotIssue = snapshotIssue;
-        updateLabelsForImages();
-    }
-
-    public boolean getShrinkToFit() {
+    public Boolean getShrinkToFit() {
         return shrinkToFitProp.get();
     }
 
-    public void setShrinkToFit(boolean value) {
-        this.shrinkToFitProp.set(value);
+    public void setShrinkToFit(Boolean value) {
+        shrinkToFitProp.set(value);
     }
 
     public void bindShrinkToFitTo(Prop<Boolean> prop) {
         shrinkToFitProp.bindTo(prop);
     }
+
+    //endregion
+
+    //region snapshotIssue
+    private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
+            newPropNullableBindable(null, this, "snapshotIssue", f -> updateLabelsForImages());
+
+    @Nullable
+    public SnapshotIssue getSnapshotIssue() {
+        return snapshotIssueProp.get();
+    }
+
+    public void setSnapshotIssue(@Nullable SnapshotIssue value) {
+        snapshotIssueProp.set(value);
+    }
+
+    public void bindSnapshotIssueTo(PropNullable<SnapshotIssue> prop) {
+        snapshotIssueProp.bindTo(prop);
+    }
+
+    //endregion
 
     public int getExpectedImageIndex() {
         return expectedImageIndex;

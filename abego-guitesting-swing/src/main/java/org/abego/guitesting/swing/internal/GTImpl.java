@@ -574,7 +574,7 @@ public final class GTImpl implements GT {
 
 
     @Override
-    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
+    public Seq<SnapshotIssue> getSnapshotIssues() {
         return screenCaptureSupport.getSnapshotIssues();
     }
 

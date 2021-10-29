@@ -31,7 +31,6 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
-import org.abego.guitesting.swing.internal.util.PropBindable;
 import org.abego.guitesting.swing.internal.util.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.Prop;
@@ -68,14 +67,14 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBord
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
-class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
+class SnapshotReviewWidget implements Widget {
 
     //region Context
     private final EventService eventService = EventServices.getDefault();
     //endregion
     //region State/Model
-    private final DefaultListModel<T> remainingIssues;
-    private final PropNullable<@Nullable T> selectedIssue = newPropNullable(null, this, "selectedIssue");
+    private final DefaultListModel<SnapshotIssue> remainingIssues;
+    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     //endregion
@@ -96,15 +95,15 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private final ImagesLegend imagesLegend = imagesLegend();
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxUpdateable();
-    private final VariantsIndicator<T> variantsIndicator = variantsIndicator();
+    private final VariantsIndicator variantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
             = expectedActualDifferenceImageView();
-    private final SnapshotIssuesVList<T> snapshotIssuesVList = snapshotIssuesVList();
+    private final SnapshotIssuesVList<SnapshotIssue> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
 
     //endregion
     //region Construction
-    private SnapshotReviewWidget(Seq<T> issues) {
+    private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
         // init State
         remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
@@ -138,15 +137,15 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         });
     }
 
-    public static <T extends SnapshotIssue> SnapshotReviewWidget<T> snapshotReviewWidget(Seq<T> issues) {
-        return new SnapshotReviewWidget<>(issues);
+    public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
+        return new SnapshotReviewWidget(issues);
     }
 
     //endregion
     //region Properties
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
-        VariantsInfo<T> info = getVariantsInfo(dependencyCollector);
+        VariantsInfo info = getVariantsInfo(dependencyCollector);
         if (info == null) {
             return " ";
         }
@@ -181,24 +180,25 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     @Nullable
-    private T getSelectedIssue() {
+    private SnapshotIssue getSelectedIssue() {
         return selectedIssue.get();
     }
 
-    private T getSelectedIssue(DependencyCollector dependencyCollector) {
+    @Nullable
+    private SnapshotIssue getSelectedIssue(DependencyCollector dependencyCollector) {
         dependencyCollector.dependsOnProperty(selectedIssue);
         return selectedIssue.get();
     }
 
     @Nullable
-    private VariantsInfo<T> getVariantsInfo(DependencyCollector dependencyCollector) {
-        T issue = getSelectedIssue(dependencyCollector);
+    private VariantsInfo getVariantsInfo(DependencyCollector dependencyCollector) {
+        SnapshotIssue issue = getSelectedIssue(dependencyCollector);
         if (issue == null) {
             return null;
         }
 
         //noinspection CallToSuspiciousStringMethod
-        Seq<T> variants = SeqUtil2.newSeq(remainingIssues.elements())
+        Seq<SnapshotIssue> variants = SeqUtil2.newSeq(remainingIssues.elements())
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
         return variantsInfo(issue, variants);
     }
@@ -213,7 +213,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     //endregion
     //region Action related
     private void overwriteSnapshot() {
-        @Nullable T currentIssue = getSelectedIssue();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
@@ -223,7 +223,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void addAlternativeSnapshot() {
-        @Nullable T currentIssue = getSelectedIssue();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             copyFile(
                     toFile(currentIssue.getActualImage()),
@@ -233,20 +233,20 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     }
 
     private void ignoreCurrentIssue() {
-        @Nullable T currentIssue = getSelectedIssue();
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
         if (currentIssue != null) {
             removeIssue(currentIssue);
         }
     }
 
-    private void removeIssue(T issue) {
+    private void removeIssue(SnapshotIssue issue) {
         remainingIssues.removeElement(issue);
     }
 
-    private void removeIssueAndVariants(T issue) {
+    private void removeIssueAndVariants(SnapshotIssue issue) {
         String name = issue.getSnapshotName();
         for (int i = remainingIssues.size() - 1; i >= 0; i--) {
-            T issueInModel = remainingIssues.get(i);
+            SnapshotIssue issueInModel = remainingIssues.get(i);
             //noinspection CallToSuspiciousStringMethod
             if (issueInModel.getSnapshotName().equals(name)) {
                 remainingIssues.removeElementAt(i);
@@ -267,11 +267,11 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
         //TODO remove when all stuff is using the new Binding
         eventService.addPropertyObserver(selectedIssue,"value", e->onSelectedIssueChanged());
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
+        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
     }
 
     //TODO: with the Prop approach this should go away?
     private void onSelectedIssueChanged() {
-        expectedActualDifferenceImageView.setSnapshotIssue(getSelectedIssue());
         variantsIndicator.setVariantsInfo(getVariantsInfo(DependencyCollector.DoNothing));
     }
 

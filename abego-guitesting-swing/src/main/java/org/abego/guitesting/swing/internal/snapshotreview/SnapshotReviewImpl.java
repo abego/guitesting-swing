@@ -36,11 +36,11 @@ import java.util.function.Supplier;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
-public class SnapshotReviewImpl<T extends SnapshotIssue> implements SnapshotReview {
+public class SnapshotReviewImpl implements SnapshotReview {
 
-    private final Supplier<Seq<T>> issuesSupplier;
+    private final Supplier<Seq<SnapshotIssue>> issuesSupplier;
 
-    private SnapshotReviewImpl(Supplier<Seq<T>> issuesSupplier) {
+    private SnapshotReviewImpl(Supplier<Seq<SnapshotIssue>> issuesSupplier) {
         this.issuesSupplier = issuesSupplier;
     }
 
@@ -50,18 +50,18 @@ public class SnapshotReviewImpl<T extends SnapshotIssue> implements SnapshotRevi
         gt.newSnapshotReview().showIssues();
     }
 
-    public static <T extends SnapshotIssue> SnapshotReview newSnapshotReview(
-            Supplier<Seq<T>> issuesSupplier) {
-        return new SnapshotReviewImpl<>(issuesSupplier);
+    public static SnapshotReview newSnapshotReview(
+            Supplier<Seq<SnapshotIssue>> issuesSupplier) {
+        return new SnapshotReviewImpl(issuesSupplier);
     }
 
     @Override
     public void showIssues(Consumer<JFrame> framePreShowCode) {
 
-        Seq<T> issues = getSnapshotIssues();
+        Seq<SnapshotIssue> issues = getSnapshotIssues();
 
         invokeLater(() -> {
-            SnapshotReviewWidget<T> widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
+            SnapshotReviewWidget widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
             //noinspection StringConcatenation
             JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
             frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
@@ -71,7 +71,7 @@ public class SnapshotReviewImpl<T extends SnapshotIssue> implements SnapshotRevi
         });
     }
 
-    private Seq<T> getSnapshotIssues() {
+    private Seq<SnapshotIssue> getSnapshotIssues() {
         return issuesSupplier.get();
     }
 

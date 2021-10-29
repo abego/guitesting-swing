@@ -489,7 +489,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
     }
 
-    default Seq<? extends SnapshotIssue> getSnapshotIssues() {
+    default Seq<SnapshotIssue> getSnapshotIssues() {
         return SeqUtil.emptySeq();
     }
 

@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -37,12 +36,12 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GA
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
-class VariantsIndicator<T extends SnapshotIssue> implements Widget {
+class VariantsIndicator implements Widget {
     private static final int BULLET_SIZE = 24;
     private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
 
     @Nullable
-    private VariantsInfo<T> variantsInfo;
+    private VariantsInfo variantsInfo;
     private final JComponent content;
 
     private VariantsIndicator() {
@@ -54,8 +53,8 @@ class VariantsIndicator<T extends SnapshotIssue> implements Widget {
         content.setBackground(Color.white);
     }
 
-    public static <T extends SnapshotIssue> VariantsIndicator<T> variantsIndicator() {
-        return new VariantsIndicator<>();
+    public static VariantsIndicator variantsIndicator() {
+        return new VariantsIndicator();
     }
 
     @Override
@@ -64,11 +63,11 @@ class VariantsIndicator<T extends SnapshotIssue> implements Widget {
     }
 
     @Nullable
-    public VariantsInfo<T> getVariantsInfo() {
+    public VariantsInfo getVariantsInfo() {
         return variantsInfo;
     }
 
-    public void setVariantsInfo(@Nullable VariantsInfo<T> info) {
+    public void setVariantsInfo(@Nullable VariantsInfo info) {
         variantsInfo = info;
 
         updateContent();
@@ -77,7 +76,7 @@ class VariantsIndicator<T extends SnapshotIssue> implements Widget {
     private void updateContent() {
         invokeLater(() -> {
             content.removeAll();
-            @Nullable VariantsInfo<T> info = getVariantsInfo();
+            @Nullable VariantsInfo info = getVariantsInfo();
             if (info != null) {
                 int n = info.getVariantsCount();
                 int sel = info.getVariantsIndex();
