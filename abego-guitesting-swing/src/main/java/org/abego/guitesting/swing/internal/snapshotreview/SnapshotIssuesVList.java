@@ -25,6 +25,8 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.PropNullable;
+import org.abego.guitesting.swing.internal.util.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -36,20 +38,21 @@ import javax.swing.JList;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import java.awt.Color;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.Bordered.borderedWithTopLine;
+import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
     private final static Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
@@ -58,7 +61,7 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
     private final Action nextScreenshotAction;
     private final JButton previousScreenshotButton;
     private final JButton nextScreenshotButton;
-    private final JList<T> issuesList;
+    private final JList<T> issuesList = new JList<>();;
     private final JComponent content;
     private int lastSelectedIndex = -1;
 
@@ -71,7 +74,6 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
         previousScreenshotButton.setAction(previousScreenshotAction);
         nextScreenshotButton.setAction(nextScreenshotAction);
 
-        issuesList = new JList<>();
         issuesList.setBorder(null);
         issuesList.setCellRenderer(newListCellRenderer(
                 SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst));
@@ -114,15 +116,42 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
         issuesList.setSelectedIndex(index);
     }
 
+    //region selectedIssue
+    private PropNullableBindable<T> selectedIssueProp =
+            newPropNullableBindable(null, this, "selectedIssue", f -> updateSelectedIssueUI());
+
+    {
+        issuesList.addListSelectionListener(e -> updateSelectedIssueProp());
+    }
+
+
     @Nullable
     public T getSelectedIssue() {
-        return issuesList.getSelectedValue();
+        return selectedIssueProp.get();
     }
 
-    public void addSelectedIssueChangeListener(Consumer<SnapshotIssuesVList<T>> listener) {
-        issuesList.addListSelectionListener(e -> listener.accept(this));
+    public void setSelectedIssue(@Nullable T value) {
+        selectedIssueProp.set(value);
     }
 
+    public void bindSelectedIssueTo(PropNullable<T> prop) {
+        selectedIssueProp.bindTo(prop);
+    }
+
+    private void updateSelectedIssueUI() {
+        invokeLater(() -> {
+            T value = selectedIssueProp.get();
+            issuesList.setSelectedValue(value, true);
+        });
+    }
+
+    private void updateSelectedIssueProp() {
+        T value = issuesList.getSelectedValue();
+        if (!Objects.equals(getSelectedIssue(), value)) {
+            selectedIssueProp.set(value);
+        }
+    }
+    //endregion
     @Override
     public JComponent getComponent() {
         return content;

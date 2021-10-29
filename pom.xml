@@ -94,8 +94,8 @@
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
-        <abego-commons-base.version>0.11.0</abego-commons-base.version>
-        <abego-commons-test.version>0.11.0</abego-commons-test.version>
+        <abego-commons-base.version>0.12.0-SNAPSHOT</abego-commons-base.version>
+        <abego-commons-test.version>0.12.0-SNAPSHOT</abego-commons-test.version>
         <abego-commons-swing.version>0.11.0</abego-commons-swing.version>
         <abego-event-swing.version>0.1.0-SNAPSHOT</abego-event-swing.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
