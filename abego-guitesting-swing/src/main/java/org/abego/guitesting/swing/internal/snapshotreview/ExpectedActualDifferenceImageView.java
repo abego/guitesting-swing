@@ -52,10 +52,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     private static final int BORDER_SIZE = 3;
     private static final int MIN_IMAGE_SIZE = 16;
 
-    private Color expectedBorderColor = Color.green;
-    private Color actualBorderColor = Color.red;
-    private Color differenceBorderColor = Color.black;
-
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
     //TODO: extra class? HList?
@@ -70,6 +66,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //region shrinkToFit
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Boolean> shrinkToFitProp =
             newPropBindable(FALSE, this, "shrinkToFit", f -> updateLabelsForImages());
 
@@ -88,6 +85,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
 
     //region expectedImageIndex
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
             newPropBindable(0, this, "expectedImageIndex", f -> updateLabelsForImages());
 
@@ -123,26 +121,59 @@ class ExpectedActualDifferenceImageView implements Widget {
 
     //endregion
 
-    public Color getExpectedBorderColor() {return expectedBorderColor;}
+    //region expectedBorderColor
+    private final PropBindable<Color> expectedBorderColorProp =
+            newPropBindable(Color.green, this, "expectedBorderColor", f -> updateLabelsForImages());
 
-    public void setExpectedBorderColor(Color expectedBorderColor) {
-        this.expectedBorderColor = expectedBorderColor;
-        updateLabelsForImages();
+    public Color getExpectedBorderColor() {
+        return expectedBorderColorProp.get();
     }
 
-    public Color getActualBorderColor() {return actualBorderColor;}
-
-    public void setActualBorderColor(Color actualBorderColor) {
-        this.actualBorderColor = actualBorderColor;
-        updateLabelsForImages();
+    public void setExpectedBorderColor(Color value) {
+        expectedBorderColorProp.set(value);
     }
 
-    public Color getDifferenceBorderColor() {return differenceBorderColor;}
-
-    public void setDifferenceBorderColor(Color differenceBorderColor) {
-        this.differenceBorderColor = differenceBorderColor;
-        updateLabelsForImages();
+    public void bindExpectedBorderColorTo(Prop<Color> prop) {
+        expectedBorderColorProp.bindTo(prop);
     }
+
+    //endregion
+
+    //region actualBorderColor
+    private final PropBindable<Color> actualBorderColorProp =
+            newPropBindable(Color.red, this, "actualBorderColor", f -> updateLabelsForImages());
+
+    public Color getActualBorderColor() {
+        return actualBorderColorProp.get();
+    }
+
+    public void setActualBorderColor(Color value) {
+        actualBorderColorProp.set(value);
+    }
+
+    public void bindActualBorderColorTo(Prop<Color> prop) {
+        actualBorderColorProp.bindTo(prop);
+    }
+
+    //endregion
+
+    //region differenceBorderColor
+    private final PropBindable<Color> differenceBorderColorProp =
+            newPropBindable(Color.black, this, "differenceBorderColor", f -> updateLabelsForImages());
+
+    public Color getDifferenceBorderColor() {
+        return differenceBorderColorProp.get();
+    }
+
+    public void setDifferenceBorderColor(Color value) {
+        differenceBorderColorProp.set(value);
+    }
+
+    public void bindDifferenceBorderColorTo(Prop<Color> prop) {
+        differenceBorderColorProp.bindTo(prop);
+    }
+
+    //endregion
 
     @Override
     public JComponent getComponent() {

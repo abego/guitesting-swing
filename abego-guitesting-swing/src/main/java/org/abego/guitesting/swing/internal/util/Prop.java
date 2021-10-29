@@ -87,7 +87,7 @@ public class Prop<T> implements Var<T> {
     }
 
     public static <T> Prop<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
-        return new Prop<T>(null, valueComputation, null, null);
+        return new Prop<>(null, valueComputation, null, null);
     }
 
     @Override

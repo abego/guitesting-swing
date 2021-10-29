@@ -29,7 +29,6 @@ import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -48,6 +47,8 @@ import java.util.function.Function;
  * property name the name of the Prob within its container.
  */
 public class PropNullable<T> implements VarNullable<T> {
+    //TODO: can we share some code between PropNullable and Prop?
+
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable Function<DependencyCollector, T> valueComputation;
@@ -62,7 +63,8 @@ public class PropNullable<T> implements VarNullable<T> {
                          @Nullable Object otherSource,
                          @Nullable String otherPropertyName) {
         if (value != null && valueComputation != null) {
-            throw new IllegalArgumentException("Must not specify both a value and a valueComputation");
+            //noinspection DuplicateStringLiteralInspection
+            throw new IllegalArgumentException("Must not specify both a value and a valueComputation"); //NON-NLS
         }
         this.value = value;
         this.valueComputation = valueComputation;
@@ -80,7 +82,7 @@ public class PropNullable<T> implements VarNullable<T> {
     }
 
     public static <T> PropNullable<T> newPropNullable(
-            T value, Object otherSource, String otherPropertyName) {
+            @Nullable T value, Object otherSource, String otherPropertyName) {
         return new PropNullable<>(value, null, otherSource, otherPropertyName);
     }
 
@@ -109,24 +111,22 @@ public class PropNullable<T> implements VarNullable<T> {
             return;
         }
         if (valueComputation != null) {
-            throw new IllegalStateException("Cannot set value on computed property");
+            //noinspection DuplicateStringLiteralInspection
+            throw new IllegalStateException("Cannot set value on computed property"); //NON-NLS
         }
         this.value = value;
         postPropertyChanged();
     }
 
-    @NonNull
-    private T recompute() {
-        return recomputeAndOnChangeDo(() -> {});
+    private void recompute() {
+        recomputeAndOnChangeDo(() -> {});
     }
 
-    @NonNull
-    private T recomputeAndPostEvent() {
-        return recomputeAndOnChangeDo(this::postPropertyChanged);
+    private void recomputeAndPostEvent() {
+        recomputeAndOnChangeDo(this::postPropertyChanged);
     }
 
-    @NonNull
-    private T recomputeAndOnChangeDo(Runnable onChangeCode) {
+    private void recomputeAndOnChangeDo(Runnable onChangeCode) {
         if (observers != null) {
             for (EventObserver<PropertyChanged> o : observers) {
                 eventService.removeObserver(o);
@@ -142,6 +142,7 @@ public class PropNullable<T> implements VarNullable<T> {
                         source, propertyName, e -> recomputeAndPostEvent()));
             }
         };
+        @Nullable Function<DependencyCollector, T> comp = valueComputation;
         T v = valueComputation.apply(dependencyCollector);
         mustComputeValue = true;
         if (!observers.isEmpty()) {
@@ -151,10 +152,10 @@ public class PropNullable<T> implements VarNullable<T> {
             value = v;
             onChangeCode.run();
         }
-        return v;
     }
 
     private void postPropertyChanged() {
+        //noinspection DuplicateStringLiteralInspection
         eventService.postPropertyChanged(this, "value"); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
             eventService.postPropertyChanged(otherSource, otherPropertyName);

@@ -70,7 +70,9 @@ class SnapshotReviewWidget implements Widget {
 
     //region State/Model
     private final DefaultListModel<SnapshotIssue> remainingIssues;
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<Integer> expectedImageIndexProp = newProp(0);
     private final Prop<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
@@ -78,10 +80,13 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Actions
+    @SuppressWarnings("FieldCanBeLocal")
     private final Action addAlternativeSnapshotAction;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Action overwriteSnapshotAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action ignoreCurrentIssueAction;
+    @SuppressWarnings("FieldCanBeLocal")
     private final Action rotateImageAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action toggleShrinkToFitAction;
@@ -130,10 +135,8 @@ class SnapshotReviewWidget implements Widget {
         initBindings();
 
         // More initialization
-        invokeLater(() -> {
-            // make sure we have a focus
-            ignoreButton.requestFocusInWindow();
-        });
+        // make sure we have a focus
+        invokeLater(ignoreButton::requestFocusInWindow);
     }
 
     public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
@@ -259,13 +262,12 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
+        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
-        //TODO remove when all stuff is using the new Binding
-        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
+        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
         expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
         expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
-        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
         imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
         variantsIndicator.bindVariantsInfoTo(variantsInfoProp);
     }

@@ -58,6 +58,7 @@ class ImagesLegend implements Widget {
     }
 
     //region expectedImageIndex
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
             newPropBindable(0, this, "expectedImageIndex", f -> onExpectedImageIndexChanged());
 
