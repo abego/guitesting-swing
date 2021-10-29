@@ -89,11 +89,6 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
                 .component();
 
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
-        // TODO: use different trigger (e.g. when displayed?)
-        invokeLater(() -> {
-            // select the first issue in the list (if there is any)
-            issuesList.setSelectedIndex(0);
-        });
     }
 
     public static <T extends SnapshotIssue> SnapshotIssuesVList<T> snapshotIssuesVList() {

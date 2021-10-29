@@ -135,8 +135,15 @@ class SnapshotReviewWidget implements Widget {
         initBindings();
 
         // More initialization
-        // make sure we have a focus
-        invokeLater(ignoreButton::requestFocusInWindow);
+        invokeLater(() -> {
+            // make the first item of the "remainingIssues" the "selected issue"
+            if (!remainingIssues.isEmpty()) {
+                setSelectedIssue(remainingIssues.get(0));
+            }
+
+            // make sure we have a focus
+            ignoreButton.requestFocusInWindow();
+        });
     }
 
     public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
@@ -183,6 +190,10 @@ class SnapshotReviewWidget implements Widget {
     @Nullable
     private SnapshotIssue getSelectedIssue() {
         return selectedIssue.get();
+    }
+
+    private void setSelectedIssue(SnapshotIssue issue) {
+        selectedIssue.set(issue);
     }
 
     @Nullable

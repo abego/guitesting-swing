@@ -38,10 +38,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -52,9 +50,11 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.ListCellRendererForTextProvider.newListCellRendererForTextProvider;
 
@@ -275,6 +275,17 @@ public final class SwingUtil {
         return flowLeftWithBottomLine(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
     }
 
+    //endregion
+
+    //region invokeLater...
+    public static void invokeLaterOnce(AtomicBoolean mustInvoke, Runnable runnable) {
+        mustInvoke.set(true);
+        invokeLater(() -> {
+            if (mustInvoke.getAndSet(false)) {
+                runnable.run();
+            }
+        });
+    }
     //endregion
 
 }

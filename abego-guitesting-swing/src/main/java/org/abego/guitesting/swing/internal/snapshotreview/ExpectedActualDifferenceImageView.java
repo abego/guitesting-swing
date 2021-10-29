@@ -38,19 +38,23 @@ import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
-import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
+import static org.abego.guitesting.swing.internal.util.StackTraceElementUtil.printStackTraceOnlyOwnCode;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
 class ExpectedActualDifferenceImageView implements Widget {
     private static final int BORDER_SIZE = 3;
     private static final int MIN_IMAGE_SIZE = 16;
+
+    private final AtomicBoolean mustUpdateLabelsForImages = new AtomicBoolean();
 
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
@@ -83,25 +87,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
-
-    //region expectedImageIndex
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropBindable<Integer> expectedImageIndexProp =
-            newPropBindable(0, this, "expectedImageIndex", f -> updateLabelsForImages());
-
-    public Integer getExpectedImageIndex() {
-        return expectedImageIndexProp.get();
-    }
-
-    public void setExpectedImageIndex(Integer value) {
-        expectedImageIndexProp.set(value);
-    }
-
-    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
-        expectedImageIndexProp.bindTo(prop);
-    }
-
-    //endregion
     //region snapshotIssue
     private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
             newPropNullableBindable(null, this, "snapshotIssue", f -> updateLabelsForImages());
@@ -120,7 +105,24 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
+    //region expectedImageIndex
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final PropBindable<Integer> expectedImageIndexProp =
+            newPropBindable(0, this, "expectedImageIndex", f -> updateLabelsForImages());
 
+    public Integer getExpectedImageIndex() {
+        return expectedImageIndexProp.get();
+    }
+
+    public void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
+    }
+
+    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+        expectedImageIndexProp.bindTo(prop);
+    }
+
+    //endregion
     //region expectedBorderColor
     private final PropBindable<Color> expectedBorderColorProp =
             newPropBindable(Color.green, this, "expectedBorderColor", f -> updateLabelsForImages());
@@ -138,7 +140,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
-
     //region actualBorderColor
     private final PropBindable<Color> actualBorderColorProp =
             newPropBindable(Color.red, this, "actualBorderColor", f -> updateLabelsForImages());
@@ -156,7 +157,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
-
     //region differenceBorderColor
     private final PropBindable<Color> differenceBorderColorProp =
             newPropBindable(Color.black, this, "differenceBorderColor", f -> updateLabelsForImages());
@@ -186,18 +186,15 @@ class ExpectedActualDifferenceImageView implements Widget {
 
     private void onContentResized() {
         if (getShrinkToFit()) {
-            onImagesAreaMayHaveChanged();
+            updateLabelsForImages();
         }
     }
 
-    private void onImagesAreaMayHaveChanged() {
-        updateLabelsForImages();
-    }
 
     // dependsOn (snapshotIssue != null ? (shrinkToFit ? content.visibleRect : null) : null)
     // ? expectedImageIndex, expectedBorderColor, actualBorderColor,  differenceBorderColor: null
     private void updateLabelsForImages() {
-        invokeLater(() -> {
+        invokeLaterOnce(mustUpdateLabelsForImages, () -> {
             @Nullable SnapshotImages images = getSnapshotImages();
             if (images != null) {
                 setIconAndLinedBorder(
