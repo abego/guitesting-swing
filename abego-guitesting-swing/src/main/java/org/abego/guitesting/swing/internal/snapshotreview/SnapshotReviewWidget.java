@@ -25,15 +25,13 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
-import org.abego.event.EventService;
-import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
+import org.abego.guitesting.swing.internal.util.Prop;
 import org.abego.guitesting.swing.internal.util.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
-import org.abego.guitesting.swing.internal.util.Prop;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -42,7 +40,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-
 import java.awt.Color;
 
 import static java.lang.Boolean.TRUE;
@@ -57,7 +54,9 @@ import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
+import static org.abego.guitesting.swing.internal.util.Prop.newComputedProp;
 import static org.abego.guitesting.swing.internal.util.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.PropNullable.newComputedPropNullable;
 import static org.abego.guitesting.swing.internal.util.PropNullable.newPropNullable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
@@ -69,16 +68,13 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 class SnapshotReviewWidget implements Widget {
 
-    //region Context
-    private final EventService eventService = EventServices.getDefault();
-    //endregion
     //region State/Model
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<Integer> expectedImageIndexProp = newProp(0);
-    private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropNullable<VariantsInfo> variantsInfoProp = newPropNullable(this::getVariantsInfo);
+    private final Prop<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropNullable<VariantsInfo> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
 
     //endregion
     //region Actions

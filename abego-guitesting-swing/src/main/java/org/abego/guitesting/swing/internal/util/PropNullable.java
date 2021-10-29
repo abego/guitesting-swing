@@ -72,25 +72,25 @@ public class PropNullable<T> implements VarNullable<T> {
     }
 
     public static <T> PropNullable<T> newPropNullable() {
-        return new PropNullable<T>(null, null,null, null);
+        return new PropNullable<>(null, null,null, null);
     }
 
     public static <T> PropNullable<T> newPropNullable(T value) {
-        return new PropNullable<T>(value, null,null, null);
+        return new PropNullable<>(value, null,null, null);
     }
 
     public static <T> PropNullable<T> newPropNullable(
             T value, Object otherSource, String otherPropertyName) {
-        return new PropNullable<T>(value, null, otherSource, otherPropertyName);
+        return new PropNullable<>(value, null, otherSource, otherPropertyName);
     }
 
-    public static <T> PropNullable<T> newPropNullable(
+    public static <T> PropNullable<T> newComputedPropNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropNullable<T>(null, valueComputation, otherSource, otherPropertyName);
+        return new PropNullable<>(null, valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> PropNullable<T> newPropNullable(Function<DependencyCollector, T> valueComputation) {
-        return new PropNullable<T>(null, valueComputation, null, null);
+    public static <T> PropNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
+        return new PropNullable<>(null, valueComputation, null, null);
     }
 
     @Override

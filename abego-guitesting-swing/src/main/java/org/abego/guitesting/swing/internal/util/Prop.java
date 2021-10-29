@@ -81,12 +81,12 @@ public class Prop<T> implements Var<T> {
         return new Prop<T>(value, null, otherSource, otherPropertyName);
     }
 
-    public static <T> Prop<T> newProp(
+    public static <T> Prop<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return new Prop<T>(null, valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> Prop<T> newProp(Function<DependencyCollector, T> valueComputation) {
+    public static <T> Prop<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
         return new Prop<T>(null, valueComputation, null, null);
     }
 
