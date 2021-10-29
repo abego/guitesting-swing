@@ -24,14 +24,18 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.commons.var.Var;
 import org.abego.commons.var.VarNullable;
+import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
+import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * A {@link VarNullable} emitting {@link org.abego.event.PropertyChanged} events
@@ -46,44 +50,114 @@ import java.util.Objects;
 public class PropNullable<T> implements VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
+    private final @Nullable Function<DependencyCollector, T> valueComputation;
     private final @Nullable String otherPropertyName;
     private @Nullable T value;
+    private @Nullable List<EventObserver<PropertyChanged>> observers;
+    private boolean mustComputeValue;
 
 
     private PropNullable(@Nullable T value,
+                         @Nullable Function<DependencyCollector, T> valueComputation,
                          @Nullable Object otherSource,
                          @Nullable String otherPropertyName) {
+        if (value != null && valueComputation != null) {
+            throw new IllegalArgumentException("Must not specify both a value and a valueComputation");
+        }
         this.value = value;
+        this.valueComputation = valueComputation;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
+        this.mustComputeValue = valueComputation != null;
     }
 
     public static <T> PropNullable<T> newPropNullable() {
-        return new PropNullable<T>(null, null, null);
+        return new PropNullable<T>(null, null,null, null);
     }
 
     public static <T> PropNullable<T> newPropNullable(T value) {
-        return new PropNullable<T>(value, null, null);
+        return new PropNullable<T>(value, null,null, null);
     }
 
     public static <T> PropNullable<T> newPropNullable(
             T value, Object otherSource, String otherPropertyName) {
-        return new PropNullable<T>(value, otherSource, otherPropertyName);
+        return new PropNullable<T>(value, null, otherSource, otherPropertyName);
+    }
+
+    public static <T> PropNullable<T> newPropNullable(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return new PropNullable<T>(null, valueComputation, otherSource, otherPropertyName);
+    }
+
+    public static <T> PropNullable<T> newPropNullable(Function<DependencyCollector, T> valueComputation) {
+        return new PropNullable<T>(null, valueComputation, null, null);
     }
 
     @Override
     public @Nullable T get() {
+        if (mustComputeValue) {
+            // do the initial computation
+            mustComputeValue = false;
+            recompute();
+        }
         return value;
     }
 
     @Override
     public void set(@Nullable T value) {
-        if (!Objects.equals(value,this.value)) {
-            this.value = value;
-            eventService.postPropertyChanged(this, "value"); //NON-NLS
-            if (otherSource != null && otherPropertyName != null) {
-                eventService.postPropertyChanged(otherSource, otherPropertyName);
+        if (Objects.equals(value, this.value)) {
+            return;
+        }
+        if (valueComputation != null) {
+            throw new IllegalStateException("Cannot set value on computed property");
+        }
+        this.value = value;
+        postPropertyChanged();
+    }
+
+    @NonNull
+    private T recompute() {
+        return recomputeAndOnChangeDo(() -> {});
+    }
+
+    @NonNull
+    private T recomputeAndPostEvent() {
+        return recomputeAndOnChangeDo(this::postPropertyChanged);
+    }
+
+    @NonNull
+    private T recomputeAndOnChangeDo(Runnable onChangeCode) {
+        if (observers != null) {
+            for (EventObserver<PropertyChanged> o : observers) {
+                eventService.removeObserver(o);
             }
+            this.observers = null;
+        }
+
+        List<EventObserver<PropertyChanged>> observers = new ArrayList<>();
+        DependencyCollector dependencyCollector = new DependencyCollector() {
+            @Override
+            public void dependsOnProperty(Object source, String propertyName) {
+                observers.add(eventService.addPropertyObserver(
+                        source, propertyName, e -> recomputeAndPostEvent()));
+            }
+        };
+        T v = valueComputation.apply(dependencyCollector);
+        mustComputeValue = true;
+        if (!observers.isEmpty()) {
+            this.observers = observers;
+        }
+        if (!Objects.equals(v, value)) {
+            value = v;
+            onChangeCode.run();
+        }
+        return v;
+    }
+
+    private void postPropertyChanged() {
+        eventService.postPropertyChanged(this, "value"); //NON-NLS
+        if (otherSource != null && otherPropertyName != null) {
+            eventService.postPropertyChanged(otherSource, otherPropertyName);
         }
     }
 }

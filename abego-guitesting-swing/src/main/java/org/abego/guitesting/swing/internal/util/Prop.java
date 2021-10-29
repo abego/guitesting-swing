@@ -60,7 +60,7 @@ public class Prop<T> implements Var<T> {
                  @Nullable Object otherSource,
                  @Nullable String otherPropertyName) {
         if (value != null && valueComputation != null) {
-            throw new IllegalArgumentException("Must not speficy both a value and a valueComputation");
+            throw new IllegalArgumentException("Must not specify both a value and a valueComputation");
         }
         this.value = value;
         this.valueComputation = valueComputation;
@@ -86,6 +86,10 @@ public class Prop<T> implements Var<T> {
         return new Prop<T>(null, valueComputation, otherSource, otherPropertyName);
     }
 
+    public static <T> Prop<T> newProp(Function<DependencyCollector, T> valueComputation) {
+        return new Prop<T>(null, valueComputation, null, null);
+    }
+
     @Override
     public @NonNull T get() {
         @Nullable T v = value;
@@ -95,8 +99,6 @@ public class Prop<T> implements Var<T> {
             }
             if (v == null) {
                 throw new IllegalStateException("Var has no value"); //NON-NLS
-            } else {
-                postPropertyChanged();
             }
         }
         return v;
@@ -116,7 +118,7 @@ public class Prop<T> implements Var<T> {
 
     @NonNull
     private T recompute() {
-        return recomputeAndOnChangeDo(()->{});
+        return recomputeAndOnChangeDo(() -> {});
     }
 
     @NonNull
@@ -127,7 +129,7 @@ public class Prop<T> implements Var<T> {
     @NonNull
     private T recomputeAndOnChangeDo(Runnable onChangeCode) {
         if (observers != null) {
-                for (EventObserver<PropertyChanged> o : observers) {
+            for (EventObserver<PropertyChanged> o : observers) {
                 eventService.removeObserver(o);
             }
             this.observers = null;

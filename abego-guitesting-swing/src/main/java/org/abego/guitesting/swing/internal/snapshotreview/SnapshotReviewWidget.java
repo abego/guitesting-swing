@@ -78,6 +78,8 @@ class SnapshotReviewWidget implements Widget {
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<Integer> expectedImageIndexProp = newProp(0);
     private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropNullable<VariantsInfo> variantsInfoProp = newPropNullable(this::getVariantsInfo);
+
     //endregion
     //region Actions
     private final Action addAlternativeSnapshotAction;
@@ -264,17 +266,12 @@ class SnapshotReviewWidget implements Widget {
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
         //TODO remove when all stuff is using the new Binding
-        eventService.addPropertyObserver(selectedIssue,"value", e->onSelectedIssueChanged());
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
         expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
         expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
         imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
-    }
-
-    //TODO: with the Prop approach this should go away?
-    private void onSelectedIssueChanged() {
-        variantsIndicator.setVariantsInfo(getVariantsInfo(DependencyCollector.DoNothing));
+        variantsIndicator.bindVariantsInfoTo(variantsInfoProp);
     }
 
     //endregion

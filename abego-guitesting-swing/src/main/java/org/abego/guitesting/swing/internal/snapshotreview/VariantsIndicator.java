@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.PropNullable;
+import org.abego.guitesting.swing.internal.util.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -32,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import static javax.swing.SwingUtilities.invokeLater;
+import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -40,8 +43,6 @@ class VariantsIndicator implements Widget {
     private static final int BULLET_SIZE = 24;
     private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
 
-    @Nullable
-    private VariantsInfo variantsInfo;
     private final JComponent content;
 
     private VariantsIndicator() {
@@ -62,17 +63,24 @@ class VariantsIndicator implements Widget {
         return content;
     }
 
+    //region variantsInfo
+    private final PropNullableBindable<VariantsInfo> variantsInfoProp =
+            newPropNullableBindable(null, this, "variantsInfo", f -> updateContent());
+
     @Nullable
     public VariantsInfo getVariantsInfo() {
-        return variantsInfo;
+        return variantsInfoProp.get();
     }
 
-    public void setVariantsInfo(@Nullable VariantsInfo info) {
-        variantsInfo = info;
-
-        updateContent();
+    public void setVariantsInfo(@Nullable VariantsInfo value) {
+        variantsInfoProp.set(value);
     }
 
+    public void bindVariantsInfoTo(PropNullable<VariantsInfo> prop) {
+        variantsInfoProp.bindTo(prop);
+    }
+
+    //endregion
     private void updateContent() {
         invokeLater(() -> {
             content.removeAll();
