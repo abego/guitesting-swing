@@ -24,6 +24,9 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.Prop;
+import org.abego.guitesting.swing.internal.util.PropBindable;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -31,6 +34,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import static javax.swing.BorderFactory.createLineBorder;
+import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
@@ -45,7 +49,6 @@ class ImagesLegend implements Widget {
             expectedLabel, actualLabel, differenceLabel
     };
     private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
-    private int expectedImageIndex = 0;
     private Color expectedBorderColor = Color.green;
     private Color actualBorderColor = Color.red;
     private Color differenceBorderColor = Color.black;
@@ -54,14 +57,23 @@ class ImagesLegend implements Widget {
         return new ImagesLegend();
     }
 
-    public int getExpectedImageIndex() {
-        return expectedImageIndex;
+    //region expectedImageIndex
+    private final PropBindable<Integer> expectedImageIndexProp =
+            newPropBindable(0, this, "expectedImageIndex", f -> onExpectedImageIndexChanged());
+
+    public Integer getExpectedImageIndex() {
+        return expectedImageIndexProp.get();
     }
 
-    public void setExpectedImageIndex(int expectedImageIndex) {
-        this.expectedImageIndex = expectedImageIndex;
-        onExpectedImageIndexChanged();
+    public void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
     }
+
+    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+        expectedImageIndexProp.bindTo(prop);
+    }
+
+    //endregion
 
     public Color getExpectedBorderColor() {
         return expectedBorderColor;

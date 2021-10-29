@@ -65,8 +65,6 @@ class ExpectedActualDifferenceImageView implements Widget {
         c.setBorder(null);
     }, labelsForImages);
 
-    private int expectedImageIndex = 0;
-
     public static ExpectedActualDifferenceImageView expectedActualDifferenceImageView() {
         return new ExpectedActualDifferenceImageView();
     }
@@ -89,6 +87,23 @@ class ExpectedActualDifferenceImageView implements Widget {
 
     //endregion
 
+    //region expectedImageIndex
+    private final PropBindable<Integer> expectedImageIndexProp =
+            newPropBindable(0, this, "expectedImageIndex", f -> updateLabelsForImages());
+
+    public Integer getExpectedImageIndex() {
+        return expectedImageIndexProp.get();
+    }
+
+    public void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
+    }
+
+    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+        expectedImageIndexProp.bindTo(prop);
+    }
+
+    //endregion
     //region snapshotIssue
     private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
             newPropNullableBindable(null, this, "snapshotIssue", f -> updateLabelsForImages());
@@ -107,15 +122,6 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
-
-    public int getExpectedImageIndex() {
-        return expectedImageIndex;
-    }
-
-    public void setExpectedImageIndex(int expectedImageIndex) {
-        this.expectedImageIndex = expectedImageIndex;
-        updateLabelsForImages();
-    }
 
     public Color getExpectedBorderColor() {return expectedBorderColor;}
 
@@ -164,15 +170,15 @@ class ExpectedActualDifferenceImageView implements Widget {
             @Nullable SnapshotImages images = getSnapshotImages();
             if (images != null) {
                 setIconAndLinedBorder(
-                        labelsForImages[(expectedImageIndex) % 3],
+                        labelsForImages[(getExpectedImageIndex()) % 3],
                         images.getExpectedImage(),
                         getExpectedBorderColor());
                 setIconAndLinedBorder(
-                        labelsForImages[(expectedImageIndex + 1) % 3],
+                        labelsForImages[(getExpectedImageIndex() + 1) % 3],
                         images.getActualImage(),
                         getActualBorderColor());
                 setIconAndLinedBorder(
-                        labelsForImages[(expectedImageIndex + 2) % 3],
+                        labelsForImages[(getExpectedImageIndex() + 2) % 3],
                         images.getDifferenceImage(),
                         getDifferenceBorderColor());
             }

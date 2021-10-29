@@ -76,6 +76,7 @@ class SnapshotReviewWidget implements Widget {
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
+    private final Prop<Integer> expectedImageIndexProp = newProp(0);
     private final Prop<String> selectedIssueDescriptionProp = newProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     //endregion
     //region Actions
@@ -159,12 +160,11 @@ class SnapshotReviewWidget implements Widget {
     }
 
     private int getExpectedImageIndex() {
-        return expectedActualDifferenceImageView.getExpectedImageIndex();
+        return expectedImageIndexProp.get();
     }
 
-    private void setExpectedImageIndex(int value) {
-        expectedActualDifferenceImageView.setExpectedImageIndex(value);
-        onExpectedImageIndexChanged();
+    private void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
     }
 
     private boolean getShrinkToFit() {
@@ -262,21 +262,19 @@ class SnapshotReviewWidget implements Widget {
     //region Binding related
     private void initBindings() {
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
-        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
         //TODO remove when all stuff is using the new Binding
         eventService.addPropertyObserver(selectedIssue,"value", e->onSelectedIssueChanged());
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
+        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
+        expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
         expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
+        imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
     }
 
     //TODO: with the Prop approach this should go away?
     private void onSelectedIssueChanged() {
         variantsIndicator.setVariantsInfo(getVariantsInfo(DependencyCollector.DoNothing));
-    }
-
-    private void onExpectedImageIndexChanged() {
-        imagesLegend.setExpectedImageIndex(getExpectedImageIndex());
     }
 
     //endregion
