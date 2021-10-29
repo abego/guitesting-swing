@@ -25,14 +25,17 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.commons.var.Var;
+import org.abego.commons.var.VarNullable;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Objects;
+
 /**
- * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
- * when its value changed (via {@link org.abego.event.EventServices} default).
+ * A {@link VarNullable} emitting {@link org.abego.event.PropertyChanged} events
+ * when its value changed (via {@link EventServices} default).
  * <p>
  * By default the source of the PropertyChanged event will be the Prop object
  * and the property name "value". In addition, a second PropertyChanged event
@@ -40,56 +43,47 @@ import org.eclipse.jdt.annotation.Nullable;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prob within its container.
  */
-public class Prop<T> implements Var<T> {
+public class PropNullable<T> implements VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
     private @Nullable T value;
 
 
-    private Prop(@Nullable T value,
-                 @Nullable Object otherSource,
-                 @Nullable String otherPropertyName) {
+    private PropNullable(@Nullable T value,
+                         @Nullable Object otherSource,
+                         @Nullable String otherPropertyName) {
         this.value = value;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
     }
 
-    public static <T> Prop<T> newProp() {
-        return new Prop<T>(null, null, null);
+    public static <T> PropNullable<T> newPropNullable() {
+        return new PropNullable<T>(null, null, null);
     }
 
-    public static <T> Prop<T> newProp(T value) {
-        return new Prop<T>(value, null, null);
+    public static <T> PropNullable<T> newPropNullable(T value) {
+        return new PropNullable<T>(value, null, null);
     }
 
-    public static <T> Prop<T> newProp(
+    public static <T> PropNullable<T> newPropNullable(
             T value, Object otherSource, String otherPropertyName) {
-        return new Prop<T>(value, otherSource, otherPropertyName);
+        return new PropNullable<T>(value, otherSource, otherPropertyName);
     }
 
     @Override
-    public @NonNull T get() {
-        @Nullable T v = value;
-        if (v == null) {
-            throw new IllegalStateException("Var has no value"); //NON-NLS
-        }
-        return v;
+    public @Nullable T get() {
+        return value;
     }
 
     @Override
-    public void set(@NonNull T value) {
-        if (!value.equals(this.value)) {
+    public void set(@Nullable T value) {
+        if (!Objects.equals(value,this.value)) {
             this.value = value;
             eventService.postPropertyChanged(this, "value"); //NON-NLS
             if (otherSource != null && otherPropertyName != null) {
                 eventService.postPropertyChanged(otherSource, otherPropertyName);
             }
         }
-    }
-
-    @Override
-    public boolean hasValue() {
-        return value != null;
     }
 }

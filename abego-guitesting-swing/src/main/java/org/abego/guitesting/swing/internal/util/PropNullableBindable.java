@@ -24,31 +24,31 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.commons.var.Var;
+import org.abego.commons.var.VarNullable;
 import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
-import static org.abego.guitesting.swing.internal.util.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.PropNullable.newPropNullable;
 
-public class PropBindable<T> implements Var<T> {
+public class PropNullableBindable<T> implements VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final Consumer<T> onSourceOfTruthValueChanged;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
-    private Prop<T> prop;
+    private PropNullable<T> prop;
     private EventObserver<PropertyChanged> observer;
 
-    private PropBindable(@NonNull T initialValue,
-                         @Nullable Object otherSource,
-                         @Nullable String otherPropertyName,
-                         Consumer<T> onSourceOfTruthValueChanged) {
-        prop = newProp(initialValue);
+    private PropNullableBindable(@Nullable T initialValue,
+                                 @Nullable Object otherSource,
+                                 @Nullable String otherPropertyName,
+                                 Consumer<T> onSourceOfTruthValueChanged) {
+        prop = newPropNullable(initialValue);
         this.onSourceOfTruthValueChanged = onSourceOfTruthValueChanged;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
@@ -56,40 +56,40 @@ public class PropBindable<T> implements Var<T> {
                 prop, e -> onValueChanged(get()));
     }
 
-    public static <T> PropBindable<T> newPropBindable(
-            @NonNull T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<T>(initialValue, null, null,
+    public static <T> PropNullableBindable<T> newPropNullableBindable(
+            @Nullable T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
+        return new PropNullableBindable<T>(initialValue, null, null,
                 onSourceOfTruthValueChanged);
     }
 
-    public static <T> PropBindable<T> newPropBindable(
-            @NonNull T initialValue,
+    public static <T> PropNullableBindable<T> newPropNullableBindable(
+            @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName,
             Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<T>(initialValue, otherSource, otherPropertyName,
+        return new PropNullableBindable<T>(initialValue, otherSource, otherPropertyName,
                 onSourceOfTruthValueChanged);
     }
 
     @Override
-    public @NonNull T get() {
+    public @Nullable T get() {
         return prop.get();
     }
 
     @Override
-    public void set(@NonNull T value) {
+    public void set(@Nullable T value) {
         prop.set(value);
     }
 
-    public void bindTo(Prop<T> sourceOfTruth) {
+    public void bindTo(PropNullable<T> sourceOfTruth) {
         eventService.removeObserver(observer);
 
-        @NonNull T oldValue = get();
+        @Nullable T oldValue = get();
         prop = sourceOfTruth;
 
         observer = eventService.addPropertyObserver(prop,
                 e -> onValueChanged(get()));
-        if (!oldValue.equals(get())) {
+        if (!Objects.equals(oldValue, get())) {
             onValueChanged(get());
         }
     }

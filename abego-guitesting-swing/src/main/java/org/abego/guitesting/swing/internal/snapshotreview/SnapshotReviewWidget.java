@@ -25,8 +25,11 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
+import org.abego.event.EventService;
+import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
+import org.abego.guitesting.swing.internal.util.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.Prop;
 import org.eclipse.jdt.annotation.Nullable;
@@ -52,6 +55,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImp
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
+import static org.abego.guitesting.swing.internal.util.PropNullable.newPropNullable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
@@ -63,8 +67,12 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
+    //region Context
+    private final EventService eventService = EventServices.getDefault();
+    //endregion
     //region State/Model
     private final DefaultListModel<T> remainingIssues;
+    private final PropNullable<@Nullable T> selectedIssue = newPropNullable(null, this, "selectedIssue");
     private final Prop<Boolean> shrinkToFitProp = Prop.newProp(TRUE, this, "shrinkToFit");
     //endregion
     //region Actions
@@ -170,7 +178,7 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
 
     @Nullable
     private T getSelectedIssue() {
-        return snapshotIssuesVList.getSelectedIssue();
+        return selectedIssue.get();
     }
 
     @Nullable
@@ -245,8 +253,9 @@ class SnapshotReviewWidget<T extends SnapshotIssue> implements Widget {
     private void initBindings() {
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
-
-        snapshotIssuesVList.addSelectedIssueChangeListener(e -> onSelectedIssueChanged());
+        snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
+        //TODO remove when all stuff is using the new Binding
+        eventService.addPropertyObserver(selectedIssue,"value", e->onSelectedIssueChanged());
     }
 
     private void onSelectedIssueChanged() {
