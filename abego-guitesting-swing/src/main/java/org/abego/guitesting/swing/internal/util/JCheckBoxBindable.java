@@ -45,12 +45,6 @@ public final class JCheckBoxBindable extends JCheckBox {
         return new JCheckBoxBindable();
     }
 
-    @Override
-    public void setAction(Action action) {
-        super.setAction(action);
-        SwingUtil.handleAccelerator(this, action);
-    }
-
     public void bindSelectedTo(Prop<Boolean> prop) {
         selectedProp.bindTo(prop);
     }

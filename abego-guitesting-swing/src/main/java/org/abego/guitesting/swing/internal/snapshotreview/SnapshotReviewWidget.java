@@ -88,8 +88,6 @@ class SnapshotReviewWidget implements Widget {
     private final Action ignoreCurrentIssueAction;
     @SuppressWarnings("FieldCanBeLocal")
     private final Action rotateImageAction;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Action toggleShrinkToFitAction;
     //endregion
     //region Components
     private final JLabelBindable selectedIssueDescriptionLabel = labelBindable();
@@ -117,21 +115,12 @@ class SnapshotReviewWidget implements Widget {
         ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
         overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
         rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
-        toggleShrinkToFitAction = newAction("Shrink to Fit (#)", KeyStroke.getKeyStroke("NUMBER_SIGN"), e -> toggleShrinkToFit()); //NON-NLS
 
         // init Components
-        snapshotIssuesVList.setListModel(remainingIssues);
-
-        overwriteButton.setAction(overwriteSnapshotAction);
-        addAlternativeButton.setAction(addAlternativeSnapshotAction);
-        ignoreButton.setAction(ignoreCurrentIssueAction);
-        rotateButton.setAction(rotateImageAction);
-        shrinkToFitCheckBox.setAction(toggleShrinkToFitAction);
-
         styleComponents();
         layoutComponents();
 
-        // Notifications support
+        // Binding support
         initBindings();
 
         // More initialization
@@ -142,7 +131,7 @@ class SnapshotReviewWidget implements Widget {
             }
 
             // make sure we have a focus
-            ignoreButton.requestFocusInWindow();
+            shrinkToFitCheckBox.requestFocusInWindow();
         });
     }
 
@@ -181,10 +170,6 @@ class SnapshotReviewWidget implements Widget {
 
     private void setShrinkToFit(boolean value) {
         shrinkToFitProp.set(value);
-    }
-
-    private void toggleShrinkToFit() {
-        setShrinkToFit(!getShrinkToFit());
     }
 
     @Nullable
@@ -273,6 +258,13 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
+        snapshotIssuesVList.setListModel(remainingIssues);
+
+        overwriteButton.setAction(overwriteSnapshotAction);
+        addAlternativeButton.setAction(addAlternativeSnapshotAction);
+        ignoreButton.setAction(ignoreCurrentIssueAction);
+        rotateButton.setAction(rotateImageAction);
+
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
@@ -296,6 +288,8 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImageView.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
         expectedActualDifferenceImageView.setActualBorderColor(ACTUAL_BORDER_COLOR);
         expectedActualDifferenceImageView.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
+
+        shrinkToFitCheckBox.setText("Shrink to Fit");
     }
 
     //endregion
