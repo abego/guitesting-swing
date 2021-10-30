@@ -41,23 +41,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
 class ImagesLegendWidget implements Widget {
 
-    private static final int LEGEND_BORDER_SIZE = 2;
-
-    private final JLabel expectedLabel = legendLabel(" Expected ");//NON-NLS
-    private final JLabel actualLabel = legendLabel(" Actual ");//NON-NLS
-    private final JLabel differenceLabel = legendLabel(" Difference ");//NON-NLS
-    private final JLabel[] labels = new JLabel[]{
-            expectedLabel, actualLabel, differenceLabel
-    };
-    private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
-    private Color expectedBorderColor = Color.green;
-    private Color actualBorderColor = Color.red;
-    private Color differenceBorderColor = Color.black;
-
-    public static ImagesLegendWidget imagesLegend() {
-        return new ImagesLegendWidget();
-    }
-
+    //region State/Model
     //region expectedImageIndex
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
@@ -77,6 +61,7 @@ class ImagesLegendWidget implements Widget {
 
     //endregion
 
+    private Color expectedBorderColor = Color.green;
     public Color getExpectedBorderColor() {
         return expectedBorderColor;
     }
@@ -87,6 +72,7 @@ class ImagesLegendWidget implements Widget {
         onExpectedBorderColorChanged();
     }
 
+    private Color actualBorderColor = Color.red;
     public Color getActualBorderColor() {
         return actualBorderColor;
     }
@@ -97,6 +83,7 @@ class ImagesLegendWidget implements Widget {
         onActualBorderColorChanged();
     }
 
+    private Color differenceBorderColor = Color.black;
     public Color getDifferenceBorderColor() {
         return differenceBorderColor;
     }
@@ -106,9 +93,19 @@ class ImagesLegendWidget implements Widget {
 
         onDifferenceBorderColorChanged();
     }
-
-    public JComponent getContent() {
-        return content;
+    //endregion
+    //region Components
+    private final JLabel expectedLabel = legendLabel(" Expected ");//NON-NLS
+    private final JLabel actualLabel = legendLabel(" Actual ");//NON-NLS
+    private final JLabel differenceLabel = legendLabel(" Difference ");//NON-NLS
+    private final JLabel[] labels = new JLabel[]{
+            expectedLabel, actualLabel, differenceLabel
+    };
+    private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
+    //endregion
+    //region Construction
+    public static ImagesLegendWidget imagesLegendWidget() {
+        return new ImagesLegendWidget();
     }
 
     private ImagesLegendWidget() {
@@ -116,6 +113,23 @@ class ImagesLegendWidget implements Widget {
         onExpectedBorderColorChanged();
         onActualBorderColorChanged();
         onDifferenceBorderColorChanged();
+    }
+
+    //endregion
+    //region Widget related
+    public JComponent getContent() {
+        return content;
+    }
+    private static final int LEGEND_BORDER_SIZE = 2;
+
+    private void updateContent() {
+        SwingUtilities.invokeLater(() -> {
+            content.removeAll();
+            content.add(labels[(3 - getExpectedImageIndex()) % 3]);
+            content.add(labels[(4 - getExpectedImageIndex()) % 3]);
+            content.add(labels[(5 - getExpectedImageIndex()) % 3]);
+            content.validate();
+        });
     }
 
     private static JLabel legendLabel(String title) {
@@ -128,14 +142,10 @@ class ImagesLegendWidget implements Widget {
         return label;
     }
 
+    //endregion
+    //region Binding related
     private void onExpectedImageIndexChanged() {
-        SwingUtilities.invokeLater(() -> {
-            content.removeAll();
-            content.add(labels[(3 - getExpectedImageIndex()) % 3]);
-            content.add(labels[(4 - getExpectedImageIndex()) % 3]);
-            content.add(labels[(5 - getExpectedImageIndex()) % 3]);
-            content.validate();
-        });
+        updateContent();
     }
 
     private void onExpectedBorderColorChanged() {
@@ -153,6 +163,6 @@ class ImagesLegendWidget implements Widget {
     private static void setLegendLabelBorderColor(JLabel label, Color color) {
         label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
     }
-
+    //endregion
 
 }
