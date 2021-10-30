@@ -106,7 +106,7 @@
                         </transformer>
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>complete</shadedClassifierName>
+                    <shadedClassifierName>app</shadedClassifierName>
                 </configuration>
                 <executions>
                     <execution>
@@ -114,10 +114,6 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>app</shadedClassifierName>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
