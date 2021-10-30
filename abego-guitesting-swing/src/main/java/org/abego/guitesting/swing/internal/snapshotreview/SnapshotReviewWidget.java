@@ -79,6 +79,65 @@ class SnapshotReviewWidget implements Widget {
     private final Prop<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     private final PropNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
 
+    private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
+        @Nullable
+        SnapshotVariant info = getVariantsInfo(dependencyCollector);
+        if (info == null) {
+            return " ";
+        }
+
+        String label = SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue());
+        int variantsCount = info.getVariantsCount();
+        return (variantsCount > 1)
+                ? String.format("[%d of %d] %s", //NON-NLS
+                info.getVariantsIndex() + 1, variantsCount, label)
+                : label;
+    }
+
+    private int getExpectedImageIndex() {
+        return expectedImageIndexProp.get();
+    }
+
+    private void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
+    }
+
+    private boolean getShrinkToFit() {
+        return shrinkToFitProp.get();
+    }
+
+    private void setShrinkToFit(boolean value) {
+        shrinkToFitProp.set(value);
+    }
+
+    @Nullable
+    private SnapshotIssue getSelectedIssue() {
+        return selectedIssue.get();
+    }
+
+    private void setSelectedIssue(SnapshotIssue issue) {
+        selectedIssue.set(issue);
+    }
+
+    @Nullable
+    private SnapshotIssue getSelectedIssue(DependencyCollector dependencyCollector) {
+        dependencyCollector.dependsOnProperty(selectedIssue);
+        return selectedIssue.get();
+    }
+
+    @Nullable
+    private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
+        SnapshotIssue issue = getSelectedIssue(dependencyCollector);
+        if (issue == null) {
+            return null;
+        }
+
+        //noinspection CallToSuspiciousStringMethod
+        Seq<SnapshotIssue> variants = SeqUtil2.newSeq(remainingIssues.elements())
+                .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
+        return variantsInfo(issue, variants);
+    }
+
     //endregion
     //region Actions
     @SuppressWarnings("FieldCanBeLocal")
@@ -141,67 +200,6 @@ class SnapshotReviewWidget implements Widget {
     }
 
     //endregion
-    //region Properties
-    private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
-        @Nullable
-        SnapshotVariant info = getVariantsInfo(dependencyCollector);
-        if (info == null) {
-            return " ";
-        }
-
-        String label = SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue());
-        int variantsCount = info.getVariantsCount();
-        return (variantsCount > 1)
-                ? String.format("[%d of %d] %s", //NON-NLS
-                info.getVariantsIndex() + 1, variantsCount, label)
-                : label;
-    }
-
-    private int getExpectedImageIndex() {
-        return expectedImageIndexProp.get();
-    }
-
-    private void setExpectedImageIndex(Integer value) {
-        expectedImageIndexProp.set(value);
-    }
-
-    private boolean getShrinkToFit() {
-        return shrinkToFitProp.get();
-    }
-
-    private void setShrinkToFit(boolean value) {
-        shrinkToFitProp.set(value);
-    }
-
-    @Nullable
-    private SnapshotIssue getSelectedIssue() {
-        return selectedIssue.get();
-    }
-
-    private void setSelectedIssue(SnapshotIssue issue) {
-        selectedIssue.set(issue);
-    }
-
-    @Nullable
-    private SnapshotIssue getSelectedIssue(DependencyCollector dependencyCollector) {
-        dependencyCollector.dependsOnProperty(selectedIssue);
-        return selectedIssue.get();
-    }
-
-    @Nullable
-    private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
-        SnapshotIssue issue = getSelectedIssue(dependencyCollector);
-        if (issue == null) {
-            return null;
-        }
-
-        //noinspection CallToSuspiciousStringMethod
-        Seq<SnapshotIssue> variants = SeqUtil2.newSeq(remainingIssues.elements())
-                .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
-        return variantsInfo(issue, variants);
-    }
-
-    //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
@@ -257,26 +255,6 @@ class SnapshotReviewWidget implements Widget {
     }
 
     //endregion
-    //region Binding related
-    private void initBindings() {
-        snapshotIssuesVList.setListModel(remainingIssues);
-
-        overwriteButton.setAction(overwriteSnapshotAction);
-        addAlternativeButton.setAction(addAlternativeSnapshotAction);
-        ignoreButton.setAction(ignoreCurrentIssueAction);
-        rotateButton.setAction(rotateImageAction);
-
-        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
-        shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
-        snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
-        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
-        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
-        expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
-        imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
-        snapshotVariantsIndicator.bindVariantsInfoTo(variantsInfoProp);
-    }
-
-    //endregion
     //region Style related
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
@@ -313,6 +291,26 @@ class SnapshotReviewWidget implements Widget {
                 .left(snapshotVariantsIndicator.getContent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageView.getContent()))
                 .bottom(snapshotIssuesVList.getContent());
+    }
+
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        snapshotIssuesVList.setListModel(remainingIssues);
+
+        overwriteButton.setAction(overwriteSnapshotAction);
+        addAlternativeButton.setAction(addAlternativeSnapshotAction);
+        ignoreButton.setAction(ignoreCurrentIssueAction);
+        rotateButton.setAction(rotateImageAction);
+
+        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
+        shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
+        snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
+        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
+        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
+        expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
+        imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
+        snapshotVariantsIndicator.bindVariantsInfoTo(variantsInfoProp);
     }
 
     //endregion

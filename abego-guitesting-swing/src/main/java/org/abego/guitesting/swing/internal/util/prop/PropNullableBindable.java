@@ -47,6 +47,7 @@ public class PropNullableBindable<T> implements VarNullable<T> {
     private PropNullableBindable(@Nullable T initialValue,
                                  @Nullable Object otherSource,
                                  @Nullable String otherPropertyName,
+                                 //TODO: avoid callback, use events
                                  Consumer<T> onSourceOfTruthValueChanged) {
         prop = newPropNullable(initialValue);
         this.onSourceOfTruthValueChanged = onSourceOfTruthValueChanged;
@@ -69,6 +70,14 @@ public class PropNullableBindable<T> implements VarNullable<T> {
             Consumer<T> onSourceOfTruthValueChanged) {
         return new PropNullableBindable<T>(initialValue, otherSource, otherPropertyName,
                 onSourceOfTruthValueChanged);
+    }
+
+    public static <T> PropNullableBindable<T> newPropNullableBindable(
+            @Nullable T initialValue,
+            @Nullable Object otherSource,
+            @Nullable String otherPropertyName) {
+        return new PropNullableBindable<T>(initialValue, otherSource, otherPropertyName,
+                e->{});
     }
 
     @Override

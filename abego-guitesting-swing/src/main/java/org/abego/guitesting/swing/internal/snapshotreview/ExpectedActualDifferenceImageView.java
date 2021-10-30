@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.event.EventService;
+import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -36,43 +38,29 @@ import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
 import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
 class ExpectedActualDifferenceImageView implements Widget {
-    private static final int BORDER_SIZE = 3;
-    private static final int MIN_IMAGE_SIZE = 16;
 
-    private final AtomicBoolean mustUpdateLabelsForImages = new AtomicBoolean();
-
-    private final JLabel[] labelsForImages =
-            new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
-    //TODO: extra class? HList?
-    private final JComponent content = flowLeft(c -> {
-        c.setOpaque(true);
-        c.setBackground(Color.white);
-        c.setBorder(null);
-    }, labelsForImages);
-
-    public static ExpectedActualDifferenceImageView expectedActualDifferenceImageView() {
-        return new ExpectedActualDifferenceImageView();
-    }
-
+    //region State/Model
     //region shrinkToFit
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Boolean> shrinkToFitProp =
-            newPropBindable(FALSE, this, "shrinkToFit", f -> updateLabelsForImages());
+            newPropBindable(FALSE, this, "shrinkToFit");
 
     public Boolean getShrinkToFit() {
         return shrinkToFitProp.get();
@@ -89,7 +77,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
     //region snapshotIssue
     private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
-            newPropNullableBindable(null, this, "snapshotIssue", f -> updateLabelsForImages());
+            newPropNullableBindable(null, this, "snapshotIssue");
 
     @Nullable
     public SnapshotIssue getSnapshotIssue() {
@@ -108,7 +96,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //region expectedImageIndex
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
-            newPropBindable(0, this, "expectedImageIndex", f -> updateLabelsForImages());
+            newPropBindable(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -125,7 +113,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
     //region expectedBorderColor
     private final PropBindable<Color> expectedBorderColorProp =
-            newPropBindable(Color.green, this, "expectedBorderColor", f -> updateLabelsForImages());
+            newPropBindable(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -142,7 +130,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
     //region actualBorderColor
     private final PropBindable<Color> actualBorderColorProp =
-            newPropBindable(Color.red, this, "actualBorderColor", f -> updateLabelsForImages());
+            newPropBindable(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -159,7 +147,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
     //region differenceBorderColor
     private final PropBindable<Color> differenceBorderColorProp =
-            newPropBindable(Color.black, this, "differenceBorderColor", f -> updateLabelsForImages());
+            newPropBindable(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();
@@ -174,14 +162,87 @@ class ExpectedActualDifferenceImageView implements Widget {
     }
 
     //endregion
+    //endregion
+    //region Components
+    private final JLabel[] labelsForImages =
+            new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
+    private final JComponent content = new JPanel();
 
+    //endregion
+    //region Construction
+    public static ExpectedActualDifferenceImageView expectedActualDifferenceImageView() {
+        return new ExpectedActualDifferenceImageView();
+    }
+
+    private ExpectedActualDifferenceImageView() {
+        styleComponents();
+        layoutComponents();
+        initBinding();
+    }
+
+    //endregion
+    //region Widget related
     @Override
     public JComponent getContent() {
         return content;
     }
 
-    private ExpectedActualDifferenceImageView() {
+    private static final int MIN_IMAGE_SIZE = 16;
+
+    private @Nullable SnapshotImages getSnapshotImages() {
+        @Nullable SnapshotIssue issue = getSnapshotIssue();
+        if (issue == null) {
+            return null;
+        }
+        return snapshotImages(issue, getImagesArea());
+    }
+
+    private @Nullable Dimension getImagesArea() {
+        if (getShrinkToFit()) {
+            Rectangle visibleRect = content.getVisibleRect();
+            int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
+            int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+            return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
+        } else {
+            return null;
+        }
+    }
+
+    //endregion
+    //region Style related
+    private static final int BORDER_SIZE = 3;
+
+    private void styleComponents() {
+        content.setOpaque(true);
+        content.setBackground(Color.white);
+        content.setBorder(null);
+    }
+
+    private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
+        label.setIcon(icon);
+        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
+    }
+
+    //endregion Style
+    //region Layout related
+    private void layoutComponents() {
+        content.setLayout(new FlowLayout(FlowLayout.LEADING));
+        addAll(content,labelsForImages);
+    }
+    //endregion
+    //region Binding related
+    private final AtomicBoolean mustUpdateLabelsForImages = new AtomicBoolean();
+
+    private void initBinding() {
         onComponentResized(content, e -> onContentResized());
+        EventService eventService = EventServices.getDefault();
+        eventService.addPropertyObserver(shrinkToFitProp, e->updateLabelsForImages());
+        eventService.addPropertyObserver(snapshotIssueProp, e->updateLabelsForImages());
+        eventService.addPropertyObserver(expectedImageIndexProp, e->updateLabelsForImages());
+        eventService.addPropertyObserver(expectedBorderColorProp, e->updateLabelsForImages());
+        eventService.addPropertyObserver(actualBorderColorProp, e->updateLabelsForImages());
+        eventService.addPropertyObserver(differenceBorderColorProp, e->updateLabelsForImages());
+
     }
 
     private void onContentResized() {
@@ -210,29 +271,5 @@ class ExpectedActualDifferenceImageView implements Widget {
             SwingUtil.setVisible(images != null, labelsForImages);
         });
     }
-
-    private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
-        label.setIcon(icon);
-        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
-    }
-
-    private @Nullable Dimension getImagesArea() {
-        if (getShrinkToFit()) {
-            Rectangle visibleRect = content.getVisibleRect();
-            int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
-            int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
-            return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
-        } else {
-            return null;
-        }
-    }
-
-    private @Nullable SnapshotImages getSnapshotImages() {
-        @Nullable SnapshotIssue issue = getSnapshotIssue();
-        if (issue == null) {
-            return null;
-        }
-        return snapshotImages(issue, getImagesArea());
-    }
-
+    //endregion
 }

@@ -47,6 +47,7 @@ public class PropBindable<T> implements Var<T> {
     private PropBindable(@NonNull T initialValue,
                          @Nullable Object otherSource,
                          @Nullable String otherPropertyName,
+                         //TODO: avoid callback, use events
                          Consumer<T> onSourceOfTruthValueChanged) {
         prop = newProp(initialValue);
         this.onSourceOfTruthValueChanged = onSourceOfTruthValueChanged;
@@ -57,6 +58,7 @@ public class PropBindable<T> implements Var<T> {
     }
 
     public static <T> PropBindable<T> newPropBindable(
+            //TODO: avoid callback, use events
             @NonNull T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
         return new PropBindable<T>(initialValue, null, null,
                 onSourceOfTruthValueChanged);
@@ -66,9 +68,18 @@ public class PropBindable<T> implements Var<T> {
             @NonNull T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName,
+            //TODO: avoid callback, use events
             Consumer<T> onSourceOfTruthValueChanged) {
         return new PropBindable<T>(initialValue, otherSource, otherPropertyName,
                 onSourceOfTruthValueChanged);
+    }
+
+    public static <T> PropBindable<T> newPropBindable(
+            @NonNull T initialValue,
+            @Nullable Object otherSource,
+            @Nullable String otherPropertyName) {
+        return new PropBindable<T>(initialValue, otherSource, otherPropertyName,
+                e->{});
     }
 
     @Override
