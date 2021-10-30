@@ -55,14 +55,14 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
-class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
+class SnapshotIssuesVList implements Widget {
     private final static Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
 
     private final Action previousScreenshotAction;
     private final Action nextScreenshotAction;
     private final JButton previousScreenshotButton;
     private final JButton nextScreenshotButton;
-    private final JList<T> issuesList = new JList<>();;
+    private final JList<SnapshotIssue> issuesList = new JList<>();;
     private final JComponent content;
     private int lastSelectedIndex = -1;
 
@@ -92,15 +92,15 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
         issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
     }
 
-    public static <T extends SnapshotIssue> SnapshotIssuesVList<T> snapshotIssuesVList() {
-        return new SnapshotIssuesVList<>();
+    public static SnapshotIssuesVList snapshotIssuesVList() {
+        return new SnapshotIssuesVList();
     }
 
-    public ListModel<T> getListModel() {
+    public ListModel<SnapshotIssue> getListModel() {
         return issuesList.getModel();
     }
 
-    public void setListModel(DefaultListModel<T> issuesListModel) {
+    public void setListModel(DefaultListModel<SnapshotIssue> issuesListModel) {
         issuesList.setModel(issuesListModel);
     }
 
@@ -113,7 +113,7 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
     }
 
     //region selectedIssue
-    private PropNullableBindable<T> selectedIssueProp =
+    private PropNullableBindable<SnapshotIssue> selectedIssueProp =
             newPropNullableBindable(null, this, "selectedIssue", f -> updateSelectedIssueUI());
 
     {
@@ -122,27 +122,27 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
 
 
     @Nullable
-    public T getSelectedIssue() {
+    public SnapshotIssue getSelectedIssue() {
         return selectedIssueProp.get();
     }
 
-    public void setSelectedIssue(@Nullable T value) {
+    public void setSelectedIssue(@Nullable SnapshotIssue value) {
         selectedIssueProp.set(value);
     }
 
-    public void bindSelectedIssueTo(PropNullable<T> prop) {
+    public void bindSelectedIssueTo(PropNullable<SnapshotIssue> prop) {
         selectedIssueProp.bindTo(prop);
     }
 
     private void updateSelectedIssueUI() {
         invokeLater(() -> {
-            T value = selectedIssueProp.get();
+            SnapshotIssue value = selectedIssueProp.get();
             issuesList.setSelectedValue(value, true);
         });
     }
 
     private void updateSelectedIssueProp() {
-        T value = issuesList.getSelectedValue();
+        SnapshotIssue value = issuesList.getSelectedValue();
         if (!Objects.equals(getSelectedIssue(), value)) {
             selectedIssueProp.set(value);
         }

@@ -160,7 +160,7 @@ class SnapshotReviewWidget implements Widget {
     private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget
             = expectedActualDifferenceImageView();
-    private final SnapshotIssuesVList<SnapshotIssue> snapshotIssuesVList = snapshotIssuesVList();
+    private final SnapshotIssuesVList snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
 
     //endregion
