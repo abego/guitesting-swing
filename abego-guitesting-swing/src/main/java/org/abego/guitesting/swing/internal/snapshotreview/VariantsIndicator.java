@@ -24,8 +24,8 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.internal.util.PropNullable;
-import org.abego.guitesting.swing.internal.util.PropNullableBindable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -34,7 +34,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
+import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;

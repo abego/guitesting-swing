@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.VarNullable;
 import org.abego.event.EventObserver;
@@ -34,7 +34,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static org.abego.guitesting.swing.internal.util.PropNullable.newPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.PropNullable.newPropNullable;
 
 public class PropNullableBindable<T> implements VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();

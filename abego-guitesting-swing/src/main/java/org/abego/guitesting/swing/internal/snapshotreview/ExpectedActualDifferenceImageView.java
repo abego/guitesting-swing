@@ -25,10 +25,10 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.Prop;
-import org.abego.guitesting.swing.internal.util.PropBindable;
-import org.abego.guitesting.swing.internal.util.PropNullable;
-import org.abego.guitesting.swing.internal.util.PropNullableBindable;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropBindable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -43,9 +43,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
-import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
-import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
-import static org.abego.guitesting.swing.internal.util.StackTraceElementUtil.printStackTraceOnlyOwnCode;
+import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;

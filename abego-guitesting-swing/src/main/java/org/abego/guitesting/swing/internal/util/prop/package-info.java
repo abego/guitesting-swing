@@ -22,45 +22,13 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+/**
+ * The implementation package of the "Snapshot Review" feature,
+ * not intended to be access directly by client code.
+ * <p>
+ * Stuff inside this package may change any time without prior notice.
+ */
+@NonNullByDefault
+package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropBindable;
-
-import javax.swing.JLabel;
-
-import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
-
-public final class JLabelBindable extends JLabel {
-
-    private PropBindable<String> textProp =
-            newPropBindable("", this, "text", f -> updateTextUI());
-
-    private JLabelBindable() {
-        addPropertyChangeListener("text", e -> updateTextProp());
-        updateTextUI();
-    }
-
-    public static JLabelBindable labelBindable() {
-        return new JLabelBindable();
-    }
-
-    public void bindTextTo(Prop<String> prop) {
-        textProp.bindTo(prop);
-    }
-
-    private void updateTextUI() {
-        invokeLater(() -> {
-            setText(textProp.get());
-        });
-    }
-
-    private void updateTextProp() {
-        String text = getText();
-        if (!(textProp.get().equals(text))) {
-            textProp.set(text);
-        }
-    }
-
-}
+import org.eclipse.jdt.annotation.NonNullByDefault;

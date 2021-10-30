@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
@@ -34,7 +34,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Consumer;
 
-import static org.abego.guitesting.swing.internal.util.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
 public class PropBindable<T> implements Var<T> {
     private final EventService eventService = EventServices.getDefault();

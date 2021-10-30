@@ -24,12 +24,14 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import javax.swing.Action;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropBindable;
+
 import javax.swing.JCheckBox;
 
 import static java.lang.Boolean.FALSE;
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
 
 public final class JCheckBoxBindable extends JCheckBox {
 

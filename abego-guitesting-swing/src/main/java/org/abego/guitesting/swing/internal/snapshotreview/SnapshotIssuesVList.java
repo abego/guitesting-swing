@@ -25,8 +25,8 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.PropNullable;
-import org.abego.guitesting.swing.internal.util.PropNullableBindable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -44,7 +44,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.Bordered.borderedWithTopLine;
-import static org.abego.guitesting.swing.internal.util.PropNullableBindable.newPropNullableBindable;
+import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;

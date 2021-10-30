@@ -22,13 +22,14 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.VarNullable;
 import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
+import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;

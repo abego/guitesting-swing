@@ -24,6 +24,11 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropBindable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
+
 public interface DependencyCollector {
     DependencyCollector DoNothing = new DependencyCollector() {
         @Override
