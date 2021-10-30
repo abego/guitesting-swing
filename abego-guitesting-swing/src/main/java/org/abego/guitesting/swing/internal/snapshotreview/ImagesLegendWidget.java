@@ -39,7 +39,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newProp
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
-class ImagesLegend implements Widget {
+class ImagesLegendWidget implements Widget {
 
     private static final int LEGEND_BORDER_SIZE = 2;
 
@@ -54,8 +54,8 @@ class ImagesLegend implements Widget {
     private Color actualBorderColor = Color.red;
     private Color differenceBorderColor = Color.black;
 
-    public static ImagesLegend imagesLegend() {
-        return new ImagesLegend();
+    public static ImagesLegendWidget imagesLegend() {
+        return new ImagesLegendWidget();
     }
 
     //region expectedImageIndex
@@ -111,7 +111,7 @@ class ImagesLegend implements Widget {
         return content;
     }
 
-    private ImagesLegend() {
+    private ImagesLegendWidget() {
         onExpectedImageIndexChanged();
         onExpectedBorderColorChanged();
         onActualBorderColorChanged();
