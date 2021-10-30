@@ -190,9 +190,6 @@ class ExpectedActualDifferenceImageView implements Widget {
         }
     }
 
-
-    // dependsOn (snapshotIssue != null ? (shrinkToFit ? content.visibleRect : null) : null)
-    // ? expectedImageIndex, expectedBorderColor, actualBorderColor,  differenceBorderColor: null
     private void updateLabelsForImages() {
         invokeLaterOnce(mustUpdateLabelsForImages, () -> {
             @Nullable SnapshotImages images = getSnapshotImages();
@@ -214,13 +211,11 @@ class ExpectedActualDifferenceImageView implements Widget {
         });
     }
 
-    // changes: label.icon, label.border
     private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
         label.setIcon(icon);
         label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
     }
 
-    // dependsOn: shrinkToFit ? content.visibleRect : null
     private @Nullable Dimension getImagesArea() {
         if (getShrinkToFit()) {
             Rectangle visibleRect = content.getVisibleRect();
@@ -232,7 +227,6 @@ class ExpectedActualDifferenceImageView implements Widget {
         }
     }
 
-    // dependsOn: snapshotIssue != null ? (shrinkToFit ? content.visibleRect : null) : null
     private @Nullable SnapshotImages getSnapshotImages() {
         @Nullable SnapshotIssue issue = getSnapshotIssue();
         if (issue == null) {
