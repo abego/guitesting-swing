@@ -29,7 +29,6 @@ import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
-import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
