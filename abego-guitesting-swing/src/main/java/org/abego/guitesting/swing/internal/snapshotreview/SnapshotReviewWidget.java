@@ -49,8 +49,8 @@ import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegend.imagesLegend;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
-import static org.abego.guitesting.swing.internal.snapshotreview.VariantsIndicator.variantsIndicator;
-import static org.abego.guitesting.swing.internal.snapshotreview.VariantsInfoImpl.variantsInfo;
+import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicator.variantsIndicator;
+import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
@@ -77,7 +77,7 @@ class SnapshotReviewWidget implements Widget {
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<Integer> expectedImageIndexProp = newProp(0);
     private final Prop<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropNullable<VariantsInfo> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
+    private final PropNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
 
     //endregion
     //region Actions
@@ -98,7 +98,7 @@ class SnapshotReviewWidget implements Widget {
     private final ImagesLegend imagesLegend = imagesLegend();
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxUpdateable();
-    private final VariantsIndicator variantsIndicator = variantsIndicator();
+    private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
             = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<SnapshotIssue> snapshotIssuesVList = snapshotIssuesVList();
@@ -144,7 +144,7 @@ class SnapshotReviewWidget implements Widget {
     //region Properties
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
-        VariantsInfo info = getVariantsInfo(dependencyCollector);
+        SnapshotVariant info = getVariantsInfo(dependencyCollector);
         if (info == null) {
             return " ";
         }
@@ -189,7 +189,7 @@ class SnapshotReviewWidget implements Widget {
     }
 
     @Nullable
-    private VariantsInfo getVariantsInfo(DependencyCollector dependencyCollector) {
+    private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
         SnapshotIssue issue = getSelectedIssue(dependencyCollector);
         if (issue == null) {
             return null;
@@ -273,7 +273,7 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
         expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
         imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
-        variantsIndicator.bindVariantsInfoTo(variantsInfoProp);
+        snapshotVariantsIndicator.bindVariantsInfoTo(variantsInfoProp);
     }
 
     //endregion
@@ -310,7 +310,7 @@ class SnapshotReviewWidget implements Widget {
                                 shrinkToFitCheckBox,
                                 separatorBar()))
                         .component())
-                .left(variantsIndicator.getContent())
+                .left(snapshotVariantsIndicator.getContent())
                 .center(scrollingNoBorder(expectedActualDifferenceImageView.getContent()))
                 .bottom(snapshotIssuesVList.getContent());
     }

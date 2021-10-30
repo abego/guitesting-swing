@@ -27,11 +27,11 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 
-class VariantsInfoImpl implements VariantsInfo {
+class SnapshotVariantImpl implements SnapshotVariant {
     private final SnapshotIssue issue;
     private final Seq<SnapshotIssue> variants;
 
-    private VariantsInfoImpl(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
+    private SnapshotVariantImpl(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
         this.issue = issue;
         this.variants = variants;
     }
@@ -51,7 +51,7 @@ class VariantsInfoImpl implements VariantsInfo {
         return variants.indexOf(issue);
     }
 
-    public static  VariantsInfo variantsInfo(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
-        return new VariantsInfoImpl(issue, variants);
+    public static SnapshotVariant variantsInfo(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
+        return new SnapshotVariantImpl(issue, variants);
     }
 }

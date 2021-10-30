@@ -26,7 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 
-interface VariantsInfo {
+interface SnapshotVariant {
     SnapshotIssue getIssue();
 
     int getVariantsCount();

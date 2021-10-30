@@ -40,13 +40,13 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GA
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
-class VariantsIndicator implements Widget {
+class SnapshotVariantsIndicator implements Widget {
     private static final int BULLET_SIZE = 24;
     private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
 
     private final JComponent content;
 
-    private VariantsIndicator() {
+    private SnapshotVariantsIndicator() {
         content = flowLeft(DEFAULT_FLOW_GAP, 0);
         // make the panel so small only one bullet fits into the row,
         // so the bullets are stacked vertically
@@ -55,8 +55,8 @@ class VariantsIndicator implements Widget {
         content.setBackground(Color.white);
     }
 
-    public static VariantsIndicator variantsIndicator() {
-        return new VariantsIndicator();
+    public static SnapshotVariantsIndicator variantsIndicator() {
+        return new SnapshotVariantsIndicator();
     }
 
     @Override
@@ -65,19 +65,19 @@ class VariantsIndicator implements Widget {
     }
 
     //region variantsInfo
-    private final PropNullableBindable<VariantsInfo> variantsInfoProp =
+    private final PropNullableBindable<SnapshotVariant> variantsInfoProp =
             newPropNullableBindable(null, this, "variantsInfo", f -> updateContent());
 
     @Nullable
-    public VariantsInfo getVariantsInfo() {
+    public SnapshotVariant getVariantsInfo() {
         return variantsInfoProp.get();
     }
 
-    public void setVariantsInfo(@Nullable VariantsInfo value) {
+    public void setVariantsInfo(@Nullable SnapshotVariant value) {
         variantsInfoProp.set(value);
     }
 
-    public void bindVariantsInfoTo(PropNullable<VariantsInfo> prop) {
+    public void bindVariantsInfoTo(PropNullable<SnapshotVariant> prop) {
         variantsInfoProp.bindTo(prop);
     }
 
@@ -85,7 +85,7 @@ class VariantsIndicator implements Widget {
     private void updateContent() {
         invokeLater(() -> {
             content.removeAll();
-            @Nullable VariantsInfo info = getVariantsInfo();
+            @Nullable SnapshotVariant info = getVariantsInfo();
             if (info != null) {
                 int n = info.getVariantsCount();
                 int sel = info.getVariantsIndex();
