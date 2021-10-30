@@ -30,7 +30,7 @@ import java.net.URL;
 
 import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
-public class Icons {
+class Icons {
     public static ImageIcon overwriteIcon() {
         return iconFromResource("overwrite2-16.png"); //NON-NLS
     }
