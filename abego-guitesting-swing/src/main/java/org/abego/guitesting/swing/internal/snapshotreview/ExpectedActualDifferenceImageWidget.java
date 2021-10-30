@@ -54,7 +54,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
-class ExpectedActualDifferenceImageView implements Widget {
+class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
     //region shrinkToFit
@@ -170,11 +170,11 @@ class ExpectedActualDifferenceImageView implements Widget {
 
     //endregion
     //region Construction
-    public static ExpectedActualDifferenceImageView expectedActualDifferenceImageView() {
-        return new ExpectedActualDifferenceImageView();
+    public static ExpectedActualDifferenceImageWidget expectedActualDifferenceImageView() {
+        return new ExpectedActualDifferenceImageWidget();
     }
 
-    private ExpectedActualDifferenceImageView() {
+    private ExpectedActualDifferenceImageWidget() {
         styleComponents();
         layoutComponents();
         initBinding();

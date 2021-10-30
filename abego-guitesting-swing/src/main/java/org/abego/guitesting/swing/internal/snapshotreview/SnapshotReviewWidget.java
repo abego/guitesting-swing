@@ -46,7 +46,7 @@ import java.awt.Color;
 import static java.lang.Boolean.TRUE;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
-import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageView.expectedActualDifferenceImageView;
+import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegend.imagesLegend;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicator.variantsIndicator;
@@ -158,7 +158,7 @@ class SnapshotReviewWidget implements Widget {
     private final JButton rotateButton = toolbarButton();
     private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxUpdateable();
     private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
-    private final ExpectedActualDifferenceImageView expectedActualDifferenceImageView
+    private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget
             = expectedActualDifferenceImageView();
     private final SnapshotIssuesVList<SnapshotIssue> snapshotIssuesVList = snapshotIssuesVList();
     private final JComponent content = new JPanel();
@@ -264,9 +264,9 @@ class SnapshotReviewWidget implements Widget {
         imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
         imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
         imagesLegend.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
-        expectedActualDifferenceImageView.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
-        expectedActualDifferenceImageView.setActualBorderColor(ACTUAL_BORDER_COLOR);
-        expectedActualDifferenceImageView.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
+        expectedActualDifferenceImageWidget.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
+        expectedActualDifferenceImageWidget.setActualBorderColor(ACTUAL_BORDER_COLOR);
+        expectedActualDifferenceImageWidget.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
 
         shrinkToFitCheckBox.setText("Shrink to Fit");
     }
@@ -289,7 +289,7 @@ class SnapshotReviewWidget implements Widget {
                                 separatorBar()))
                         .component())
                 .left(snapshotVariantsIndicator.getContent())
-                .center(scrollingNoBorder(expectedActualDifferenceImageView.getContent()))
+                .center(scrollingNoBorder(expectedActualDifferenceImageWidget.getContent()))
                 .bottom(snapshotIssuesVList.getContent());
     }
 
@@ -306,9 +306,9 @@ class SnapshotReviewWidget implements Widget {
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
         snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
-        expectedActualDifferenceImageView.bindSnapshotIssueTo(selectedIssue);
-        expectedActualDifferenceImageView.bindShrinkToFitTo(shrinkToFitProp);
-        expectedActualDifferenceImageView.bindExpectedImageIndexTo(expectedImageIndexProp);
+        expectedActualDifferenceImageWidget.bindSnapshotIssueTo(selectedIssue);
+        expectedActualDifferenceImageWidget.bindShrinkToFitTo(shrinkToFitProp);
+        expectedActualDifferenceImageWidget.bindExpectedImageIndexTo(expectedImageIndexProp);
         imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
         snapshotVariantsIndicator.bindVariantsInfoTo(variantsInfoProp);
     }
