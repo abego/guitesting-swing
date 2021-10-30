@@ -48,7 +48,7 @@ import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSup
 
 final class SnapshotIssueSupport {
     /**
-     * The {@link Pattern} to match the file name of an "expectedImage".
+     * The {@link Pattern} to match the parts of an "expectedImage" file name.
      * <p>
      * Groups
      * <ul>
@@ -56,6 +56,11 @@ final class SnapshotIssueSupport {
      *     <li>2 - fileName</li>
      *     <li>3 - index</li>
      * </ul>
+     * The package path only contains lower case letters (and '.' and '\') and
+     * ends with a '.'. The first capital letter (belonging to the classname)
+     * starts the filename which ends before the "-expectedImage@". The integer
+     * behind that is the index. It follows the file extension that must be
+     * ".png".
      **/
     private final static Pattern EXPECTED_IMAGE_FILE_NAME_PATTERN =
             Pattern.compile("([-a-z.\\\\]+)([^@]*?)-expectedImage@(\\d+)\\.png");

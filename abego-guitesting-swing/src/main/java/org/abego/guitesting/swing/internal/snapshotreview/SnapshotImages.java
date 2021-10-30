@@ -29,36 +29,38 @@ import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.ImageIcon;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import static org.abego.guitesting.swing.internal.util.DimensionUtil.shrinkToFitFactor;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 final class SnapshotImages {
+    private static @Nullable SnapshotImages cachedSnapshotImages;
+
     private final SnapshotIssue issue;
     private final @Nullable Dimension area;
-    private final ImageIcon rawExpectedImage;
-    private final ImageIcon rawActualImage;
-    private final ImageIcon rawDifferenceImage;
     private final ImageIcon expectedImage;
     private final ImageIcon actualImage;
     private final ImageIcon differenceImage;
-    SnapshotImages(
+
+    private SnapshotImages(
             SnapshotIssue issue,
             @Nullable Dimension area) {
         this.issue = issue;
         this.area = area;
 
-        rawExpectedImage = icon(toFile(issue.getExpectedImage()));
-        rawActualImage = icon(toFile(issue.getActualImage()));
-        rawDifferenceImage = icon(toFile(issue.getDifferenceImage()));
+        ImageIcon rawExpectedImage = icon(toFile(issue.getExpectedImage()));
+        ImageIcon rawActualImage = icon(toFile(issue.getActualImage()));
+        ImageIcon rawDifferenceImage = icon(toFile(issue.getDifferenceImage()));
 
         double scaleFactor = 1.0;
         if (area != null) {
-            scaleFactor = getShrinkToFitScaleFactor(area);
+            Dimension imagesTotalSize = totalSize(
+                    rawExpectedImage, rawActualImage, rawDifferenceImage);
+            scaleFactor = shrinkToFitFactor(imagesTotalSize, area);
         }
         if (scaleFactor != 1.0) {
             expectedImage = scaledImageIcon(rawExpectedImage, scaleFactor);
@@ -71,11 +73,16 @@ final class SnapshotImages {
         }
     }
 
-    private static ImageIcon scaledImageIcon(ImageIcon icon, double scaleFactor) {
-        Image image = icon.getImage();
-        int w = icon.getIconWidth();
-        return new ImageIcon(
-                image.getScaledInstance((int) (w * scaleFactor), -1, Image.SCALE_SMOOTH));
+    public static SnapshotImages snapshotImages(
+            SnapshotIssue issue, @Nullable Dimension area) {
+        @Nullable SnapshotImages images = cachedSnapshotImages;
+        if (images != null
+                && Objects.equals(images.getIssue(), issue)
+                && Objects.equals(images.getArea(), area)) {
+            return images;
+        }
+        cachedSnapshotImages = new SnapshotImages(issue, area);
+        return cachedSnapshotImages;
     }
 
     @Nullable
@@ -95,28 +102,25 @@ final class SnapshotImages {
         return differenceImage;
     }
 
+    private static ImageIcon scaledImageIcon(ImageIcon icon, double scaleFactor) {
+        Image image = icon.getImage();
+        int w = icon.getIconWidth();
+        return new ImageIcon(
+                image.getScaledInstance((int) (w * scaleFactor), -1, Image.SCALE_SMOOTH));
+    }
+
     /**
-     * Returns the factor the images must be scaled down to fit in the given
-     * rectangle, or {@code 1.0} when the images fit into the rectangle
-     * without scaling.
-     *
-     * <p>The images are assumed to be place left to right and top aligned.</p>
+     * Returns the size the imageIcons occupy when placed from left to right and
+     * top aligned.
      */
-    private double getShrinkToFitScaleFactor(Dimension area) {
+    private static Dimension totalSize(ImageIcon... imageIcons) {
         int totalWidth = 0;
         int maxHeight = 0;
-        for (ImageIcon image : new ImageIcon[]{rawExpectedImage, rawActualImage, rawDifferenceImage}) {
+        for (ImageIcon image : imageIcons) {
             totalWidth += image.getIconWidth();
             maxHeight = max(maxHeight, image.getIconHeight());
         }
-        double scaleFactor = 1.0;
-        if (area.getHeight() > 0 && maxHeight > area.getHeight()) {
-            scaleFactor = area.getHeight() / maxHeight;
-        }
-        if (area.getWidth() > 0 && totalWidth > area.getWidth()) {
-            scaleFactor = min(scaleFactor,  area.getWidth() / totalWidth);
-        }
-        return scaleFactor;
+        return new Dimension(totalWidth, maxHeight);
     }
 
     public SnapshotIssue getIssue() {

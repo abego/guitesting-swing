@@ -24,27 +24,21 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import javax.swing.Action;
-import javax.swing.JCheckBox;
-import java.util.function.Supplier;
+import org.abego.commons.seq.Seq;
+import org.abego.commons.seq.SeqUtil;
 
-public final class JCheckBoxUpdateable extends JCheckBox implements Updateable {
-    private final Supplier<Boolean> selectedCondition;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
-    private JCheckBoxUpdateable(Supplier<Boolean> selectedCondition, Action action) {
-        setAction(action);
-        this.selectedCondition = selectedCondition;
-        update();
-    }
+public final class SeqUtil2 {
 
-    public static JCheckBoxUpdateable newJCheckBoxWithUpdate(Supplier<Boolean> selectedCondition, Action action) {
-        return new JCheckBoxUpdateable(selectedCondition, action);
-    }
-
-    public void update() {
-        boolean newValue = selectedCondition.get();
-        if (isSelected() != newValue) {
-            setSelected(newValue);
+    //TODO: move to Seq/Utils
+    public static <T> Seq<T> newSeq(Enumeration<T> enumeration) {
+        List<T> list = new ArrayList<>();
+        while (enumeration.hasMoreElements()) {
+            list.add(enumeration.nextElement());
         }
+        return SeqUtil.newSeq(list);
     }
 }

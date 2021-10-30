@@ -32,42 +32,47 @@ import org.abego.guitesting.swing.SnapshotReview;
 
 import javax.swing.JFrame;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static javax.swing.SwingUtilities.invokeLater;
 
 public class SnapshotReviewImpl implements SnapshotReview {
 
-	private final GT gt;
+    private final Supplier<Seq<SnapshotIssue>> issuesSupplier;
 
-	private SnapshotReviewImpl(GT gt) {
-		this.gt = gt;
-	}
+    private SnapshotReviewImpl(Supplier<Seq<SnapshotIssue>> issuesSupplier) {
+        this.issuesSupplier = issuesSupplier;
+    }
 
-	public static void main(String[] args) {
-		GT gt = GuiTesting.newGT();
+    public static void main(String[] args) {
+        GT gt = GuiTesting.newGT();
 
-		gt.newSnapshotReview().showIssues();
-	}
+        gt.newSnapshotReview().showIssues();
+    }
 
-	public static SnapshotReview newSnapshotReview(GT gt) {
-		return new SnapshotReviewImpl(gt);
-	}
+    public static SnapshotReview newSnapshotReview(
+            Supplier<Seq<SnapshotIssue>> issuesSupplier) {
+        return new SnapshotReviewImpl(issuesSupplier);
+    }
 
-	@Override
-	public void showIssues(Consumer<JFrame> framePreShowCode) {
+    @Override
+    public void showIssues(Consumer<JFrame> framePreShowCode) {
 
-		Seq<? extends SnapshotIssue> issues = gt.getSnapshotIssues();
+        Seq<SnapshotIssue> issues = getSnapshotIssues();
 
-		invokeLater(() -> {
-			SnapshotReviewPane pane = new SnapshotReviewPane(issues);
-			//noinspection StringConcatenation
-			JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
-			frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
-			frame.setContentPane(pane);
-			framePreShowCode.accept(frame);
-			frame.setVisible(true);
-		});
-	}
+        invokeLater(() -> {
+            SnapshotReviewWidget widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
+            //noinspection StringConcatenation
+            JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
+            frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
+            frame.setContentPane(widget.getComponent());
+            framePreShowCode.accept(frame);
+            frame.setVisible(true);
+        });
+    }
 
+    private Seq<SnapshotIssue> getSnapshotIssues() {
+        return issuesSupplier.get();
+    }
 
 }

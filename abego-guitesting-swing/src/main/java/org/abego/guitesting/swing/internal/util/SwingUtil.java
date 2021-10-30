@@ -38,9 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,11 +50,12 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
-import static org.abego.guitesting.swing.internal.util.BorderedPanel.newBorderedPanel;
 import static org.abego.guitesting.swing.internal.util.ListCellRendererForTextProvider.newListCellRendererForTextProvider;
 
 public final class SwingUtil {
@@ -179,40 +178,12 @@ public final class SwingUtil {
     //endregion
 
     //region JButton related
-    public static JButton button(Action action, Consumer<JButton> initCode) {
-        JButton button = new JButton(action);
-        handleAccelerator(button, action);
-        initCode.accept(button);
-        return button;
-    }
-
-    public static JButton iconButton(Action action) {
-        return button(action, b -> {
-            b.setText(null);
-            b.setBorder(new EmptyBorder(3, 3, 3, 3));
-            b.setBackground(LIGHTER_GRAY);
-            b.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    b.setOpaque(true);
-                    b.repaint();
-                }
-
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    b.setOpaque(false);
-                    b.repaint();
-                }
-            });
-        });
+    public static JButton toolbarButton() {
+        return JToolbarButton.newJToolbarButton();
     }
     //endregion
 
     //region JList related
-    public static <T> JList<T> vlist(ListModel<T> listModel, Consumer<JList<T>> initCode) {
-        JList<T> list = new JList<>(listModel);
-        initCode.accept(list);
-        return list;
-    }
-
     public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
         DefaultListModel<T> listModel = new DefaultListModel<>();
         for (T i : items) {
@@ -233,11 +204,28 @@ public final class SwingUtil {
             list.setSelectedIndex(newIndex);
         }
     }
+
+    public static void ensureSelectionIsVisible(JList<?> list) {
+        int selectedIndex = list.getSelectedIndex();
+        if (selectedIndex >= 0) {
+            list.ensureIndexIsVisible(selectedIndex);
+        }
+    }
     //endregion
 
-    //region JScollPane related
+    //region JScrollPane related
+    public static JScrollPane scrolling(JComponent component, Consumer<JScrollPane> initCode) {
+        JScrollPane jScrollPane = new JScrollPane(component);
+        initCode.accept(jScrollPane);
+        return jScrollPane;
+    }
+
     public static JScrollPane scrolling(JComponent component) {
-        return new JScrollPane(component);
+        return scrolling(component, c -> {});
+    }
+
+    public static JScrollPane scrollingNoBorder(JComponent component) {
+        return scrolling(component, c -> c.setBorder(null));
     }
     //endregion
 
@@ -253,26 +241,23 @@ public final class SwingUtil {
     //endregion
 
     //region Layout related
-    public static BorderedPanel bordered() {
-        return newBorderedPanel();
-    }
-
-    public static JComponent flow(int align, int hgap, int vgap, Consumer<JPanel> initCode, JComponent... components) {
+    public static JComponent flow(int align, int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
+        result.setOpaque(false);
         initCode.accept(result);
         addAll(result, components);
         return result;
     }
 
-    public static JComponent flowLeft(int hgap, int vgap, Consumer<JPanel> initCode, JComponent... components) {
+    public static JComponent flowLeft(int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         return flow(FlowLayout.LEADING, hgap, vgap, initCode, components);
     }
 
-    public static JComponent flowLeft(int hgap, int vgap, JComponent... components) {
+    public static JComponent flowLeft(int hgap, int vgap, Component... components) {
         return flowLeft(hgap, vgap, p -> {}, components);
     }
 
-    public static JComponent flowLeft(Consumer<JPanel> initCode, JComponent... components) {
+    public static JComponent flowLeft(Consumer<JComponent> initCode, Component... components) {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, initCode, components);
     }
 
@@ -280,10 +265,26 @@ public final class SwingUtil {
         return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
     }
 
-    public static JComponent flowLeftWithBottomLine(JComponent... components) {
-        return flowLeft(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP,
+    public static JComponent flowLeftWithBottomLine(int hgap, int vgap, Component... components) {
+        return flowLeft(hgap, vgap,
                 l -> l.setBorder(new MatteBorder(0, 0, 1, 0, LIGHTER_GRAY)),
                 components);
+    }
+
+    public static JComponent flowLeftWithBottomLine(Component... components) {
+        return flowLeftWithBottomLine(DEFAULT_FLOW_GAP, DEFAULT_FLOW_GAP, components);
+    }
+
+    //endregion
+
+    //region invokeLater...
+    public static void invokeLaterOnce(AtomicBoolean mustInvoke, Runnable runnable) {
+        mustInvoke.set(true);
+        invokeLater(() -> {
+            if (mustInvoke.getAndSet(false)) {
+                runnable.run();
+            }
+        });
     }
     //endregion
 

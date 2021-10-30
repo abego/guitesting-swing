@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal;
+package org.abego.guitesting.swing.internal.snapshotreview;
 
 
 import javax.swing.ImageIcon;

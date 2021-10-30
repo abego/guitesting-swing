@@ -436,8 +436,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     @Override
-    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
-        return newSnapshotIssueSupport(getSnapshotReportDirectory(),
+    public Seq<SnapshotIssue> getSnapshotIssues() {
+        return (Seq<SnapshotIssue>)newSnapshotIssueSupport(getSnapshotReportDirectory(),
                 new File(getTestResourcesDirectoryPath())).findSnapshotIssues();
     }
 

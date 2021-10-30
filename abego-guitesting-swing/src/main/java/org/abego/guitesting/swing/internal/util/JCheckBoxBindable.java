@@ -24,24 +24,48 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.commons.lang.exception.MustNotInstantiateException;
-
 import javax.swing.Action;
-import java.util.function.Supplier;
+import javax.swing.JCheckBox;
 
-import static org.abego.guitesting.swing.internal.util.JCheckBoxUpdateable.newJCheckBoxWithUpdate;
+import static java.lang.Boolean.FALSE;
+import static javax.swing.SwingUtilities.invokeLater;
+import static org.abego.guitesting.swing.internal.util.PropBindable.newPropBindable;
 
-public final class UpdateableSwingUtil {
-    UpdateableSwingUtil() {
-        throw new MustNotInstantiateException();
+public final class JCheckBoxBindable extends JCheckBox {
+
+    private PropBindable<Boolean> selectedProp =
+            newPropBindable(FALSE, this, "selected", f -> updateSelectedUI());
+
+    private JCheckBoxBindable() {
+        addItemListener(i -> updateSelectedProp());
+        updateSelectedUI();
     }
 
-    public static JCheckBoxUpdateable checkBox(
-            Supplier<Boolean> selectedCondition, Action action) {
-
-        JCheckBoxUpdateable checkBox =
-                newJCheckBoxWithUpdate(selectedCondition, action);
-        SwingUtil.handleAccelerator(checkBox, action);
-        return checkBox;
+    public static JCheckBoxBindable checkBoxUpdateable() {
+        return new JCheckBoxBindable();
     }
+
+    @Override
+    public void setAction(Action action) {
+        super.setAction(action);
+        SwingUtil.handleAccelerator(this, action);
+    }
+
+    public void bindSelectedTo(Prop<Boolean> prop) {
+        selectedProp.bindTo(prop);
+    }
+
+    private void updateSelectedUI() {
+        invokeLater(() -> {
+            setSelected(selectedProp.get());
+        });
+    }
+
+    private void updateSelectedProp() {
+        boolean isSelected = isSelected();
+        if (selectedProp.get() != isSelected) {
+            selectedProp.set(isSelected);
+        }
+    }
+
 }
