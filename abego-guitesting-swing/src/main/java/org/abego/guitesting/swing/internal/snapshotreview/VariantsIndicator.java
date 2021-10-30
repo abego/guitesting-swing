@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -59,7 +60,7 @@ class VariantsIndicator implements Widget {
     }
 
     @Override
-    public JComponent getComponent() {
+    public JComponent getContent() {
         return content;
     }
 

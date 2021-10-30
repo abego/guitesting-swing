@@ -65,7 +65,7 @@ public class SnapshotReviewImpl implements SnapshotReview {
             //noinspection StringConcatenation
             JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
             frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
-            frame.setContentPane(widget.getComponent());
+            frame.setContentPane(widget.getContent());
             framePreShowCode.accept(frame);
             frame.setVisible(true);
         });

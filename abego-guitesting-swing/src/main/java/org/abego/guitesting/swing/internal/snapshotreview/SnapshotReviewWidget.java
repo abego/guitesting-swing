@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
+import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
@@ -203,7 +204,7 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Widget related
     @Override
-    public JComponent getComponent() {
+    public JComponent getContent() {
         return content;
     }
 
@@ -303,15 +304,15 @@ class SnapshotReviewWidget implements Widget {
                                 addAlternativeButton,
                                 ignoreButton,
                                 separatorBar(),
-                                imagesLegend.getComponent(),
+                                imagesLegend.getContent(),
                                 rotateButton,
                                 separatorBar(),
                                 shrinkToFitCheckBox,
                                 separatorBar()))
                         .component())
-                .left(variantsIndicator.getComponent())
-                .center(scrollingNoBorder(expectedActualDifferenceImageView.getComponent()))
-                .bottom(snapshotIssuesVList.getComponent());
+                .left(variantsIndicator.getContent())
+                .center(scrollingNoBorder(expectedActualDifferenceImageView.getContent()))
+                .bottom(snapshotIssuesVList.getContent());
     }
 
     //endregion

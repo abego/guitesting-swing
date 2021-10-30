@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 
@@ -106,7 +107,7 @@ class ImagesLegend implements Widget {
         onDifferenceBorderColorChanged();
     }
 
-    public JComponent getComponent() {
+    public JComponent getContent() {
         return content;
     }
 

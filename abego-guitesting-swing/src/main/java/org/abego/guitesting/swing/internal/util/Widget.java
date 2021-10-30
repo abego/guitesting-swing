@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.snapshotreview;
+package org.abego.guitesting.swing.internal.util;
 
 import javax.swing.JComponent;
 
-interface Widget {
-    JComponent getComponent();
+public interface Widget {
+    JComponent getContent();
 }

@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
@@ -148,7 +149,7 @@ class SnapshotIssuesVList<T extends SnapshotIssue> implements Widget {
     }
     //endregion
     @Override
-    public JComponent getComponent() {
+    public JComponent getContent() {
         return content;
     }
 

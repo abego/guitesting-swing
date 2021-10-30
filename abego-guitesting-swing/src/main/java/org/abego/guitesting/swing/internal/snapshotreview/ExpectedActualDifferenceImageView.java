@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -175,7 +176,7 @@ class ExpectedActualDifferenceImageView implements Widget {
     //endregion
 
     @Override
-    public JComponent getComponent() {
+    public JComponent getContent() {
         return content;
     }
 
