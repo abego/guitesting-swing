@@ -24,31 +24,24 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
-import org.abego.event.EventService;
-import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
-class PropBindable<T> implements IPropBindable<T> {
-    private final EventService eventService = EventServices.getDefault();
-    private final @Nullable Object otherSource;
-    private final @Nullable String otherPropertyName;
+class PropBindable<T> extends PropBase<T> implements IPropBindable<T> {
     private IProp<T> prop;
     private EventObserver<PropertyChanged> observer;
 
     private PropBindable(@NonNull T initialValue,
                          @Nullable Object otherSource,
                          @Nullable String otherPropertyName) {
+        super(initialValue,otherSource,otherPropertyName);
         prop = newProp(initialValue);
-        this.otherSource = otherSource;
-        this.otherPropertyName = otherPropertyName;
         observer = eventService.addPropertyObserver(
-                prop, e -> onValueChanged(get()));
+                prop, e -> postPropertyChanged());
     }
 
     public static <T> PropBindable<T> newPropBindable(
@@ -68,12 +61,9 @@ class PropBindable<T> implements IPropBindable<T> {
         prop.set(value);
     }
 
-    /**
-     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
-     */
-    public void runDependingCode(Runnable code) {
-        code.run();
-        eventService.addPropertyObserver(this, "value", e -> code.run());
+    @Override
+    public boolean hasValue() {
+        return prop.hasValue();
     }
 
     public void bindTo(IProp<T> sourceOfTruth) {
@@ -83,18 +73,9 @@ class PropBindable<T> implements IPropBindable<T> {
         prop = sourceOfTruth;
 
         observer = eventService.addPropertyObserver(prop,
-                e -> onValueChanged(get()));
+                e -> postPropertyChanged());
         if (!oldValue.equals(get())) {
-            onValueChanged(get());
+            postPropertyChanged();
         }
     }
-
-    private void onValueChanged(T newValue) {
-        // when the source of truth changed also this object's value changed
-        eventService.postPropertyChanged(this, "value"); //NON-NLS
-        if (otherSource != null && otherPropertyName != null) {
-            eventService.postPropertyChanged(otherSource, otherPropertyName);
-        }
-    }
-
 }
