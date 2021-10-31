@@ -72,7 +72,6 @@ class SnapshotReviewWidget implements Widget {
 
     //region State/Model
     private final DefaultListModel<SnapshotIssue> remainingIssues;
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
@@ -101,14 +100,6 @@ class SnapshotReviewWidget implements Widget {
 
     private void setExpectedImageIndex(Integer value) {
         expectedImageIndexProp.set(value);
-    }
-
-    private boolean getShrinkToFit() {
-        return shrinkToFitProp.get();
-    }
-
-    private void setShrinkToFit(boolean value) {
-        shrinkToFitProp.set(value);
     }
 
     @Nullable
@@ -274,13 +265,13 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImageWidget.setActualBorderColor(ACTUAL_BORDER_COLOR);
         expectedActualDifferenceImageWidget.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
 
-        shrinkToFitCheckBox.setText("Shrink to Fit");
+        shrinkToFitCheckBox.setText("Shrink to Fit"); //NON-NLS
 
         snapshotIssuesVList.setCellTextProvider(SnapshotIssue.class, SnapshotReviewWidget::labelWithLastPartFirst);
         snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
-        snapshotIssuesVList.setTitle("Issues:");
-        snapshotIssuesVList.setPreviousItemText("Previous issue");
-        snapshotIssuesVList.setNextItemText("Next issue");
+        snapshotIssuesVList.setTitle("Issues:"); //NON-NLS
+        snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
+        snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
     }
 
     //endregion
