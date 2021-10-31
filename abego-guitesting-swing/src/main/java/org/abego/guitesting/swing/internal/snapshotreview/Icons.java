@@ -43,6 +43,7 @@ class Icons {
         return iconFromResource("red-x-16.png"); //NON-NLS
     }
 
+    @SuppressWarnings("unused")
     public static ImageIcon rotateLeftIcon() {
         return iconFromResource("rotate-left-16.png"); //NON-NLS
     }
@@ -54,6 +55,7 @@ class Icons {
     private static ImageIcon iconFromResource(String name) {
         URL resource = Icons.class.getResource(name);
         if (resource == null) {
+            //noinspection DuplicateStringLiteralInspection
             throw new IllegalArgumentException(
                     String.format("Image not found: %s", name)); //NON-NLS
         }
