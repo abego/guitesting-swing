@@ -51,6 +51,7 @@ class ImagesLegendWidget implements Widget {
         return expectedImageIndexProp.get();
     }
 
+    @SuppressWarnings("unused")
     public void setExpectedImageIndex(Integer value) {
         expectedImageIndexProp.set(value);
     }
