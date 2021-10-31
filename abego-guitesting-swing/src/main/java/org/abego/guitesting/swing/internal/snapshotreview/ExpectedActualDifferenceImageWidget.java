@@ -232,22 +232,22 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Layout related
     private void layoutComponents() {
         content.setLayout(new FlowLayout(FlowLayout.LEADING));
-        addAll(content,labelsForImages);
+        addAll(content, labelsForImages);
     }
+
     //endregion
     //region Binding related
     private final AtomicBoolean mustUpdateLabelsForImages = new AtomicBoolean();
 
     private void initBinding() {
         onComponentResized(content, e -> onContentResized());
-        EventService eventService = EventServices.getDefault();
-        eventService.addPropertyObserver(shrinkToFitProp, e->updateLabelsForImages());
-        eventService.addPropertyObserver(snapshotIssueProp, e->updateLabelsForImages());
-        eventService.addPropertyObserver(expectedImageIndexProp, e->updateLabelsForImages());
-        eventService.addPropertyObserver(expectedBorderColorProp, e->updateLabelsForImages());
-        eventService.addPropertyObserver(actualBorderColorProp, e->updateLabelsForImages());
-        eventService.addPropertyObserver(differenceBorderColorProp, e->updateLabelsForImages());
 
+        shrinkToFitProp.runDependingCode(this::updateLabelsForImages);
+        snapshotIssueProp.runDependingCode(this::updateLabelsForImages);
+        expectedImageIndexProp.runDependingCode(this::updateLabelsForImages);
+        expectedBorderColorProp.runDependingCode(this::updateLabelsForImages);
+        actualBorderColorProp.runDependingCode(this::updateLabelsForImages);
+        differenceBorderColorProp.runDependingCode(this::updateLabelsForImages);
     }
 
     private void onContentResized() {

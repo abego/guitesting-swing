@@ -60,55 +60,51 @@ class PropServiceDefault implements PropService {
         return new PropServiceDefault(eventService);
     }
 
-    public static PropService newPropService() {
-        return newPropService(EventServices.getDefault());
-    }
-
     @Override
-    public  <T> Prop<T> newProp(T value) {
+    public <T> Prop<T> newProp(T value) {
         return newPropField(eventService, value, null, null);
     }
 
     @Override
-    public  <T> Prop<T> newProp(
+    public <T> Prop<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
         return newPropField(eventService, value, otherSource, otherPropertyName);
     }
 
     @Override
-    public  <T> PropNullable<T> newPropNullable() {
+    public <T> PropNullable<T> newPropNullable() {
         return PropFieldNullable.newPropFieldNullable(eventService, null);
     }
 
     @Override
-    public  <T> PropNullable<T> newPropNullable(T value) {
+    public <T> PropNullable<T> newPropNullable(T value) {
         return PropFieldNullable.newPropFieldNullable(eventService, value);
     }
 
     @Override
-    public  <T> PropNullable<T> newPropNullable(
+    public <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName) {
         return PropFieldNullable.newPropFieldNullable(eventService, value, otherSource, otherPropertyName);
     }
 
     @Override
-    public  <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
+    public <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
         return PropComputedImpl.newPropComputed(eventService, valueComputation);
     }
 
     @Override
-    public  <T> PropComputed<T> newPropComputed(
+    public <T> PropComputed<T> newPropComputed(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return PropComputedImpl.newPropComputed(eventService, valueComputation, otherSource, otherPropertyName);
     }
 
     @Override
-    public  <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
+    public <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
         return PropComputedImpl.newPropComputed(eventService, valueComputation);
     }
 
     @Override
-    public  <T> PropComputedNullable<T> newPropComputedNullable(
+    public <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return PropComputedImpl.newPropComputed(eventService, valueComputation, otherSource, otherPropertyName);
     }
