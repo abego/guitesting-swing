@@ -50,7 +50,6 @@ import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
@@ -62,7 +61,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable
 public final class VList<T> implements Widget {
 
     //region State/Model
-    //region listModel
+    //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
     private final Prop<ListModel<T>> listModelProp =
             newProp(new DefaultListModel<>(), this, "listModel");
 
@@ -75,9 +74,9 @@ public final class VList<T> implements Widget {
     }
 
     //endregion
-    //region previousItemText
+    //region  @PropBindable public String previousItemText = "Previous item"
     private final PropBindable<String> previousItemTextProp =
-            newPropBindable("Previous item", this, "previousItemText", f -> updatePreviousItemTextUI());
+            newPropBindable("Previous item", this, "previousItemText");
 
     public String getPreviousItemText() {
         return previousItemTextProp.get();
@@ -91,18 +90,10 @@ public final class VList<T> implements Widget {
         previousItemTextProp.bindTo(prop);
     }
 
-    private void updatePreviousItemTextUI() {
-        invokeLater(() -> {
-            String value = previousItemTextProp.get();
-            ;
-        });
-    }
-
     //endregion
-
-    //region nextItemText
+    //region @PropBindable public String nextItemText = "Next item"
     private final PropBindable<String> nextItemTextProp =
-            newPropBindable("Next item", this, "nextItemText", f -> updateNextItemTextUI());
+            newPropBindable("Next item", this, "nextItemText");
 
     public String getNextItemText() {
         return nextItemTextProp.get();
@@ -116,18 +107,10 @@ public final class VList<T> implements Widget {
         nextItemTextProp.bindTo(prop);
     }
 
-    private void updateNextItemTextUI() {
-        invokeLater(() -> {
-            String value = nextItemTextProp.get();
-            ;
-        });
-    }
-
     //endregion
-
-    //region title
+    //region @PropBindable public String title = "Items:"
     private final PropBindable<String> titleProp =
-            newPropBindable("Items:", this, "title", f -> updateTitleUI());
+            newPropBindable("Items:", this, "title");
 
     public String getTitle() {
         return titleProp.get();
@@ -141,21 +124,14 @@ public final class VList<T> implements Widget {
         titleProp.bindTo(prop);
     }
 
-    private void updateTitleUI() {
-        invokeLater(() -> {
-            String value = titleProp.get();
-            ;
-        });
-    }
-
     //endregion
     private int lastSelectedIndex = -1;
 
     //endregion
     //region Actions
     //TODO customizes/generalize the actionn titles/texts
-    private final Action previousItemAction = newAction("Previous issue" + " (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
-    private final Action nextItemAction = newAction("Next issue" + " (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
+    private final Action previousItemAction = newAction("", KeyStroke.getKeyStroke("UP"), Icons.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
+    private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Icons.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
 
     private void selectPreviousItem() {
         SwingUtil.changeSelectedIndex(jList, -1);
@@ -256,8 +232,8 @@ public final class VList<T> implements Widget {
         bindUpdateCode(listModelProp, this::onListModelPropChanged);
         bindUpdateCode(selectedItemProp, this::onSelectedItemPropChanged);
 
-        bindUpdateCode(previousItemTextProp, () -> previousItemButton.setText(getPreviousItemText() + " (↑)"));
-        bindUpdateCode(nextItemTextProp, () -> nextItemButton.setText(getNextItemText() + " (↓)"));
+        bindUpdateCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        bindUpdateCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
         bindUpdateCode(titleProp, () -> titleLabel.setText(getTitle()));
     }
 
