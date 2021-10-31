@@ -54,7 +54,7 @@ import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicator.variantsIndicator;
-import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.variantsInfo;
+import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.snapshotVariant;
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
@@ -138,7 +138,7 @@ class SnapshotReviewWidget implements Widget {
         //noinspection CallToSuspiciousStringMethod
         Seq<SnapshotIssue> variants = SeqUtil2.newSeq(remainingIssues.elements())
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
-        return variantsInfo(issue, variants);
+        return snapshotVariant(issue, variants);
     }
     //endregion
     //endregion

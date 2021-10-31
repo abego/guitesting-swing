@@ -28,13 +28,9 @@ import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 
 class SnapshotVariantImpl implements SnapshotVariant {
+    //region State
     private final SnapshotIssue issue;
     private final Seq<SnapshotIssue> variants;
-
-    private SnapshotVariantImpl(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
-        this.issue = issue;
-        this.variants = variants;
-    }
 
     @Override
     public SnapshotIssue getIssue() {
@@ -51,7 +47,15 @@ class SnapshotVariantImpl implements SnapshotVariant {
         return variants.indexOf(issue);
     }
 
-    public static SnapshotVariant variantsInfo(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
+    //endregion
+    //region Construction
+    private SnapshotVariantImpl(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
+        this.issue = issue;
+        this.variants = variants;
+    }
+
+    public static SnapshotVariant snapshotVariant(SnapshotIssue issue, Seq<SnapshotIssue> variants) {
         return new SnapshotVariantImpl(issue, variants);
     }
+    //endregion
 }

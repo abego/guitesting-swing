@@ -45,7 +45,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 class SnapshotVariantsIndicator implements Widget {
     //region State/Model
     private final PropService propService = PropServices.getDefault();
-    //region @Prop @Nullable SnapshotVariant : variantsInfo
+    //region @Prop public @Nullable SnapshotVariant : variantsInfo
     private final PropNullable<SnapshotVariant> variantsInfoProp =
             propService.newPropNullable(null, this, "variantsInfo");
 
@@ -67,6 +67,7 @@ class SnapshotVariantsIndicator implements Widget {
     //endregion
     //region Components
     private final JComponent content = new JPanel();
+
     //endregion
     //region Construction
     private SnapshotVariantsIndicator() {
@@ -78,12 +79,14 @@ class SnapshotVariantsIndicator implements Widget {
     public static SnapshotVariantsIndicator variantsIndicator() {
         return new SnapshotVariantsIndicator();
     }
+
     //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
         return content;
     }
+
     //endregion
     //region Style related
     private static final int BULLET_SIZE = 24;
