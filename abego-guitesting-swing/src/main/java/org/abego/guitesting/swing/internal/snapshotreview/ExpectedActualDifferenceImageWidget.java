@@ -57,7 +57,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResi
 class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
-    //region shrinkToFit
+    //region @PropBindable public Boolean shrinkToFit = FALSE
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Boolean> shrinkToFitProp =
             newPropBindable(FALSE, this, "shrinkToFit");
@@ -76,7 +76,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region snapshotIssue
+    //region @PropBindable public @Nullable SnapshotIssue snapshotIssue
     private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
             newPropNullableBindable(null, this, "snapshotIssue");
 
@@ -94,7 +94,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region expectedImageIndex
+    //region @PropBindable public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
             newPropBindable(0, this, "expectedImageIndex");
@@ -113,7 +113,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region expectedBorderColor
+    //region @PropBindable public Color expectedBorderColor = Color.green
     private final PropBindable<Color> expectedBorderColorProp =
             newPropBindable(Color.green, this, "expectedBorderColor");
 
@@ -131,7 +131,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region actualBorderColor
+    //region @PropBindable public Color actualBorderColor = Color.red
     private final PropBindable<Color> actualBorderColorProp =
             newPropBindable(Color.red, this, "actualBorderColor");
 
@@ -149,7 +149,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region differenceBorderColor
+    //region @PropBindable public Color differenceBorderColor = Color.black
     private final PropBindable<Color> differenceBorderColorProp =
             newPropBindable(Color.black, this, "differenceBorderColor");
 
