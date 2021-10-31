@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.Var;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.eclipse.jdt.annotation.Nullable;
@@ -33,18 +32,6 @@ import java.util.function.Function;
 
 import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropField;
 
-//TODO: review JavaDoc
-
-/**
- * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
- * when its value changed (via {@link org.abego.event.EventServices} default).
- * <p>
- * The source of the PropertyChanged event will be the Prop object
- * and the property name "value". In addition a second PropertyChanged event
- * may be generated with another source object and property name. The
- * "other source" typically is the object containing the Prop object and the
- * property name the name of the Prop within that container.
- */
 class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
     private final EventService eventService;
