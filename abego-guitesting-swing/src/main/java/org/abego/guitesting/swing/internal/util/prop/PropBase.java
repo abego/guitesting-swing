@@ -50,7 +50,7 @@ import java.util.function.Function;
  * property name the name of the Prop within that container.
  */
 //TODO: check if we can reuse some code of the different "Prop..." classes
-abstract class PropBase<T> implements SourceOfTruth<T> {
+abstract class PropBase<T> {
     //TODO: can we make this private?
     protected final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
