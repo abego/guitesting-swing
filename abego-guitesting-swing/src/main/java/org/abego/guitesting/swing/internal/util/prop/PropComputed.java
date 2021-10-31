@@ -46,7 +46,7 @@ import java.util.function.Function;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-class PropComputed<T> extends PropBase<T> {
+class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
     private final Function<DependencyCollector, T> valueComputation;
     private @Nullable List<EventObserver<PropertyChanged>> observers;
     private @Nullable T value;
@@ -55,17 +55,17 @@ class PropComputed<T> extends PropBase<T> {
     private PropComputed(Function<DependencyCollector, T> valueComputation,
                          @Nullable Object otherSource,
                          @Nullable String otherPropertyName) {
-        super(null, otherSource, otherPropertyName);
+        super(otherSource, otherPropertyName);
         this.valueComputation = valueComputation;
         this.mustComputeValue = true;
     }
 
-    public static <T> PropComputed<T> newComputedProp(
+    public static <T> IPropComputed<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return new PropComputed<>(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> PropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
+    public static <T> IPropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
         return new PropComputed<>(valueComputation, null, null);
     }
 

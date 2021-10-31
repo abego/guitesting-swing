@@ -27,6 +27,6 @@ package org.abego.guitesting.swing.internal.util.prop;
 import org.abego.commons.var.Var;
 
 //TODO rename to Prop when done with refactoring....
-public interface IProp<T> extends Var<T> {
-    void runDependingCode(Runnable code);
+public interface IProp<T> extends SourceOfTruth<T> {
+    void bindTo(SourceOfTruth<T> sourceOfTruth);
 }

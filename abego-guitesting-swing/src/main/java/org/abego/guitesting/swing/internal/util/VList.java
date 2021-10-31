@@ -25,7 +25,6 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -54,7 +53,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 
 public final class VList<T> implements Widget {
@@ -86,9 +85,9 @@ public final class VList<T> implements Widget {
     }
 
     //endregion
-    //region  @PropBindable public String previousItemText = "Previous item"
-    private final IPropBindable<String> previousItemTextProp =
-            newPropBindable("Previous item", this, "previousItemText");
+    //region  @Prop public String previousItemText = "Previous item"
+    private final IProp<String> previousItemTextProp =
+            newProp("Previous item", this, "previousItemText");
 
     public String getPreviousItemText() {
         return previousItemTextProp.get();
@@ -103,9 +102,9 @@ public final class VList<T> implements Widget {
     }
 
     //endregion
-    //region @PropBindable public String nextItemText = "Next item"
-    private final IPropBindable<String> nextItemTextProp =
-            newPropBindable("Next item", this, "nextItemText");
+    //region @Prop public String nextItemText = "Next item"
+    private final IProp<String> nextItemTextProp =
+            newProp("Next item", this, "nextItemText");
 
     public String getNextItemText() {
         return nextItemTextProp.get();
@@ -120,9 +119,9 @@ public final class VList<T> implements Widget {
     }
 
     //endregion
-    //region @PropBindable public String title = "Items:"
-    private final IPropBindable<String> titleProp =
-            newPropBindable("Items:", this, "title");
+    //region @Prop public String title = "Items:"
+    private final IProp<String> titleProp =
+            newProp("Items:", this, "title");
 
     public String getTitle() {
         return titleProp.get();

@@ -24,17 +24,63 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.event.EventObserver;
+import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-class PropField<T> extends PropBase<T> {
+import java.util.Optional;
+
+
+class PropField<T> extends PropBase<T> implements IProp<T> {
+    private SourceOfTruth<T> sourceOfTruth;
+    private EventObserver<PropertyChanged> observer;
     private @NonNull T value;
+
+   private class SimpleField<T> implements SourceOfTruth<T> {
+        private @Nullable T value;
+
+       public SimpleField(T initialValue) {
+           this.value = initialValue;
+       }
+
+       @Override
+       public @NonNull T get() {
+           @Nullable T v = value;
+           if (v == null) {
+               throw new IllegalStateException("Prop has no value"); //NON-NLS
+           }
+           return v;
+       }
+
+       @Override
+       public void set(@NonNull T value) {
+           if (value.equals(this.value)) {
+               return;
+           }
+           this.value = value;
+           postPropertyChanged();
+       }
+
+       @Override
+       public boolean hasValue() {
+           return value != null;
+       }
+
+       @Override
+       public void runDependingCode(Runnable code) {
+           PropField.this.runDependingCode(code);
+       }
+   }
 
     private PropField(@NonNull T initialValue,
                       @Nullable Object otherSource,
                       @Nullable String otherPropertyName) {
-        super(initialValue, otherSource, otherPropertyName);
+        super(otherSource, otherPropertyName);
         this.value = initialValue;
+        sourceOfTruth = new SimpleField<>(initialValue);
+        observer = eventService.addPropertyObserver(
+                sourceOfTruth, e -> postPropertyChanged());
     }
 
     public static <T> PropField<T> newPropField(
@@ -44,27 +90,37 @@ class PropField<T> extends PropBase<T> {
         return new PropField<>(initialValue, otherSource, otherPropertyName);
     }
 
+    public static <T> PropField<T> newPropField(
+            @NonNull T initialValue) {
+        return new PropField<>(initialValue, null, null);
+    }
+
     @Override
     public @NonNull T get() {
-        @Nullable T v = value;
-        if (v == null) {
-            throw new IllegalStateException("Prop has no value"); //NON-NLS
-        }
-        return v;
+        return sourceOfTruth.get();
     }
 
     @Override
     public void set(@NonNull T value) {
-        if (value.equals(this.value)) {
-            return;
-        }
-        this.value = value;
-        postPropertyChanged();
+       sourceOfTruth.set(value);
     }
 
     @Override
     public boolean hasValue() {
-        return value != null;
+        return sourceOfTruth.hasValue();
+    }
+
+    public void bindTo(SourceOfTruth<T> sourceOfTruth) {
+        eventService.removeObserver(observer);
+
+        @NonNull T oldValue = get();
+        this.sourceOfTruth = sourceOfTruth;
+
+        observer = eventService.addPropertyObserver(this.sourceOfTruth,
+                e -> postPropertyChanged());
+        if (!oldValue.equals(get())) {
+            postPropertyChanged();
+        }
     }
 
 }

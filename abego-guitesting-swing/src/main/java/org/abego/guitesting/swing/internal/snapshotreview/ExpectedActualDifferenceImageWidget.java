@@ -29,8 +29,6 @@ import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
@@ -50,7 +48,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
@@ -58,10 +56,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResi
 class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
-    //region @PropBindable public Boolean shrinkToFit = FALSE
+    //region @Prop public Boolean shrinkToFit = FALSE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IPropBindable<Boolean> shrinkToFitProp =
-            newPropBindable(FALSE, this, "shrinkToFit");
+    private final IProp<Boolean> shrinkToFitProp =
+            newProp(FALSE, this, "shrinkToFit");
 
     public Boolean getShrinkToFit() {
         return shrinkToFitProp.get();
@@ -77,7 +75,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @PropBindable public @Nullable SnapshotIssue snapshotIssue
+    //region @Prop public @Nullable SnapshotIssue snapshotIssue
     private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
             newPropNullableBindable(null, this, "snapshotIssue");
 
@@ -95,10 +93,10 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @PropBindable public Integer expectedImageIndex = 0
+    //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IPropBindable<Integer> expectedImageIndexProp =
-            newPropBindable(0, this, "expectedImageIndex");
+    private final IProp<Integer> expectedImageIndexProp =
+            newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -114,9 +112,9 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @PropBindable public Color expectedBorderColor = Color.green
-    private final IPropBindable<Color> expectedBorderColorProp =
-            newPropBindable(Color.green, this, "expectedBorderColor");
+    //region @Prop public Color expectedBorderColor = Color.green
+    private final IProp<Color> expectedBorderColorProp =
+            newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -132,9 +130,9 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @PropBindable public Color actualBorderColor = Color.red
-    private final IPropBindable<Color> actualBorderColorProp =
-            newPropBindable(Color.red, this, "actualBorderColor");
+    //region @Prop public Color actualBorderColor = Color.red
+    private final IProp<Color> actualBorderColorProp =
+            newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -150,9 +148,9 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @PropBindable public Color differenceBorderColor = Color.black
-    private final IPropBindable<Color> differenceBorderColorProp =
-            newPropBindable(Color.black, this, "differenceBorderColor");
+    //region @Prop public Color differenceBorderColor = Color.black
+    private final IProp<Color> differenceBorderColorProp =
+            newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();

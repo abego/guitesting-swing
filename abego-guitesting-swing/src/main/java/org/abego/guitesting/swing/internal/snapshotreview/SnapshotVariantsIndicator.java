@@ -43,7 +43,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
 class SnapshotVariantsIndicator implements Widget {
     //region State/Model
-    //region @PropBindable @Nullable SnapshotVariant : variantsInfo
+    //region @Prop @Nullable SnapshotVariant : variantsInfo
     private final PropNullableBindable<SnapshotVariant> variantsInfoProp =
             newPropNullableBindable(null, this, "variantsInfo");
 

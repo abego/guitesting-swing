@@ -25,21 +25,20 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
+import org.abego.guitesting.swing.internal.util.prop.SourceOfTruth;
 
 import javax.swing.JLabel;
 
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
 public final class JLabelBindable extends JLabel {
 
-    //region @PropBindable @InheritsGetSet public String text = ""
-    private final IPropBindable<String> textProp =
-            newPropBindable("", this, "text");
+    //region @Prop @InheritsGetSet public String text = ""
+    private final IProp<String> textProp =
+            newProp("", this, "text");
 
-    public void bindTextTo(IProp<String> prop) {
+    public void bindTextTo(SourceOfTruth<String> prop) {
         textProp.bindTo(prop);
     }
 

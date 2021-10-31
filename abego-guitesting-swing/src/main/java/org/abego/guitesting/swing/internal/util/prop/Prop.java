@@ -66,21 +66,13 @@ public class Prop {
         return newPropField(value, otherSource, otherPropertyName);
     }
 
-    public static <T> IProp<T> newComputedProp(
+    public static <T> IPropComputed<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return PropComputed.newComputedProp(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> IProp<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
+    public static <T> IPropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
         return PropComputed.newComputedProp(valueComputation);
     }
-
-    public static <T> IPropBindable<T> newPropBindable(
-            @NonNull T initialValue,
-            @Nullable Object otherSource,
-            @Nullable String otherPropertyName) {
-        return PropBindable.newPropBindable(initialValue, otherSource, otherPropertyName);
-    }
-
 
 }
