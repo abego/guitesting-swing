@@ -26,7 +26,7 @@ package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropBindable;
+import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
@@ -55,7 +55,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 
 public final class VList<T> implements Widget {
@@ -88,7 +88,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region  @PropBindable public String previousItemText = "Previous item"
-    private final PropBindable<String> previousItemTextProp =
+    private final IPropBindable<String> previousItemTextProp =
             newPropBindable("Previous item", this, "previousItemText");
 
     public String getPreviousItemText() {
@@ -105,7 +105,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region @PropBindable public String nextItemText = "Next item"
-    private final PropBindable<String> nextItemTextProp =
+    private final IPropBindable<String> nextItemTextProp =
             newPropBindable("Next item", this, "nextItemText");
 
     public String getNextItemText() {
@@ -122,7 +122,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region @PropBindable public String title = "Items:"
-    private final PropBindable<String> titleProp =
+    private final IPropBindable<String> titleProp =
             newPropBindable("Items:", this, "title");
 
     public String getTitle() {

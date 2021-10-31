@@ -27,7 +27,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropBindable;
+import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -36,7 +36,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import static javax.swing.BorderFactory.createLineBorder;
-import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newPropBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
@@ -45,7 +45,7 @@ class ImagesLegendWidget implements Widget {
     //region State/Model
     //region @PropBindable public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropBindable<Integer> expectedImageIndexProp =
+    private final IPropBindable<Integer> expectedImageIndexProp =
             newPropBindable(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {

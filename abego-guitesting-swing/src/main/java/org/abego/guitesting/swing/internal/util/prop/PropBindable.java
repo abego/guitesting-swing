@@ -34,7 +34,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
-public class PropBindable<T> implements Var<T> {
+class PropBindable<T> implements IPropBindable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;

@@ -46,7 +46,7 @@ import java.util.function.Function;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-public class PropComputed<T> extends PropBase<T> {
+class PropComputed<T> extends PropBase<T> {
     private final Function<DependencyCollector, T> valueComputation;
     private @Nullable List<EventObserver<PropertyChanged>> observers;
     private @Nullable T value;
