@@ -34,7 +34,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newProp
 
 public final class JLabelBindable extends JLabel {
 
-    private PropBindable<String> textProp =
+    private final PropBindable<String> textProp =
             newPropBindable("", this, "text", f -> updateTextUI());
 
     private JLabelBindable() {
@@ -51,9 +51,7 @@ public final class JLabelBindable extends JLabel {
     }
 
     private void updateTextUI() {
-        invokeLater(() -> {
-            setText(textProp.get());
-        });
+        invokeLater(() -> setText(textProp.get()));
     }
 
     private void updateTextProp() {

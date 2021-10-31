@@ -35,7 +35,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newProp
 
 public final class JCheckBoxBindable extends JCheckBox {
 
-    private PropBindable<Boolean> selectedProp =
+    private final PropBindable<Boolean> selectedProp =
             newPropBindable(FALSE, this, "selected", f -> updateSelectedUI());
 
     private JCheckBoxBindable() {
@@ -52,9 +52,7 @@ public final class JCheckBoxBindable extends JCheckBox {
     }
 
     private void updateSelectedUI() {
-        invokeLater(() -> {
-            setSelected(selectedProp.get());
-        });
+        invokeLater(() -> setSelected(selectedProp.get()));
     }
 
     private void updateSelectedProp() {
