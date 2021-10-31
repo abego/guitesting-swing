@@ -29,13 +29,9 @@ import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.Optional;
-
-
 class PropField<T> extends PropBase<T> implements IProp<T> {
     private SourceOfTruth<T> sourceOfTruth;
     private EventObserver<PropertyChanged> observer;
-    private @NonNull T value;
 
    private class SimpleField<T> implements SourceOfTruth<T> {
         private @Nullable T value;
@@ -77,7 +73,6 @@ class PropField<T> extends PropBase<T> implements IProp<T> {
                       @Nullable Object otherSource,
                       @Nullable String otherPropertyName) {
         super(otherSource, otherPropertyName);
-        this.value = initialValue;
         sourceOfTruth = new SimpleField<>(initialValue);
         observer = eventService.addPropertyObserver(
                 sourceOfTruth, e -> postPropertyChanged());

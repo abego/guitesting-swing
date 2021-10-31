@@ -89,11 +89,11 @@ public class Prop {
 
     public static <T> IPropComputedNullable<T> newComputedPropNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropNullable.newComputedPropNullable(valueComputation, otherSource, otherPropertyName);
+        return PropComputed.newComputedProp(valueComputation, otherSource, otherPropertyName);
     }
 
     public static <T> IPropComputedNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
-        return PropNullable.newComputedPropNullable(valueComputation, null, null);
+        return PropComputed.newComputedProp(valueComputation, null, null);
     }
 
 }

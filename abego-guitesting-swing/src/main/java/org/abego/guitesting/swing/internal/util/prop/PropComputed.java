@@ -33,6 +33,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 //TODO: review JavaDoc
@@ -46,7 +47,7 @@ import java.util.function.Function;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
+class PropComputed<T> extends PropBase<T> implements IPropComputed<T>, IPropComputedNullable<T> {
     private final Function<DependencyCollector, T> valueComputation;
     private @Nullable List<EventObserver<PropertyChanged>> observers;
     private @Nullable T value;
@@ -60,12 +61,12 @@ class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
         this.mustComputeValue = true;
     }
 
-    public static <T> IPropComputed<T> newComputedProp(
+    public static <T> PropComputed<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return new PropComputed<>(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> IPropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
+    public static <T> PropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
         return new PropComputed<>(valueComputation, null, null);
     }
 
@@ -84,7 +85,10 @@ class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
         if (value.equals(this.value)) {
             return;
         }
-        throw new IllegalStateException("Cannot set value on computed property");
+        // ignore value setters for computed properties.
+        // Instead post a change event to make sure the depending objects
+        // use the currently computed value
+        postPropertyChanged();
     }
 
     @NonNull
@@ -120,7 +124,7 @@ class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
         if (!observers.isEmpty()) {
             this.observers = observers;
         }
-        if (!v.equals(value)) {
+        if (!Objects.equals(v, value)) {
             value = v;
             onChangeCode.run();
         }
@@ -130,6 +134,11 @@ class PropComputed<T> extends PropBase<T> implements IPropComputed<T> {
     @Override
     public boolean hasValue() {
         return true;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
     }
 
 }
