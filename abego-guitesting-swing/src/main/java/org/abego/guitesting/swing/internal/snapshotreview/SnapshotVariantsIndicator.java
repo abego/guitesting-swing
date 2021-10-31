@@ -30,8 +30,10 @@ import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 
 import static javax.swing.SwingUtilities.invokeLater;
@@ -41,32 +43,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
 class SnapshotVariantsIndicator implements Widget {
-    private static final int BULLET_SIZE = 24;
-    private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
-
-    private final JComponent content;
-
-    private SnapshotVariantsIndicator() {
-        content = flowLeft(DEFAULT_FLOW_GAP, 0);
-        // make the panel so small only one bullet fits into the row,
-        // so the bullets are stacked vertically
-        content.setPreferredSize(new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
-        content.setOpaque(true);
-        content.setBackground(Color.white);
-    }
-
-    public static SnapshotVariantsIndicator variantsIndicator() {
-        return new SnapshotVariantsIndicator();
-    }
-
-    @Override
-    public JComponent getContent() {
-        return content;
-    }
-
-    //region variantsInfo
+    //region State/Model
+    //region @PropBindable @Nullable SnapshotVariant : variantsInfo
     private final PropNullableBindable<SnapshotVariant> variantsInfoProp =
-            newPropNullableBindable(null, this, "variantsInfo", f -> updateContent());
+            newPropNullableBindable(null, this, "variantsInfo");
 
     @Nullable
     public SnapshotVariant getVariantsInfo() {
@@ -82,6 +62,51 @@ class SnapshotVariantsIndicator implements Widget {
     }
 
     //endregion
+    //endregion
+    //region Components
+    private final JComponent content = new JPanel();
+    //endregion
+    //region Construction
+    private SnapshotVariantsIndicator() {
+        styleComponents();
+        layoutComponents();
+        initBindings();
+    }
+
+    public static SnapshotVariantsIndicator variantsIndicator() {
+        return new SnapshotVariantsIndicator();
+    }
+    //endregion
+    //region Widget related
+    @Override
+    public JComponent getContent() {
+        return content;
+    }
+    //endregion
+    //region Style related
+    private static final int BULLET_SIZE = 24;
+    private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
+
+    private void styleComponents() {
+        content.setOpaque(true);
+        content.setBackground(Color.white);
+    }
+
+    //endregion
+    //region Layout related
+    private void layoutComponents() {
+        content.setLayout(new FlowLayout(FlowLayout.LEADING, DEFAULT_FLOW_GAP, 0));
+        // make the panel so small only one bullet fits into the row,
+        // so the bullets are stacked vertically
+        content.setPreferredSize(new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
+    }
+
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        variantsInfoProp.runDependingCode(this::updateContent);
+    }
+
     private void updateContent() {
         invokeLater(() -> {
             content.removeAll();
@@ -98,4 +123,5 @@ class SnapshotVariantsIndicator implements Widget {
             }
         });
     }
+    //endregion
 }
