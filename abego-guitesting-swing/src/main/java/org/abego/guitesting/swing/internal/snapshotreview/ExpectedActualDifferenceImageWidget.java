@@ -127,7 +127,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindExpectedBorderColorTo(Prop<Color> prop) {
+    public void bindExpectedBorderColorTo(IProp<Color> prop) {
         expectedBorderColorProp.bindTo(prop);
     }
 
@@ -145,7 +145,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindActualBorderColorTo(Prop<Color> prop) {
+    public void bindActualBorderColorTo(IProp<Color> prop) {
         actualBorderColorProp.bindTo(prop);
     }
 
@@ -163,7 +163,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindDifferenceBorderColorTo(Prop<Color> prop) {
+    public void bindDifferenceBorderColorTo(IProp<Color> prop) {
         differenceBorderColorProp.bindTo(prop);
     }
 

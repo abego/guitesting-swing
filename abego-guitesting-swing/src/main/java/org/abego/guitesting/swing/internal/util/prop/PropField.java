@@ -24,29 +24,47 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface DependencyCollector {
-    DependencyCollector DoNothing = new DependencyCollector() {
-        @Override
-        public void dependsOnProperty(Object source, String propertyName) {
-            // do nothing
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+class PropField<T> extends PropBase<T> {
+    private @NonNull T value;
+
+    private PropField(@NonNull T initialValue,
+                      @Nullable Object otherSource,
+                      @Nullable String otherPropertyName) {
+        super(initialValue, otherSource, otherPropertyName);
+        this.value = initialValue;
+    }
+
+    public static <T> PropField<T> newPropField(
+            @NonNull T initialValue,
+            @Nullable Object otherSource,
+            @Nullable String otherPropertyName) {
+        return new PropField<>(initialValue, otherSource, otherPropertyName);
+    }
+
+    @Override
+    public @NonNull T get() {
+        @Nullable T v = value;
+        if (v == null) {
+            throw new IllegalStateException("Prop has no value"); //NON-NLS
         }
-    };
-
-    default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
-
-    default void dependsOnProperty(IProp<?> property) {
-        dependsOnProperty(property, "value");
+        return v;
     }
 
-    default void dependsOnProperty(PropNullable<?> property) {
-        dependsOnProperty(property, "value");
+    @Override
+    public void set(@NonNull T value) {
+        if (value.equals(this.value)) {
+            return;
+        }
+        this.value = value;
+        postPropertyChanged();
     }
 
-    default void dependsOnProperty(PropBindable<?> property) {
-        dependsOnProperty(property, "value");
+    @Override
+    public boolean hasValue() {
+        return value != null;
     }
 
-    default void dependsOnProperty(PropNullableBindable<?> property) {
-        dependsOnProperty(property, "value");
-    }
 }

@@ -50,37 +50,17 @@ import java.util.function.Function;
  * property name the name of the Prop within that container.
  */
 //TODO: check if we can reuse some code of the different "Prop..." classes
-class PropBase<T> implements IProp<T> {
+abstract class PropBase<T> implements IProp<T> {
     //TODO: can we make this private?
     protected final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
-    private @Nullable T value;
 
     protected PropBase(@Nullable T value,
                        @Nullable Object otherSource,
                        @Nullable String otherPropertyName) {
-        this.value = value;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
-    }
-
-    @Override
-    public @NonNull T get() {
-        @Nullable T v = value;
-        if (v == null) {
-            throw new IllegalStateException("Prop has no value"); //NON-NLS
-        }
-        return v;
-    }
-
-    @Override
-    public void set(@NonNull T value) {
-        if (value.equals(this.value)) {
-            return;
-        }
-        this.value = value;
-        postPropertyChanged();
     }
 
     /**
@@ -97,10 +77,5 @@ class PropBase<T> implements IProp<T> {
         if (otherSource != null && otherPropertyName != null) {
             eventService.postPropertyChanged(otherSource, otherPropertyName);
         }
-    }
-
-    @Override
-    public boolean hasValue() {
-        return value != null;
     }
 }

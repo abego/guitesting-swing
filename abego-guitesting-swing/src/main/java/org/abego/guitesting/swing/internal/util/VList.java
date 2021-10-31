@@ -25,7 +25,6 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.IPropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
@@ -99,7 +98,7 @@ public final class VList<T> implements Widget {
         previousItemTextProp.set(value);
     }
 
-    public void bindPreviousItemTextTo(Prop<String> prop) {
+    public void bindPreviousItemTextTo(IProp<String> prop) {
         previousItemTextProp.bindTo(prop);
     }
 
@@ -116,7 +115,7 @@ public final class VList<T> implements Widget {
         nextItemTextProp.set(value);
     }
 
-    public void bindNextItemTextTo(Prop<String> prop) {
+    public void bindNextItemTextTo(IProp<String> prop) {
         nextItemTextProp.bindTo(prop);
     }
 
@@ -133,7 +132,7 @@ public final class VList<T> implements Widget {
         titleProp.set(value);
     }
 
-    public void bindTitleTo(Prop<String> prop) {
+    public void bindTitleTo(IProp<String> prop) {
         titleProp.bindTo(prop);
     }
 

@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropField;
+
 //TODO: review JavaDoc
 /**
  * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
@@ -49,26 +51,19 @@ import java.util.function.Function;
  * property name the name of the Prop within that container.
  */
 //TODO: check if we can reuse some code of the different "Prop..." classes
-public class Prop<T> extends PropBase<T> {
-
-    private Prop(@Nullable T value,
-                 @Nullable Function<DependencyCollector, T> valueComputation,
-                 @Nullable Object otherSource,
-                 @Nullable String otherPropertyName) {
-        super(value, otherSource, otherPropertyName);
-    }
+public class Prop {
 
     public static <T> IProp<T> newProp() {
-        return new PropBase<>(null, null, null);
+        return newPropField(null, null, null);
     }
 
     public static <T> IProp<T> newProp(T value) {
-        return new PropBase<>(value, null, null);
+        return newPropField(value, null, null);
     }
 
     public static <T> IProp<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
-        return new PropBase<>(value, otherSource, otherPropertyName);
+        return newPropField(value, otherSource, otherPropertyName);
     }
 
     public static <T> IProp<T> newComputedProp(
