@@ -37,6 +37,10 @@ import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import static org.abego.guitesting.swing.internal.util.DimensionUtil.shrinkToFitFactor;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
+/**
+ * Provides the images of a {@link SnapshotIssue} ("expected", "actual",
+ * "difference"), optionally scaled down to fit into a given area.
+ */
 final class SnapshotImages {
     private static @Nullable SnapshotImages cachedSnapshotImages;
 
@@ -102,6 +106,10 @@ final class SnapshotImages {
         return differenceImage;
     }
 
+    public SnapshotIssue getIssue() {
+        return issue;
+    }
+
     private static ImageIcon scaledImageIcon(ImageIcon icon, double scaleFactor) {
         Image image = icon.getImage();
         int w = icon.getIconWidth();
@@ -121,9 +129,5 @@ final class SnapshotImages {
             maxHeight = max(maxHeight, image.getIconHeight());
         }
         return new Dimension(totalWidth, maxHeight);
-    }
-
-    public SnapshotIssue getIssue() {
-        return issue;
     }
 }
