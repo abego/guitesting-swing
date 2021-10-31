@@ -192,9 +192,14 @@ public final class SwingUtil {
         return listModel;
     }
 
-    public static <T> ListCellRenderer<T> newListCellRenderer(
+    public static <T> ListCellRenderer<? super T> newListCellRenderer(
             Class<T> valueType, Function<T, String> textProvider) {
         return newListCellRendererForTextProvider(valueType, textProvider);
+    }
+
+    public static <T> ListCellRenderer<? super T> newListCellRenderer(
+            Function<T, String> textProvider) {
+        return newListCellRendererForTextProvider(textProvider);
     }
 
     public static void changeSelectedIndex(JList<?> list, int diff) {

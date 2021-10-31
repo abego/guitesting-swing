@@ -73,6 +73,19 @@ public final class VList<T> implements Widget {
     }
 
     //endregion
+    //region @Prop public Function<T, String> cellTextProvider = Objects::toString
+    private final Prop<Function<T, String>> cellTextProviderProp =
+            newProp(Objects::toString, this, "cellTextProvider");
+
+    public Function<T, String> getCellTextProvider() {
+        return cellTextProviderProp.get();
+    }
+
+    public void setCellTextProvider(Function<T, String> textProvider) {
+        cellTextProviderProp.set(textProvider);
+    }
+
+    //endregion
     //region  @PropBindable public String previousItemText = "Previous item"
     private final PropBindable<String> previousItemTextProp =
             newPropBindable("Previous item", this, "previousItemText");
@@ -149,19 +162,9 @@ public final class VList<T> implements Widget {
     private final JList<T> jList = new JList<>();
     private final JComponent content = new JPanel();
 
-    private void initComponents() {
-    }
-
-    //TODO: move etc
-    public void setCellTextProvider(
-            Class<T> valueType, Function<T, String> textProvider) {
-        jList.setCellRenderer(newListCellRenderer(valueType, textProvider));
-    }
-
     //endregion
     //region Construction
     private VList() {
-        initComponents();
         styleComponents();
         layoutComponents();
         initBindings();
@@ -228,7 +231,8 @@ public final class VList<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        listModelProp.runDependingCode(this::onListModelPropChanged);
+        cellTextProviderProp.runDependingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
+        listModelProp.runDependingCode(() -> jList.setModel(getListModel()));
         selectedItemProp.runDependingCode(this::onSelectedItemPropChanged);
 
         previousItemTextProp.runDependingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
@@ -269,10 +273,6 @@ public final class VList<T> implements Widget {
 
     private void onSelectedItemPropChanged() {
         invokeLater(() -> jList.setSelectedValue(selectedItemProp.get(), true));
-    }
-
-    private void onListModelPropChanged() {
-        jList.setModel(getListModel());
     }
 
     //endregion

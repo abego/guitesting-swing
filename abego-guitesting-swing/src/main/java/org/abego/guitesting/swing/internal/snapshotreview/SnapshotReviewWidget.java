@@ -267,7 +267,7 @@ class SnapshotReviewWidget implements Widget {
 
         shrinkToFitCheckBox.setText("Shrink to Fit"); //NON-NLS
 
-        snapshotIssuesVList.setCellTextProvider(SnapshotIssue.class, SnapshotReviewWidget::labelWithLastPartFirst);
+        snapshotIssuesVList.setCellTextProvider(SnapshotReviewWidget::labelWithLastPartFirst);
         snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
         snapshotIssuesVList.setTitle("Issues:"); //NON-NLS
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
