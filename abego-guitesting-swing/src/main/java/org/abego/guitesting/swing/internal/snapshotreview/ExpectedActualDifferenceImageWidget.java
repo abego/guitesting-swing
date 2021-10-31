@@ -66,6 +66,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return shrinkToFitProp.get();
     }
 
+    @SuppressWarnings("unused")
     public void setShrinkToFit(Boolean value) {
         shrinkToFitProp.set(value);
     }
@@ -102,6 +103,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return expectedImageIndexProp.get();
     }
 
+    @SuppressWarnings("unused")
     public void setExpectedImageIndex(Integer value) {
         expectedImageIndexProp.set(value);
     }
@@ -123,6 +125,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         expectedBorderColorProp.set(value);
     }
 
+    @SuppressWarnings("unused")
     public void bindExpectedBorderColorTo(Prop<Color> prop) {
         expectedBorderColorProp.bindTo(prop);
     }
@@ -140,6 +143,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         actualBorderColorProp.set(value);
     }
 
+    @SuppressWarnings("unused")
     public void bindActualBorderColorTo(Prop<Color> prop) {
         actualBorderColorProp.bindTo(prop);
     }
@@ -157,6 +161,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         differenceBorderColorProp.set(value);
     }
 
+    @SuppressWarnings("unused")
     public void bindDifferenceBorderColorTo(Prop<Color> prop) {
         differenceBorderColorProp.bindTo(prop);
     }
