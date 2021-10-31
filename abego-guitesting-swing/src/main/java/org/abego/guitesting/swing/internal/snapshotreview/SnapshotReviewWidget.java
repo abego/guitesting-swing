@@ -87,7 +87,7 @@ class SnapshotReviewWidget implements Widget {
             return " ";
         }
 
-        String label = SnapshotIssueUtil.labelWithLastPartFirst(info.getIssue());
+        String label = labelWithLastPartFirst(info.getIssue());
         int variantsCount = info.getVariantsCount();
         return (variantsCount > 1)
                 ? String.format("[%d of %d] %s", //NON-NLS
@@ -165,7 +165,6 @@ class SnapshotReviewWidget implements Widget {
     private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
         remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
-        snapshotIssuesVList.setCellTextProvider(SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst);
         styleComponents();
         layoutComponents();
         initBindings();
@@ -185,6 +184,26 @@ class SnapshotReviewWidget implements Widget {
     public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
         return new SnapshotReviewWidget(issues);
     }
+
+    /**
+     * Returns the "simple" name of the snapshot first (the part behind the last
+     * '.'), followed by the package and class part, separated by a " - ".
+     */
+    private static <T extends SnapshotIssue> String labelWithLastPartFirst(T issue) {
+        StringBuilder result = new StringBuilder();
+        String s = issue.getLabel();
+        //noinspection MagicCharacter
+        int iDot = s.lastIndexOf('.');
+        if (iDot >= 0) {
+            result.append(s, iDot + 1, s.length());
+            result.append(" - ");
+            result.append(s, 0, iDot);
+        } else {
+            result.append(s);
+        }
+        return result.toString();
+    }
+
 
     //endregion
     //region Widget related
@@ -257,6 +276,7 @@ class SnapshotReviewWidget implements Widget {
 
         shrinkToFitCheckBox.setText("Shrink to Fit");
 
+        snapshotIssuesVList.setCellTextProvider(SnapshotIssue.class, SnapshotReviewWidget::labelWithLastPartFirst);
         snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
         snapshotIssuesVList.setTitle("Issues:");
         snapshotIssuesVList.setPreviousItemText("Previous issue");
