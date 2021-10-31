@@ -44,7 +44,6 @@ import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
 import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewImpl;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 
 import javax.swing.JFrame;
@@ -476,16 +475,16 @@ public final class GTImpl implements GT {
         List<Executable> allTests = new ArrayList<>();
 
         //noinspection StringConcatenation
-        allTests.add(()->
+        allTests.add(() ->
                 waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar")); //NON-NLS
 
         //noinspection StringConcatenation
-        allTests.add(()-> withAltKeyPressedRun(() ->
+        allTests.add(() -> withAltKeyPressedRun(() ->
                 waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"))); //NON-NLS
 
         for (int i = 0; i < menubar.getMenuCount(); i++) {
             int index = i;
-            allTests.add(()-> waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(menubar,snapshotName,index));
+            allTests.add(() -> waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(menubar, snapshotName, index));
         }
 
         assertAll(allTests);
@@ -523,10 +522,10 @@ public final class GTImpl implements GT {
             JMenu menu, String menuSnapshotName) {
         List<Executable> allTests = new ArrayList<>();
 
-        allTests.add(()->waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName));
+        allTests.add(() -> waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName));
         for (int i = 0; i < menu.getItemCount(); i++) {
             int index = i;
-            allTests.add(()-> waitUntilMenuScreenshotMatchSnapshotHelper(
+            allTests.add(() -> waitUntilMenuScreenshotMatchSnapshotHelper(
                     menu, menuSnapshotName, index));
         }
         assertAll(allTests);
