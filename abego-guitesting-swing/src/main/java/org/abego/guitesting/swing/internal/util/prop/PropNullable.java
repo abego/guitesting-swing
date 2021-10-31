@@ -118,6 +118,14 @@ public class PropNullable<T> implements VarNullable<T> {
         postPropertyChanged();
     }
 
+    /**
+     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
+     */
+    public void runDependingCode(Runnable code) {
+        code.run();
+        eventService.addPropertyObserver(this, "value", e -> code.run());
+    }
+
     private void recompute() {
         recomputeAndOnChangeDo(() -> {});
     }

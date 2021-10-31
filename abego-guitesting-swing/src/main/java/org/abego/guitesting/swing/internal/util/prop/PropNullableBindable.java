@@ -103,6 +103,14 @@ public class PropNullableBindable<T> implements VarNullable<T> {
         }
     }
 
+    /**
+     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
+     */
+    public void runDependingCode(Runnable code) {
+        code.run();
+        eventService.addPropertyObserver(this, "value", e -> code.run());
+    }
+
     private void onValueChanged(T newValue) {
         onSourceOfTruthValueChanged.accept(newValue);
         // when the source of truth changed also this object's value changed

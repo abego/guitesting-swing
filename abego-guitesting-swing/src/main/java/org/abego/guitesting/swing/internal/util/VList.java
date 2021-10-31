@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.event.EventServices;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -229,28 +228,12 @@ public final class VList<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        bindUpdateCode(listModelProp, this::onListModelPropChanged);
-        bindUpdateCode(selectedItemProp, this::onSelectedItemPropChanged);
+        listModelProp.runDependingCode(this::onListModelPropChanged);
+        selectedItemProp.runDependingCode(this::onSelectedItemPropChanged);
 
-        bindUpdateCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
-        bindUpdateCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        bindUpdateCode(titleProp, () -> titleLabel.setText(getTitle()));
-    }
-
-    //TODO: move to Prop/... and rename
-    public static <T> void bindUpdateCode(Prop<T> prop, Runnable runnable) {
-        EventServices.getDefault().addPropertyObserver(prop, e -> runnable.run());
-        runnable.run();
-    }
-    //TODO: move to PropBindable/... and rename
-    public static <T> void bindUpdateCode(PropBindable<T> prop, Runnable runnable) {
-        EventServices.getDefault().addPropertyObserver(prop, e -> runnable.run());
-        runnable.run();
-    }
-    //TODO: move to PropNullableBindable/... and rename
-    public static <T> void bindUpdateCode(PropNullableBindable<T> prop, Runnable runnable) {
-        EventServices.getDefault().addPropertyObserver(prop, e -> runnable.run());
-        runnable.run();
+        previousItemTextProp.runDependingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        nextItemTextProp.runDependingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
+        titleProp.runDependingCode(() -> titleLabel.setText(getTitle()));
     }
 
     private void onSelectedItemInUIChanged() {

@@ -46,6 +46,7 @@ import java.util.function.Function;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
+//TODO: check if we can reuse some code of the different "Prop..." classes
 public class Prop<T> implements Var<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
@@ -114,6 +115,14 @@ public class Prop<T> implements Var<T> {
         }
         this.value = value;
         postPropertyChanged();
+    }
+
+    /**
+     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
+     */
+    public void runDependingCode(Runnable code) {
+        code.run();
+        eventService.addPropertyObserver(this, "value", e -> code.run());
     }
 
     @NonNull

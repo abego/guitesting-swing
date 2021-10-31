@@ -92,6 +92,14 @@ public class PropBindable<T> implements Var<T> {
         prop.set(value);
     }
 
+    /**
+     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
+     */
+    public void runDependingCode(Runnable code) {
+        code.run();
+        eventService.addPropertyObserver(this, "value", e -> code.run());
+    }
+
     public void bindTo(Prop<T> sourceOfTruth) {
         eventService.removeObserver(observer);
 
