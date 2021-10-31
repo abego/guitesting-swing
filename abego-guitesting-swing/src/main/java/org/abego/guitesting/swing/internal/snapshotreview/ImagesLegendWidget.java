@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.internal.util.Widget;
-import org.abego.guitesting.swing.internal.util.prop.IProp;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 
 import javax.swing.JComponent;
@@ -44,7 +44,7 @@ class ImagesLegendWidget implements Widget {
     //region State/Model
     //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Integer> expectedImageIndexProp =
+    private final Prop<Integer> expectedImageIndexProp =
             newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
@@ -56,14 +56,14 @@ class ImagesLegendWidget implements Widget {
         expectedImageIndexProp.set(value);
     }
 
-    public void bindExpectedImageIndexTo(IProp<Integer> prop) {
+    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
         expectedImageIndexProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> expectedBorderColorProp = PropService.newProp(Color.green, this, "expectedBorderColor");
+    private final Prop<Color> expectedBorderColorProp = PropService.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -76,7 +76,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> actualBorderColorProp = PropService.newProp(Color.red, this, "actualBorderColor");
+    private final Prop<Color> actualBorderColorProp = PropService.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -89,7 +89,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> differenceBorderColorProp = PropService.newProp(Color.black, this, "differenceBorderColor");
+    private final Prop<Color> differenceBorderColorProp = PropService.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();

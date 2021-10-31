@@ -28,9 +28,9 @@ import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
-import org.abego.guitesting.swing.internal.util.prop.IProp;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
-import org.abego.guitesting.swing.internal.util.prop.IPropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -58,7 +58,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region State/Model
     //region @Prop public Boolean shrinkToFit = FALSE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Boolean> shrinkToFitProp =
+    private final Prop<Boolean> shrinkToFitProp =
             newProp(FALSE, this, "shrinkToFit");
 
     public Boolean getShrinkToFit() {
@@ -70,13 +70,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         shrinkToFitProp.set(value);
     }
 
-    public void bindShrinkToFitTo(IProp<Boolean> prop) {
+    public void bindShrinkToFitTo(Prop<Boolean> prop) {
         shrinkToFitProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
-    private final IPropNullable<SnapshotIssue> snapshotIssueProp =
+    private final PropNullable<SnapshotIssue> snapshotIssueProp =
             newPropNullable(null, this, "snapshotIssue");
 
     @Nullable
@@ -95,7 +95,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Integer> expectedImageIndexProp =
+    private final Prop<Integer> expectedImageIndexProp =
             newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
@@ -107,13 +107,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         expectedImageIndexProp.set(value);
     }
 
-    public void bindExpectedImageIndexTo(IProp<Integer> prop) {
+    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
         expectedImageIndexProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
-    private final IProp<Color> expectedBorderColorProp =
+    private final Prop<Color> expectedBorderColorProp =
             newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
@@ -125,13 +125,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindExpectedBorderColorTo(IProp<Color> prop) {
+    public void bindExpectedBorderColorTo(Prop<Color> prop) {
         expectedBorderColorProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
-    private final IProp<Color> actualBorderColorProp =
+    private final Prop<Color> actualBorderColorProp =
             newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
@@ -143,13 +143,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindActualBorderColorTo(IProp<Color> prop) {
+    public void bindActualBorderColorTo(Prop<Color> prop) {
         actualBorderColorProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
-    private final IProp<Color> differenceBorderColorProp =
+    private final Prop<Color> differenceBorderColorProp =
             newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
@@ -161,7 +161,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindDifferenceBorderColorTo(IProp<Color> prop) {
+    public void bindDifferenceBorderColorTo(Prop<Color> prop) {
         differenceBorderColorProp.bindTo(prop);
     }
 

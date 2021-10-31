@@ -24,8 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.IPropNullable;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -59,7 +59,7 @@ public final class VList<T> implements Widget {
 
     //region State/Model
     //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
-    private final IProp<ListModel<T>> listModelProp =
+    private final Prop<ListModel<T>> listModelProp =
             newProp(new DefaultListModel<>(), this, "listModel");
 
     public ListModel<T> getListModel() {
@@ -72,7 +72,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region @Prop public Function<T, String> cellTextProvider = Objects::toString
-    private final IProp<Function<T, String>> cellTextProviderProp =
+    private final Prop<Function<T, String>> cellTextProviderProp =
             newProp(Objects::toString, this, "cellTextProvider");
 
     public Function<T, String> getCellTextProvider() {
@@ -85,7 +85,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region  @Prop public String previousItemText = "Previous item"
-    private final IProp<String> previousItemTextProp =
+    private final Prop<String> previousItemTextProp =
             newProp("Previous item", this, "previousItemText");
 
     public String getPreviousItemText() {
@@ -96,13 +96,13 @@ public final class VList<T> implements Widget {
         previousItemTextProp.set(value);
     }
 
-    public void bindPreviousItemTextTo(IProp<String> prop) {
+    public void bindPreviousItemTextTo(Prop<String> prop) {
         previousItemTextProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public String nextItemText = "Next item"
-    private final IProp<String> nextItemTextProp =
+    private final Prop<String> nextItemTextProp =
             newProp("Next item", this, "nextItemText");
 
     public String getNextItemText() {
@@ -113,13 +113,13 @@ public final class VList<T> implements Widget {
         nextItemTextProp.set(value);
     }
 
-    public void bindNextItemTextTo(IProp<String> prop) {
+    public void bindNextItemTextTo(Prop<String> prop) {
         nextItemTextProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public String title = "Items:"
-    private final IProp<String> titleProp =
+    private final Prop<String> titleProp =
             newProp("Items:", this, "title");
 
     public String getTitle() {
@@ -130,7 +130,7 @@ public final class VList<T> implements Widget {
         titleProp.set(value);
     }
 
-    public void bindTitleTo(IProp<String> prop) {
+    public void bindTitleTo(Prop<String> prop) {
         titleProp.bindTo(prop);
     }
 
@@ -174,7 +174,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region selectedItem
-    private final IPropNullable<T> selectedItemProp =
+    private final PropNullable<T> selectedItemProp =
             newPropNullable(null, this, "selectedItem");
 
     @Nullable

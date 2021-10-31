@@ -25,16 +25,8 @@
 package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.Var;
-import org.abego.event.EventObserver;
-import org.abego.event.EventService;
-import org.abego.event.EventServices;
-import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import sun.plugin.dom.exception.InvalidStateException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropField;
@@ -53,43 +45,43 @@ import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropFie
 //TODO: check if we can reuse some code of the different "Prop..." classes
 public class PropService {
 
-    public static <T> IProp<T> newProp(T value) {
+    public static <T> Prop<T> newProp(T value) {
         return newPropField(value, null, null);
     }
 
-    public static <T> IProp<T> newProp(
+    public static <T> Prop<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
         return newPropField(value, otherSource, otherPropertyName);
     }
 
-    public static <T> IPropComputed<T> newComputedProp(
+    public static <T> PropComputed<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputed.newComputedProp(valueComputation, otherSource, otherPropertyName);
+        return PropComputedImpl.newComputedProp(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> IPropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
-        return PropComputed.newComputedProp(valueComputation);
+    public static <T> PropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedImpl.newComputedProp(valueComputation);
     }
-    public static <T> IPropNullable<T> newPropNullable() {
+    public static <T> PropNullable<T> newPropNullable() {
         return PropFieldNullable.newPropField(null);
     }
 
-    public static <T> IPropNullable<T> newPropNullable(T value) {
+    public static <T> PropNullable<T> newPropNullable(T value) {
         return PropFieldNullable.newPropField(value);
     }
 
-    public static <T> IPropNullable<T> newPropNullable(
+    public static <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName) {
         return PropFieldNullable.newPropField(value, otherSource, otherPropertyName);
     }
 
-    public static <T> IPropComputedNullable<T> newComputedPropNullable(
+    public static <T> PropComputedNullable<T> newComputedPropNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputed.newComputedProp(valueComputation, otherSource, otherPropertyName);
+        return PropComputedImpl.newComputedProp(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> IPropComputedNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
-        return PropComputed.newComputedProp(valueComputation, null, null);
+    public static <T> PropComputedNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedImpl.newComputedProp(valueComputation, null, null);
     }
 
 }

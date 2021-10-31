@@ -34,15 +34,15 @@ public interface DependencyCollector {
 
     default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
 
-    default void dependsOnProperty(IProp<?> property) {
+    default void dependsOnProperty(Prop<?> property) {
         dependsOnProperty(property, "value");
     }
 
-    default void dependsOnProperty(IPropNullable<?> property) {
+    default void dependsOnProperty(PropNullable<?> property) {
         dependsOnProperty(property, "value");
     }
 
-    default void dependsOnProperty(IPropComputedNullable<?> property) {
+    default void dependsOnProperty(PropComputedNullable<?> property) {
         dependsOnProperty(property, "value");
     }
 }

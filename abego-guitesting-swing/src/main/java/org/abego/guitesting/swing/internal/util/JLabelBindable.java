@@ -24,7 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.guitesting.swing.internal.util.prop.IProp;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruth;
 
 import javax.swing.JLabel;
@@ -35,7 +35,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 public final class JLabelBindable extends JLabel {
 
     //region @Prop @InheritsGetSet public String text = ""
-    private final IProp<String> textProp =
+    private final Prop<String> textProp =
             newProp("", this, "text");
 
     public void bindTextTo(SourceOfTruth<String> prop) {

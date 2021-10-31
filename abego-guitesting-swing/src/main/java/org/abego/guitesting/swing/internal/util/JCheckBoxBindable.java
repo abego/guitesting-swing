@@ -24,7 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util;
 
-import org.abego.guitesting.swing.internal.util.prop.IProp;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 
 import javax.swing.JCheckBox;
 
@@ -35,10 +35,10 @@ import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 public final class JCheckBoxBindable extends JCheckBox {
 
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
-    private final IProp<Boolean> selectedProp =
+    private final Prop<Boolean> selectedProp =
             newProp(FALSE, this, "selected");
 
-    public void bindSelectedTo(IProp<Boolean> prop) {
+    public void bindSelectedTo(Prop<Boolean> prop) {
         selectedProp.bindTo(prop);
     }
 

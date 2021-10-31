@@ -29,7 +29,7 @@ import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-class PropField<T> extends PropBase<T> implements IProp<T> {
+class PropField<T> extends PropBase<T> implements Prop<T> {
     private SourceOfTruth<T> sourceOfTruth;
     private EventObserver<PropertyChanged> observer;
 

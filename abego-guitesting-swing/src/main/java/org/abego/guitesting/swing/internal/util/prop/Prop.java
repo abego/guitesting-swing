@@ -24,5 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface IPropComputedNullable<T> extends SourceOfTruthNullable<T> {
+public interface Prop<T> extends SourceOfTruth<T> {
+    void bindTo(SourceOfTruth<T> sourceOfTruth);
 }

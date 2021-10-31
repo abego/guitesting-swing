@@ -26,12 +26,11 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.event.EventObserver;
 import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Objects;
 
-class PropFieldNullable<T> extends PropBase<T> implements IPropNullable<T> {
+class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
     private SourceOfTruthNullable<T> sourceOfTruth;
     private EventObserver<PropertyChanged> observer;
 
