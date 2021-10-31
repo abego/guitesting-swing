@@ -25,8 +25,8 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
-import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
+import org.abego.guitesting.swing.internal.util.prop.IPropNullable;
+import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -53,8 +53,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
 
 public final class VList<T> implements Widget {
 
@@ -175,8 +174,8 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region selectedItem
-    private final PropNullableBindable<T> selectedItemProp =
-            newPropNullableBindable(null, this, "selectedItem");
+    private final IPropNullable<T> selectedItemProp =
+            newPropNullable(null, this, "selectedItem");
 
     @Nullable
     public T getSelectedItem() {
@@ -187,7 +186,7 @@ public final class VList<T> implements Widget {
         selectedItemProp.set(value);
     }
 
-    public void bindSelectedItemTo(PropNullable<T> prop) {
+    public void bindSelectedItemTo(SourceOfTruthNullable<T> prop) {
         selectedItemProp.bindTo(prop);
     }
 

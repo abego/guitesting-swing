@@ -48,7 +48,7 @@ import java.util.function.Function;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prob within its container.
  */
-public class PropNullable<T> implements VarNullable<T> {
+class PropNullable<T> implements IPropComputedNullable<T>, VarNullable<T> {
     //TODO: can we share some code between PropNullable and Prop?
 
     private final EventService eventService = EventServices.getDefault();

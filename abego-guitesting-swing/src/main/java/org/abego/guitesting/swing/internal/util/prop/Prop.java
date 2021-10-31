@@ -74,5 +74,26 @@ public class Prop {
     public static <T> IPropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
         return PropComputed.newComputedProp(valueComputation);
     }
+    public static <T> IPropNullable<T> newPropNullable() {
+        return PropNullableBindable.newPropNullableBindable(null,e-> {});
+    }
+
+    public static <T> IPropNullable<T> newPropNullable(T value) {
+        return PropNullableBindable.newPropNullableBindable(value,e->{});
+    }
+
+    public static <T> IPropNullable<T> newPropNullable(
+            @Nullable T value, Object otherSource, String otherPropertyName) {
+        return PropNullableBindable.newPropNullableBindable(value, otherSource, otherPropertyName);
+    }
+
+    public static <T> IPropComputedNullable<T> newComputedPropNullable(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return PropNullable.newComputedPropNullable(valueComputation, otherSource, otherPropertyName);
+    }
+
+    public static <T> IPropComputedNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
+        return PropNullable.newComputedPropNullable(valueComputation, null, null);
+    }
 
 }

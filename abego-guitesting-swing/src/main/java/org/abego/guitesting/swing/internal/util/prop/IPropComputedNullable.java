@@ -24,25 +24,5 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface DependencyCollector {
-    DependencyCollector DoNothing = new DependencyCollector() {
-        @Override
-        public void dependsOnProperty(Object source, String propertyName) {
-            // do nothing
-        }
-    };
-
-    default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
-
-    default void dependsOnProperty(IProp<?> property) {
-        dependsOnProperty(property, "value");
-    }
-
-    default void dependsOnProperty(IPropNullable<?> property) {
-        dependsOnProperty(property, "value");
-    }
-
-    default void dependsOnProperty(IPropComputedNullable<?> property) {
-        dependsOnProperty(property, "value");
-    }
+public interface IPropComputedNullable<T> extends SourceOfTruthNullable<T> {
 }

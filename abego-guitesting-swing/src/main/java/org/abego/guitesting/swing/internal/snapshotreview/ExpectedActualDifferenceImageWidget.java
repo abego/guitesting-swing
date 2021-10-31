@@ -29,9 +29,9 @@ import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
-import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.IPropNullable;
+import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
@@ -49,9 +49,9 @@ import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 
@@ -76,8 +76,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
-    private final PropNullableBindable<SnapshotIssue> snapshotIssueProp =
-            newPropNullableBindable(null, this, "snapshotIssue");
+    private final IPropNullable<SnapshotIssue> snapshotIssueProp =
+            newPropNullable(null, this, "snapshotIssue");
 
     @Nullable
     public SnapshotIssue getSnapshotIssue() {
@@ -88,7 +88,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         snapshotIssueProp.set(value);
     }
 
-    public void bindSnapshotIssueTo(PropNullable<SnapshotIssue> prop) {
+    public void bindSnapshotIssueTo(SourceOfTruthNullable<SnapshotIssue> prop) {
         snapshotIssueProp.bindTo(prop);
     }
 

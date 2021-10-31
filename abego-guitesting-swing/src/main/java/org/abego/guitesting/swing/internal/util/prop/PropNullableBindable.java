@@ -37,12 +37,12 @@ import java.util.function.Consumer;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullable.newPropNullable;
 
 //TODO: review JavaDoc
-public class PropNullableBindable<T> implements VarNullable<T> {
+class PropNullableBindable<T> implements IPropComputedNullable<T>, IPropNullable<T>, VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final Consumer<T> onSourceOfTruthValueChanged;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
-    private PropNullable<T> prop;
+    private SourceOfTruthNullable<T> prop;
     private EventObserver<PropertyChanged> observer;
 
     private PropNullableBindable(@Nullable T initialValue,
@@ -91,7 +91,7 @@ public class PropNullableBindable<T> implements VarNullable<T> {
         prop.set(value);
     }
 
-    public void bindTo(PropNullable<T> sourceOfTruth) {
+    public void bindTo(SourceOfTruthNullable<T> sourceOfTruth) {
         eventService.removeObserver(observer);
 
         @Nullable T oldValue = get();

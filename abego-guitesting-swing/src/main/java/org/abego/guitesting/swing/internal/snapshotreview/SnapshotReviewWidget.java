@@ -33,7 +33,8 @@ import org.abego.guitesting.swing.internal.util.JLabelBindable;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.IPropComputed;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.IPropComputedNullable;
+import org.abego.guitesting.swing.internal.util.prop.IPropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -59,8 +60,8 @@ import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBo
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newComputedProp;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropNullable.newComputedPropNullable;
-import static org.abego.guitesting.swing.internal.util.prop.PropNullable.newPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newComputedPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
@@ -73,12 +74,12 @@ class SnapshotReviewWidget implements Widget {
 
     //region State/Model
     private final DefaultListModel<SnapshotIssue> remainingIssues;
-    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
+    private final IPropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final IProp<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final IProp<Integer> expectedImageIndexProp = newProp(0);
     private final IPropComputed<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
+    private final IPropComputedNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
