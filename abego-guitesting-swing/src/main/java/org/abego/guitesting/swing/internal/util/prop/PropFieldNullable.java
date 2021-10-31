@@ -70,14 +70,14 @@ class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
                 sourceOfTruth, e -> postPropertyChanged());
     }
 
-    public static <T> PropFieldNullable<T> newPropField(
+    public static <T> PropFieldNullable<T> newPropFieldNullable(
             @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
         return new PropFieldNullable<>(initialValue, otherSource, otherPropertyName);
     }
 
-    public static <T> PropFieldNullable<T> newPropField(
+    public static <T> PropFieldNullable<T> newPropFieldNullable(
             @Nullable T initialValue) {
         return new PropFieldNullable<>(initialValue, null, null);
     }

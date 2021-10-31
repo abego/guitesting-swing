@@ -58,9 +58,9 @@ import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxBindable;
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newComputedProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropComputed;
 import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newComputedPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropComputedNullable;
 import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
@@ -78,8 +78,8 @@ class SnapshotReviewWidget implements Widget {
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
     private final Prop<Integer> expectedImageIndexProp = newProp(0);
-    private final PropComputed<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
+    private final PropComputed<String> selectedIssueDescriptionProp = newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = newPropComputedNullable(this::getVariantsInfo);
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable

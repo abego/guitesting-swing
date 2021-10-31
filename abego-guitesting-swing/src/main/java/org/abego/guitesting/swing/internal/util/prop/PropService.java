@@ -54,34 +54,34 @@ public class PropService {
         return newPropField(value, otherSource, otherPropertyName);
     }
 
-    public static <T> PropComputed<T> newComputedProp(
-            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputedImpl.newComputedProp(valueComputation, otherSource, otherPropertyName);
-    }
-
-    public static <T> PropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
-        return PropComputedImpl.newComputedProp(valueComputation);
-    }
     public static <T> PropNullable<T> newPropNullable() {
-        return PropFieldNullable.newPropField(null);
+        return PropFieldNullable.newPropFieldNullable(null);
     }
 
     public static <T> PropNullable<T> newPropNullable(T value) {
-        return PropFieldNullable.newPropField(value);
+        return PropFieldNullable.newPropFieldNullable(value);
     }
 
     public static <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName) {
-        return PropFieldNullable.newPropField(value, otherSource, otherPropertyName);
+        return PropFieldNullable.newPropFieldNullable(value, otherSource, otherPropertyName);
     }
 
-    public static <T> PropComputedNullable<T> newComputedPropNullable(
+    public static <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedImpl.newPropComputed(valueComputation);
+    }
+
+    public static <T> PropComputed<T> newPropComputed(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputedImpl.newComputedProp(valueComputation, otherSource, otherPropertyName);
+        return PropComputedImpl.newPropComputed(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> PropComputedNullable<T> newComputedPropNullable(Function<DependencyCollector, T> valueComputation) {
-        return PropComputedImpl.newComputedProp(valueComputation, null, null);
+    public static <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedImpl.newPropComputed(valueComputation);
     }
 
+    public static <T> PropComputedNullable<T> newPropComputedNullable(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return PropComputedImpl.newPropComputed(valueComputation, otherSource, otherPropertyName);
+    }
 }

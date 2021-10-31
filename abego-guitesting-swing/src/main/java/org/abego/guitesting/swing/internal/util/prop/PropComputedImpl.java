@@ -61,12 +61,12 @@ class PropComputedImpl<T> extends PropBase<T> implements PropComputed<T>, PropCo
         this.mustComputeValue = true;
     }
 
-    public static <T> PropComputedImpl<T> newComputedProp(
+    static <T> PropComputedImpl<T> newPropComputed(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return new PropComputedImpl<>(valueComputation, otherSource, otherPropertyName);
     }
 
-    public static <T> PropComputedImpl<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
+    static <T> PropComputedImpl<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
         return new PropComputedImpl<>(valueComputation, null, null);
     }
 
