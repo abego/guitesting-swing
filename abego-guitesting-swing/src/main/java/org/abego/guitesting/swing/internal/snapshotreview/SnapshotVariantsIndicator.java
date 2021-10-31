@@ -39,7 +39,6 @@ import java.awt.Font;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
 class SnapshotVariantsIndicator implements Widget {
@@ -53,6 +52,7 @@ class SnapshotVariantsIndicator implements Widget {
         return variantsInfoProp.get();
     }
 
+    @SuppressWarnings("unused")
     public void setVariantsInfo(@Nullable SnapshotVariant value) {
         variantsInfoProp.set(value);
     }
