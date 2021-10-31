@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.event.EventService;
+
 public class PropServices {
     PropServices() {
         throw new UnsupportedOperationException();
@@ -31,6 +33,10 @@ public class PropServices {
 
     public static PropService getDefault() {
         return PropServiceDefault.getDefault();
+    }
+
+    public static PropService newPropService(EventService eventService) {
+        return PropServiceDefault.newPropService(eventService);
     }
 
 }
