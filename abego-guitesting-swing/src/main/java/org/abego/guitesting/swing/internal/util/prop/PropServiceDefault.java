@@ -45,9 +45,8 @@ import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropFie
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-//TODO: check if we can reuse some code of the different "Prop..." classes
 class PropServiceDefault implements PropService {
-    private static PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
+    private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
     private final EventService eventService;
 
     private PropServiceDefault(EventService eventService) {this.eventService = eventService;}
