@@ -26,6 +26,8 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
+import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -39,13 +41,13 @@ import java.awt.Font;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 
 class SnapshotVariantsIndicator implements Widget {
     //region State/Model
+    private final PropService propService = PropServices.getDefault();
     //region @Prop @Nullable SnapshotVariant : variantsInfo
     private final PropNullable<SnapshotVariant> variantsInfoProp =
-            newPropNullable(null, this, "variantsInfo");
+            propService.newPropNullable(null, this, "variantsInfo");
 
     @Nullable
     public SnapshotVariant getVariantsInfo() {

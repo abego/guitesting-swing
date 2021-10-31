@@ -25,23 +25,27 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
+import org.abego.guitesting.swing.internal.util.prop.PropServices;
 
 import javax.swing.JCheckBox;
 
 import static java.lang.Boolean.FALSE;
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 
 public final class JCheckBoxBindable extends JCheckBox {
 
+    //region State/Model
+    private final PropService propService = PropServices.getDefault();
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
     private final Prop<Boolean> selectedProp =
-            newProp(FALSE, this, "selected");
+            propService.newProp(FALSE, this, "selected");
 
     public void bindSelectedTo(Prop<Boolean> prop) {
         selectedProp.bindTo(prop);
     }
 
+    //endregion
     //endregion
     //region Construction
     private JCheckBoxBindable() {

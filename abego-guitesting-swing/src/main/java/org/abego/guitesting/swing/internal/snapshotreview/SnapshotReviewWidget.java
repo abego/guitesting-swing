@@ -36,6 +36,8 @@ import org.abego.guitesting.swing.internal.util.prop.PropComputed;
 import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
+import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -58,10 +60,6 @@ import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxBindable;
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropComputed;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropComputedNullable;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
@@ -73,13 +71,14 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 class SnapshotReviewWidget implements Widget {
 
     //region State/Model
+    private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
-    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
+    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = propService.newPropNullable(null, this, "selectedIssue");
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
-    private final Prop<Integer> expectedImageIndexProp = newProp(0);
-    private final PropComputed<String> selectedIssueDescriptionProp = newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = newPropComputedNullable(this::getVariantsInfo);
+    private final Prop<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
+    private final Prop<Integer> expectedImageIndexProp = propService.newProp(0);
+    private final PropComputed<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable

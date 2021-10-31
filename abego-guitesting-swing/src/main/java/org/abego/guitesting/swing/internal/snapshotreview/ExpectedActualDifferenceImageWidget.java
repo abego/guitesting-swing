@@ -31,6 +31,8 @@ import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
+import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -48,18 +50,17 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
-import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
+    private final PropService propService = PropServices.getDefault();
     //region @Prop public Boolean shrinkToFit = FALSE
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp =
-            newProp(FALSE, this, "shrinkToFit");
+            propService.newProp(FALSE, this, "shrinkToFit");
 
     public Boolean getShrinkToFit() {
         return shrinkToFitProp.get();
@@ -77,7 +78,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
     private final PropNullable<SnapshotIssue> snapshotIssueProp =
-            newPropNullable(null, this, "snapshotIssue");
+            propService.newPropNullable(null, this, "snapshotIssue");
 
     @Nullable
     public SnapshotIssue getSnapshotIssue() {
@@ -96,7 +97,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Integer> expectedImageIndexProp =
-            newProp(0, this, "expectedImageIndex");
+            propService.newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -114,7 +115,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     private final Prop<Color> expectedBorderColorProp =
-            newProp(Color.green, this, "expectedBorderColor");
+            propService.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -132,7 +133,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     private final Prop<Color> actualBorderColorProp =
-            newProp(Color.red, this, "actualBorderColor");
+            propService.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -150,7 +151,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     private final Prop<Color> differenceBorderColorProp =
-            newProp(Color.black, this, "differenceBorderColor");
+            propService.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();
