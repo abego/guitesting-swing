@@ -38,23 +38,20 @@ import static javax.swing.SwingUtilities.invokeLater;
 
 public class SnapshotReviewImpl implements SnapshotReview {
 
+    //region State
     private final Supplier<Seq<SnapshotIssue>> issuesSupplier;
-
+    //endregion
+    //region Construction
     private SnapshotReviewImpl(Supplier<Seq<SnapshotIssue>> issuesSupplier) {
         this.issuesSupplier = issuesSupplier;
-    }
-
-    public static void main(String[] args) {
-        GT gt = GuiTesting.newGT();
-
-        gt.newSnapshotReview().showIssues();
     }
 
     public static SnapshotReview newSnapshotReview(
             Supplier<Seq<SnapshotIssue>> issuesSupplier) {
         return new SnapshotReviewImpl(issuesSupplier);
     }
-
+    //endregion
+    //region Commands
     @Override
     public void showIssues(Consumer<JFrame> framePreShowCode) {
 
@@ -74,5 +71,13 @@ public class SnapshotReviewImpl implements SnapshotReview {
     private Seq<SnapshotIssue> getSnapshotIssues() {
         return issuesSupplier.get();
     }
+    //endregion
+    //region main
+    public static void main(String[] args) {
+        GT gt = GuiTesting.newGT();
+
+        gt.newSnapshotReview().showIssues();
+    }
+    //endregion
 
 }

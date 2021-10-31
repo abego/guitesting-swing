@@ -42,14 +42,42 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
  * "difference"), optionally scaled down to fit into a given area.
  */
 final class SnapshotImages {
+
+    //region State/Model
     private static @Nullable SnapshotImages cachedSnapshotImages;
 
     private final SnapshotIssue issue;
+
+    public SnapshotIssue getIssue() {
+        return issue;
+    }
+
     private final @Nullable Dimension area;
+
+    public @Nullable Dimension getArea() {
+        return area;
+    }
+
     private final ImageIcon expectedImage;
+
+    public ImageIcon getExpectedImage() {
+        return expectedImage;
+    }
+
     private final ImageIcon actualImage;
+
+    public ImageIcon getActualImage() {
+        return actualImage;
+    }
+
     private final ImageIcon differenceImage;
 
+    public ImageIcon getDifferenceImage() {
+        return differenceImage;
+    }
+
+    //endregion
+    //region Construction
     private SnapshotImages(
             SnapshotIssue issue,
             @Nullable Dimension area) {
@@ -89,27 +117,6 @@ final class SnapshotImages {
         return cachedSnapshotImages;
     }
 
-    @Nullable
-    public Dimension getArea() {
-        return area;
-    }
-
-    public ImageIcon getExpectedImage() {
-        return expectedImage;
-    }
-
-    public ImageIcon getActualImage() {
-        return actualImage;
-    }
-
-    public ImageIcon getDifferenceImage() {
-        return differenceImage;
-    }
-
-    public SnapshotIssue getIssue() {
-        return issue;
-    }
-
     private static ImageIcon scaledImageIcon(ImageIcon icon, double scaleFactor) {
         Image image = icon.getImage();
         int w = icon.getIconWidth();
@@ -130,4 +137,5 @@ final class SnapshotImages {
         }
         return new Dimension(totalWidth, maxHeight);
     }
+    //endregion
 }

@@ -73,35 +73,8 @@ class SnapshotReviewWidget implements Widget {
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
+    //region @Prop public @Nullable SnapshotIssue selectedIssue
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = propService.newPropNullable(null, this, "selectedIssue");
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
-    private final Prop<Integer> expectedImageIndexProp = propService.newProp(0);
-    private final PropComputed<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
-
-    private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
-        @Nullable
-        SnapshotVariant info = getVariantsInfo(dependencyCollector);
-        if (info == null) {
-            return " ";
-        }
-
-        String label = labelWithLastPartFirst(info.getIssue());
-        int variantsCount = info.getVariantsCount();
-        return (variantsCount > 1)
-                ? String.format("[%d of %d] %s", //NON-NLS
-                info.getVariantsIndex() + 1, variantsCount, label)
-                : label;
-    }
-
-    private int getExpectedImageIndex() {
-        return expectedImageIndexProp.get();
-    }
-
-    private void setExpectedImageIndex(Integer value) {
-        expectedImageIndexProp.set(value);
-    }
 
     @Nullable
     private SnapshotIssue getSelectedIssue() {
@@ -118,6 +91,43 @@ class SnapshotReviewWidget implements Widget {
         return selectedIssue.get();
     }
 
+    //endregion
+    //region @Prop public Boolean shrinkToFit = TRUE
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final Prop<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
+    //endregion
+    //region @Prop public Integer expectedImageIndex = 0
+    private final Prop<Integer> expectedImageIndexProp = propService.newProp(0);
+
+    private int getExpectedImageIndex() {
+        return expectedImageIndexProp.get();
+    }
+
+    private void setExpectedImageIndex(Integer value) {
+        expectedImageIndexProp.set(value);
+    }
+    //endregion
+    //region @Prop public String selectedIssueDescription {}
+    private final PropComputed<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+
+    private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
+        @Nullable
+        SnapshotVariant info = getVariantsInfo(dependencyCollector);
+        if (info == null) {
+            return " ";
+        }
+
+        String label = labelWithLastPartFirst(info.getIssue());
+        int variantsCount = info.getVariantsCount();
+        return (variantsCount > 1)
+                ? String.format("[%d of %d] %s", //NON-NLS
+                info.getVariantsIndex() + 1, variantsCount, label)
+                : label;
+    }
+    //endregion
+    //region @Prop public @Nullable SnapshotVariant variantsInfo {}
+    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
+
     @Nullable
     private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
         SnapshotIssue issue = getSelectedIssue(dependencyCollector);
@@ -130,13 +140,60 @@ class SnapshotReviewWidget implements Widget {
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
         return variantsInfo(issue, variants);
     }
-
+    //endregion
     //endregion
     //region Actions
     private final Action addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
     private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
     private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
     private final Action rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
+
+    private void overwriteSnapshot() {
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        if (currentIssue != null) {
+            copyFile(
+                    toFile(currentIssue.getActualImage()),
+                    toFile(currentIssue.getOverwriteURL()));
+            removeIssueAndVariants(currentIssue);
+        }
+    }
+
+    private void addAlternativeSnapshot() {
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        if (currentIssue != null) {
+            copyFile(
+                    toFile(currentIssue.getActualImage()),
+                    toFile(currentIssue.getAddAlternativeURL()));
+            removeIssueAndVariants(currentIssue);
+        }
+    }
+
+    private void ignoreCurrentIssue() {
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        if (currentIssue != null) {
+            removeIssue(currentIssue);
+        }
+    }
+
+    private void removeIssue(SnapshotIssue issue) {
+        remainingIssues.removeElement(issue);
+    }
+
+    private void removeIssueAndVariants(SnapshotIssue issue) {
+        String name = issue.getSnapshotName();
+        for (int i = remainingIssues.size() - 1; i >= 0; i--) {
+            SnapshotIssue issueInModel = remainingIssues.get(i);
+            //noinspection CallToSuspiciousStringMethod
+            if (issueInModel.getSnapshotName().equals(name)) {
+                remainingIssues.removeElementAt(i);
+            }
+        }
+    }
+
+    private void rotateImages() {
+        setExpectedImageIndex((getExpectedImageIndex() + 1) % 3);
+    }
+
     //endregion
     //region Components
     private final JLabelBindable selectedIssueDescriptionLabel = labelBindable();
@@ -196,60 +253,11 @@ class SnapshotReviewWidget implements Widget {
         return result.toString();
     }
 
-
     //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
         return content;
-    }
-
-    //endregion
-    //region Action related
-    private void overwriteSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
-        if (currentIssue != null) {
-            copyFile(
-                    toFile(currentIssue.getActualImage()),
-                    toFile(currentIssue.getOverwriteURL()));
-            removeIssueAndVariants(currentIssue);
-        }
-    }
-
-    private void addAlternativeSnapshot() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
-        if (currentIssue != null) {
-            copyFile(
-                    toFile(currentIssue.getActualImage()),
-                    toFile(currentIssue.getAddAlternativeURL()));
-            removeIssueAndVariants(currentIssue);
-        }
-    }
-
-    private void ignoreCurrentIssue() {
-        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
-        if (currentIssue != null) {
-            removeIssue(currentIssue);
-        }
-    }
-
-    private void removeIssue(SnapshotIssue issue) {
-        remainingIssues.removeElement(issue);
-    }
-
-    private void removeIssueAndVariants(SnapshotIssue issue) {
-        String name = issue.getSnapshotName();
-        for (int i = remainingIssues.size() - 1; i >= 0; i--) {
-            SnapshotIssue issueInModel = remainingIssues.get(i);
-            //noinspection CallToSuspiciousStringMethod
-            if (issueInModel.getSnapshotName().equals(name)) {
-                remainingIssues.removeElementAt(i);
-            }
-        }
-    }
-
-    private void rotateImages() {
-        setExpectedImageIndex((getExpectedImageIndex() + 1) % 3);
     }
 
     //endregion
@@ -301,6 +309,7 @@ class SnapshotReviewWidget implements Widget {
     //region Binding related
     private void initBindings() {
         snapshotIssuesVList.setListModel(remainingIssues);
+        snapshotIssuesVList.bindSelectedItemTo(selectedIssue);
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
@@ -309,7 +318,6 @@ class SnapshotReviewWidget implements Widget {
 
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
-        snapshotIssuesVList.bindSelectedItemTo(selectedIssue);
         expectedActualDifferenceImageWidget.bindSnapshotIssueTo(selectedIssue);
         expectedActualDifferenceImageWidget.bindShrinkToFitTo(shrinkToFitProp);
         expectedActualDifferenceImageWidget.bindExpectedImageIndexTo(expectedImageIndexProp);
