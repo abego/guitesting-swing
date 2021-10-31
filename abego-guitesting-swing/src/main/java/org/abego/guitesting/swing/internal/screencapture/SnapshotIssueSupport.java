@@ -64,7 +64,7 @@ final class SnapshotIssueSupport {
      **/
     private final static Pattern EXPECTED_IMAGE_FILE_NAME_PATTERN =
             Pattern.compile("([-a-z.\\\\]+)([^@]*?)-expectedImage@(\\d+)\\.png");
-    private final List<Issue> items = new ArrayList<>();
+    private final List<SnapshotIssue> items = new ArrayList<>();
     private final File guitestingReportsDir;
     private final File testResourcesDir;
 
@@ -77,7 +77,7 @@ final class SnapshotIssueSupport {
         return new SnapshotIssueSupport(guitestingReportsDir, testResourcesDir);
     }
 
-    public Seq<? extends SnapshotIssue> findSnapshotIssues() {
+    public Seq<SnapshotIssue> findSnapshotIssues() {
         items.clear();
 
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {

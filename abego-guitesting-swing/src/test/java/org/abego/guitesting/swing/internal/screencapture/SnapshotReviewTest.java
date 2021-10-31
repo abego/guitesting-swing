@@ -38,6 +38,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 import static org.abego.guitesting.swing.SnapshotReview.SNAPSHOT_REVIEW_FRAME_NAME;
+import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT;
 import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +51,7 @@ final class SnapshotReviewTest {
         File myResourcesDir = new File(testResourcesDir.getAbsolutePath() + "/org/abego/guitesting/swing/snap-shots");
 
         // fill the "reports" directory.
-        FileUtil.copyResourcesToDirectoryFlat(new File(reportsDir, "images"),
+        FileUtil.copyResourcesToDirectoryFlat(new File(reportsDir, SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT),
                 "/org/abego/guitesting/swing/internal/review-sample/images/",
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-actualImage.png",
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot-differenceImage@0.png",

@@ -55,7 +55,7 @@ public class SnapshotReviewApp {
         }
 
         if (testResourcesDirectory != null) {
-            gt.setTestResourcesDirectoryPath(testResourcesDirectory);
+            gt.setTestResourcesDirectory(new File(testResourcesDirectory));
         }
         if (snapshotReportDirectory != null) {
             gt.setSnapshotReportDirectory(new File(snapshotReportDirectory));
@@ -98,7 +98,7 @@ public class SnapshotReviewApp {
     }
 
     private File getTestResourcesDirectory() {
-        return new File(gt.getTestResourcesDirectoryPath());
+        return gt.getTestResourcesDirectory();
     }
 
     private File getSnapshotReportDirectory() {

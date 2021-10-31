@@ -63,6 +63,7 @@ import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
 import static org.abego.guitesting.swing.internal.screencapture.SnapshotIssueSupport.newSnapshotIssueSupport;
 
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
+    static final String SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT = "images";
     static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
@@ -195,7 +196,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             Component component, @Nullable Rectangle rectangle, BufferedImage... expectedImages) {
         rectangle = adjustRectangleForScreenCapture(component, rectangle);
         SnapshotInfo snapshotInfo = new SnapshotInfo(
-                null, "waitUntilScreenshotMatchesImage", getTestResourcesDirectoryPath());
+                null, "waitUntilScreenshotMatchesImage", getTestResourcesDirectory());
         return waitUntilScreenshotMatchesImageHelper(
                 component, rectangle, expectedImages, null, snapshotInfo);
     }
@@ -259,7 +260,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public BufferedImage[] getImagesOfSnapshot(String name) {
-        SnapshotInfo info = new SnapshotInfo(name, "getImagesOfSnapshot", getTestResourcesDirectoryPath());
+        SnapshotInfo info = new SnapshotInfo(name, "getImagesOfSnapshot", getTestResourcesDirectory());
         return info.getImagesOfSnapshot();
     }
 
@@ -270,7 +271,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             String snapshotName)
             throws GuiTestingException {
         SnapshotInfo info = new SnapshotInfo(
-                snapshotName, "waitUntilScreenshotMatchesSnapshot", getTestResourcesDirectoryPath());
+                snapshotName, "waitUntilScreenshotMatchesSnapshot", getTestResourcesDirectory());
 
         rectangle = adjustRectangleForScreenCapture(component, rectangle);
 
@@ -400,7 +401,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         File outputDir = getSnapshotReportDirectory();
         String timestamp = Instant.now().toString();
 
-        String imagesDirName = "images"; //NON-NLS
+        String imagesDirName = SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT; //NON-NLS
         File imagesDir = new File(outputDir, imagesDirName);
         FileUtil.ensureDirectoryExists(imagesDir);
         File actualImageFile = new File(imagesDir, snapshotInfo.getActualImageFileName());
@@ -437,8 +438,8 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public Seq<SnapshotIssue> getSnapshotIssues() {
-        return (Seq<SnapshotIssue>)newSnapshotIssueSupport(getSnapshotReportDirectory(),
-                new File(getTestResourcesDirectoryPath())).findSnapshotIssues();
+        return newSnapshotIssueSupport(getSnapshotReportDirectory(),
+                getTestResourcesDirectory()).findSnapshotIssues();
     }
 
     static class SnapshotInfo {
@@ -447,16 +448,16 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
          * The (absolute) snapshot name, with "/" as delimiters
          */
         private final String absoluteSnapshotName;
-        private final String testResourcesDirectoryPath;
+        private final File testResourcesDirectory;
         private final URL urlToTestClass;
 
         SnapshotInfo(
                 @Nullable String snapshotName,
                 String calleeName,
-                String testResourcesDirectoryPath) {
+                File testResourcesDirectory) {
             this.absoluteSnapshotName =
                     resolveSnapshotName(snapshotName, calleeName);
-            this.testResourcesDirectoryPath = testResourcesDirectoryPath;
+            this.testResourcesDirectory = testResourcesDirectory;
             this.urlToTestClass = urlToTestClass(calleeName);
         }
 
@@ -528,7 +529,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         private File getTestResourcesDirectory() {
             //noinspection StringConcatenation
             String testResourcesDirectoryURL =
-                    getMavenProjectDirectoryURL() + "/" + testResourcesDirectoryPath; //NON-NLS
+                    getMavenProjectDirectoryURL() + "/" + testResourcesDirectory.getPath(); //NON-NLS
 
             File testResourcesDir = urlToFile(testResourcesDirectoryURL); //NON-NLS
             FileUtil.ensureDirectoryExists(testResourcesDir);
