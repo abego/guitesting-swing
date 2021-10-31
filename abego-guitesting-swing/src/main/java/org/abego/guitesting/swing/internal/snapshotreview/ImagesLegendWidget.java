@@ -42,10 +42,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 class ImagesLegendWidget implements Widget {
 
     //region State/Model
-    //region expectedImageIndex
+    //region @PropBindable public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropBindable<Integer> expectedImageIndexProp =
-            newPropBindable(0, this, "expectedImageIndex", f -> onExpectedImageIndexChanged());
+            newPropBindable(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -61,39 +61,45 @@ class ImagesLegendWidget implements Widget {
     }
 
     //endregion
+    //region @Prop public Color expectedBorderColor = Color.green
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final Prop<Color> expectedBorderColorProp = Prop.newProp(Color.green, this, "expectedBorderColor");
 
-    private Color expectedBorderColor = Color.green;
     public Color getExpectedBorderColor() {
-        return expectedBorderColor;
+        return expectedBorderColorProp.get();
     }
 
     public void setExpectedBorderColor(Color color) {
-        this.expectedBorderColor = color;
-
-        onExpectedBorderColorChanged();
+        expectedBorderColorProp.set(color);
     }
 
-    private Color actualBorderColor = Color.red;
+    //endregion
+    //region @Prop public Color actualBorderColor = Color.red
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final Prop<Color> actualBorderColorProp = Prop.newProp(Color.red, this, "actualBorderColor");
+
     public Color getActualBorderColor() {
-        return actualBorderColor;
+        return actualBorderColorProp.get();
     }
 
     public void setActualBorderColor(Color color) {
-        this.actualBorderColor = color;
-
-        onActualBorderColorChanged();
+        actualBorderColorProp.set(color);
     }
 
-    private Color differenceBorderColor = Color.black;
+    //endregion
+    //region @Prop public Color differenceBorderColor = Color.black
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final Prop<Color> differenceBorderColorProp = Prop.newProp(Color.black, this, "differenceBorderColor");
+
     public Color getDifferenceBorderColor() {
-        return differenceBorderColor;
+        return differenceBorderColorProp.get();
     }
 
     public void setDifferenceBorderColor(Color color) {
-        this.differenceBorderColor = color;
-
-        onDifferenceBorderColorChanged();
+        differenceBorderColorProp.set(color);
     }
+
+    //endregion
     //endregion
     //region Components
     private final JLabel expectedLabel = legendLabel(" Expected ");//NON-NLS
@@ -103,17 +109,16 @@ class ImagesLegendWidget implements Widget {
             expectedLabel, actualLabel, differenceLabel
     };
     private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
+
     //endregion
     //region Construction
-    public static ImagesLegendWidget imagesLegendWidget() {
-        return new ImagesLegendWidget();
+    private ImagesLegendWidget() {
+        initBindings();
+        setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor());
     }
 
-    private ImagesLegendWidget() {
-        onExpectedImageIndexChanged();
-        onExpectedBorderColorChanged();
-        onActualBorderColorChanged();
-        onDifferenceBorderColorChanged();
+    public static ImagesLegendWidget imagesLegendWidget() {
+        return new ImagesLegendWidget();
     }
 
     //endregion
@@ -121,7 +126,7 @@ class ImagesLegendWidget implements Widget {
     public JComponent getContent() {
         return content;
     }
-    private static final int LEGEND_BORDER_SIZE = 2;
+
 
     private void updateContent() {
         SwingUtilities.invokeLater(() -> {
@@ -144,26 +149,25 @@ class ImagesLegendWidget implements Widget {
     }
 
     //endregion
-    //region Binding related
-    private void onExpectedImageIndexChanged() {
-        updateContent();
-    }
-
-    private void onExpectedBorderColorChanged() {
-        setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor());
-    }
-
-    private void onActualBorderColorChanged() {
-        setLegendLabelBorderColor(actualLabel, getActualBorderColor());
-    }
-
-    private void onDifferenceBorderColorChanged() {
-        setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor());
-    }
+    //region Style related
+    private static final int LEGEND_BORDER_SIZE = 2;
 
     private static void setLegendLabelBorderColor(JLabel label, Color color) {
         label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
     }
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        expectedImageIndexProp.runDependingCode(this::updateContent);
+
+        expectedBorderColorProp.runDependingCode(() ->
+                setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor()));
+        actualBorderColorProp.runDependingCode(() ->
+                setLegendLabelBorderColor(actualLabel, getActualBorderColor()));
+        differenceBorderColorProp.runDependingCode(() ->
+                setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor()));
+    }
+
     //endregion
 
 }
