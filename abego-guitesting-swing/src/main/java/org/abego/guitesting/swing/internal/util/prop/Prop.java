@@ -31,6 +31,7 @@ import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,21 +71,21 @@ public class Prop<T> implements Var<T> {
     }
 
     public static <T> Prop<T> newProp() {
-        return new Prop<T>(null, null, null, null);
+        return new Prop<>(null, null, null, null);
     }
 
     public static <T> Prop<T> newProp(T value) {
-        return new Prop<T>(value, null, null, null);
+        return new Prop<>(value, null, null, null);
     }
 
     public static <T> Prop<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
-        return new Prop<T>(value, null, otherSource, otherPropertyName);
+        return new Prop<>(value, null, otherSource, otherPropertyName);
     }
 
     public static <T> Prop<T> newComputedProp(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new Prop<T>(null, valueComputation, otherSource, otherPropertyName);
+        return new Prop<>(null, valueComputation, otherSource, otherPropertyName);
     }
 
     public static <T> Prop<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
@@ -137,6 +138,11 @@ public class Prop<T> implements Var<T> {
 
     @NonNull
     private T recomputeAndOnChangeDo(Runnable onChangeCode) {
+        @Nullable Function<DependencyCollector, T> computation = this.valueComputation;
+        if (computation == null) {
+            throw new InvalidStateException("Internal Error: no valueComputation defined");
+        }
+
         if (observers != null) {
             for (EventObserver<PropertyChanged> o : observers) {
                 eventService.removeObserver(o);
@@ -152,7 +158,8 @@ public class Prop<T> implements Var<T> {
                         source, propertyName, e -> recomputeAndPostEvent()));
             }
         };
-        T v = valueComputation.apply(dependencyCollector);
+
+        T v = computation.apply(dependencyCollector);
         if (!observers.isEmpty()) {
             this.observers = observers;
         }

@@ -60,7 +60,7 @@ public class PropBindable<T> implements Var<T> {
     public static <T> PropBindable<T> newPropBindable(
             //TODO: avoid callback, use events
             @NonNull T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<T>(initialValue, null, null,
+        return new PropBindable<>(initialValue, null, null,
                 onSourceOfTruthValueChanged);
     }
 
@@ -70,7 +70,7 @@ public class PropBindable<T> implements Var<T> {
             @Nullable String otherPropertyName,
             //TODO: avoid callback, use events
             Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<T>(initialValue, otherSource, otherPropertyName,
+        return new PropBindable<>(initialValue, otherSource, otherPropertyName,
                 onSourceOfTruthValueChanged);
     }
 
@@ -78,7 +78,7 @@ public class PropBindable<T> implements Var<T> {
             @NonNull T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropBindable<T>(initialValue, otherSource, otherPropertyName,
+        return new PropBindable<>(initialValue, otherSource, otherPropertyName,
                 e->{});
     }
 

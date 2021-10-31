@@ -30,6 +30,7 @@ import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,11 @@ public class PropNullable<T> implements VarNullable<T> {
     }
 
     private void recomputeAndOnChangeDo(Runnable onChangeCode) {
+        @Nullable Function<DependencyCollector, T> computation = this.valueComputation;
+        if (computation == null) {
+            throw new InvalidStateException("Internal Error: no valueComputation defined");
+        }
+
         if (observers != null) {
             for (EventObserver<PropertyChanged> o : observers) {
                 eventService.removeObserver(o);
@@ -151,7 +157,7 @@ public class PropNullable<T> implements VarNullable<T> {
             }
         };
         @Nullable Function<DependencyCollector, T> comp = valueComputation;
-        T v = valueComputation.apply(dependencyCollector);
+        T v = computation.apply(dependencyCollector);
         mustComputeValue = true;
         if (!observers.isEmpty()) {
             this.observers = observers;

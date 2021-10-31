@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.function.Consumer;
 
+import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
+
 public final class Bordered {
     private final JComponent component;
 
@@ -41,14 +43,6 @@ public final class Bordered {
         Bordered bordered = new Bordered(component);
         initCode.accept(component);
         return bordered;
-    }
-
-    //TODO: move method?!
-    public static Bordered borderedWithTopLine() {
-        return bordered(b -> {
-            b.setBorder(
-                    BorderUtil.borderTopLighterGray());
-        });
     }
 
     public static Bordered bordered(JComponent component) {

@@ -59,7 +59,7 @@ public class PropNullableBindable<T> implements VarNullable<T> {
 
     public static <T> PropNullableBindable<T> newPropNullableBindable(
             @Nullable T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropNullableBindable<T>(initialValue, null, null,
+        return new PropNullableBindable<>(initialValue, null, null,
                 onSourceOfTruthValueChanged);
     }
 
@@ -68,7 +68,7 @@ public class PropNullableBindable<T> implements VarNullable<T> {
             @Nullable Object otherSource,
             @Nullable String otherPropertyName,
             Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropNullableBindable<T>(initialValue, otherSource, otherPropertyName,
+        return new PropNullableBindable<>(initialValue, otherSource, otherPropertyName,
                 onSourceOfTruthValueChanged);
     }
 
@@ -76,7 +76,7 @@ public class PropNullableBindable<T> implements VarNullable<T> {
             @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropNullableBindable<T>(initialValue, otherSource, otherPropertyName,
+        return new PropNullableBindable<>(initialValue, otherSource, otherPropertyName,
                 e->{});
     }
 
