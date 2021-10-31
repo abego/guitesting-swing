@@ -29,11 +29,13 @@ import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-class PropField<T> extends PropBase<T> implements IProp<T> {
-    private SourceOfTruth<T> sourceOfTruth;
+import java.util.Objects;
+
+class PropFieldNullable<T> extends PropBase<T> implements IPropNullable<T> {
+    private SourceOfTruthNullable<T> sourceOfTruth;
     private EventObserver<PropertyChanged> observer;
 
-   private class SimpleField implements SourceOfTruth<T> {
+    private class SimpleField implements SourceOfTruthNullable<T> {
         private @Nullable T value;
 
        public SimpleField(T initialValue) {
@@ -41,17 +43,13 @@ class PropField<T> extends PropBase<T> implements IProp<T> {
        }
 
        @Override
-       public @NonNull T get() {
-           @Nullable T v = value;
-           if (v == null) {
-               throw new IllegalStateException("Prop has no value"); //NON-NLS
-           }
-           return v;
+       public @Nullable T get() {
+           return value;
        }
 
        @Override
-       public void set(@NonNull T value) {
-           if (value.equals(this.value)) {
+       public void set(@Nullable T value) {
+           if (Objects.equals(value, this.value)) {
                return;
            }
            this.value = value;
@@ -59,61 +57,52 @@ class PropField<T> extends PropBase<T> implements IProp<T> {
        }
 
        @Override
-       public boolean hasValue() {
-           return value != null;
-       }
-
-       @Override
        public void runDependingCode(Runnable code) {
-           PropField.this.runDependingCode(code);
+           PropFieldNullable.this.runDependingCode(code);
        }
    }
 
-    private PropField(@NonNull T initialValue,
-                      @Nullable Object otherSource,
-                      @Nullable String otherPropertyName) {
+    private PropFieldNullable(@Nullable T initialValue,
+                              @Nullable Object otherSource,
+                              @Nullable String otherPropertyName) {
         super(otherSource, otherPropertyName);
         sourceOfTruth = new SimpleField(initialValue);
         observer = eventService.addPropertyObserver(
                 sourceOfTruth, e -> postPropertyChanged());
     }
 
-    public static <T> PropField<T> newPropField(
-            @NonNull T initialValue,
+    public static <T> PropFieldNullable<T> newPropField(
+            @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropField<>(initialValue, otherSource, otherPropertyName);
+        return new PropFieldNullable<>(initialValue, otherSource, otherPropertyName);
     }
 
-    public static <T> PropField<T> newPropField(
-            @NonNull T initialValue) {
-        return new PropField<>(initialValue, null, null);
+    public static <T> PropFieldNullable<T> newPropField(
+            @Nullable T initialValue) {
+        return new PropFieldNullable<>(initialValue, null, null);
     }
 
     @Override
-    public @NonNull T get() {
+    public @Nullable T get() {
         return sourceOfTruth.get();
     }
 
     @Override
-    public void set(@NonNull T value) {
+    public void set(@Nullable T value) {
        sourceOfTruth.set(value);
     }
 
     @Override
-    public boolean hasValue() {
-        return sourceOfTruth.hasValue();
-    }
-
-    public void bindTo(SourceOfTruth<T> sourceOfTruth) {
+    public void bindTo(SourceOfTruthNullable<T> sourceOfTruth) {
         eventService.removeObserver(observer);
 
-        @NonNull T oldValue = get();
+        @Nullable T oldValue = get();
         this.sourceOfTruth = sourceOfTruth;
 
         observer = eventService.addPropertyObserver(this.sourceOfTruth,
                 e -> postPropertyChanged());
-        if (!oldValue.equals(get())) {
+        if (!Objects.equals(oldValue,get())) {
             postPropertyChanged();
         }
     }

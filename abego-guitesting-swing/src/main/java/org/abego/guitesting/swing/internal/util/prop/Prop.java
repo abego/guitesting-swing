@@ -53,10 +53,6 @@ import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropFie
 //TODO: check if we can reuse some code of the different "Prop..." classes
 public class Prop {
 
-    public static <T> IProp<T> newProp() {
-        return newPropField(null, null, null);
-    }
-
     public static <T> IProp<T> newProp(T value) {
         return newPropField(value, null, null);
     }
@@ -75,16 +71,16 @@ public class Prop {
         return PropComputed.newComputedProp(valueComputation);
     }
     public static <T> IPropNullable<T> newPropNullable() {
-        return PropNullableBindable.newPropNullableBindable(null,e-> {});
+        return PropFieldNullable.newPropField(null);
     }
 
     public static <T> IPropNullable<T> newPropNullable(T value) {
-        return PropNullableBindable.newPropNullableBindable(value,e->{});
+        return PropFieldNullable.newPropField(value);
     }
 
     public static <T> IPropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName) {
-        return PropNullableBindable.newPropNullableBindable(value, otherSource, otherPropertyName);
+        return PropFieldNullable.newPropField(value, otherSource, otherPropertyName);
     }
 
     public static <T> IPropComputedNullable<T> newComputedPropNullable(
