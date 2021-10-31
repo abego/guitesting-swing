@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-//TODO rename to Prop when done with refactoring....
 public interface PropNullable<T> extends SourceOfTruthNullable<T> {
     void bindTo(SourceOfTruthNullable<T> sourceOfTruth);
 }
