@@ -37,37 +37,36 @@ class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
     private class SimpleField implements SourceOfTruthNullable<T> {
         private @Nullable T value;
 
-       public SimpleField(T initialValue) {
-           this.value = initialValue;
-       }
+        public SimpleField(T initialValue) {
+            this.value = initialValue;
+        }
 
-       @Override
-       public @Nullable T get() {
-           return value;
-       }
+        @Override
+        public @Nullable T get() {
+            return value;
+        }
 
-       @Override
-       public void set(@Nullable T value) {
-           if (Objects.equals(value, this.value)) {
-               return;
-           }
-           this.value = value;
-           postPropertyChanged();
-       }
+        @Override
+        public void set(@Nullable T value) {
+            if (Objects.equals(value, this.value)) {
+                return;
+            }
+            this.value = value;
+            postPropertyChanged();
+        }
 
-       @Override
-       public void runDependingCode(Runnable code) {
-           PropFieldNullable.this.runDependingCode(code);
-       }
-   }
+        @Override
+        public void runDependingCode(Runnable code) {
+            PropFieldNullable.this.runDependingCode(code);
+        }
+    }
 
     private PropFieldNullable(@Nullable T initialValue,
                               @Nullable Object otherSource,
                               @Nullable String otherPropertyName) {
         super(otherSource, otherPropertyName);
         sourceOfTruth = new SimpleField(initialValue);
-        observer = eventService.addPropertyObserver(
-                sourceOfTruth, e -> postPropertyChanged());
+        observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
     }
 
     public static <T> PropFieldNullable<T> newPropFieldNullable(
@@ -89,19 +88,19 @@ class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
 
     @Override
     public void set(@Nullable T value) {
-       sourceOfTruth.set(value);
+        sourceOfTruth.set(value);
     }
 
     @Override
     public void bindTo(SourceOfTruthNullable<T> sourceOfTruth) {
-        eventService.removeObserver(observer);
+        removeObserver(observer);
 
         @Nullable T oldValue = get();
         this.sourceOfTruth = sourceOfTruth;
 
-        observer = eventService.addPropertyObserver(this.sourceOfTruth,
+        observer = addPropertyObserver(this.sourceOfTruth,
                 e -> postPropertyChanged());
-        if (!Objects.equals(oldValue,get())) {
+        if (!Objects.equals(oldValue, get())) {
             postPropertyChanged();
         }
     }

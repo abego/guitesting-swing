@@ -35,6 +35,7 @@ import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 //TODO: review JavaDoc
@@ -52,7 +53,7 @@ import java.util.function.Function;
 //TODO: check if we can reuse some code of the different "Prop..." classes
 abstract class PropBase<T> {
     //TODO: can we make this private?
-    protected final EventService eventService = EventServices.getDefault();
+    private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
 
@@ -70,6 +71,27 @@ abstract class PropBase<T> {
         eventService.addPropertyObserver(this, "value", e -> code.run());
     }
 
+    protected EventObserver<PropertyChanged> addPropertyObserver(
+            Object source,
+            // any property name,
+            // no extra condition,
+            // use defaultDispatcher,
+            Consumer<PropertyChanged> listener) {
+        return eventService.addPropertyObserver(source, listener);
+    }
+
+    protected EventObserver<PropertyChanged> addPropertyObserver(
+            Object source,
+            @Nullable String propertyName,
+            // no extra condition (just the property name),
+            // use defaultDispatcher,
+            Consumer<PropertyChanged> listener) {
+        return eventService.addPropertyObserver(source, propertyName, listener);
+    }
+
+    protected void removeObserver(EventObserver<?> observer) {
+        eventService.removeObserver(observer);
+    }
 
     protected void postPropertyChanged() {
         eventService.postPropertyChanged(this, "value"); //NON-NLS

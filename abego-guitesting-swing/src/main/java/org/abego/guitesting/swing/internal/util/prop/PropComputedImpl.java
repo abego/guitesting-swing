@@ -106,7 +106,7 @@ class PropComputedImpl<T> extends PropBase<T> implements PropComputed<T>, PropCo
 
         if (observers != null) {
             for (EventObserver<PropertyChanged> o : observers) {
-                eventService.removeObserver(o);
+                removeObserver(o);
             }
             this.observers = null;
         }
@@ -115,7 +115,7 @@ class PropComputedImpl<T> extends PropBase<T> implements PropComputed<T>, PropCo
         DependencyCollector dependencyCollector = new DependencyCollector() {
             @Override
             public void dependsOnProperty(Object source, String propertyName) {
-                observers.add(eventService.addPropertyObserver(
+                observers.add(addPropertyObserver(
                         source, propertyName, e -> recomputeAndPostEvent()));
             }
         };
