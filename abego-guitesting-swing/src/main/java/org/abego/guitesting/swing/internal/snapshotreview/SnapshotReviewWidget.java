@@ -140,14 +140,10 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Actions
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Action addAlternativeSnapshotAction;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Action overwriteSnapshotAction;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Action ignoreCurrentIssueAction;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Action rotateImageAction;
+    private final Action addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
+    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
+    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
+    private final Action rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
     //endregion
     //region Components
     private final JLabelBindable selectedIssueDescriptionLabel = labelBindable();
@@ -166,21 +162,11 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Construction
     private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
-        // init State
         remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
 
-        // init Actions
-        addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
-        ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
-        overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
-        rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
-
-        // init Components
         styleComponents();
         layoutComponents();
-
-        // Binding support
         initBindings();
 
         // More initialization
@@ -296,7 +282,7 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        snapshotIssuesVList.setListModel(remainingIssues);
+        snapshotIssuesVList.setIssuesListModel(remainingIssues);
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);

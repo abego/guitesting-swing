@@ -24,8 +24,10 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullableBindable;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
@@ -36,6 +38,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import java.awt.Color;
@@ -43,8 +46,9 @@ import java.util.Objects;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
+import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
-import static org.abego.guitesting.swing.internal.util.Bordered.borderedWithTopLine;
+import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 import static org.abego.guitesting.swing.internal.util.prop.PropNullableBindable.newPropNullableBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
@@ -55,71 +59,68 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
+//TODO Generalized to a "VList" widget?
 class SnapshotIssuesVList implements Widget {
-    private final static Color TITLE_BAR_COLOR = new Color(0xE2E6Ec);
 
-    private final Action previousScreenshotAction;
-    private final Action nextScreenshotAction;
-    private final JButton previousScreenshotButton;
-    private final JButton nextScreenshotButton;
-    private final JList<SnapshotIssue> issuesList = new JList<>();;
-    private final JComponent content;
+    //region State/Model
+    //region issuesListModel
+    private final Prop<ListModel<SnapshotIssue>> issuesListModelProp =
+            newProp(new DefaultListModel<>(), this, "issuesListModel");
+
+    public ListModel<SnapshotIssue> getIssuesListModel() {
+        return issuesListModelProp.get();
+    }
+
+    public void setIssuesListModel(ListModel<SnapshotIssue> listModel) {
+        issuesListModelProp.set(listModel);
+    }
+
+    //endregion
     private int lastSelectedIndex = -1;
 
-    private SnapshotIssuesVList() {
-        nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS
-        previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
-        previousScreenshotButton = toolbarButton();
-        nextScreenshotButton = toolbarButton();
+    //endregion
+    //region Actions
+    private final Action previousScreenshotAction = newAction("Previous issue (↑)", KeyStroke.getKeyStroke("UP"), Icons.previousIssueIcon(), e -> selectPreviousIssue()); //NON-NLS
+    private final Action nextScreenshotAction = newAction("Next issue (↓)", KeyStroke.getKeyStroke("DOWN"), Icons.nextIssueIcon(), e -> selectNextIssue()); //NON-NLS;
 
-        previousScreenshotButton.setAction(previousScreenshotAction);
-        nextScreenshotButton.setAction(nextScreenshotAction);
+    private void selectPreviousIssue() {
+        SwingUtil.changeSelectedIndex(issuesList, -1);
+    }
 
-        issuesList.setBorder(null);
+    private void selectNextIssue() {
+        SwingUtil.changeSelectedIndex(issuesList, 1);
+    }
+
+    //endregion
+    //region Components
+    private final JButton previousScreenshotButton = toolbarButton();
+    private final JButton nextScreenshotButton = toolbarButton();
+    private final JComponent topBar = new JPanel();
+    private final JList<SnapshotIssue> issuesList = new JList<>();
+    private final JComponent content = new JPanel();
+
+    private void initComponents() {
         issuesList.setCellRenderer(newListCellRenderer(
                 SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst));
+    }
 
-        content = borderedWithTopLine()
-                .top(bordered(l -> l.setBackground(TITLE_BAR_COLOR))
-                        .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
-                        .right(flowLeft(DEFAULT_FLOW_GAP, 0,
-                                previousScreenshotButton,
-                                nextScreenshotButton))
-                        .component())
-                .bottom(scrollingNoBorder(issuesList))
-                .component();
-
-        issuesList.addListSelectionListener(e -> onSelectedIssueChanged());
+    //endregion
+    //region Construction
+    private SnapshotIssuesVList() {
+        initComponents();
+        styleComponents();
+        layoutComponents();
+        initBindings();
     }
 
     public static SnapshotIssuesVList snapshotIssuesVList() {
         return new SnapshotIssuesVList();
     }
 
-    public ListModel<SnapshotIssue> getListModel() {
-        return issuesList.getModel();
-    }
-
-    public void setListModel(DefaultListModel<SnapshotIssue> issuesListModel) {
-        issuesList.setModel(issuesListModel);
-    }
-
-    public int getSelectedIndex() {
-        return issuesList.getSelectedIndex();
-    }
-
-    public void setSelectedIndex(int index) {
-        issuesList.setSelectedIndex(index);
-    }
-
+    //endregion
     //region selectedIssue
-    private PropNullableBindable<SnapshotIssue> selectedIssueProp =
-            newPropNullableBindable(null, this, "selectedIssue", f -> updateSelectedIssueUI());
-
-    {
-        issuesList.addListSelectionListener(e -> updateSelectedIssueProp());
-    }
-
+    private final PropNullableBindable<SnapshotIssue> selectedIssueProp =
+            newPropNullableBindable(null, this, "selectedIssue");
 
     @Nullable
     public SnapshotIssue getSelectedIssue() {
@@ -134,38 +135,56 @@ class SnapshotIssuesVList implements Widget {
         selectedIssueProp.bindTo(prop);
     }
 
-    private void updateSelectedIssueUI() {
-        invokeLater(() -> {
-            SnapshotIssue value = selectedIssueProp.get();
-            issuesList.setSelectedValue(value, true);
-        });
-    }
-
-    private void updateSelectedIssueProp() {
-        SnapshotIssue value = issuesList.getSelectedValue();
-        if (!Objects.equals(getSelectedIssue(), value)) {
-            selectedIssueProp.set(value);
-        }
-    }
     //endregion
+    //region Widget related
     @Override
     public JComponent getContent() {
         return content;
     }
 
-    private void selectPreviousIssue() {
-        SwingUtil.changeSelectedIndex(issuesList, -1);
+    //endregion
+    //region Style related
+    private final static Color TOP_BAR_COLOR = new Color(0xE2E6Ec);
+
+    private void styleComponents() {
+        topBar.setBackground(TOP_BAR_COLOR);
+        issuesList.setBorder(null);
+        //TODO: or must this be done by the container?
+        content.setBorder(borderTopLighterGray());
     }
 
-    private void selectNextIssue() {
-        SwingUtil.changeSelectedIndex(issuesList, 1);
+    //endregion
+    //region Layout related
+    private void layoutComponents() {
+        bordered(topBar)
+                .left(flowLeft(DEFAULT_FLOW_GAP, 0, label("Issues:"))) //NON-NLS
+                .right(flowLeft(DEFAULT_FLOW_GAP, 0,
+                        previousScreenshotButton,
+                        nextScreenshotButton));
+
+        bordered(content)
+                .top(topBar)
+                .bottom(scrollingNoBorder(issuesList));
     }
 
-    private void onSelectedIssueChanged() {
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        previousScreenshotButton.setAction(previousScreenshotAction);
+        nextScreenshotButton.setAction(nextScreenshotAction);
+
+        EventServices.getDefault().addPropertyObserver(issuesListModelProp, e -> onIssuesListModelPropChanged());
+        issuesList.addListSelectionListener(e -> onSelectedIssueInUIChanged());
+        EventServices.getDefault().addPropertyObserver(selectedIssueProp, e -> onSelectedIssuePropChanged());
+    }
+
+    private void onSelectedIssueInUIChanged() {
+        updateSelectedIssueProp();
+
         invokeLater(() -> {
             // ensure an item is selected, preferably at the "last selected index"
             if (getSelectedIssue() == null) {
-                int size = getListModel().getSize();
+                int size = getIssuesListModel().getSize();
                 if (size > 0) {
                     int i = limit(lastSelectedIndex, 0, size - 1);
                     issuesList.setSelectedIndex(i);
@@ -178,8 +197,25 @@ class SnapshotIssuesVList implements Widget {
                 lastSelectedIndex = selectedIndex;
             }
 
+            // scroll list if required
             ensureSelectionIsVisible(issuesList);
         });
     }
 
+    private void updateSelectedIssueProp() {
+        SnapshotIssue value = issuesList.getSelectedValue();
+        if (!Objects.equals(getSelectedIssue(), value)) {
+            selectedIssueProp.set(value);
+        }
+    }
+
+    private void onSelectedIssuePropChanged() {
+        invokeLater(() -> issuesList.setSelectedValue(selectedIssueProp.get(), true));
+    }
+
+    private void onIssuesListModelPropChanged() {
+        issuesList.setModel(getIssuesListModel());
+    }
+
+    //endregion
 }

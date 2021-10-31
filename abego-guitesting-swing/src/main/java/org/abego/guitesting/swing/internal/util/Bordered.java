@@ -26,12 +26,8 @@ package org.abego.guitesting.swing.internal.util;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.border.MatteBorder;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.util.function.Consumer;
-
-import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 
 public final class Bordered {
     private final JComponent component;
@@ -51,7 +47,7 @@ public final class Bordered {
     public static Bordered borderedWithTopLine() {
         return bordered(b -> {
             b.setBorder(
-                    new MatteBorder(1, 0, 0, 0, LIGHTER_GRAY));
+                    BorderUtil.borderTopLighterGray());
         });
     }
 
