@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.snapshotreview;
+package org.abego.guitesting.swing.internal.util;
 
 
 import javax.swing.ImageIcon;
@@ -31,24 +31,12 @@ import java.net.URL;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 class Icons {
-    public static ImageIcon overwriteIcon() {
-        return iconFromResource("overwrite2-16.png"); //NON-NLS
+    public static ImageIcon nextItemIcon() {
+        return iconFromResource("triangle-down-16.png"); //NON-NLS
     }
 
-    public static ImageIcon alternativeIcon() {
-        return iconFromResource("alternative2-16.png"); //NON-NLS
-    }
-
-    public static ImageIcon ignoreIcon() {
-        return iconFromResource("red-x-16.png"); //NON-NLS
-    }
-
-    public static ImageIcon rotateLeftIcon() {
-        return iconFromResource("rotate-left-16.png"); //NON-NLS
-    }
-
-    public static ImageIcon rotateRightIcon() {
-        return iconFromResource("rotate-right-16.png"); //NON-NLS
+    public static ImageIcon previousItemIcon() {
+        return iconFromResource("triangle-up-16.png"); //NON-NLS
     }
 
     private static ImageIcon iconFromResource(String name) {

@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.VList;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
@@ -48,7 +49,6 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageView;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
-import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicator.variantsIndicator;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.variantsInfo;
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
@@ -157,7 +157,7 @@ class SnapshotReviewWidget implements Widget {
     private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget
             = expectedActualDifferenceImageView();
-    private final SnapshotIssuesVList snapshotIssuesVList = snapshotIssuesVList();
+    private final VList<SnapshotIssue> snapshotIssuesVList = VList.vList();
     private final JComponent content = new JPanel();
 
     //endregion
@@ -165,7 +165,7 @@ class SnapshotReviewWidget implements Widget {
     private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
         remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
-
+        snapshotIssuesVList.setCellTextProvider(SnapshotIssue.class, SnapshotIssueUtil::labelWithLastPartFirst);
         styleComponents();
         layoutComponents();
         initBindings();
@@ -255,9 +255,12 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImageWidget.setActualBorderColor(ACTUAL_BORDER_COLOR);
         expectedActualDifferenceImageWidget.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
 
-        snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
-
         shrinkToFitCheckBox.setText("Shrink to Fit");
+
+        snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
+        snapshotIssuesVList.setTitle("Issues:");
+        snapshotIssuesVList.setPreviousItemText("Previous issue");
+        snapshotIssuesVList.setNextItemText("Next issue");
     }
 
     //endregion
@@ -285,7 +288,7 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        snapshotIssuesVList.setIssuesListModel(remainingIssues);
+        snapshotIssuesVList.setListModel(remainingIssues);
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
@@ -294,7 +297,7 @@ class SnapshotReviewWidget implements Widget {
 
         selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
         shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
-        snapshotIssuesVList.bindSelectedIssueTo(selectedIssue);
+        snapshotIssuesVList.bindSelectedItemTo(selectedIssue);
         expectedActualDifferenceImageWidget.bindSnapshotIssueTo(selectedIssue);
         expectedActualDifferenceImageWidget.bindShrinkToFitTo(shrinkToFitProp);
         expectedActualDifferenceImageWidget.bindExpectedImageIndexTo(expectedImageIndexProp);
