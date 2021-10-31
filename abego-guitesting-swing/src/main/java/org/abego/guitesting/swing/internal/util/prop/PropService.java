@@ -51,7 +51,7 @@ import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropFie
  * property name the name of the Prop within that container.
  */
 //TODO: check if we can reuse some code of the different "Prop..." classes
-public class Prop {
+public class PropService {
 
     public static <T> IProp<T> newProp(T value) {
         return newPropField(value, null, null);

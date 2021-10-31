@@ -48,10 +48,10 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 

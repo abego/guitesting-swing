@@ -26,7 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.IProp;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -35,7 +35,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import static javax.swing.BorderFactory.createLineBorder;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 
@@ -63,7 +63,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> expectedBorderColorProp = Prop.newProp(Color.green, this, "expectedBorderColor");
+    private final IProp<Color> expectedBorderColorProp = PropService.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -76,7 +76,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> actualBorderColorProp = Prop.newProp(Color.red, this, "actualBorderColor");
+    private final IProp<Color> actualBorderColorProp = PropService.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -89,7 +89,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final IProp<Color> differenceBorderColorProp = Prop.newProp(Color.black, this, "differenceBorderColor");
+    private final IProp<Color> differenceBorderColorProp = PropService.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();

@@ -30,7 +30,7 @@ import javax.swing.JCheckBox;
 
 import static java.lang.Boolean.FALSE;
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 
 public final class JCheckBoxBindable extends JCheckBox {
 

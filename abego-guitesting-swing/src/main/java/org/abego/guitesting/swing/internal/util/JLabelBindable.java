@@ -30,7 +30,7 @@ import org.abego.guitesting.swing.internal.util.prop.SourceOfTruth;
 import javax.swing.JLabel;
 
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
 
 public final class JLabelBindable extends JLabel {
 

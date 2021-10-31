@@ -39,7 +39,7 @@ import java.awt.Font;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 
 class SnapshotVariantsIndicator implements Widget {
     //region State/Model

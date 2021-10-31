@@ -52,8 +52,8 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
-import static org.abego.guitesting.swing.internal.util.prop.Prop.newPropNullable;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newProp;
+import static org.abego.guitesting.swing.internal.util.prop.PropService.newPropNullable;
 
 public final class VList<T> implements Widget {
 
