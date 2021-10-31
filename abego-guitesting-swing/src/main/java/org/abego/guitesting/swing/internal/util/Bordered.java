@@ -29,8 +29,6 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.util.function.Consumer;
 
-import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
-
 public final class Bordered {
     private final JComponent component;
 
