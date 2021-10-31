@@ -54,7 +54,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariant
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
-import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
+import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxBindable;
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newComputedProp;
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
@@ -144,7 +144,7 @@ class SnapshotReviewWidget implements Widget {
     private final JButton ignoreButton = toolbarButton();
     private final ImagesLegendWidget imagesLegendWidget = imagesLegendWidget();
     private final JButton rotateButton = toolbarButton();
-    private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxUpdateable();
+    private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxBindable();
     private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget
             = expectedActualDifferenceImageView();
