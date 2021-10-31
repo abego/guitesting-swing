@@ -51,6 +51,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWid
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotIssuesVList.snapshotIssuesVList;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicator.variantsIndicator;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.variantsInfo;
+import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxUpdateable;
@@ -253,6 +254,8 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImageWidget.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
         expectedActualDifferenceImageWidget.setActualBorderColor(ACTUAL_BORDER_COLOR);
         expectedActualDifferenceImageWidget.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
+
+        snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
 
         shrinkToFitCheckBox.setText("Shrink to Fit");
     }

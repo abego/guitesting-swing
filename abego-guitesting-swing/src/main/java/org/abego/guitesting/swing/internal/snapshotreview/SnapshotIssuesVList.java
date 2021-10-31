@@ -149,8 +149,6 @@ class SnapshotIssuesVList implements Widget {
     private void styleComponents() {
         topBar.setBackground(TOP_BAR_COLOR);
         issuesList.setBorder(null);
-        //TODO: or must this be done by the container?
-        content.setBorder(borderTopLighterGray());
     }
 
     //endregion
