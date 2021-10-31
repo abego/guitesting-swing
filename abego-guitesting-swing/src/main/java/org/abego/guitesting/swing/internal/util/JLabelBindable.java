@@ -34,20 +34,29 @@ import static org.abego.guitesting.swing.internal.util.prop.PropBindable.newProp
 
 public final class JLabelBindable extends JLabel {
 
+    //region @PropBindable @InheritsGetSet public String text = ""
     private final PropBindable<String> textProp =
-            newPropBindable("", this, "text", f -> updateTextUI());
+            newPropBindable("", this, "text");
 
+    public void bindTextTo(Prop<String> prop) {
+        textProp.bindTo(prop);
+    }
+
+    //endregion
+    //region Construction
     private JLabelBindable() {
-        addPropertyChangeListener("text", e -> updateTextProp());
-        updateTextUI();
+        initBindings();
     }
 
     public static JLabelBindable labelBindable() {
         return new JLabelBindable();
     }
 
-    public void bindTextTo(Prop<String> prop) {
-        textProp.bindTo(prop);
+    //endregion
+    //region Binding related
+    private void initBindings() {
+        textProp.runDependingCode(this::updateTextUI);
+        addPropertyChangeListener("text", e -> updateTextProp());
     }
 
     private void updateTextUI() {
@@ -60,5 +69,5 @@ public final class JLabelBindable extends JLabel {
             textProp.set(text);
         }
     }
-
+    //endregion
 }
