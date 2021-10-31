@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.event.EventObserver;
+import org.abego.event.EventService;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -69,24 +70,27 @@ class PropField<T> extends PropBase<T> implements Prop<T> {
         }
     }
 
-    private PropField(@NonNull T initialValue,
+    private PropField(EventService eventService,
+                      @NonNull T initialValue,
                       @Nullable Object otherSource,
                       @Nullable String otherPropertyName) {
-        super(otherSource, otherPropertyName);
+        super(eventService, otherSource, otherPropertyName);
         sourceOfTruth = new SimpleField(initialValue);
         observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
     }
 
     public static <T> PropField<T> newPropField(
+            EventService eventService,
             @NonNull T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropField<>(initialValue, otherSource, otherPropertyName);
+        return new PropField<>(eventService, initialValue, otherSource, otherPropertyName);
     }
 
     public static <T> PropField<T> newPropField(
+            EventService eventService,
             @NonNull T initialValue) {
-        return new PropField<>(initialValue, null, null);
+        return new PropField<>(eventService, initialValue, null, null);
     }
 
     @Override

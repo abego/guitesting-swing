@@ -53,12 +53,14 @@ import java.util.function.Function;
 //TODO: check if we can reuse some code of the different "Prop..." classes
 abstract class PropBase<T> {
     //TODO: can we make this private?
-    private final EventService eventService = EventServices.getDefault();
+    private final EventService eventService;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
 
-    protected PropBase(@Nullable Object otherSource,
+    protected PropBase(EventService eventService,
+                       @Nullable Object otherSource,
                        @Nullable String otherPropertyName) {
+        this.eventService = eventService;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
     }

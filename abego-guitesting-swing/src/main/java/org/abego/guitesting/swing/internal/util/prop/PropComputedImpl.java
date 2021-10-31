@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
+import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,6 +38,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 //TODO: review JavaDoc
+
 /**
  * A {@link Var} emitting {@link PropertyChanged} events
  * when its value changed (via {@link EventServices} default).
@@ -53,21 +55,25 @@ class PropComputedImpl<T> extends PropBase<T> implements PropComputed<T>, PropCo
     private @Nullable T value;
     private boolean mustComputeValue;
 
-    private PropComputedImpl(Function<DependencyCollector, T> valueComputation,
+    private PropComputedImpl(EventService eventService,
+                             Function<DependencyCollector, T> valueComputation,
                              @Nullable Object otherSource,
                              @Nullable String otherPropertyName) {
-        super(otherSource, otherPropertyName);
+        super(eventService, otherSource, otherPropertyName);
         this.valueComputation = valueComputation;
         this.mustComputeValue = true;
     }
 
     static <T> PropComputedImpl<T> newPropComputed(
+            EventService eventService,
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropComputedImpl<>(valueComputation, otherSource, otherPropertyName);
+        return new PropComputedImpl<>(eventService, valueComputation, otherSource, otherPropertyName);
     }
 
-    static <T> PropComputedImpl<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
-        return new PropComputedImpl<>(valueComputation, null, null);
+    static <T> PropComputedImpl<T> newPropComputed(
+            EventService eventService,
+            Function<DependencyCollector, T> valueComputation) {
+        return new PropComputedImpl<>(eventService, valueComputation, null, null);
     }
 
     @Override
