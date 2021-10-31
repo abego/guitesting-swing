@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -61,7 +62,7 @@ public final class VList<T> implements Widget {
 
     //region State/Model
     //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
-    private final Prop<ListModel<T>> listModelProp =
+    private final IProp<ListModel<T>> listModelProp =
             newProp(new DefaultListModel<>(), this, "listModel");
 
     public ListModel<T> getListModel() {
@@ -74,7 +75,7 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region @Prop public Function<T, String> cellTextProvider = Objects::toString
-    private final Prop<Function<T, String>> cellTextProviderProp =
+    private final IProp<Function<T, String>> cellTextProviderProp =
             newProp(Objects::toString, this, "cellTextProvider");
 
     public Function<T, String> getCellTextProvider() {

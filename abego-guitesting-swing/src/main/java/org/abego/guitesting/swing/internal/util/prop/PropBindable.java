@@ -32,15 +32,13 @@ import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.function.Consumer;
-
 import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
 public class PropBindable<T> implements Var<T> {
     private final EventService eventService = EventServices.getDefault();
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
-    private Prop<T> prop;
+    private IProp<T> prop;
     private EventObserver<PropertyChanged> observer;
 
     private PropBindable(@NonNull T initialValue,
@@ -78,7 +76,7 @@ public class PropBindable<T> implements Var<T> {
         eventService.addPropertyObserver(this, "value", e -> code.run());
     }
 
-    public void bindTo(Prop<T> sourceOfTruth) {
+    public void bindTo(IProp<T> sourceOfTruth) {
         eventService.removeObserver(observer);
 
         @NonNull T oldValue = get();

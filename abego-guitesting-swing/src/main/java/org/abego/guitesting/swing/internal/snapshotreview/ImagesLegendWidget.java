@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 
@@ -56,14 +57,14 @@ class ImagesLegendWidget implements Widget {
         expectedImageIndexProp.set(value);
     }
 
-    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+    public void bindExpectedImageIndexTo(IProp<Integer> prop) {
         expectedImageIndexProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> expectedBorderColorProp = Prop.newProp(Color.green, this, "expectedBorderColor");
+    private final IProp<Color> expectedBorderColorProp = Prop.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -76,7 +77,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> actualBorderColorProp = Prop.newProp(Color.red, this, "actualBorderColor");
+    private final IProp<Color> actualBorderColorProp = Prop.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -89,7 +90,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> differenceBorderColorProp = Prop.newProp(Color.black, this, "differenceBorderColor");
+    private final IProp<Color> differenceBorderColorProp = Prop.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();

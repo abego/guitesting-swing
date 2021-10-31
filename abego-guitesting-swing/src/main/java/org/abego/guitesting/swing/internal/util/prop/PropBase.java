@@ -38,9 +38,10 @@ import java.util.List;
 import java.util.function.Function;
 
 //TODO: review JavaDoc
+
 /**
- * A {@link Var} emitting {@link org.abego.event.PropertyChanged} events
- * when its value changed (via {@link org.abego.event.EventServices} default).
+ * A {@link Var} emitting {@link PropertyChanged} events
+ * when its value changed (via {@link EventServices} default).
  * <p>
  * The source of the PropertyChanged event will be the Prop object
  * and the property name "value". In addition a second PropertyChanged event
@@ -49,34 +50,57 @@ import java.util.function.Function;
  * property name the name of the Prop within that container.
  */
 //TODO: check if we can reuse some code of the different "Prop..." classes
-public class Prop<T> extends PropBase<T> {
+public class PropBase<T> implements IProp<T> {
+    //TODO: can we make this private?
+    protected final EventService eventService = EventServices.getDefault();
+    private final @Nullable Object otherSource;
+    private final @Nullable String otherPropertyName;
+    private @Nullable T value;
 
-    private Prop(@Nullable T value,
-                 @Nullable Function<DependencyCollector, T> valueComputation,
-                 @Nullable Object otherSource,
-                 @Nullable String otherPropertyName) {
-        super(value, otherSource, otherPropertyName);
+    protected PropBase(@Nullable T value,
+                       @Nullable Object otherSource,
+                       @Nullable String otherPropertyName) {
+        this.value = value;
+        this.otherSource = otherSource;
+        this.otherPropertyName = otherPropertyName;
     }
 
-    public static <T> IProp<T> newProp() {
-        return new PropBase<>(null, null, null);
+    @Override
+    public @NonNull T get() {
+        @Nullable T v = value;
+        if (v == null) {
+            throw new IllegalStateException("Prop has no value"); //NON-NLS
+        }
+        return v;
     }
 
-    public static <T> IProp<T> newProp(T value) {
-        return new PropBase<>(value, null, null);
+    @Override
+    public void set(@NonNull T value) {
+        if (value.equals(this.value)) {
+            return;
+        }
+        this.value = value;
+        postPropertyChanged();
     }
 
-    public static <T> IProp<T> newProp(
-            T value, Object otherSource, String otherPropertyName) {
-        return new PropBase<>(value, otherSource, otherPropertyName);
+    /**
+     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
+     */
+    public void runDependingCode(Runnable code) {
+        code.run();
+        eventService.addPropertyObserver(this, "value", e -> code.run());
     }
 
-    public static <T> PropComputed<T> newComputedProp(
-            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputed.newComputedProp(valueComputation, otherSource, otherPropertyName);
+
+    protected void postPropertyChanged() {
+        eventService.postPropertyChanged(this, "value"); //NON-NLS
+        if (otherSource != null && otherPropertyName != null) {
+            eventService.postPropertyChanged(otherSource, otherPropertyName);
+        }
     }
 
-    public static <T> PropComputed<T> newComputedProp(Function<DependencyCollector, T> valueComputation) {
-        return PropComputed.newComputedProp(valueComputation);
+    @Override
+    public boolean hasValue() {
+        return value != null;
     }
 }

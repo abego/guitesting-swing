@@ -28,6 +28,7 @@ import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropBindable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -71,7 +72,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         shrinkToFitProp.set(value);
     }
 
-    public void bindShrinkToFitTo(Prop<Boolean> prop) {
+    public void bindShrinkToFitTo(IProp<Boolean> prop) {
         shrinkToFitProp.bindTo(prop);
     }
 
@@ -108,7 +109,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         expectedImageIndexProp.set(value);
     }
 
-    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+    public void bindExpectedImageIndexTo(IProp<Integer> prop) {
         expectedImageIndexProp.bindTo(prop);
     }
 

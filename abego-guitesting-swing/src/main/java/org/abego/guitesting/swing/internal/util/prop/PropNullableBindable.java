@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 
 import static org.abego.guitesting.swing.internal.util.prop.PropNullable.newPropNullable;
 
+//TODO: review JavaDoc
 public class PropNullableBindable<T> implements VarNullable<T> {
     private final EventService eventService = EventServices.getDefault();
     private final Consumer<T> onSourceOfTruthValueChanged;

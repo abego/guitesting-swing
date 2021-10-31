@@ -31,7 +31,9 @@ import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
 import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.prop.IProp;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropComputed;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.eclipse.jdt.annotation.Nullable;
@@ -74,9 +76,9 @@ class SnapshotReviewWidget implements Widget {
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     private final PropNullable<@Nullable SnapshotIssue> selectedIssue = newPropNullable(null, this, "selectedIssue");
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
-    private final Prop<Integer> expectedImageIndexProp = newProp(0);
-    private final Prop<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final IProp<Boolean> shrinkToFitProp = newProp(TRUE, this, "shrinkToFit");
+    private final IProp<Integer> expectedImageIndexProp = newProp(0);
+    private final PropComputed<String> selectedIssueDescriptionProp = newComputedProp(this::getSelectedIssueDescription, this, "selectedIssueDescription");
     private final PropNullable<SnapshotVariant> variantsInfoProp = newComputedPropNullable(this::getVariantsInfo);
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {

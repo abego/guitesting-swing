@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+//TODO: review JavaDoc
 /**
  * A {@link VarNullable} emitting {@link org.abego.event.PropertyChanged} events
  * when its value changed (via {@link EventServices} default).
