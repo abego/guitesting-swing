@@ -38,7 +38,6 @@ import static org.abego.guitesting.swing.internal.util.prop.Prop.newProp;
 
 public class PropBindable<T> implements Var<T> {
     private final EventService eventService = EventServices.getDefault();
-    private final Consumer<T> onSourceOfTruthValueChanged;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
     private Prop<T> prop;
@@ -46,11 +45,8 @@ public class PropBindable<T> implements Var<T> {
 
     private PropBindable(@NonNull T initialValue,
                          @Nullable Object otherSource,
-                         @Nullable String otherPropertyName,
-                         //TODO: avoid callback, use events
-                         Consumer<T> onSourceOfTruthValueChanged) {
+                         @Nullable String otherPropertyName) {
         prop = newProp(initialValue);
-        this.onSourceOfTruthValueChanged = onSourceOfTruthValueChanged;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
         observer = eventService.addPropertyObserver(
@@ -58,28 +54,10 @@ public class PropBindable<T> implements Var<T> {
     }
 
     public static <T> PropBindable<T> newPropBindable(
-            //TODO: avoid callback, use events
-            @NonNull T initialValue, Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<>(initialValue, null, null,
-                onSourceOfTruthValueChanged);
-    }
-
-    public static <T> PropBindable<T> newPropBindable(
-            @NonNull T initialValue,
-            @Nullable Object otherSource,
-            @Nullable String otherPropertyName,
-            //TODO: avoid callback, use events
-            Consumer<T> onSourceOfTruthValueChanged) {
-        return new PropBindable<>(initialValue, otherSource, otherPropertyName,
-                onSourceOfTruthValueChanged);
-    }
-
-    public static <T> PropBindable<T> newPropBindable(
             @NonNull T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropBindable<>(initialValue, otherSource, otherPropertyName,
-                e->{});
+        return new PropBindable<>(initialValue, otherSource, otherPropertyName);
     }
 
     @Override
@@ -114,7 +92,6 @@ public class PropBindable<T> implements Var<T> {
     }
 
     private void onValueChanged(T newValue) {
-        onSourceOfTruthValueChanged.accept(newValue);
         // when the source of truth changed also this object's value changed
         eventService.postPropertyChanged(this, "value"); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
