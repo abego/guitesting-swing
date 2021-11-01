@@ -24,8 +24,6 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.event.EventService;
-import org.abego.event.EventServices;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;

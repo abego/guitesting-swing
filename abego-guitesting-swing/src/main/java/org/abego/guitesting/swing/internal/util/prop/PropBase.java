@@ -29,14 +29,9 @@ import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import sun.plugin.dom.exception.InvalidStateException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 //TODO: review JavaDoc
 
