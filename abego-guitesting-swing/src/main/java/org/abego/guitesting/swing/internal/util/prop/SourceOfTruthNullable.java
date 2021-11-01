@@ -26,6 +26,12 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.VarNullable;
 
+import javax.swing.SwingUtilities;
+
 public interface SourceOfTruthNullable<T> extends VarNullable<T> {
     void runDependingCode(Runnable code);
+
+    default void runDependingCodeLater(Runnable code) {
+        SwingUtilities.invokeLater(code);
+    }
 }

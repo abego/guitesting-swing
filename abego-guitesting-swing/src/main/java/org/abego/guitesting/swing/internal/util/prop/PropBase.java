@@ -30,6 +30,7 @@ import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
+import javax.swing.SwingUtilities;
 import java.util.function.Consumer;
 
 //TODO: review JavaDoc
@@ -64,7 +65,9 @@ abstract class PropBase<T> {
      */
     public void runDependingCode(Runnable code) {
         code.run();
-        eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME, e -> code.run());
+        //TODO provide a "switch" when to run with invokeLater and when direct
+        eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
+                e -> SwingUtilities.invokeLater(code));
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(

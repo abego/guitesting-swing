@@ -29,11 +29,11 @@ import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.Props;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 import static java.lang.Boolean.FALSE;
-import static javax.swing.SwingUtilities.invokeLater;
 
-public final class JCheckBoxBindable extends JCheckBox {
+public final class CheckBoxWidget implements Widget {
 
     //region State/Model
     private final Props props = PropServices.newProps();
@@ -41,19 +41,44 @@ public final class JCheckBoxBindable extends JCheckBox {
     private final Prop<Boolean> selectedProp =
             props.newProp(FALSE, this, "selected"); //NON-NLS
 
+    public boolean isSelected() {return selectedProp.get();}
+
+    public void setSelected(boolean value) {selectedProp.set(value);}
+
     public void bindSelectedTo(Prop<Boolean> prop) {
         selectedProp.bindTo(prop);
     }
 
     //endregion
+    //region @Prop public String text = ""
+    private final Prop<String> textProp =
+            props.newProp("", this, "text"); //NON-NLS
+
+    public String getText() {
+        return textProp.get();
+    }
+
+    public void setText(String value) {
+        textProp.set(value);
+    }
+
+    public void bindTextTo(Prop<String> prop) {
+        textProp.bindTo(prop);
+    }
+
+    //endregion
+    //endregion
+    //region Components
+    private JCheckBox checkBox = new JCheckBox();
+
     //endregion
     //region Construction/Closing
-    private JCheckBoxBindable() {
+    private CheckBoxWidget() {
         initBindings();
     }
 
-    public static JCheckBoxBindable checkBoxBindable() {
-        return new JCheckBoxBindable();
+    public static CheckBoxWidget checkBoxWidget() {
+        return new CheckBoxWidget();
     }
 
     public void close() {
@@ -61,21 +86,29 @@ public final class JCheckBoxBindable extends JCheckBox {
     }
 
     //endregion
+    //region Widget related
+    @Override
+    public JComponent getContent() {
+        return checkBox;
+    }
+
+    //endregion
     //region Binding related
     private void initBindings() {
-        selectedProp.runDependingCode(this::updateSelectedUI);
-        addItemListener(i -> updateSelectedProp());
+        // Model -> UI
+        selectedProp.runDependingCode(() -> checkBox.setSelected(isSelected()));
+        textProp.runDependingCode(() -> checkBox.setText(getText()));
+        // UI -> Model
+        checkBox.addItemListener(i -> updateSelectedProp());
     }
 
-    private void updateSelectedUI() {
-        invokeLater(() -> setSelected(selectedProp.get()));
-    }
 
     private void updateSelectedProp() {
-        boolean isSelected = isSelected();
+        boolean isSelected = checkBox.isSelected();
         if (selectedProp.get() != isSelected) {
             selectedProp.set(isSelected);
         }
     }
+
     //endregion
 }

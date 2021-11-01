@@ -134,13 +134,11 @@ class ImagesLegendWidget implements Widget {
 
 
     private void updateContent() {
-        SwingUtilities.invokeLater(() -> {
-            content.removeAll();
-            content.add(labels[(3 - getExpectedImageIndex()) % 3]);
-            content.add(labels[(4 - getExpectedImageIndex()) % 3]);
-            content.add(labels[(5 - getExpectedImageIndex()) % 3]);
-            content.validate();
-        });
+        content.removeAll();
+        content.add(labels[(3 - getExpectedImageIndex()) % 3]);
+        content.add(labels[(4 - getExpectedImageIndex()) % 3]);
+        content.add(labels[(5 - getExpectedImageIndex()) % 3]);
+        content.validate();
     }
 
     private static JLabel legendLabel(String title) {
@@ -160,6 +158,7 @@ class ImagesLegendWidget implements Widget {
     private static void setLegendLabelBorderColor(JLabel label, Color color) {
         label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
     }
+
     //endregion
     //region Binding related
     private void initBindings() {

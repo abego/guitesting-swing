@@ -28,7 +28,7 @@ import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.VList;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
-import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
+import org.abego.guitesting.swing.internal.util.CheckBoxWidget;
 import org.abego.guitesting.swing.internal.util.JLabelBindable;
 import org.abego.guitesting.swing.internal.util.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -58,7 +58,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariant
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
-import static org.abego.guitesting.swing.internal.util.JCheckBoxBindable.checkBoxBindable;
+import static org.abego.guitesting.swing.internal.util.CheckBoxWidget.checkBoxWidget;
 import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
@@ -202,7 +202,7 @@ class SnapshotReviewWidget implements Widget {
     private final JButton ignoreButton = toolbarButton();
     private final ImagesLegendWidget imagesLegendWidget = imagesLegendWidget();
     private final JButton rotateButton = toolbarButton();
-    private final JCheckBoxBindable shrinkToFitCheckBox = checkBoxBindable();
+    private final CheckBoxWidget shrinkToFitCheckBox = checkBoxWidget();
     private final SnapshotVariantsIndicator snapshotVariantsIndicator = variantsIndicator();
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget
             = expectedActualDifferenceImageView();
@@ -226,7 +226,7 @@ class SnapshotReviewWidget implements Widget {
             }
 
             // make sure we have a focus
-            shrinkToFitCheckBox.requestFocusInWindow();
+            shrinkToFitCheckBox.getContent().requestFocusInWindow();
         });
     }
 
@@ -308,7 +308,7 @@ class SnapshotReviewWidget implements Widget {
                                 imagesLegendWidget.getContent(),
                                 rotateButton,
                                 separatorBar(),
-                                shrinkToFitCheckBox,
+                                shrinkToFitCheckBox.getContent(),
                                 separatorBar()))
                         .component())
                 .left(snapshotVariantsIndicator.getContent())

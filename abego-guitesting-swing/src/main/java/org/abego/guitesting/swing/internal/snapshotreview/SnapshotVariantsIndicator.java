@@ -117,20 +117,18 @@ class SnapshotVariantsIndicator implements Widget {
     }
 
     private void updateContent() {
-        invokeLater(() -> {
-            content.removeAll();
-            @Nullable SnapshotVariant info = getVariantsInfo();
-            if (info != null) {
-                int n = info.getVariantsCount();
-                int sel = info.getVariantsIndex();
-                for (int i = 0; n > 1 && i < n; i++) {
-                    content.add(
-                            label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
-                }
-                content.repaint();
-                content.revalidate();
+        content.removeAll();
+        @Nullable SnapshotVariant info = getVariantsInfo();
+        if (info != null) {
+            int n = info.getVariantsCount();
+            int sel = info.getVariantsIndex();
+            for (int i = 0; n > 1 && i < n; i++) {
+                content.add(
+                        label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
             }
-        });
+            content.repaint();
+            content.revalidate();
+        }
     }
     //endregion
 }

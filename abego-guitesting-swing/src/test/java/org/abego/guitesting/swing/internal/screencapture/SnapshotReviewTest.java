@@ -28,10 +28,10 @@ import org.abego.commons.io.FileUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.SnapshotReview;
-import org.abego.guitesting.swing.internal.util.JCheckBoxBindable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -106,12 +106,12 @@ final class SnapshotReviewTest {
                 },
                 () -> {
                     // Un-"Shrink to fit"
-                    gt.componentWith(JCheckBoxBindable.class, c -> true).doClick();
+                    gt.componentWith(JCheckBox.class, c -> true).doClick();
                     gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "noShrink");
                 },
                 () -> {
                     // "Shrink to fit"
-                    gt.componentWith(JCheckBoxBindable.class, c -> true).doClick();
+                    gt.componentWith(JCheckBox.class, c -> true).doClick();
                     gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane(), "line2");
                 },
                 () -> {

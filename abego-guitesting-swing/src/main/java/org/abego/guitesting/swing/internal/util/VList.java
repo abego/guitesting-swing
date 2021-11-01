@@ -236,7 +236,7 @@ public final class VList<T> implements Widget {
 
         cellTextProviderProp.runDependingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
         listModelProp.runDependingCode(() -> jList.setModel(getListModel()));
-        selectedItemProp.runDependingCode(this::onSelectedItemPropChanged);
+        selectedItemProp.runDependingCode(()-> jList.setSelectedValue(selectedItemProp.get(), true));
 
         //noinspection StringConcatenation
         previousItemTextProp.runDependingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
@@ -274,10 +274,6 @@ public final class VList<T> implements Widget {
         if (!Objects.equals(getSelectedItem(), value)) {
             selectedItemProp.set(value);
         }
-    }
-
-    private void onSelectedItemPropChanged() {
-        invokeLater(() -> jList.setSelectedValue(selectedItemProp.get(), true));
     }
 
     //endregion
