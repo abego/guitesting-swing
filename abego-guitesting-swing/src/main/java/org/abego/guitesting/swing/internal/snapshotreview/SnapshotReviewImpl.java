@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
+import org.abego.commons.swing.WindowUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
@@ -35,6 +36,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static javax.swing.SwingUtilities.invokeLater;
+import static org.abego.commons.swing.WindowUtil.onWindowClosed;
 
 public class SnapshotReviewImpl implements SnapshotReview {
 
@@ -65,6 +67,8 @@ public class SnapshotReviewImpl implements SnapshotReview {
             frame.setContentPane(widget.getContent());
             framePreShowCode.accept(frame);
             frame.setVisible(true);
+
+            onWindowClosed(frame, e->widget.close());
         });
     }
 

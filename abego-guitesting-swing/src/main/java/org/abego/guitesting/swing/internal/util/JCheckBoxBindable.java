@@ -47,7 +47,7 @@ public final class JCheckBoxBindable extends JCheckBox {
 
     //endregion
     //endregion
-    //region Construction
+    //region Construction/Closing
     private JCheckBoxBindable() {
         initBindings();
     }
@@ -55,6 +55,11 @@ public final class JCheckBoxBindable extends JCheckBox {
     public static JCheckBoxBindable checkBoxBindable() {
         return new JCheckBoxBindable();
     }
+
+    public void close() {
+        props.close();
+    }
+
     //endregion
     //region Binding related
     private void initBindings() {

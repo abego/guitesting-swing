@@ -175,7 +175,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private final JComponent content = new JPanel();
 
     //endregion
-    //region Construction
+    //region Construction/Closing
     public static ExpectedActualDifferenceImageWidget expectedActualDifferenceImageView() {
         return new ExpectedActualDifferenceImageWidget();
     }
@@ -186,6 +186,9 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         initBinding();
     }
 
+    public void close() {
+        props.close();
+    }
     //endregion
     //region Widget related
     @Override

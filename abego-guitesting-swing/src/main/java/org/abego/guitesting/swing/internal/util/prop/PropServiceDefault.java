@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
-    private final EventService eventsForProp;
+    private final EventService eventService;
 
     private class EventsForPropImpl implements EventsForProp {
         private final Set<EventObserver<?>> remainingObservers = new HashSet<>();
@@ -46,7 +46,7 @@ class PropServiceDefault implements PropService {
         public EventObserver<PropertyChanged> addPropertyObserver(Object source, @Nullable String propertyName, Consumer<PropertyChanged> listener) {
             checkNotClosed();
 
-            EventObserver<PropertyChanged> observer = eventsForProp.addPropertyObserver(source, propertyName, listener);
+            EventObserver<PropertyChanged> observer = eventService.addPropertyObserver(source, propertyName, listener);
             remainingObservers.add(observer);
             return observer;
         }
@@ -56,19 +56,19 @@ class PropServiceDefault implements PropService {
             checkNotClosed();
 
             remainingObservers.remove(observer);
-            eventsForProp.removeObserver(observer);
+            eventService.removeObserver(observer);
         }
 
         @Override
         public void postPropertyChanged(Object source, String propertyName) {
             checkNotClosed();
 
-            eventsForProp.postPropertyChanged(source, propertyName);
+            eventService.postPropertyChanged(source, propertyName);
         }
 
         public void close() {
             isClosed = true;
-            eventsForProp.removeAllObservers(remainingObservers);
+            eventService.removeAllObservers(remainingObservers);
         }
 
         private void checkNotClosed() {
@@ -78,7 +78,7 @@ class PropServiceDefault implements PropService {
         }
     }
 
-    private PropServiceDefault(EventService eventsForProp) {this.eventsForProp = eventsForProp;}
+    private PropServiceDefault(EventService eventService) {this.eventService = eventService;}
 
     static PropService getDefault() {
         return DEFAULT_INSTANCE;
@@ -90,7 +90,7 @@ class PropServiceDefault implements PropService {
 
     @Override
     public Props newProps() {
-        return new PropsDefault(new EventsForPropImpl());
+        return PropsDefault.newProps(new EventsForPropImpl());
     }
 
 }

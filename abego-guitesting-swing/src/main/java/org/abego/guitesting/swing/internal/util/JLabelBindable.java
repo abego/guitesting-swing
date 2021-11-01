@@ -45,13 +45,17 @@ public final class JLabelBindable extends JLabel {
     }
 
     //endregion
-    //region Construction
+    //region Construction/Closing
     private JLabelBindable() {
         initBindings();
     }
 
     public static JLabelBindable labelBindable() {
         return new JLabelBindable();
+    }
+
+    public void close() {
+        props.close();
     }
 
     //endregion

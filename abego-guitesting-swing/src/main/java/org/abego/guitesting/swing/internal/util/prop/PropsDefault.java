@@ -33,10 +33,15 @@ import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropFie
 class PropsDefault implements Props {
     private final EventsForProp eventsForProp;
 
-    PropsDefault(EventsForProp eventsForProp) {this.eventsForProp = eventsForProp;}
+    private PropsDefault(EventsForProp eventsForProp) {this.eventsForProp = eventsForProp;}
 
-    public static Props newPropSession(EventsForProp eventsForProp) {
+    public static Props newProps(EventsForProp eventsForProp) {
         return new PropsDefault(eventsForProp);
+    }
+
+    @Override
+    public void close() {
+        eventsForProp.close();
     }
 
     @Override
@@ -86,10 +91,5 @@ class PropsDefault implements Props {
     public <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
         return PropComputedNullableImpl.newPropComputedNullable(eventsForProp, valueComputation, otherSource, otherPropertyName);
-    }
-
-    @Override
-    public void close() {
-        eventsForProp.close();
     }
 }

@@ -69,7 +69,7 @@ class SnapshotVariantsIndicator implements Widget {
     private final JComponent content = new JPanel();
 
     //endregion
-    //region Construction
+    //region Construction/Closing
     private SnapshotVariantsIndicator() {
         styleComponents();
         layoutComponents();
@@ -78,6 +78,10 @@ class SnapshotVariantsIndicator implements Widget {
 
     public static SnapshotVariantsIndicator variantsIndicator() {
         return new SnapshotVariantsIndicator();
+    }
+
+    public void close() {
+        props.close();
     }
 
     //endregion

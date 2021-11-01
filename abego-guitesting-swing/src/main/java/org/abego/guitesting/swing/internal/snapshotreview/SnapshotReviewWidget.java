@@ -234,6 +234,17 @@ class SnapshotReviewWidget implements Widget {
         return new SnapshotReviewWidget(issues);
     }
 
+    public void close() {
+        selectedIssueDescriptionLabel.close();
+        imagesLegendWidget.close();
+        shrinkToFitCheckBox.close();
+        snapshotVariantsIndicator.close();
+        expectedActualDifferenceImageWidget.close();
+        snapshotIssuesVList.close();
+
+        props.close();
+    }
+
     /**
      * Returns the "simple" name of the snapshot first (the part behind the last
      * '.'), followed by the package and class part, separated by a " - ".
