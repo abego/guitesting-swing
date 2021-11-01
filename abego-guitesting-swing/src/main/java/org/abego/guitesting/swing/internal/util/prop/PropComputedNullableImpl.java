@@ -24,41 +24,38 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.lang.ObjectUtil;
 import org.abego.event.EventService;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.Objects;
 import java.util.function.Function;
 
-public class PropComputedImpl<T> extends PropComputedBase<T> implements PropComputed<T>{
-    private PropComputedImpl(EventService eventService,
-                             Function<DependencyCollector, T> valueComputation,
-                             @Nullable Object otherSource,
-                             @Nullable String otherPropertyName) {
+public class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropComputedNullable<T>{
+    private PropComputedNullableImpl(EventService eventService,
+                                     Function<DependencyCollector, T> valueComputation,
+                                     @Nullable Object otherSource,
+                                     @Nullable String otherPropertyName) {
         super(eventService, valueComputation, otherSource, otherPropertyName);
     }
 
-    static <T> PropComputed<T> newPropComputed(
+    static <T> PropComputedNullable<T> newPropComputedNullable(
             EventService eventService,
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropComputedImpl<>(eventService, valueComputation, otherSource, otherPropertyName);
+        return new PropComputedNullableImpl<>(eventService, valueComputation, otherSource, otherPropertyName);
     }
 
-    static <T> PropComputed<T> newPropComputed(
+    static <T> PropComputedNullable<T> newPropComputedNullable(
             EventService eventService,
             Function<DependencyCollector, T> valueComputation) {
-        return new PropComputedImpl<>(eventService, valueComputation, null, null);
+        return new PropComputedNullableImpl<>(eventService, valueComputation, null, null);
     }
 
     @Override
-    public @NonNull T get() {
-        return ObjectUtil.valueOrFail(_get());
+    public @Nullable T get() {
+        return _get();
     }
 
     @Override
-    public void set(@NonNull T value) {
+    public void set(@Nullable T value) {
         _set(value);
     }
 

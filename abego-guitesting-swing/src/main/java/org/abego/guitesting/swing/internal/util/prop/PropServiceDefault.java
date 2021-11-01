@@ -86,13 +86,13 @@ class PropServiceDefault implements PropService {
 
     @Override
     public <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
-        return PropComputedImpl.newPropComputed(eventService, valueComputation);
+        return PropComputedNullableImpl.newPropComputedNullable(eventService, valueComputation);
     }
 
     @Override
     public <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputedImpl.newPropComputed(eventService, valueComputation, otherSource, otherPropertyName);
+        return PropComputedNullableImpl.newPropComputedNullable(eventService, valueComputation, otherSource, otherPropertyName);
     }
 
 }
