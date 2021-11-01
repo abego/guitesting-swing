@@ -87,7 +87,7 @@ public final class VList<T> implements Widget {
     //endregion
     //region  @Prop public String previousItemText = "Previous item"
     private final Prop<String> previousItemTextProp =
-            propService.newProp("Previous item", this, "previousItemText");
+            propService.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
 
     public String getPreviousItemText() {
         return previousItemTextProp.get();
@@ -104,7 +104,7 @@ public final class VList<T> implements Widget {
     //endregion
     //region @Prop public String nextItemText = "Next item"
     private final Prop<String> nextItemTextProp =
-            propService.newProp("Next item", this, "nextItemText");
+            propService.newProp("Next item", this, "nextItemText"); //NON-NLS
 
     public String getNextItemText() {
         return nextItemTextProp.get();
@@ -121,7 +121,7 @@ public final class VList<T> implements Widget {
     //endregion
     //region @Prop public String title = "Items:"
     private final Prop<String> titleProp =
-            propService.newProp("Items:", this, "title");
+            propService.newProp("Items:", this, "title"); //NON-NLS
 
     public String getTitle() {
         return titleProp.get();
@@ -141,8 +141,8 @@ public final class VList<T> implements Widget {
     //endregion
     //region Actions
     //TODO customizes/generalize the actionn titles/texts
-    private final Action previousItemAction = newAction("", KeyStroke.getKeyStroke("UP"), Icons.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
-    private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Icons.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
+    private final Action previousItemAction = newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
+    private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Resources.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
 
     private void selectPreviousItem() {
         SwingUtil.changeSelectedIndex(jList, -1);
@@ -234,7 +234,9 @@ public final class VList<T> implements Widget {
         listModelProp.runDependingCode(() -> jList.setModel(getListModel()));
         selectedItemProp.runDependingCode(this::onSelectedItemPropChanged);
 
+        //noinspection StringConcatenation
         previousItemTextProp.runDependingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        //noinspection StringConcatenation
         nextItemTextProp.runDependingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
         titleProp.runDependingCode(() -> titleLabel.setText(getTitle()));
     }

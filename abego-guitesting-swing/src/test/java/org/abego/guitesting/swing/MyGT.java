@@ -147,7 +147,7 @@ public class MyGT {
 
 
     static JTextField showFrameWithTextField() {
-        // setup a text field to receive the keyboard input
+        // set up a text field to receive the keyboard input
         JTextField tf = new JTextField();
         tf.setColumns(20);
 
@@ -217,7 +217,7 @@ public class MyGT {
             button.revalidate();
             button.addMouseListener(logMouseEventsToBlackboardWriter());
             button.addMouseWheelListener(logMouseWheelEventsToBlackboardWriter());
-            // set the name after all other initialization so we can synchronize
+            // set the name after all other initialization, so we can synchronize
             // with the non-EDT thread's "waitForWindowWith" call (see below)
             frame.setName(frameName);
         });

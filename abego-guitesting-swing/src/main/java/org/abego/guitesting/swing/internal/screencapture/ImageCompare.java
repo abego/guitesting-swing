@@ -50,8 +50,8 @@ public final class ImageCompare {
     }
 
     public static ImageCompare newImageCompare(int tolerancePercentage) {
-        // for exact compares, with no tolerance, we reuse.
-        // Otherwise we create a new instance each time
+        // For compares with the default tolerance we reuse the DEFAULT_COMPARE.
+        // In the other cases we create a new instance each time.
         return tolerancePercentage == TOLERANCE_PERCENTAGE_DEFAULT
                 ? DEFAULT_COMPARE
                 : new ImageCompare(tolerancePercentage);

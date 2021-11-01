@@ -24,13 +24,15 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+
 import javax.swing.border.MatteBorder;
 
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 
 public final class BorderUtil {
     BorderUtil() {
-        throw new UnsupportedOperationException("Must not instantiate");
+        throw new MustNotInstantiateException();
     }
 
     public static MatteBorder borderTopLighterGray() {

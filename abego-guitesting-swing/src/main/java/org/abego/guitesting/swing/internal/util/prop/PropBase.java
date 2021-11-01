@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  * when its value changed (via {@link EventServices} default).
  * <p>
  * The source of the PropertyChanged event will be the Prop object
- * and the property name "value". In addition a second PropertyChanged event
+ * and the property name "value". In addition, a second PropertyChanged event
  * may be generated with another source object and property name. The
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
@@ -65,7 +65,7 @@ abstract class PropBase<T> {
      */
     public void runDependingCode(Runnable code) {
         code.run();
-        eventService.addPropertyObserver(this, "value", e -> code.run());
+        eventService.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME, e -> code.run());
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(
@@ -91,7 +91,7 @@ abstract class PropBase<T> {
     }
 
     protected void postPropertyChanged() {
-        eventService.postPropertyChanged(this, "value"); //NON-NLS
+        eventService.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
             eventService.postPropertyChanged(otherSource, otherPropertyName);
         }

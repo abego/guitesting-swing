@@ -2301,7 +2301,7 @@ public class GTTest {
         assertEquals(Color.black, new Color(image.getRGB(50, 50)));
 
         // The other color we cannot directly compare as createScreenCapture
-        // does not always reproduces the "native" colors. So we just check
+        // does not always reproduce the "native" colors. So we just check
         // the "color-ish"
         assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
         assertTrue(isGreenish(new Color(image.getRGB(20, 90))));

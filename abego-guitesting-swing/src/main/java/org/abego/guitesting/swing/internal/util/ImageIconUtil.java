@@ -22,23 +22,27 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util.prop;
+package org.abego.guitesting.swing.internal.util;
 
-public interface DependencyCollector {
-    DependencyCollector DoNothing = new DependencyCollector() {
-        @Override
-        public void dependsOnProperty(Object source, String propertyName) {
-            // do nothing
-        }
-    };
+import org.abego.commons.lang.exception.MustNotInstantiateException;
 
-    default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
+import javax.swing.ImageIcon;
+import java.net.URL;
 
-    default void dependsOnProperty(SourceOfTruth<?> property) {
-        dependsOnProperty(property, PropService.VALUE_PROPERTY_NAME);
+import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
+
+public final class ImageIconUtil {
+    ImageIconUtil() {
+        throw new MustNotInstantiateException();
     }
 
-    default void dependsOnProperty(SourceOfTruthNullable<?> property) {
-        dependsOnProperty(property, PropService.VALUE_PROPERTY_NAME);
+    public static ImageIcon iconFromResource(String name, Class<?> resourceClass) {
+        URL resource = resourceClass.getResource(name);
+        if (resource == null) {
+            //noinspection DuplicateStringLiteralInspection
+            throw new IllegalArgumentException(
+                    String.format("ImageIcon not found: %s. Looking in %s", name, resourceClass)); //NON-NLS
+        }
+        return icon(resource);
     }
 }

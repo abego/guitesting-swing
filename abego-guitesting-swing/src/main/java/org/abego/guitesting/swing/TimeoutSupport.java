@@ -45,7 +45,7 @@ public interface TimeoutSupport extends TimeoutSupplier {
      * Sets the {@code timeout} property, as returned by {@link #timeout()}, to
      * the given {@code durationInMillis}.
      *
-     * @param durationInMillis the duration of the timeout, in milli seconds
+     * @param durationInMillis the duration of the timeout, in milliseconds
      */
     default void setTimeoutMillis(long durationInMillis) {
         setTimeout(Duration.ofMillis(durationInMillis));

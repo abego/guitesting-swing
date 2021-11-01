@@ -56,9 +56,9 @@ public interface RobotAPI extends
     BufferedImage createScreenCapture(Rectangle rectangle);
 
     /**
-     * Sleeps (the current thread) for {@code milliseconds} milli seconds.
+     * Sleeps (the current thread) for the given {@code milliseconds}.
      *
-     * @param milliseconds the time in milli seconds
+     * @param milliseconds the time in milliseconds
      */
     void delay(int milliseconds);
 

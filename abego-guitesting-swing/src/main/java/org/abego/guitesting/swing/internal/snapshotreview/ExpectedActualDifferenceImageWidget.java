@@ -112,6 +112,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> expectedBorderColorProp =
             propService.newProp(Color.green, this, "expectedBorderColor");
 
@@ -130,6 +131,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> actualBorderColorProp =
             propService.newProp(Color.red, this, "actualBorderColor");
 
@@ -148,6 +150,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
+    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> differenceBorderColorProp =
             propService.newProp(Color.black, this, "differenceBorderColor");
 

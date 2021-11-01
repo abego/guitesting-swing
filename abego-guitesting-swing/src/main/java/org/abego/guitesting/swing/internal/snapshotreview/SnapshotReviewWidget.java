@@ -143,10 +143,10 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //endregion
     //region Actions
-    private final Action addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Icons.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
-    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Icons.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
-    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Icons.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
-    private final Action rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Icons.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
+    private final Action addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Resources.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
+    private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Resources.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
+    private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Resources.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
+    private final Action rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Resources.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
 
     private void overwriteSnapshot() {
         @Nullable SnapshotIssue currentIssue = getSelectedIssue();

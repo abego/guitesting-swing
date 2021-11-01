@@ -357,6 +357,7 @@ public interface GT extends
      *
      * @return this object as EDTSupport
      */
+    @SuppressWarnings("GrazieInspection")
     default EDTSupport _edt() {
         return this;
     }

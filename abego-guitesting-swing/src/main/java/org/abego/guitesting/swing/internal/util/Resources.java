@@ -26,11 +26,8 @@ package org.abego.guitesting.swing.internal.util;
 
 
 import javax.swing.ImageIcon;
-import java.net.URL;
 
-import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
-
-class Icons {
+class Resources {
     public static ImageIcon nextItemIcon() {
         return iconFromResource("triangle-down-16.png"); //NON-NLS
     }
@@ -40,11 +37,7 @@ class Icons {
     }
 
     private static ImageIcon iconFromResource(String name) {
-        URL resource = Icons.class.getResource(name);
-        if (resource == null) {
-            throw new IllegalArgumentException(
-                    String.format("Image not found: %s", name)); //NON-NLS
-        }
-        return icon(resource);
+        return ImageIconUtil.iconFromResource(name, Resources.class);
     }
+
 }

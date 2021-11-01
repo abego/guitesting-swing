@@ -256,8 +256,8 @@ final class MouseSupportImpl implements MouseSupport {
      * Because there is a delay between calling a Robot mouse method and its
      * effect in the environment (e.g. a changes mouse position) we sometimes
      * need to wait for the change state, e.g. check the current mouse position.
-     * However this is not always sufficient, as e.g. some events will be
-     * posted even after the state change. Therefore we need to observe the
+     * However, this is not always sufficient, as e.g. some events will be
+     * posted even after the state change. Therefore, we need to observe the
      * events, too. This is what this class is for.
      */
     private static class MouseLocationObserver {

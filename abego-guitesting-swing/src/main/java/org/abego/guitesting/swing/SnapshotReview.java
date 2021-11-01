@@ -29,7 +29,7 @@ import java.awt.Frame;
 import java.util.function.Consumer;
 
 public interface SnapshotReview {
-    String SNAPSHOT_REVIEW_FRAME_NAME = "snapshot-review-frame";
+    String SNAPSHOT_REVIEW_FRAME_NAME = "snapshot-review-frame"; //NON-NLS
 
     default void showIssues() {
         showIssues(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));

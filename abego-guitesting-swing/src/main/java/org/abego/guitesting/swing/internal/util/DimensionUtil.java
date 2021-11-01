@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+
 import java.awt.Dimension;
 
 import static java.lang.Math.min;
@@ -31,7 +33,7 @@ import static java.lang.Math.min;
 public final class DimensionUtil {
 
     DimensionUtil() {
-        throw new IllegalArgumentException("Must not instantiate"); //NON-NLS
+        throw new MustNotInstantiateException();
     }
 
     /**

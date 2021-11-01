@@ -55,7 +55,7 @@ public class JTextComponentTestUtil {
 
         // at least one highlight exists
 
-        // for now we just return the first highlight
+        // for now, we just return the first highlight
         Highlighter.Highlight h = highlights[0];
         int s = h.getStartOffset();
         int e = h.getEndOffset();

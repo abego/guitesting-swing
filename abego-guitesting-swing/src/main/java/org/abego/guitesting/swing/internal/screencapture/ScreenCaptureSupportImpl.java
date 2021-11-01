@@ -63,7 +63,7 @@ import static org.abego.guitesting.swing.internal.GuiTestingUtil.urlToFile;
 import static org.abego.guitesting.swing.internal.screencapture.SnapshotIssueSupport.newSnapshotIssueSupport;
 
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
-    static final String SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT = "images";
+    static final String SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT = "images"; //NON-NLS
     static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);

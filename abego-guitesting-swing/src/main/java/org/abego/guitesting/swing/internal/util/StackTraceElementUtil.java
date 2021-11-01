@@ -24,13 +24,15 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+
 import java.io.PrintStream;
 import java.util.function.Predicate;
 
 public final class StackTraceElementUtil {
 
     StackTraceElementUtil() {
-        throw new UnsupportedOperationException("Must not instantiate");
+        throw new MustNotInstantiateException();
     }
 
     public static void printStackTrace(PrintStream out, StackTraceElement[] stackTrace, Predicate<StackTraceElement> includeElement) {

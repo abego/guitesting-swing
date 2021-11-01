@@ -38,7 +38,7 @@ public final class JLabelBindable extends JLabel {
     //region @Prop @InheritsGetSet public String text = ""
     private final PropService propService = PropServices.getDefault();
     private final Prop<String> textProp =
-            propService.newProp("", this, "text");
+            propService.newProp("", this, "text"); //NON-NLS
 
     public void bindTextTo(SourceOfTruth<String> prop) {
         textProp.bindTo(prop);
@@ -67,6 +67,7 @@ public final class JLabelBindable extends JLabel {
 
     private void updateTextProp() {
         String text = getText();
+        //noinspection CallToSuspiciousStringMethod
         if (!(textProp.get().equals(text))) {
             textProp.set(text);
         }

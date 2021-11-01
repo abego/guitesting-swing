@@ -44,7 +44,7 @@ import java.util.function.Function;
  * when its value changed (via {@link EventServices} default).
  * <p>
  * The source of the PropertyChanged event will be the Prop object
- * and the property name "value". In addition a second PropertyChanged event
+ * and the property name "value". In addition, a second PropertyChanged event
  * may be generated with another source object and property name. The
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
@@ -92,8 +92,8 @@ class PropComputedImpl<T> extends PropBase<T> implements PropComputed<T>, PropCo
             return;
         }
         // ignore value setters for computed properties.
-        // Instead post a change event to make sure the depending objects
-        // use the currently computed value
+        // Instead, post a change event to make sure the objects depending on
+        // this Prop use the currently computed value.
         postPropertyChanged();
     }
 

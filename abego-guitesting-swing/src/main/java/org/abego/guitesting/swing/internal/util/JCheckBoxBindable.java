@@ -39,7 +39,7 @@ public final class JCheckBoxBindable extends JCheckBox {
     private final PropService propService = PropServices.getDefault();
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
     private final Prop<Boolean> selectedProp =
-            propService.newProp(FALSE, this, "selected");
+            propService.newProp(FALSE, this, "selected"); //NON-NLS
 
     public void bindSelectedTo(Prop<Boolean> prop) {
         selectedProp.bindTo(prop);

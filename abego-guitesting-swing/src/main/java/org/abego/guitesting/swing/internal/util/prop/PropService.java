@@ -29,6 +29,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Function;
 
 public interface PropService {
+    String VALUE_PROPERTY_NAME = "value";
+
     <T> Prop<T> newProp(T value);
 
     <T> Prop<T> newProp(

@@ -44,8 +44,8 @@ final class KeyboardSupportImpl implements KeyboardSupport {
 
     /**
      * Make sure to match every keyPressed without a corresponding keyRelease.
-     * Otherwise key events may be lost in later runs (at least when working
-     * mac OS and IntelliJ.)
+     * Otherwise, key events may be lost in later runs (at least when working
+     * macOS and IntelliJ.)
      */
     private final Set<Integer> keycodesToRelease = new HashSet<>();
 
