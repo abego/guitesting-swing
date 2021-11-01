@@ -24,8 +24,32 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface PropService {
-    String VALUE_PROPERTY_NAME = "value";
+import org.abego.event.EventObserver;
+import org.abego.event.PropertyChanged;
+import org.eclipse.jdt.annotation.Nullable;
 
-    Props newProps();
- }
+import java.util.function.Consumer;
+
+interface EventsForProp {
+    EventObserver<PropertyChanged> addPropertyObserver(
+            Object source,
+            @Nullable String propertyName,
+            // no extra condition (just the property name),
+            // use defaultDispatcher,
+            Consumer<PropertyChanged> listener);
+
+    default EventObserver<PropertyChanged> addPropertyObserver(
+            Object source,
+            // any property name,
+            // no extra condition (just the property name),
+            // use defaultDispatcher,
+            Consumer<PropertyChanged> listener) {
+        return addPropertyObserver(source, null, listener);
+    }
+
+    void removeObserver(EventObserver<?> observer);
+
+    void postPropertyChanged(Object source, String propertyName);
+
+    void close();
+}

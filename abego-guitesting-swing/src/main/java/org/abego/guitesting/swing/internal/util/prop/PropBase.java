@@ -26,7 +26,6 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
-import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
@@ -48,14 +47,14 @@ import java.util.function.Consumer;
 //TODO: check if we can reuse some code of the different "Prop..." classes
 abstract class PropBase<T> {
     //TODO: can we make this private?
-    private final EventService eventService;
+    private final EventsForProp eventsForProp;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
 
-    protected PropBase(EventService eventService,
+    protected PropBase(EventsForProp eventsForProp,
                        @Nullable Object otherSource,
                        @Nullable String otherPropertyName) {
-        this.eventService = eventService;
+        this.eventsForProp = eventsForProp;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
     }
@@ -65,7 +64,7 @@ abstract class PropBase<T> {
      */
     public void runDependingCode(Runnable code) {
         code.run();
-        eventService.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME, e -> code.run());
+        eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME, e -> code.run());
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(
@@ -74,7 +73,7 @@ abstract class PropBase<T> {
             // no extra condition,
             // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
-        return eventService.addPropertyObserver(source, listener);
+        return eventsForProp.addPropertyObserver(source, listener);
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(
@@ -83,17 +82,17 @@ abstract class PropBase<T> {
             // no extra condition (just the property name),
             // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
-        return eventService.addPropertyObserver(source, propertyName, listener);
+        return eventsForProp.addPropertyObserver(source, propertyName, listener);
     }
 
     protected void removeObserver(EventObserver<?> observer) {
-        eventService.removeObserver(observer);
+        eventsForProp.removeObserver(observer);
     }
 
     protected void postPropertyChanged() {
-        eventService.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
+        eventsForProp.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
-            eventService.postPropertyChanged(otherSource, otherPropertyName);
+            eventsForProp.postPropertyChanged(otherSource, otherPropertyName);
         }
     }
 }

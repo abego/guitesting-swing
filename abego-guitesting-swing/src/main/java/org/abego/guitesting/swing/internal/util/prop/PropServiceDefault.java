@@ -24,75 +24,73 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.event.EventObserver;
 import org.abego.event.EventService;
 import org.abego.event.EventServices;
+import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.function.Function;
-
-import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropField;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 
 class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
-    private final EventService eventService;
+    private final EventService eventsForProp;
 
-    private PropServiceDefault(EventService eventService) {this.eventService = eventService;}
+    private class EventsForPropImpl implements EventsForProp {
+        private final Set<EventObserver<?>> remainingObservers = new HashSet<>();
+        private boolean isClosed;
+
+        @Override
+        public EventObserver<PropertyChanged> addPropertyObserver(Object source, @Nullable String propertyName, Consumer<PropertyChanged> listener) {
+            checkNotClosed();
+
+            EventObserver<PropertyChanged> observer = eventsForProp.addPropertyObserver(source, propertyName, listener);
+            remainingObservers.add(observer);
+            return observer;
+        }
+
+        @Override
+        public void removeObserver(EventObserver<?> observer) {
+            checkNotClosed();
+
+            remainingObservers.remove(observer);
+            eventsForProp.removeObserver(observer);
+        }
+
+        @Override
+        public void postPropertyChanged(Object source, String propertyName) {
+            checkNotClosed();
+
+            eventsForProp.postPropertyChanged(source, propertyName);
+        }
+
+        public void close() {
+            isClosed = true;
+            eventsForProp.removeAllObservers(remainingObservers);
+        }
+
+        private void checkNotClosed() {
+            if (isClosed) {
+                throw new IllegalStateException("Already closed"); //NON-NLS
+            }
+        }
+    }
+
+    private PropServiceDefault(EventService eventsForProp) {this.eventsForProp = eventsForProp;}
 
     static PropService getDefault() {
         return DEFAULT_INSTANCE;
     }
 
-    public static PropService newPropService(EventService eventService) {
-        return new PropServiceDefault(eventService);
+    static PropService newPropService(EventService eventsForProp) {
+        return new PropServiceDefault(eventsForProp);
     }
 
     @Override
-    public <T> Prop<T> newProp(T value) {
-        return newPropField(eventService, value, null, null);
-    }
-
-    @Override
-    public <T> Prop<T> newProp(
-            T value, Object otherSource, String otherPropertyName) {
-        return newPropField(eventService, value, otherSource, otherPropertyName);
-    }
-
-    @Override
-    public <T> PropNullable<T> newPropNullable() {
-        return PropFieldNullable.newPropFieldNullable(eventService, null);
-    }
-
-    @Override
-    public <T> PropNullable<T> newPropNullable(T value) {
-        return PropFieldNullable.newPropFieldNullable(eventService, value);
-    }
-
-    @Override
-    public <T> PropNullable<T> newPropNullable(
-            @Nullable T value, Object otherSource, String otherPropertyName) {
-        return PropFieldNullable.newPropFieldNullable(eventService, value, otherSource, otherPropertyName);
-    }
-
-    @Override
-    public <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
-        return PropComputedImpl.newPropComputed(eventService, valueComputation);
-    }
-
-    @Override
-    public <T> PropComputed<T> newPropComputed(
-            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputedImpl.newPropComputed(eventService, valueComputation, otherSource, otherPropertyName);
-    }
-
-    @Override
-    public <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
-        return PropComputedNullableImpl.newPropComputedNullable(eventService, valueComputation);
-    }
-
-    @Override
-    public <T> PropComputedNullable<T> newPropComputedNullable(
-            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return PropComputedNullableImpl.newPropComputedNullable(eventService, valueComputation, otherSource, otherPropertyName);
+    public Props newProps() {
+        return new PropsDefault(new EventsForPropImpl());
     }
 
 }

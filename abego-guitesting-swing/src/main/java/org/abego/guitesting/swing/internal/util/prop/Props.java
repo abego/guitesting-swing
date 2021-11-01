@@ -24,8 +24,33 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface PropService {
-    String VALUE_PROPERTY_NAME = "value";
+import org.eclipse.jdt.annotation.Nullable;
 
-    Props newProps();
- }
+import java.util.function.Function;
+
+public interface Props {
+    <T> Prop<T> newProp(T value);
+
+    <T> Prop<T> newProp(
+            T value, Object otherSource, String otherPropertyName);
+
+    <T> PropNullable<T> newPropNullable();
+
+    <T> PropNullable<T> newPropNullable(T value);
+
+    <T> PropNullable<T> newPropNullable(
+            @Nullable T value, Object otherSource, String otherPropertyName);
+
+    <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
+
+    <T> PropComputed<T> newPropComputed(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
+
+    <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation);
+
+    <T> PropComputedNullable<T> newPropComputedNullable(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
+
+    void close();
+
+}

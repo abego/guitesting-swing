@@ -26,7 +26,6 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
-import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
@@ -55,11 +54,11 @@ abstract class PropComputedBase<T> extends PropBase<T> {
     private @Nullable T value;
     private boolean mustComputeValue;
 
-    protected PropComputedBase(EventService eventService,
+    protected PropComputedBase(EventsForProp eventsForProp,
                                Function<DependencyCollector, T> valueComputation,
                                @Nullable Object otherSource,
                                @Nullable String otherPropertyName) {
-        super(eventService, otherSource, otherPropertyName);
+        super(eventsForProp, otherSource, otherPropertyName);
         this.valueComputation = valueComputation;
         this.mustComputeValue = true;
     }

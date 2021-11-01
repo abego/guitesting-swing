@@ -35,8 +35,12 @@ public class PropServices {
         return PropServiceDefault.getDefault();
     }
 
-    public static PropService newPropService(EventService eventService) {
-        return PropServiceDefault.newPropService(eventService);
+    public static PropService newPropService(EventService eventsForProp) {
+        return PropServiceDefault.newPropService(eventsForProp);
+    }
+
+    public static Props newProps() {
+        return getDefault().newProps();
     }
 
 }

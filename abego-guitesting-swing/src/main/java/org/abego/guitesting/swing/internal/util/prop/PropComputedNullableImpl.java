@@ -24,29 +24,28 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.event.EventService;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
 public class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropComputedNullable<T>{
-    private PropComputedNullableImpl(EventService eventService,
+    private PropComputedNullableImpl(EventsForProp eventsForProp,
                                      Function<DependencyCollector, T> valueComputation,
                                      @Nullable Object otherSource,
                                      @Nullable String otherPropertyName) {
-        super(eventService, valueComputation, otherSource, otherPropertyName);
+        super(eventsForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputedNullable<T> newPropComputedNullable(
-            EventService eventService,
+            EventsForProp eventsForProp,
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropComputedNullableImpl<>(eventService, valueComputation, otherSource, otherPropertyName);
+        return new PropComputedNullableImpl<>(eventsForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputedNullable<T> newPropComputedNullable(
-            EventService eventService,
+            EventsForProp eventsForProp,
             Function<DependencyCollector, T> valueComputation) {
-        return new PropComputedNullableImpl<>(eventService, valueComputation, null, null);
+        return new PropComputedNullableImpl<>(eventsForProp, valueComputation, null, null);
     }
 
     @Override
