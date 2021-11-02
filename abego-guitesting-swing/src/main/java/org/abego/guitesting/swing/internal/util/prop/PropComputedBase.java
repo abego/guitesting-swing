@@ -82,18 +82,15 @@ abstract class PropComputedBase<T> extends PropBase<T> {
         postPropertyChanged();
     }
 
-    @NonNull
-    private T recompute() {
-        return recomputeAndOnChangeDo(() -> {});
+    private void recompute() {
+        recomputeAndOnChangeDo(() -> {});
     }
 
-    @NonNull
-    private T recomputeAndPostEvent() {
-        return recomputeAndOnChangeDo(this::postPropertyChanged);
+    private void recomputeAndPostEvent() {
+        recomputeAndOnChangeDo(this::postPropertyChanged);
     }
 
-    @NonNull
-    private T recomputeAndOnChangeDo(Runnable onChangeCode) {
+    private void recomputeAndOnChangeDo(Runnable onChangeCode) {
 
         if (observers != null) {
             for (EventObserver<PropertyChanged> o : observers) {
@@ -119,6 +116,5 @@ abstract class PropComputedBase<T> extends PropBase<T> {
             value = v;
             onChangeCode.run();
         }
-        return v;
     }
 }
