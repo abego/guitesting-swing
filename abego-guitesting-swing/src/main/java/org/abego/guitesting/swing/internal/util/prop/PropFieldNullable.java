@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Objects;
 
+//TODO can we share code between PropFieldNullable and PropField
 class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
     private SourceOfTruthNullable<T> sourceOfTruth;
     private EventObserver<PropertyChanged> observer;

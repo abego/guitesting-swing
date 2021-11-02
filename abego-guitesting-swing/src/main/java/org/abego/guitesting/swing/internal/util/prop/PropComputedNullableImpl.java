@@ -28,7 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
-public class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropComputedNullable<T>{
+class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropComputedNullable<T>{
     private PropComputedNullableImpl(EventsForProp eventsForProp,
                                      Function<DependencyCollector, T> valueComputation,
                                      @Nullable Object otherSource,

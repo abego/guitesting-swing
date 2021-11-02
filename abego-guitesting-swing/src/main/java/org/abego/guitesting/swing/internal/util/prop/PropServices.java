@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.event.EventService;
+import org.abego.event.EventServices;
 
 public class PropServices {
     PropServices() {
@@ -35,8 +36,23 @@ public class PropServices {
         return PropServiceDefault.getDefault();
     }
 
-    public static PropService newPropService(EventService eventsForProp) {
-        return PropServiceDefault.newPropService(eventsForProp);
+    /**
+     * Create a new PropService, using the given {@link EventService}.
+     * <p>
+     * The {@link PropService} uses an {@link EventService} for its inner
+     * working. With {@link PropServices#getDefault()} the default
+     * {@link EventService} ({@link EventServices#getDefault()}) is used. When
+     * you want to create a new PropService that uses a different EventService
+     * use this {@link #newPropService(EventService)} method.
+     * <p>
+     * Make sure to use the same EventService olso with other objects working
+     * on Prop instances created with the PropService. Especially be aware of
+     * the fact that events never leave an EventService. E.g. an observer
+     * created by the default EventService will not be informed when events
+     * are posted by a different EventService.
+     */
+    public static PropService newPropService(EventService eventService) {
+        return PropServiceDefault.newPropService(eventService);
     }
 
     public static Props newProps() {
