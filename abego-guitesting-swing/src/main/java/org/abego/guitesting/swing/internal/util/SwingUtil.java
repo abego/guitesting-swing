@@ -53,6 +53,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
@@ -190,6 +191,14 @@ public final class SwingUtil {
             listModel.addElement(i);
         }
         return listModel;
+    }
+
+    public static <T> void removeIf(DefaultListModel<T> listModel, Predicate<T> predicate) {
+        for (int i = listModel.size() - 1; i >= 0; i--) {
+            if (predicate.test(listModel.get(i))) {
+                listModel.removeElementAt(i);
+            }
+        }
     }
 
     public static <T> ListCellRenderer<? super T> newListCellRenderer(

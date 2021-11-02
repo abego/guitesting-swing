@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
@@ -181,13 +182,8 @@ class SnapshotReviewWidget implements Widget {
 
     private void removeIssueAndVariants(SnapshotIssue issue) {
         String name = issue.getSnapshotName();
-        for (int i = remainingIssues.size() - 1; i >= 0; i--) {
-            SnapshotIssue issueInModel = remainingIssues.get(i);
-            //noinspection CallToSuspiciousStringMethod
-            if (issueInModel.getSnapshotName().equals(name)) {
-                remainingIssues.removeElementAt(i);
-            }
-        }
+        //noinspection CallToSuspiciousStringMethod
+        SwingUtil.removeIf(remainingIssues, i -> i.getSnapshotName().equals(name));
     }
 
     private void rotateImages() {
