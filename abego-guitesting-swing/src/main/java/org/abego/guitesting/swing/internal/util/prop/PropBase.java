@@ -31,6 +31,7 @@ import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.SwingUtilities;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 //TODO: review JavaDoc
@@ -45,9 +46,7 @@ import java.util.function.Consumer;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-//TODO: check if we can reuse some code of the different "Prop..." classes
 abstract class PropBase<T> {
-    //TODO: can we make this private?
     private final EventsForProp eventsForProp;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
@@ -60,14 +59,22 @@ abstract class PropBase<T> {
         this.otherPropertyName = otherPropertyName;
     }
 
-    /**
-     * Runs a {@link Runnable} (the "code") "now" and whenever the Prop changes.
-     */
-    public void runDependingCode(Runnable code) {
+    public void runDependingSwingCode(Runnable code) {
+        // the initial run, in the current thread.
         code.run();
-        //TODO provide a "switch" when to run with invokeLater and when direct
+
+        // some more logic to cover the "run once, even after multiple changes"
+        // feature.
+        AtomicBoolean mustRun = new AtomicBoolean(false);
         eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
-                e -> SwingUtilities.invokeLater(code));
+                e -> {
+                    mustRun.set(true);
+                    SwingUtilities.invokeLater(() -> {
+                        if (mustRun.getAndSet(false)) {
+                            code.run();
+                        }
+                    });
+                });
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(

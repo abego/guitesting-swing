@@ -24,7 +24,22 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.Var;
-
-public interface SourceOfTruth<T> extends Var<T>, DependingSwingCodeRunner {
+public interface DependingSwingCodeRunner {
+    /**
+     * Run the {@code code} now and whenever this {@link SourceOfTruth} changes.
+     * <p>
+     * The {@code code} may operate on Swing components. Therefore, all but the
+     * initial run are executed in the Event Dispatch Thread. The initial run
+     * is performed immediately, in the current thread. To be thread-safe
+     * make sure to run #runDependingSwingCode method before the
+     * Swing components it operates on are realized
+     * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
+     * <p>
+     * Typically this method is used to update Swing components according to some
+     * state they depend on. The first run of the code, directly performed with
+     * the invocation of #runDependingSwingCode, performs the initialization.
+     * After that the code is re-run when code was changed. The code will only
+     * be re-run once, even if multiple changes occured since the last run.
+     */
+    void runDependingSwingCode(Runnable code);
 }

@@ -96,8 +96,8 @@ public final class CheckBoxWidget implements Widget {
     //region Binding related
     private void initBindings() {
         // Model -> UI
-        selectedProp.runDependingCode(() -> checkBox.setSelected(isSelected()));
-        textProp.runDependingCode(() -> checkBox.setText(getText()));
+        selectedProp.runDependingSwingCode(() -> checkBox.setSelected(isSelected()));
+        textProp.runDependingSwingCode(() -> checkBox.setText(getText()));
         // UI -> Model
         checkBox.addItemListener(i -> updateSelectedProp());
     }

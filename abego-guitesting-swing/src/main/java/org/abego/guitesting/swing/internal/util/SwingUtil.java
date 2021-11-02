@@ -281,16 +281,4 @@ public final class SwingUtil {
     }
 
     //endregion
-
-    //region invokeLater...
-    public static void invokeLaterOnce(AtomicBoolean mustInvoke, Runnable runnable) {
-        mustInvoke.set(true);
-        invokeLater(() -> {
-            if (mustInvoke.getAndSet(false)) {
-                runnable.run();
-            }
-        });
-    }
-    //endregion
-
 }

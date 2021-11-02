@@ -56,8 +56,8 @@ class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
         }
 
         @Override
-        public void runDependingCode(Runnable code) {
-            PropFieldNullable.this.runDependingCode(code);
+        public void runDependingSwingCode(Runnable code) {
+            PropFieldNullable.this.runDependingSwingCode(code);
         }
     }
 

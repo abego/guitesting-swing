@@ -64,8 +64,8 @@ class PropField<T> extends PropBase<T> implements Prop<T> {
         }
 
         @Override
-        public void runDependingCode(Runnable code) {
-            PropField.this.runDependingCode(code);
+        public void runDependingSwingCode(Runnable code) {
+            PropField.this.runDependingSwingCode(code);
         }
     }
 

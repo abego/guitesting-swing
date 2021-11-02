@@ -38,7 +38,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
-import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
@@ -113,7 +112,7 @@ class SnapshotVariantsIndicator implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        variantsInfoProp.runDependingCode(this::updateContent);
+        variantsInfoProp.runDependingSwingCode(this::updateContent);
     }
 
     private void updateContent() {

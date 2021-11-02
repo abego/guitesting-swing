@@ -48,7 +48,6 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.invokeLaterOnce;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
@@ -189,6 +188,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     public void close() {
         props.close();
     }
+
     //endregion
     //region Widget related
     @Override
@@ -241,17 +241,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region Binding related
-    private final AtomicBoolean mustUpdateLabelsForImages = new AtomicBoolean();
-
     private void initBinding() {
         onComponentResized(content, e -> onContentResized());
 
-        shrinkToFitProp.runDependingCode(this::updateLabelsForImages);
-        snapshotIssueProp.runDependingCode(this::updateLabelsForImages);
-        expectedImageIndexProp.runDependingCode(this::updateLabelsForImages);
-        expectedBorderColorProp.runDependingCode(this::updateLabelsForImages);
-        actualBorderColorProp.runDependingCode(this::updateLabelsForImages);
-        differenceBorderColorProp.runDependingCode(this::updateLabelsForImages);
+        shrinkToFitProp.runDependingSwingCode(this::updateLabelsForImages);
+        snapshotIssueProp.runDependingSwingCode(this::updateLabelsForImages);
+        expectedImageIndexProp.runDependingSwingCode(this::updateLabelsForImages);
+        expectedBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
+        actualBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
+        differenceBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
     }
 
     private void onContentResized() {
@@ -261,24 +259,22 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private void updateLabelsForImages() {
-        invokeLaterOnce(mustUpdateLabelsForImages, () -> {
-            @Nullable SnapshotImages images = getSnapshotImages();
-            if (images != null) {
-                setIconAndLinedBorder(
-                        labelsForImages[(getExpectedImageIndex()) % 3],
-                        images.getExpectedImage(),
-                        getExpectedBorderColor());
-                setIconAndLinedBorder(
-                        labelsForImages[(getExpectedImageIndex() + 1) % 3],
-                        images.getActualImage(),
-                        getActualBorderColor());
-                setIconAndLinedBorder(
-                        labelsForImages[(getExpectedImageIndex() + 2) % 3],
-                        images.getDifferenceImage(),
-                        getDifferenceBorderColor());
-            }
-            SwingUtil.setVisible(images != null, labelsForImages);
-        });
+        @Nullable SnapshotImages images = getSnapshotImages();
+        if (images != null) {
+            setIconAndLinedBorder(
+                    labelsForImages[(getExpectedImageIndex()) % 3],
+                    images.getExpectedImage(),
+                    getExpectedBorderColor());
+            setIconAndLinedBorder(
+                    labelsForImages[(getExpectedImageIndex() + 1) % 3],
+                    images.getActualImage(),
+                    getActualBorderColor());
+            setIconAndLinedBorder(
+                    labelsForImages[(getExpectedImageIndex() + 2) % 3],
+                    images.getDifferenceImage(),
+                    getDifferenceBorderColor());
+        }
+        SwingUtil.setVisible(images != null, labelsForImages);
     }
     //endregion
 }

@@ -61,7 +61,7 @@ public final class JLabelBindable extends JLabel {
     //endregion
     //region Binding related
     private void initBindings() {
-        textProp.runDependingCode(this::updateTextUI);
+        textProp.runDependingSwingCode(this::updateTextUI);
         addPropertyChangeListener("text", e -> updateTextProp());
     }
 

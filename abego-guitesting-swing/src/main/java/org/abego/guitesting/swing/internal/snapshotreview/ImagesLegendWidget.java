@@ -31,7 +31,6 @@ import org.abego.guitesting.swing.internal.util.prop.Props;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -162,13 +161,13 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        expectedImageIndexProp.runDependingCode(this::updateContent);
+        expectedImageIndexProp.runDependingSwingCode(this::updateContent);
 
-        expectedBorderColorProp.runDependingCode(() ->
+        expectedBorderColorProp.runDependingSwingCode(() ->
                 setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor()));
-        actualBorderColorProp.runDependingCode(() ->
+        actualBorderColorProp.runDependingSwingCode(() ->
                 setLegendLabelBorderColor(actualLabel, getActualBorderColor()));
-        differenceBorderColorProp.runDependingCode(() ->
+        differenceBorderColorProp.runDependingSwingCode(() ->
                 setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor()));
     }
 

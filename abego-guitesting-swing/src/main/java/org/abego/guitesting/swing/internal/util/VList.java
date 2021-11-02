@@ -234,15 +234,15 @@ public final class VList<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        cellTextProviderProp.runDependingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
-        listModelProp.runDependingCode(() -> jList.setModel(getListModel()));
-        selectedItemProp.runDependingCode(()-> jList.setSelectedValue(selectedItemProp.get(), true));
+        cellTextProviderProp.runDependingSwingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
+        listModelProp.runDependingSwingCode(() -> jList.setModel(getListModel()));
+        selectedItemProp.runDependingSwingCode(()-> jList.setSelectedValue(selectedItemProp.get(), true));
 
         //noinspection StringConcatenation
-        previousItemTextProp.runDependingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        previousItemTextProp.runDependingSwingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
         //noinspection StringConcatenation
-        nextItemTextProp.runDependingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        titleProp.runDependingCode(() -> titleLabel.setText(getTitle()));
+        nextItemTextProp.runDependingSwingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
+        titleProp.runDependingSwingCode(() -> titleLabel.setText(getTitle()));
     }
 
     private void onSelectedItemInUIChanged() {
