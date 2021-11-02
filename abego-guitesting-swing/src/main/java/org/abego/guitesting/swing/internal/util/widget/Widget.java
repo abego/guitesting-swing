@@ -22,22 +22,10 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.widget;
 
+import javax.swing.JComponent;
 
-import javax.swing.ImageIcon;
-
-class Resources {
-    public static ImageIcon nextItemIcon() {
-        return iconFromResource("triangle-down-16.png"); //NON-NLS
-    }
-
-    public static ImageIcon previousItemIcon() {
-        return iconFromResource("triangle-up-16.png"); //NON-NLS
-    }
-
-    private static ImageIcon iconFromResource(String name) {
-        return ImageIconUtil.iconFromResource(name, Resources.class);
-    }
-
+public interface Widget {
+    JComponent getContent();
 }

@@ -22,8 +22,9 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.widget;
 
+import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
@@ -55,7 +56,7 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRend
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
-public final class VList<T> implements Widget {
+public final class VListWidget<T> implements Widget {
 
     //region State/Model
     private final Props props = PropServices.newProps();
@@ -141,7 +142,7 @@ public final class VList<T> implements Widget {
     //endregion
     //region Actions
     //TODO customizes/generalize the actionn titles/texts
-    private final Action previousItemAction = newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
+    private final Action previousItemAction = SwingUtil.newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
     private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Resources.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
 
     private void selectPreviousItem() {
@@ -163,14 +164,14 @@ public final class VList<T> implements Widget {
 
     //endregion
     //region Construction/Closing
-    private VList() {
+    private VListWidget() {
         styleComponents();
         layoutComponents();
         initBindings();
     }
 
-    public static <T> VList<T> vList() {
-        return new VList<>();
+    public static <T> VListWidget<T> vList() {
+        return new VListWidget<>();
     }
 
     public void close() {

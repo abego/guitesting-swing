@@ -24,7 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
-import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.Props;

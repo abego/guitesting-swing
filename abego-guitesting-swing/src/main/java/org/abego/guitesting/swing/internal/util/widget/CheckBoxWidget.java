@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;

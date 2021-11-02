@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.Widget;
+import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -42,7 +42,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
