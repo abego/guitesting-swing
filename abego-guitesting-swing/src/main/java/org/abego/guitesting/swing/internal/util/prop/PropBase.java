@@ -65,15 +65,18 @@ abstract class PropBase<T> {
 
         // some more logic to cover the "run once, even after multiple changes"
         // feature.
-        AtomicBoolean mustRun = new AtomicBoolean(false);
+        AtomicBoolean runPending = new AtomicBoolean(false);
         eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
                 e -> {
-                    mustRun.set(true);
-                    SwingUtilities.invokeLater(() -> {
-                        if (mustRun.getAndSet(false)) {
-                            code.run();
-                        }
-                    });
+                    // only schedule a new run when there is not yet one pending
+                    if (!runPending.getAndSet(true)) {
+                        SwingUtilities.invokeLater(() -> {
+                            // only run the code when it is still necessary
+                            if (runPending.getAndSet(false)) {
+                                code.run();
+                            }
+                        });
+                    }
                 });
     }
 

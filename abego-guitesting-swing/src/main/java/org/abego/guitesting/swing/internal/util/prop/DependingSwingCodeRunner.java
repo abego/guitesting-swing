@@ -26,14 +26,17 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 public interface DependingSwingCodeRunner {
     /**
-     * Run the {@code code} now and whenever this {@link SourceOfTruth} changes.
+     * Run the {@code code} now and whenever the object the method belongs to
+     * changes.
      * <p>
      * The {@code code} may operate on Swing components. Therefore, all but the
      * initial run are executed in the Event Dispatch Thread. The initial run
      * is performed immediately, in the current thread. To be thread-safe
      * make sure to run #runDependingSwingCode method before the
      * Swing components it operates on are realized
-     * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
+     * (http://www.javapractices.com/topic/TopicAction.do?Id=153), or from the
+     * Event Dispatch Thread (e.g. via
+     * {@link javax.swing.SwingUtilities#invokeLater(Runnable)}.
      * <p>
      * Typically this method is used to update Swing components according to some
      * state they depend on. The first run of the code, directly performed with
