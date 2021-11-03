@@ -24,11 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.Var;
 import org.abego.event.EventObserver;
-import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -36,18 +33,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-//TODO: review JavaDoc
-
-/**
- * A {@link Var} emitting {@link PropertyChanged} events
- * when its value changed (via {@link EventServices} default).
- * <p>
- * The source of the PropertyChanged event will be the Prop object
- * and the property name "value". In addition, a second PropertyChanged event
- * may be generated with another source object and property name. The
- * "other source" typically is the object containing the Prop object and the
- * property name the name of the Prop within that container.
- */
 abstract class PropComputedBase<T> extends PropBase<T> {
     private final Function<DependencyCollector, T> valueComputation;
     private @Nullable List<EventObserver<PropertyChanged>> observers;
@@ -63,6 +48,11 @@ abstract class PropComputedBase<T> extends PropBase<T> {
         this.mustComputeValue = true;
     }
 
+    /**
+     * This "getter" _get is defined to allow code reuse between the Nullable
+     * and non-Nullable variants of PropComputed (the concrete class' get method
+     * defines the correct Nullable type and just calls the _get method)
+     */
     protected @Nullable T _get() {
         if (mustComputeValue) {
             // do the initial computation
@@ -72,13 +62,20 @@ abstract class PropComputedBase<T> extends PropBase<T> {
         return value;
     }
 
+    /**
+     * This "setter" _set is defined to allow code reuse between the Nullable
+     * and non-Nullable variants of PropComputed (the concrete class' set method
+     * defines the correct Nullable type and just calls the _set method)
+     */
     protected void _set(@Nullable T value) {
         if (Objects.equals(value, this.value)) {
             return;
         }
-        // ignore value setters for computed properties.
+        // ignore value setters for computed properties, as the value is only
+        // defined by the computation.
         // Instead, post a change event to make sure the objects depending on
-        // this Prop use the currently computed value.
+        // this Prop use the currently computed value (especially that one that
+        // may have tried to set a different value).
         postPropertyChanged();
     }
 

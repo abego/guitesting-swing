@@ -24,6 +24,20 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.commons.var.Var;
+import org.abego.event.EventServices;
+import org.abego.event.PropertyChanged;
+
+/**
+ * A {@link Var} emitting {@link PropertyChanged} events
+ * when its value changed (via {@link EventServices} default).
+ * <p>
+ * The source of the PropertyChanged event will be the Prop object
+ * and the property name "value". In addition, a second PropertyChanged event
+ * may be generated with another source object and property name. The
+ * "other source" typically is the object containing the Prop object and the
+ * property name the name of the Prop within that container.
+ */
 public interface Prop<T> extends SourceOfTruth<T> {
     void bindTo(SourceOfTruth<T> sourceOfTruth);
 }
