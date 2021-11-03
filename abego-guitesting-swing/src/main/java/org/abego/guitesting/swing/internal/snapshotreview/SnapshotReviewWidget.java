@@ -30,7 +30,7 @@ import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
-import org.abego.guitesting.swing.internal.util.JLabelBindable;
+import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropComputed;
@@ -60,7 +60,7 @@ import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLight
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
-import static org.abego.guitesting.swing.internal.util.JLabelBindable.labelBindable;
+import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
@@ -192,7 +192,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Components
-    private final JLabelBindable selectedIssueDescriptionLabel = labelBindable();
+    private final LabelWidget selectedIssueDescriptionLabel = labelWidget();
     private final JButton overwriteButton = toolbarButton();
     private final JButton addAlternativeButton = toolbarButton();
     private final JButton ignoreButton = toolbarButton();
@@ -295,7 +295,7 @@ class SnapshotReviewWidget implements Widget {
     private void layoutComponents() {
         bordered(content)
                 .top(bordered()
-                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel))
+                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel.getContent()))
                         .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
                                 overwriteButton,
                                 addAlternativeButton,

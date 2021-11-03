@@ -22,36 +22,49 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util;
+package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.Props;
 import org.abego.guitesting.swing.internal.util.prop.SourceOfTruth;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import static javax.swing.SwingUtilities.invokeLater;
+public final class LabelWidget implements Widget {
 
-public final class JLabelBindable extends JLabel {
-
-    //region @Prop @InheritsGetSet public String text = ""
+    //region State/Model
     private final Props props = PropServices.newProps();
+    //region @Prop public String text = ""
     private final Prop<String> textProp =
             props.newProp("", this, "text"); //NON-NLS
+
+    public String getText() {
+        return textProp.get();
+    }
+
+    public void setText(String value) {
+        textProp.set(value);
+    }
 
     public void bindTextTo(SourceOfTruth<String> prop) {
         textProp.bindTo(prop);
     }
 
     //endregion
+    //endregion
+    //region Components
+    private final JLabel label = new JLabel();
+
+    //endregion
     //region Construction/Closing
-    private JLabelBindable() {
+    private LabelWidget() {
         initBindings();
     }
 
-    public static JLabelBindable labelBindable() {
-        return new JLabelBindable();
+    public static LabelWidget labelWidget() {
+        return new LabelWidget();
     }
 
     public void close() {
@@ -59,22 +72,28 @@ public final class JLabelBindable extends JLabel {
     }
 
     //endregion
+    //region Widget related
+    @Override
+    public JComponent getContent() {
+        return label;
+    }
+
+    //endregion
     //region Binding related
     private void initBindings() {
-        textProp.runDependingSwingCode(this::updateTextUI);
-        addPropertyChangeListener("text", e -> updateTextProp());
+        textProp.runDependingSwingCode(() -> label.setText(textProp.get()));
+        label.addPropertyChangeListener("text", e -> updateTextProp());
     }
 
-    private void updateTextUI() {
-        invokeLater(() -> setText(textProp.get()));
-    }
 
     private void updateTextProp() {
-        String text = getText();
+        String text = label.getText();
+        //TODO: do we need the equals check, or should this do the setter?
         //noinspection CallToSuspiciousStringMethod
         if (!(textProp.get().equals(text))) {
             textProp.set(text);
         }
     }
+
     //endregion
 }
