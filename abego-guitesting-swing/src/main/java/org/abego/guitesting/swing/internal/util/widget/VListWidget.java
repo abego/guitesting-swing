@@ -170,7 +170,7 @@ public final class VListWidget<T> implements Widget {
         initBindings();
     }
 
-    public static <T> VListWidget<T> vList() {
+    public static <T> VListWidget<T> vListWidget() {
         return new VListWidget<>();
     }
 

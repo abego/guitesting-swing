@@ -174,7 +174,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region Construction/Closing
-    public static ExpectedActualDifferenceImageWidget expectedActualDifferenceImageView() {
+    public static ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget() {
         return new ExpectedActualDifferenceImageWidget();
     }
 

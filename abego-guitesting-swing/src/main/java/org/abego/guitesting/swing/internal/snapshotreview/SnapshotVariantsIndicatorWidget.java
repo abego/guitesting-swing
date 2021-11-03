@@ -41,7 +41,7 @@ import java.awt.Font;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
-class SnapshotVariantsIndicator implements Widget {
+class SnapshotVariantsIndicatorWidget implements Widget {
     //region State/Model
     private final Props props = PropServices.newProps();
     //region @Prop public @Nullable SnapshotVariant : variantsInfo
@@ -69,14 +69,14 @@ class SnapshotVariantsIndicator implements Widget {
 
     //endregion
     //region Construction/Closing
-    private SnapshotVariantsIndicator() {
+    private SnapshotVariantsIndicatorWidget() {
         styleComponents();
         layoutComponents();
         initBindings();
     }
 
-    public static SnapshotVariantsIndicator variantsIndicator() {
-        return new SnapshotVariantsIndicator();
+    public static SnapshotVariantsIndicatorWidget variantsIndicatorWidget() {
+        return new SnapshotVariantsIndicatorWidget();
     }
 
     public void close() {
