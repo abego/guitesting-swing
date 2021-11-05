@@ -26,23 +26,26 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 public interface DependingSwingCodeRunner {
     /**
-     * Run the {@code code} now and whenever the object the method belongs to
-     * changes.
+     * Run the {@code code} now and whenever the object changes its value.
      * <p>
      * The {@code code} may operate on Swing components. Therefore, all but the
      * initial run are executed in the Event Dispatch Thread. The initial run
      * is performed immediately, in the current thread. To be thread-safe
-     * make sure to run #runDependingSwingCode method before the
-     * Swing components it operates on are realized
-     * (http://www.javapractices.com/topic/TopicAction.do?Id=153), or from the
-     * Event Dispatch Thread (e.g. via
-     * {@link javax.swing.SwingUtilities#invokeLater(Runnable)}.
+     * make sure to run #runDependingSwingCode from the Event Dispatch Thread
+     * (e.g. via {@link javax.swing.SwingUtilities#invokeLater(Runnable)} or,
+     *  before the Swing components the {@code code} operates on are realized
+     * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
      * <p>
-     * Typically this method is used to update Swing components according to some
-     * state they depend on. The first run of the code, directly performed with
-     * the invocation of #runDependingSwingCode, performs the initialization.
-     * After that the code is re-run when code was changed. The code will only
-     * be re-run once, even if multiple changes occured since the last run.
+     * Typically this method is used to update Swing components that depend
+     * on the value of this object. Then first run of the {@code code}, directly
+     * performed with the invocation of #runDependingSwingCode, initializes the
+     * related aspects of the Swing components (e.g. their "text"). After that
+     * the {@code code} is re-run when the object's value changed.<p>
+     * <p>
+     * After a change the {@code code} is executed, but there may be some delay
+     * between the change and the execution of the {@code code}. Also multiple
+     * changes may result in just one code execution, covering all changes that
+     * occured since the last code run.
      */
     void runDependingSwingCode(Runnable code);
 }
