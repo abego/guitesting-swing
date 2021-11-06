@@ -69,27 +69,27 @@ class PropField<T> extends PropBase<T> implements Prop<T> {
         }
     }
 
-    private PropField(EventsForProp eventsForProp,
+    private PropField(EventAPIForProp eventAPIForProp,
                       @NonNull T initialValue,
                       @Nullable Object otherSource,
                       @Nullable String otherPropertyName) {
-        super(eventsForProp, otherSource, otherPropertyName);
+        super(eventAPIForProp, otherSource, otherPropertyName);
         sourceOfTruth = new SimpleField(initialValue);
         observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
     }
 
     public static <T> PropField<T> newPropField(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             @NonNull T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropField<>(eventsForProp, initialValue, otherSource, otherPropertyName);
+        return new PropField<>(eventAPIForProp, initialValue, otherSource, otherPropertyName);
     }
 
     public static <T> PropField<T> newPropField(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             @NonNull T initialValue) {
-        return new PropField<>(eventsForProp, initialValue, null, null);
+        return new PropField<>(eventAPIForProp, initialValue, null, null);
     }
 
     @Override

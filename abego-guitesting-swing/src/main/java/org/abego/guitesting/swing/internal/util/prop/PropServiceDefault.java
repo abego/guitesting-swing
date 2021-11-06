@@ -38,7 +38,7 @@ class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
     private final EventService eventService;
 
-    private class EventsForPropImpl implements EventsForProp {
+    private class EventHandlingForPropImpl implements EventAPIForProp {
         private final Set<EventObserver<?>> remainingObservers = new HashSet<>();
         private boolean isClosed;
 
@@ -90,7 +90,7 @@ class PropServiceDefault implements PropService {
 
     @Override
     public Props newProps() {
-        return PropsDefault.newProps(new EventsForPropImpl());
+        return PropsDefault.newProps(new EventHandlingForPropImpl());
     }
 
 }

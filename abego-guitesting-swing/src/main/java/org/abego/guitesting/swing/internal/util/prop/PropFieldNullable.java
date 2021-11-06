@@ -62,27 +62,27 @@ class PropFieldNullable<T> extends PropBase<T> implements PropNullable<T> {
         }
     }
 
-    private PropFieldNullable(EventsForProp eventsForProp,
+    private PropFieldNullable(EventAPIForProp eventAPIForProp,
                               @Nullable T initialValue,
                               @Nullable Object otherSource,
                               @Nullable String otherPropertyName) {
-        super(eventsForProp, otherSource, otherPropertyName);
+        super(eventAPIForProp, otherSource, otherPropertyName);
         sourceOfTruth = new SimpleField(initialValue);
         observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
     }
 
     public static <T> PropFieldNullable<T> newPropFieldNullable(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropFieldNullable<>(eventsForProp,initialValue, otherSource, otherPropertyName);
+        return new PropFieldNullable<>(eventAPIForProp,initialValue, otherSource, otherPropertyName);
     }
 
     public static <T> PropFieldNullable<T> newPropFieldNullable(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             @Nullable T initialValue) {
-        return new PropFieldNullable<>(eventsForProp,initialValue, null, null);
+        return new PropFieldNullable<>(eventAPIForProp,initialValue, null, null);
     }
 
     @Override

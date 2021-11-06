@@ -29,23 +29,23 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Function;
 
 class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropComputedNullable<T>{
-    private PropComputedNullableImpl(EventsForProp eventsForProp,
+    private PropComputedNullableImpl(EventAPIForProp eventAPIForProp,
                                      Function<DependencyCollector, T> valueComputation,
                                      @Nullable Object otherSource,
                                      @Nullable String otherPropertyName) {
-        super(eventsForProp, valueComputation, otherSource, otherPropertyName);
+        super(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputedNullable<T> newPropComputedNullable(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropComputedNullableImpl<>(eventsForProp, valueComputation, otherSource, otherPropertyName);
+        return new PropComputedNullableImpl<>(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputedNullable<T> newPropComputedNullable(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             Function<DependencyCollector, T> valueComputation) {
-        return new PropComputedNullableImpl<>(eventsForProp, valueComputation, null, null);
+        return new PropComputedNullableImpl<>(eventAPIForProp, valueComputation, null, null);
     }
 
     @Override

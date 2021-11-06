@@ -31,23 +31,23 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Function;
 
 public class PropComputedImpl<T> extends PropComputedBase<T> implements PropComputed<T>{
-    private PropComputedImpl(EventsForProp eventsForProp,
+    private PropComputedImpl(EventAPIForProp eventAPIForProp,
                              Function<DependencyCollector, T> valueComputation,
                              @Nullable Object otherSource,
                              @Nullable String otherPropertyName) {
-        super(eventsForProp, valueComputation, otherSource, otherPropertyName);
+        super(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputed<T> newPropComputed(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
-        return new PropComputedImpl<>(eventsForProp, valueComputation, otherSource, otherPropertyName);
+        return new PropComputedImpl<>(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
     }
 
     static <T> PropComputed<T> newPropComputed(
-            EventsForProp eventsForProp,
+            EventAPIForProp eventAPIForProp,
             Function<DependencyCollector, T> valueComputation) {
-        return new PropComputedImpl<>(eventsForProp, valueComputation, null, null);
+        return new PropComputedImpl<>(eventAPIForProp, valueComputation, null, null);
     }
 
     @Override

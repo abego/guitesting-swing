@@ -33,14 +33,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 abstract class PropBase<T> {
-    private final EventsForProp eventsForProp;
+    private final EventAPIForProp eventAPIForProp;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
 
-    protected PropBase(EventsForProp eventsForProp,
+    protected PropBase(EventAPIForProp eventAPIForProp,
                        @Nullable Object otherSource,
                        @Nullable String otherPropertyName) {
-        this.eventsForProp = eventsForProp;
+        this.eventAPIForProp = eventAPIForProp;
         this.otherSource = otherSource;
         this.otherPropertyName = otherPropertyName;
     }
@@ -52,7 +52,7 @@ abstract class PropBase<T> {
         // some more logic to cover the "run once, even after multiple changes"
         // feature.
         AtomicBoolean runPending = new AtomicBoolean(false);
-        eventsForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
+        eventAPIForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
                 e -> {
                     // only schedule a new run when there is not yet one pending
                     if (!runPending.getAndSet(true)) {
@@ -72,7 +72,7 @@ abstract class PropBase<T> {
             // no extra condition,
             // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
-        return eventsForProp.addPropertyObserver(source, listener);
+        return eventAPIForProp.addPropertyObserver(source, listener);
     }
 
     protected EventObserver<PropertyChanged> addPropertyObserver(
@@ -81,17 +81,17 @@ abstract class PropBase<T> {
             // no extra condition (just the property name),
             // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
-        return eventsForProp.addPropertyObserver(source, propertyName, listener);
+        return eventAPIForProp.addPropertyObserver(source, propertyName, listener);
     }
 
     protected void removeObserver(EventObserver<?> observer) {
-        eventsForProp.removeObserver(observer);
+        eventAPIForProp.removeObserver(observer);
     }
 
     protected void postPropertyChanged() {
-        eventsForProp.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
+        eventAPIForProp.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
-            eventsForProp.postPropertyChanged(otherSource, otherPropertyName);
+            eventAPIForProp.postPropertyChanged(otherSource, otherPropertyName);
         }
     }
 }

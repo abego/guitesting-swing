@@ -30,19 +30,14 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Consumer;
 
-interface EventsForProp {
+interface EventAPIForProp {
     EventObserver<PropertyChanged> addPropertyObserver(
             Object source,
             @Nullable String propertyName,
-            // no extra condition (just the property name),
-            // use defaultDispatcher,
             Consumer<PropertyChanged> listener);
 
     default EventObserver<PropertyChanged> addPropertyObserver(
             Object source,
-            // any property name,
-            // no extra condition (just the property name),
-            // use defaultDispatcher,
             Consumer<PropertyChanged> listener) {
         return addPropertyObserver(source, null, listener);
     }
