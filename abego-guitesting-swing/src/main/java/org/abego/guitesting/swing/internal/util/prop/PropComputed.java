@@ -24,5 +24,5 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface PropComputed<T> extends SourceOfTruth<T> {
+public interface PropComputed<T> extends Prop<T> {
 }

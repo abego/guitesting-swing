@@ -27,5 +27,5 @@ package org.abego.guitesting.swing.internal.util.prop;
 public interface PropService {
     String VALUE_PROPERTY_NAME = "value";
 
-    Props newProps();
+    PropFactory newProps();
  }

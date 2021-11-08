@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+//TODO can we separate the "Swing" part from the "prop" core module?
 public interface DependingSwingCodeRunner {
     /**
      * Run the {@code code} now and whenever the object changes its value.

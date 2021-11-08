@@ -29,7 +29,7 @@ import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 
 /**
- * A {@link Var} emitting {@link PropertyChanged} events
+ * An object holding a value and emitting {@link PropertyChanged} events
  * when its value changed (via {@link EventServices} default).
  * <p>
  * The source of the PropertyChanged event will be the Prop object
@@ -38,6 +38,6 @@ import org.abego.event.PropertyChanged;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-public interface Prop<T> extends SourceOfTruth<T> {
-    void bindTo(SourceOfTruth<T> sourceOfTruth);
+//TODO: don't use Var, but "inine" that interface, or just the relevant parts
+public interface Prop<T> extends Var<T>, DependingSwingCodeRunner {
 }

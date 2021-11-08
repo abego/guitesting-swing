@@ -28,15 +28,15 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
-import static org.abego.guitesting.swing.internal.util.prop.PropField.newPropField;
+import static org.abego.guitesting.swing.internal.util.prop.PropFieldImpl.newPropField;
 
-class PropsDefault implements Props {
+class PropFactoryDefault implements PropFactory {
     private final EventAPIForProp eventAPIForProp;
 
-    private PropsDefault(EventAPIForProp eventAPIForProp) {this.eventAPIForProp = eventAPIForProp;}
+    private PropFactoryDefault(EventAPIForProp eventAPIForProp) {this.eventAPIForProp = eventAPIForProp;}
 
-    public static Props newProps(EventAPIForProp eventAPIForProp) {
-        return new PropsDefault(eventAPIForProp);
+    public static PropFactory newProps(EventAPIForProp eventAPIForProp) {
+        return new PropFactoryDefault(eventAPIForProp);
     }
 
     @Override
@@ -45,30 +45,30 @@ class PropsDefault implements Props {
     }
 
     @Override
-    public <T> Prop<T> newProp(T value) {
+    public <T> PropField<T> newProp(T value) {
         return newPropField(eventAPIForProp, value, null, null);
     }
 
     @Override
-    public <T> Prop<T> newProp(
+    public <T> PropField<T> newProp(
             T value, Object otherSource, String otherPropertyName) {
         return newPropField(eventAPIForProp, value, otherSource, otherPropertyName);
     }
 
     @Override
-    public <T> PropNullable<T> newPropNullable() {
-        return PropFieldNullable.newPropFieldNullable(eventAPIForProp, null);
+    public <T> PropFieldNullable<T> newPropNullable() {
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, null);
     }
 
     @Override
-    public <T> PropNullable<T> newPropNullable(T value) {
-        return PropFieldNullable.newPropFieldNullable(eventAPIForProp, value);
+    public <T> PropFieldNullable<T> newPropNullable(T value) {
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, value);
     }
 
     @Override
-    public <T> PropNullable<T> newPropNullable(
+    public <T> PropFieldNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName) {
-        return PropFieldNullable.newPropFieldNullable(eventAPIForProp, value, otherSource, otherPropertyName);
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, value, otherSource, otherPropertyName);
     }
 
     @Override

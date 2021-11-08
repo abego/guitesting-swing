@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface PropNullable<T> extends SourceOfTruthNullable<T> {
-    void bindTo(SourceOfTruthNullable<T> sourceOfTruth);
+import org.abego.commons.var.VarNullable;
+
+public interface PropNullable<T> extends
+        VarNullable<T>, DependingSwingCodeRunner {
 }

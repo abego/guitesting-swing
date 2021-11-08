@@ -28,17 +28,17 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
-public interface Props {
-    <T> Prop<T> newProp(T value);
+public interface PropFactory {
+    <T> PropField<T> newProp(T value);
 
-    <T> Prop<T> newProp(
+    <T> PropField<T> newProp(
             T value, Object otherSource, String otherPropertyName);
 
-    <T> PropNullable<T> newPropNullable();
+    <T> PropFieldNullable<T> newPropNullable();
 
-    <T> PropNullable<T> newPropNullable(T value);
+    <T> PropFieldNullable<T> newPropNullable(T value);
 
-    <T> PropNullable<T> newPropNullable(
+    <T> PropFieldNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName);
 
     <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation);

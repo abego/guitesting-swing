@@ -89,8 +89,8 @@ class PropServiceDefault implements PropService {
     }
 
     @Override
-    public Props newProps() {
-        return PropsDefault.newProps(new EventHandlingForPropImpl());
+    public PropFactory newProps() {
+        return PropFactoryDefault.newProps(new EventHandlingForPropImpl());
     }
 
 }

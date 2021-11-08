@@ -25,13 +25,13 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.Props;
-import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropFactory;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
@@ -52,11 +52,11 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResi
 class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
-    private final Props props = PropServices.newProps();
+    private final PropFactory propFactory = PropServices.newProps();
     //region @Prop public Boolean shrinkToFit = FALSE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Boolean> shrinkToFitProp =
-            props.newProp(FALSE, this, "shrinkToFit");
+    private final PropField<Boolean> shrinkToFitProp =
+            propFactory.newProp(FALSE, this, "shrinkToFit");
 
     public Boolean getShrinkToFit() {
         return shrinkToFitProp.get();
@@ -67,14 +67,14 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         shrinkToFitProp.set(value);
     }
 
-    public void bindShrinkToFitTo(Prop<Boolean> prop) {
+    public void bindShrinkToFitTo(PropField<Boolean> prop) {
         shrinkToFitProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
-    private final PropNullable<SnapshotIssue> snapshotIssueProp =
-            props.newPropNullable(null, this, "snapshotIssue");
+    private final PropFieldNullable<SnapshotIssue> snapshotIssueProp =
+            propFactory.newPropNullable(null, this, "snapshotIssue");
 
     @Nullable
     public SnapshotIssue getSnapshotIssue() {
@@ -85,15 +85,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         snapshotIssueProp.set(value);
     }
 
-    public void bindSnapshotIssueTo(SourceOfTruthNullable<SnapshotIssue> prop) {
+    public void bindSnapshotIssueTo(PropNullable<SnapshotIssue> prop) {
         snapshotIssueProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Integer> expectedImageIndexProp =
-            props.newProp(0, this, "expectedImageIndex");
+    private final PropField<Integer> expectedImageIndexProp =
+            propFactory.newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -104,15 +104,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         expectedImageIndexProp.set(value);
     }
 
-    public void bindExpectedImageIndexTo(Prop<Integer> prop) {
+    public void bindExpectedImageIndexTo(PropField<Integer> prop) {
         expectedImageIndexProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> expectedBorderColorProp =
-            props.newProp(Color.green, this, "expectedBorderColor");
+    private final PropField<Color> expectedBorderColorProp =
+            propFactory.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -123,15 +123,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindExpectedBorderColorTo(Prop<Color> prop) {
+    public void bindExpectedBorderColorTo(PropField<Color> prop) {
         expectedBorderColorProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> actualBorderColorProp =
-            props.newProp(Color.red, this, "actualBorderColor");
+    private final PropField<Color> actualBorderColorProp =
+            propFactory.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -142,15 +142,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindActualBorderColorTo(Prop<Color> prop) {
+    public void bindActualBorderColorTo(PropField<Color> prop) {
         actualBorderColorProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Color> differenceBorderColorProp =
-            props.newProp(Color.black, this, "differenceBorderColor");
+    private final PropField<Color> differenceBorderColorProp =
+            propFactory.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();
@@ -161,7 +161,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     @SuppressWarnings("unused")
-    public void bindDifferenceBorderColorTo(Prop<Color> prop) {
+    public void bindDifferenceBorderColorTo(PropField<Color> prop) {
         differenceBorderColorProp.bindTo(prop);
     }
 
@@ -185,7 +185,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     public void close() {
-        props.close();
+        propFactory.close();
     }
 
     //endregion

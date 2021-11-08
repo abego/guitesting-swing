@@ -30,7 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
-public class PropComputedImpl<T> extends PropComputedBase<T> implements PropComputed<T>{
+final class PropComputedImpl<T> extends PropComputedBase<T> implements PropComputed<T>{
     private PropComputedImpl(EventAPIForProp eventAPIForProp,
                              Function<DependencyCollector, T> valueComputation,
                              @Nullable Object otherSource,

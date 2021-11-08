@@ -27,18 +27,18 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropComputed;
 import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.Props;
+import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -73,10 +73,10 @@ import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListW
 class SnapshotReviewWidget implements Widget {
 
     //region State/Model
-    private final Props props = PropServices.newProps();
+    private final PropFactory propFactory = PropServices.newProps();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     //region @Prop public @Nullable SnapshotIssue selectedIssue
-    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = props.newPropNullable(null, this, "selectedIssue");
+    private final PropFieldNullable<@Nullable SnapshotIssue> selectedIssue = propFactory.newPropNullable(null, this, "selectedIssue");
 
     @Nullable
     private SnapshotIssue getSelectedIssue() {
@@ -96,10 +96,10 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region @Prop public Boolean shrinkToFit = TRUE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final Prop<Boolean> shrinkToFitProp = props.newProp(TRUE, this, "shrinkToFit");
+    private final PropField<Boolean> shrinkToFitProp = propFactory.newProp(TRUE, this, "shrinkToFit");
     //endregion
     //region @Prop public Integer expectedImageIndex = 0
-    private final Prop<Integer> expectedImageIndexProp = props.newProp(0);
+    private final PropField<Integer> expectedImageIndexProp = propFactory.newProp(0);
 
     private int getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -110,7 +110,7 @@ class SnapshotReviewWidget implements Widget {
     }
     //endregion
     //region @Prop public String selectedIssueDescription {}
-    private final PropComputed<String> selectedIssueDescriptionProp = props.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropComputed<String> selectedIssueDescriptionProp = propFactory.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
@@ -128,7 +128,7 @@ class SnapshotReviewWidget implements Widget {
     }
     //endregion
     //region @Prop public @Nullable SnapshotVariant variantsInfo {}
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = props.newPropComputedNullable(this::getVariantsInfo);
+    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propFactory.newPropComputedNullable(this::getVariantsInfo);
 
     @Nullable
     private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
@@ -239,7 +239,7 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImage.close();
         snapshotIssuesVList.close();
 
-        props.close();
+        propFactory.close();
     }
 
     /**

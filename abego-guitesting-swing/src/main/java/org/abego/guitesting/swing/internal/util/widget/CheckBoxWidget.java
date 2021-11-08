@@ -24,9 +24,9 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.Props;
+import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -36,23 +36,23 @@ import static java.lang.Boolean.FALSE;
 public final class CheckBoxWidget implements Widget {
 
     //region State/Model
-    private final Props props = PropServices.newProps();
+    private final PropFactory propFactory = PropServices.newProps();
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
-    private final Prop<Boolean> selectedProp =
-            props.newProp(FALSE, this, "selected"); //NON-NLS
+    private final PropField<Boolean> selectedProp =
+            propFactory.newProp(FALSE, this, "selected"); //NON-NLS
 
     public boolean isSelected() {return selectedProp.get();}
 
     public void setSelected(boolean value) {selectedProp.set(value);}
 
-    public void bindSelectedTo(Prop<Boolean> prop) {
+    public void bindSelectedTo(PropField<Boolean> prop) {
         selectedProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public String text = ""
-    private final Prop<String> textProp =
-            props.newProp("", this, "text"); //NON-NLS
+    private final PropField<String> textProp =
+            propFactory.newProp("", this, "text"); //NON-NLS
 
     public String getText() {
         return textProp.get();
@@ -62,7 +62,7 @@ public final class CheckBoxWidget implements Widget {
         textProp.set(value);
     }
 
-    public void bindTextTo(Prop<String> prop) {
+    public void bindTextTo(PropField<String> prop) {
         textProp.bindTo(prop);
     }
 
@@ -82,7 +82,7 @@ public final class CheckBoxWidget implements Widget {
     }
 
     public void close() {
-        props.close();
+        propFactory.close();
     }
 
     //endregion

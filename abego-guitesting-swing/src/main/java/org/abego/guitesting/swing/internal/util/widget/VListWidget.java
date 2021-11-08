@@ -25,11 +25,11 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.SwingUtil;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.Props;
-import org.abego.guitesting.swing.internal.util.prop.SourceOfTruthNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropFactory;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -59,10 +59,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 public final class VListWidget<T> implements Widget {
 
     //region State/Model
-    private final Props props = PropServices.newProps();
+    private final PropFactory propFactory = PropServices.newProps();
     //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
-    private final Prop<ListModel<T>> listModelProp =
-            props.newProp(new DefaultListModel<>(), this, "listModel");
+    private final PropField<ListModel<T>> listModelProp =
+            propFactory.newProp(new DefaultListModel<>(), this, "listModel");
 
     public ListModel<T> getListModel() {
         return listModelProp.get();
@@ -74,8 +74,8 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region @Prop public Function<T, String> cellTextProvider = Objects::toString
-    private final Prop<Function<T, String>> cellTextProviderProp =
-            props.newProp(Objects::toString, this, "cellTextProvider");
+    private final PropField<Function<T, String>> cellTextProviderProp =
+            propFactory.newProp(Objects::toString, this, "cellTextProvider");
 
     public Function<T, String> getCellTextProvider() {
         return cellTextProviderProp.get();
@@ -87,8 +87,8 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region  @Prop public String previousItemText = "Previous item"
-    private final Prop<String> previousItemTextProp =
-            props.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
+    private final PropField<String> previousItemTextProp =
+            propFactory.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
 
     public String getPreviousItemText() {
         return previousItemTextProp.get();
@@ -98,14 +98,14 @@ public final class VListWidget<T> implements Widget {
         previousItemTextProp.set(value);
     }
 
-    public void bindPreviousItemTextTo(Prop<String> prop) {
+    public void bindPreviousItemTextTo(PropField<String> prop) {
         previousItemTextProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public String nextItemText = "Next item"
-    private final Prop<String> nextItemTextProp =
-            props.newProp("Next item", this, "nextItemText"); //NON-NLS
+    private final PropField<String> nextItemTextProp =
+            propFactory.newProp("Next item", this, "nextItemText"); //NON-NLS
 
     public String getNextItemText() {
         return nextItemTextProp.get();
@@ -115,14 +115,14 @@ public final class VListWidget<T> implements Widget {
         nextItemTextProp.set(value);
     }
 
-    public void bindNextItemTextTo(Prop<String> prop) {
+    public void bindNextItemTextTo(PropField<String> prop) {
         nextItemTextProp.bindTo(prop);
     }
 
     //endregion
     //region @Prop public String title = "Items:"
-    private final Prop<String> titleProp =
-            props.newProp("Items:", this, "title"); //NON-NLS
+    private final PropField<String> titleProp =
+            propFactory.newProp("Items:", this, "title"); //NON-NLS
 
     public String getTitle() {
         return titleProp.get();
@@ -132,7 +132,7 @@ public final class VListWidget<T> implements Widget {
         titleProp.set(value);
     }
 
-    public void bindTitleTo(Prop<String> prop) {
+    public void bindTitleTo(PropField<String> prop) {
         titleProp.bindTo(prop);
     }
 
@@ -175,13 +175,13 @@ public final class VListWidget<T> implements Widget {
     }
 
     public void close() {
-        props.close();
+        propFactory.close();
     }
 
     //endregion
     //region selectedItem
-    private final PropNullable<T> selectedItemProp =
-            props.newPropNullable(null, this, "selectedItem");
+    private final PropFieldNullable<T> selectedItemProp =
+            propFactory.newPropNullable(null, this, "selectedItem");
 
     @Nullable
     public T getSelectedItem() {
@@ -192,7 +192,7 @@ public final class VListWidget<T> implements Widget {
         selectedItemProp.set(value);
     }
 
-    public void bindSelectedItemTo(SourceOfTruthNullable<T> prop) {
+    public void bindSelectedItemTo(PropNullable<T> prop) {
         selectedItemProp.bindTo(prop);
     }
 

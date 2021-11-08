@@ -55,7 +55,7 @@ public class PropServices {
         return PropServiceDefault.newPropService(eventService);
     }
 
-    public static Props newProps() {
+    public static PropFactory newProps() {
         return getDefault().newProps();
     }
 

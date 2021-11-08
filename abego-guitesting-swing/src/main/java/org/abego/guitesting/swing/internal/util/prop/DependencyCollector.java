@@ -34,11 +34,11 @@ public interface DependencyCollector {
 
     default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
 
-    default void dependsOnProperty(SourceOfTruth<?> property) {
+    default void dependsOnProperty(Prop<?> property) {
         dependsOnProperty(property, PropService.VALUE_PROPERTY_NAME);
     }
 
-    default void dependsOnProperty(SourceOfTruthNullable<?> property) {
+    default void dependsOnProperty(PropNullable<?> property) {
         dependsOnProperty(property, PropService.VALUE_PROPERTY_NAME);
     }
 }
