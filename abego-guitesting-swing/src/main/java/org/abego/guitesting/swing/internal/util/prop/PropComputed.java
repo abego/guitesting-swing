@@ -24,5 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+// TOOD: do we need this to be a part of the public API? I guess, no.
 public interface PropComputed<T> extends Prop<T> {
 }
