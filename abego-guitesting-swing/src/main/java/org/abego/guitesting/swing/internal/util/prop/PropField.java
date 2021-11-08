@@ -25,5 +25,6 @@
 package org.abego.guitesting.swing.internal.util.prop;
 
 public interface PropField<T> extends Prop<T> {
+    // TODO: or make "binding" a separate object/class?
     void bindTo(Prop<T> sourceOfTruth);
 }
