@@ -28,6 +28,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -41,11 +42,15 @@ public final class LabelWidget implements Widget {
             propFactory.newProp("", this, "text"); //NON-NLS
 
     public String getText() {
-        return textProp.get();
+        return getTextProp().get();
     }
 
     public void setText(String value) {
         textProp.set(value);
+    }
+
+    private Prop<String> getTextProp() {
+        return textProp;
     }
 
     public void bindTextTo(Prop<String> prop) {

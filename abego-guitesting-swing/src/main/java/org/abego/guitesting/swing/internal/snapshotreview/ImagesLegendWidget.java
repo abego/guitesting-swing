@@ -24,10 +24,12 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
+import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -53,7 +55,11 @@ class ImagesLegendWidget implements Widget {
 
     @SuppressWarnings("unused")
     public void setExpectedImageIndex(Integer value) {
-        expectedImageIndexProp.set(value);
+        getExpectedImageIndexProp().set(value);
+    }
+
+    public Prop<Integer> getExpectedImageIndexProp() {
+        return expectedImageIndexProp;
     }
 
     public void bindExpectedImageIndexTo(PropField<Integer> prop) {

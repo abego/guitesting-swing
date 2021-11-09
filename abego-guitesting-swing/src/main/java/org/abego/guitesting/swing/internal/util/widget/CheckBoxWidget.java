@@ -24,9 +24,11 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
+import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -41,9 +43,13 @@ public final class CheckBoxWidget implements Widget {
     private final PropField<Boolean> selectedProp =
             propFactory.newProp(FALSE, this, "selected"); //NON-NLS
 
-    public boolean isSelected() {return selectedProp.get();}
+    public boolean isSelected() {return getSelectedProp().get();}
 
     public void setSelected(boolean value) {selectedProp.set(value);}
+
+    public Prop<Boolean> getSelectedProp() {
+        return selectedProp;
+    }
 
     public void bindSelectedTo(PropField<Boolean> prop) {
         selectedProp.bindTo(prop);
@@ -59,7 +65,11 @@ public final class CheckBoxWidget implements Widget {
     }
 
     public void setText(String value) {
-        textProp.set(value);
+        getTextProp().set(value);
+    }
+
+    public Prop<String> getTextProp() {
+        return textProp;
     }
 
     public void bindTextTo(PropField<String> prop) {

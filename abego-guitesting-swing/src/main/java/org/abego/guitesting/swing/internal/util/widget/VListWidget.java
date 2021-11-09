@@ -25,11 +25,13 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -91,11 +93,15 @@ public final class VListWidget<T> implements Widget {
             propFactory.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
 
     public String getPreviousItemText() {
-        return previousItemTextProp.get();
+        return getPreviousItemTextProp().get();
     }
 
     public void setPreviousItemText(String value) {
         previousItemTextProp.set(value);
+    }
+
+    public Prop<String> getPreviousItemTextProp() {
+        return previousItemTextProp;
     }
 
     public void bindPreviousItemTextTo(PropField<String> prop) {
@@ -108,11 +114,15 @@ public final class VListWidget<T> implements Widget {
             propFactory.newProp("Next item", this, "nextItemText"); //NON-NLS
 
     public String getNextItemText() {
-        return nextItemTextProp.get();
+        return getNextItemTextProp().get();
     }
 
     public void setNextItemText(String value) {
         nextItemTextProp.set(value);
+    }
+
+    public Prop<String> getNextItemTextProp() {
+        return nextItemTextProp;
     }
 
     public void bindNextItemTextTo(PropField<String> prop) {
@@ -129,7 +139,11 @@ public final class VListWidget<T> implements Widget {
     }
 
     public void setTitle(String value) {
-        titleProp.set(value);
+        getTitleProp().set(value);
+    }
+
+    public PropField<String> getTitleProp() {
+        return titleProp;
     }
 
     public void bindTitleTo(PropField<String> prop) {

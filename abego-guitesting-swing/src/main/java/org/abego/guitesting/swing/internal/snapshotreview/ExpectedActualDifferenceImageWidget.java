@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
@@ -32,6 +33,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
@@ -67,6 +69,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         shrinkToFitProp.set(value);
     }
 
+    public Prop<Boolean> getShrinkToFitProp() {return shrinkToFitProp;}
+
     public void bindShrinkToFitTo(PropField<Boolean> prop) {
         shrinkToFitProp.bindTo(prop);
     }
@@ -101,7 +105,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     @SuppressWarnings("unused")
     public void setExpectedImageIndex(Integer value) {
-        expectedImageIndexProp.set(value);
+        getExpectedImageIndexProp().set(value);
+    }
+
+    public Prop<Integer> getExpectedImageIndexProp() {
+        return expectedImageIndexProp;
     }
 
     public void bindExpectedImageIndexTo(PropField<Integer> prop) {
@@ -119,7 +127,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     public void setExpectedBorderColor(Color value) {
-        expectedBorderColorProp.set(value);
+        getExpectedBorderColorProp().set(value);
+    }
+
+    public Prop<Color> getExpectedBorderColorProp() {
+        return expectedBorderColorProp;
     }
 
     @SuppressWarnings("unused")
@@ -138,7 +150,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     public void setActualBorderColor(Color value) {
-        actualBorderColorProp.set(value);
+        getActualBorderColorProp().set(value);
+    }
+
+    public Prop<Color> getActualBorderColorProp() {
+        return actualBorderColorProp;
     }
 
     @SuppressWarnings("unused")
@@ -157,7 +173,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     public void setDifferenceBorderColor(Color value) {
-        differenceBorderColorProp.set(value);
+        getDifferenceBorderColorProp().set(value);
+    }
+
+    public Prop<Color> getDifferenceBorderColorProp() {
+        return differenceBorderColorProp;
     }
 
     @SuppressWarnings("unused")
