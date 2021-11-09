@@ -55,6 +55,7 @@ public class PropServices {
         return PropServiceDefault.newPropService(eventService);
     }
 
+    //TODO: rename? newPropFactory?
     public static PropFactory newProps() {
         return getDefault().newProps();
     }

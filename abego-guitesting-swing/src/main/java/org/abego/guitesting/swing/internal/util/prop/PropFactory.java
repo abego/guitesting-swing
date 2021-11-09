@@ -28,6 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Function;
 
+//TODO: do we need this when we have "Bindings"? Move to PropService?
 public interface PropFactory {
     <T> PropField<T> newProp(T value);
 
