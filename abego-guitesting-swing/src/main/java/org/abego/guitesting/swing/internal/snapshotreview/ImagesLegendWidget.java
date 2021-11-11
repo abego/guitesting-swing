@@ -62,10 +62,6 @@ class ImagesLegendWidget implements Widget {
         return expectedImageIndexProp;
     }
 
-    public void bindExpectedImageIndexTo(PropField<Integer> prop) {
-        expectedImageIndexProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")

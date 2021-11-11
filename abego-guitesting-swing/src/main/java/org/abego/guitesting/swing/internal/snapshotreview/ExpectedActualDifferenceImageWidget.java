@@ -25,15 +25,13 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropField;
-import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropFactory;
+import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
-import org.eclipse.jdt.annotation.NonNull;
+import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
@@ -71,10 +69,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     public Prop<Boolean> getShrinkToFitProp() {return shrinkToFitProp;}
 
-    public void bindShrinkToFitTo(PropField<Boolean> prop) {
-        shrinkToFitProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
     private final PropFieldNullable<SnapshotIssue> snapshotIssueProp =
@@ -89,8 +83,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         snapshotIssueProp.set(value);
     }
 
-    public void bindSnapshotIssueTo(PropNullable<SnapshotIssue> prop) {
-        snapshotIssueProp.bindTo(prop);
+    public PropFieldNullable<SnapshotIssue> getSnapshotIssueProp() {
+        return snapshotIssueProp;
     }
 
     //endregion
@@ -112,10 +106,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return expectedImageIndexProp;
     }
 
-    public void bindExpectedImageIndexTo(PropField<Integer> prop) {
-        expectedImageIndexProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -132,11 +122,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     public Prop<Color> getExpectedBorderColorProp() {
         return expectedBorderColorProp;
-    }
-
-    @SuppressWarnings("unused")
-    public void bindExpectedBorderColorTo(PropField<Color> prop) {
-        expectedBorderColorProp.bindTo(prop);
     }
 
     //endregion
@@ -157,11 +142,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return actualBorderColorProp;
     }
 
-    @SuppressWarnings("unused")
-    public void bindActualBorderColorTo(PropField<Color> prop) {
-        actualBorderColorProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -180,10 +160,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return differenceBorderColorProp;
     }
 
-    @SuppressWarnings("unused")
-    public void bindDifferenceBorderColorTo(PropField<Color> prop) {
-        differenceBorderColorProp.bindTo(prop);
-    }
 
     //endregion
     //endregion

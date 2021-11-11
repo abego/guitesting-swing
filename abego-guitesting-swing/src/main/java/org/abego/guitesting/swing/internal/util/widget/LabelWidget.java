@@ -49,12 +49,8 @@ public final class LabelWidget implements Widget {
         textProp.set(value);
     }
 
-    private Prop<String> getTextProp() {
+    public Prop<String> getTextProp() {
         return textProp;
-    }
-
-    public void bindTextTo(Prop<String> prop) {
-        textProp.bindTo(prop);
     }
 
     //endregion

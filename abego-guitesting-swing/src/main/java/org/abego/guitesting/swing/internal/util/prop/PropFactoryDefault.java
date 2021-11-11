@@ -45,6 +45,16 @@ class PropFactoryDefault implements PropFactory {
     }
 
     @Override
+    public Bindings newBindings() {
+        return new BindingsImpl(eventAPIForProp);
+    }
+
+    @Override
+    public EventAPIForProp getEventAPIForProp() {
+        return eventAPIForProp;
+    }
+
+    @Override
     public <T> PropField<T> newProp(T value) {
         return newPropField(eventAPIForProp, value, null, null);
     }

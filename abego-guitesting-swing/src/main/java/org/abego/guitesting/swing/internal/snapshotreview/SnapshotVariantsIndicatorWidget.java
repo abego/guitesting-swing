@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -55,11 +56,11 @@ class SnapshotVariantsIndicatorWidget implements Widget {
 
     @SuppressWarnings("unused")
     public void setVariantsInfo(@Nullable SnapshotVariant value) {
-        variantsInfoProp.set(value);
+        getVariantsInfoProp().set(value);
     }
 
-    public void bindVariantsInfoTo(PropNullable<SnapshotVariant> prop) {
-        variantsInfoProp.bindTo(prop);
+    public PropFieldNullable<SnapshotVariant> getVariantsInfoProp() {
+        return variantsInfoProp;
     }
 
     //endregion

@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+//TODO: non-public or remove
 public interface PropField<T> extends Prop<T> {
-    // TODO: or make "binding" a separate object/class?
-    void bindTo(Prop<T> sourceOfTruth);
 }

@@ -51,10 +51,6 @@ public final class CheckBoxWidget implements Widget {
         return selectedProp;
     }
 
-    public void bindSelectedTo(PropField<Boolean> prop) {
-        selectedProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public String text = ""
     private final PropField<String> textProp =
@@ -70,10 +66,6 @@ public final class CheckBoxWidget implements Widget {
 
     public Prop<String> getTextProp() {
         return textProp;
-    }
-
-    public void bindTextTo(PropField<String> prop) {
-        textProp.bindTo(prop);
     }
 
     //endregion

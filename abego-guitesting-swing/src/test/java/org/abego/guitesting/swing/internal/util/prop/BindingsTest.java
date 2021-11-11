@@ -24,6 +24,47 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-//TODO: non-public or remove
-public interface PropFieldNullable<T> extends PropNullable<T> {
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class BindingsTest {
+
+    @Test
+    void bindTo() {
+        PropFactory factory = PropServices.getDefault().newProps();
+
+        PropField<Integer> propA = factory.newProp(3);
+        assertEquals(3, propA.get());
+
+        PropField<Integer> propB = factory.newProp(4);
+        assertEquals(4, propB.get());
+
+        Bindings b = new BindingsImpl(factory.getEventAPIForProp());
+        b.bind(propA, propB);
+
+        assertEquals(3, propB.get());
+
+        propA.set(7);
+
+        assertEquals(7, propA.get());
+        assertEquals(7, propB.get());
+
+        propB.set(8);
+
+        assertEquals(8, propA.get());
+        assertEquals(8, propB.get());
+    }
+
+    @Test
+    void testBindTo() {
+    }
+
+    @Test
+    void testBindTo1() {
+    }
+
+    @Test
+    void testBindTo2() {
+    }
 }

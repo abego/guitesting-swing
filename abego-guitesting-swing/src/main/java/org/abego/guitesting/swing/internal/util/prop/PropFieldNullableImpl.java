@@ -24,16 +24,13 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.event.EventObserver;
-import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Objects;
 
 //TODO can we share code between PropFieldNullable and PropField
 class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<T> {
-    private PropNullable<T> sourceOfTruth;
-    private EventObserver<PropertyChanged> observer;
+    private PropNullable<T> valueHolder; //TODO: do we need this anymore? Embed?
 
     private class SimpleField implements PropNullable<T> {
         private @Nullable T value;
@@ -53,7 +50,7 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
                 return;
             }
             this.value = value;
-            postPropertyChanged();
+            PropFieldNullableImpl.this.postPropertyChanged();
         }
 
         @Override
@@ -67,8 +64,7 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
                                   @Nullable Object otherSource,
                                   @Nullable String otherPropertyName) {
         super(eventAPIForProp, otherSource, otherPropertyName);
-        sourceOfTruth = new SimpleField(initialValue);
-        observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
+        valueHolder = new SimpleField(initialValue);
     }
 
     public static <T> PropFieldNullableImpl<T> newPropFieldNullable(
@@ -87,26 +83,12 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
 
     @Override
     public @Nullable T get() {
-        return sourceOfTruth.get();
+        return valueHolder.get();
     }
 
     @Override
     public void set(@Nullable T value) {
-        sourceOfTruth.set(value);
-    }
-
-    @Override
-    public void bindTo(PropNullable<T> sourceOfTruth) {
-        removeObserver(observer);
-
-        @Nullable T oldValue = get();
-        this.sourceOfTruth = sourceOfTruth;
-
-        observer = addPropertyObserver(this.sourceOfTruth,
-                e -> postPropertyChanged());
-        if (!Objects.equals(oldValue, get())) {
-            postPropertyChanged();
-        }
+        valueHolder.set(value);
     }
 
 }

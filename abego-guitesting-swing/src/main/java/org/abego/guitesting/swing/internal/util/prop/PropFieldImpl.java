@@ -24,14 +24,11 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.event.EventObserver;
-import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
-    private Prop<T> sourceOfTruth;
-    private EventObserver<PropertyChanged> observer;
+    private Prop<T> valueHolder; //TODO do we need this anymore? Embed?
 
     private class SimpleField implements Prop<T> {
         private @Nullable T value;
@@ -74,8 +71,7 @@ class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
                           @Nullable Object otherSource,
                           @Nullable String otherPropertyName) {
         super(eventAPIForProp, otherSource, otherPropertyName);
-        sourceOfTruth = new SimpleField(initialValue);
-        observer = addPropertyObserver(sourceOfTruth, e -> postPropertyChanged());
+        valueHolder = new SimpleField(initialValue);
     }
 
     public static <T> PropFieldImpl<T> newPropField(
@@ -94,30 +90,17 @@ class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
 
     @Override
     public @NonNull T get() {
-        return sourceOfTruth.get();
+        return valueHolder.get();
     }
 
     @Override
     public void set(@NonNull T value) {
-        sourceOfTruth.set(value);
+        valueHolder.set(value);
     }
 
     @Override
     public boolean hasValue() {
-        return sourceOfTruth.hasValue();
-    }
-
-    public void bindTo(Prop<T> sourceOfTruth) {
-        removeObserver(observer);
-
-        @NonNull T oldValue = get();
-        this.sourceOfTruth = sourceOfTruth;
-
-        observer = addPropertyObserver(this.sourceOfTruth,
-                e -> postPropertyChanged());
-        if (!oldValue.equals(get())) {
-            postPropertyChanged();
-        }
+        return valueHolder.hasValue();
     }
 
 }

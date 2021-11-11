@@ -27,6 +27,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
@@ -108,6 +109,7 @@ class SnapshotReviewWidget implements Widget {
     private void setExpectedImageIndex(Integer value) {
         expectedImageIndexProp.set(value);
     }
+
     //endregion
     //region @Prop public String selectedIssueDescription {}
     private final PropComputed<String> selectedIssueDescriptionProp = propFactory.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
@@ -126,6 +128,7 @@ class SnapshotReviewWidget implements Widget {
                 info.getVariantsIndex() + 1, variantsCount, label)
                 : label;
     }
+
     //endregion
     //region @Prop public @Nullable SnapshotVariant variantsInfo {}
     private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propFactory.newPropComputedNullable(this::getVariantsInfo);
@@ -142,6 +145,7 @@ class SnapshotReviewWidget implements Widget {
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
         return snapshotVariant(issue, variants);
     }
+
     //endregion
     //endregion
     //region Actions
@@ -316,21 +320,22 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
+        Bindings b = propFactory.newBindings();
         snapshotIssuesVList.setListModel(remainingIssues);
-        snapshotIssuesVList.bindSelectedItemTo(selectedIssue);
+        b.bind(selectedIssue, snapshotIssuesVList.getSelectedItemProp());
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
         ignoreButton.setAction(ignoreCurrentIssueAction);
         rotateButton.setAction(rotateImageAction);
 
-        selectedIssueDescriptionLabel.bindTextTo(selectedIssueDescriptionProp);
-        shrinkToFitCheckBox.bindSelectedTo(shrinkToFitProp);
-        expectedActualDifferenceImage.bindSnapshotIssueTo(selectedIssue);
-        expectedActualDifferenceImage.bindShrinkToFitTo(shrinkToFitProp);
-        expectedActualDifferenceImage.bindExpectedImageIndexTo(expectedImageIndexProp);
-        imagesLegend.bindExpectedImageIndexTo(expectedImageIndexProp);
-        snapshotVariantsIndicator.bindVariantsInfoTo(variantsInfoProp);
+        b.bind(selectedIssueDescriptionProp, selectedIssueDescriptionLabel.getTextProp());
+        b.bind(shrinkToFitProp, shrinkToFitCheckBox.getSelectedProp());
+        b.bind(selectedIssue, expectedActualDifferenceImage.getSnapshotIssueProp());
+        b.bind(shrinkToFitProp, expectedActualDifferenceImage.getShrinkToFitProp());
+        b.bind(expectedImageIndexProp, expectedActualDifferenceImage.getExpectedImageIndexProp());
+        b.bind(expectedImageIndexProp, imagesLegend.getExpectedImageIndexProp());
+        b.bind(variantsInfoProp, snapshotVariantsIndicator.getVariantsInfoProp());
     }
 
     //endregion

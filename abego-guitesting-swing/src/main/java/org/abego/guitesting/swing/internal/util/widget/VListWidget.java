@@ -104,10 +104,6 @@ public final class VListWidget<T> implements Widget {
         return previousItemTextProp;
     }
 
-    public void bindPreviousItemTextTo(PropField<String> prop) {
-        previousItemTextProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public String nextItemText = "Next item"
     private final PropField<String> nextItemTextProp =
@@ -125,10 +121,6 @@ public final class VListWidget<T> implements Widget {
         return nextItemTextProp;
     }
 
-    public void bindNextItemTextTo(PropField<String> prop) {
-        nextItemTextProp.bindTo(prop);
-    }
-
     //endregion
     //region @Prop public String title = "Items:"
     private final PropField<String> titleProp =
@@ -144,10 +136,6 @@ public final class VListWidget<T> implements Widget {
 
     public PropField<String> getTitleProp() {
         return titleProp;
-    }
-
-    public void bindTitleTo(PropField<String> prop) {
-        titleProp.bindTo(prop);
     }
 
     //endregion
@@ -203,11 +191,11 @@ public final class VListWidget<T> implements Widget {
     }
 
     public void setSelectedItem(@Nullable T value) {
-        selectedItemProp.set(value);
+        getSelectedItemProp().set(value);
     }
 
-    public void bindSelectedItemTo(PropNullable<T> prop) {
-        selectedItemProp.bindTo(prop);
+    public PropFieldNullable<T> getSelectedItemProp() {
+        return selectedItemProp;
     }
 
     //endregion
