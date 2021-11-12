@@ -26,10 +26,9 @@ package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -37,10 +36,10 @@ import javax.swing.JLabel;
 public final class LabelWidget implements Widget {
 
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     //region @Prop public String text = ""
     private final PropField<String> textProp =
-            propFactory.newProp("", this, "text"); //NON-NLS
+            propService.newProp("", this, "text"); //NON-NLS
 
     public String getText() {
         return getTextProp().get();
@@ -70,7 +69,7 @@ public final class LabelWidget implements Widget {
     }
 
     public void close() {
-        propFactory.close();
+        bindings.close();
     }
 
     //endregion
@@ -82,9 +81,10 @@ public final class LabelWidget implements Widget {
 
     //endregion
     //region Binding related
+    private Bindings bindings = propService.newBindings();
+
     private void initBindings() {
-        Bindings b = propFactory.newBindings();
-        b.runDependingSwingCode(textProp, () -> label.setText(textProp.get()));
+        bindings.runDependingSwingCode(textProp, () -> label.setText(textProp.get()));
         label.addPropertyChangeListener("text", e -> updateTextProp());
     }
 

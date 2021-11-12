@@ -27,10 +27,9 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
-import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -44,11 +43,11 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 class ImagesLegendWidget implements Widget {
 
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     //region @Prop public Integer expectedImageIndex = 0
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropField<Integer> expectedImageIndexProp =
-            propFactory.newProp(0, this, "expectedImageIndex");
+            propService.newProp(0, this, "expectedImageIndex");
 
     public Integer getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -66,7 +65,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color expectedBorderColor = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropField<Color> expectedBorderColorProp = propFactory.newProp(Color.green, this, "expectedBorderColor");
+    private final PropField<Color> expectedBorderColorProp = propService.newProp(Color.green, this, "expectedBorderColor");
 
     public Color getExpectedBorderColor() {
         return expectedBorderColorProp.get();
@@ -79,7 +78,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color actualBorderColor = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropField<Color> actualBorderColorProp = propFactory.newProp(Color.red, this, "actualBorderColor");
+    private final PropField<Color> actualBorderColorProp = propService.newProp(Color.red, this, "actualBorderColor");
 
     public Color getActualBorderColor() {
         return actualBorderColorProp.get();
@@ -92,7 +91,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropField<Color> differenceBorderColorProp = propFactory.newProp(Color.black, this, "differenceBorderColor");
+    private final PropField<Color> differenceBorderColorProp = propService.newProp(Color.black, this, "differenceBorderColor");
 
     public Color getDifferenceBorderColor() {
         return differenceBorderColorProp.get();
@@ -125,7 +124,7 @@ class ImagesLegendWidget implements Widget {
     }
 
     public void close() {
-        propFactory.close();
+        bindings.close();
     }
 
     //endregion
@@ -163,15 +162,16 @@ class ImagesLegendWidget implements Widget {
 
     //endregion
     //region Binding related
-    private void initBindings() {
-        Bindings b = propFactory.newBindings();
-        b.runDependingSwingCode(expectedImageIndexProp, this::updateContent);
+    private Bindings bindings = propService.newBindings();
 
-        b.runDependingSwingCode(expectedBorderColorProp, () ->
+    private void initBindings() {
+        bindings.runDependingSwingCode(expectedImageIndexProp, this::updateContent);
+
+        bindings.runDependingSwingCode(expectedBorderColorProp, () ->
                 setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor()));
-        b.runDependingSwingCode(actualBorderColorProp, () ->
+        bindings.runDependingSwingCode(actualBorderColorProp, () ->
                 setLegendLabelBorderColor(actualLabel, getActualBorderColor()));
-        b.runDependingSwingCode(differenceBorderColorProp, () ->
+        bindings.runDependingSwingCode(differenceBorderColorProp, () ->
                 setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor()));
     }
 

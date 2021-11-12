@@ -29,10 +29,8 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -62,10 +60,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 public final class VListWidget<T> implements Widget {
 
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
     private final PropField<ListModel<T>> listModelProp =
-            propFactory.newProp(new DefaultListModel<>(), this, "listModel");
+            propService.newProp(new DefaultListModel<>(), this, "listModel");
 
     public ListModel<T> getListModel() {
         return listModelProp.get();
@@ -78,7 +76,7 @@ public final class VListWidget<T> implements Widget {
     //endregion
     //region @Prop public Function<T, String> cellTextProvider = Objects::toString
     private final PropField<Function<T, String>> cellTextProviderProp =
-            propFactory.newProp(Objects::toString, this, "cellTextProvider");
+            propService.newProp(Objects::toString, this, "cellTextProvider");
 
     public Function<T, String> getCellTextProvider() {
         return cellTextProviderProp.get();
@@ -91,7 +89,7 @@ public final class VListWidget<T> implements Widget {
     //endregion
     //region  @Prop public String previousItemText = "Previous item"
     private final PropField<String> previousItemTextProp =
-            propFactory.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
+            propService.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
 
     public String getPreviousItemText() {
         return getPreviousItemTextProp().get();
@@ -108,7 +106,7 @@ public final class VListWidget<T> implements Widget {
     //endregion
     //region @Prop public String nextItemText = "Next item"
     private final PropField<String> nextItemTextProp =
-            propFactory.newProp("Next item", this, "nextItemText"); //NON-NLS
+            propService.newProp("Next item", this, "nextItemText"); //NON-NLS
 
     public String getNextItemText() {
         return getNextItemTextProp().get();
@@ -125,7 +123,7 @@ public final class VListWidget<T> implements Widget {
     //endregion
     //region @Prop public String title = "Items:"
     private final PropField<String> titleProp =
-            propFactory.newProp("Items:", this, "title"); //NON-NLS
+            propService.newProp("Items:", this, "title"); //NON-NLS
 
     public String getTitle() {
         return titleProp.get();
@@ -178,13 +176,13 @@ public final class VListWidget<T> implements Widget {
     }
 
     public void close() {
-        propFactory.close();
+        bindings.close();
     }
 
     //endregion
     //region selectedItem
     private final PropFieldNullable<T> selectedItemProp =
-            propFactory.newPropNullable(null, this, "selectedItem");
+            propService.newPropNullable(null, this, "selectedItem");
 
     @Nullable
     public T getSelectedItem() {
@@ -232,23 +230,23 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region Binding related
+    private Bindings bindings = propService.newBindings();
+
     private void initBindings() {
         previousItemButton.setAction(previousItemAction);
         nextItemButton.setAction(nextItemAction);
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        Bindings b = propFactory.newBindings();
-
-        b.runDependingSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
-        b.runDependingSwingCode(listModelProp, () -> jList.setModel(getListModel()));
-        b.runDependingSwingCode(selectedItemProp, ()-> jList.setSelectedValue(selectedItemProp.get(), true));
+        bindings.runDependingSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
+        bindings.runDependingSwingCode(listModelProp, () -> jList.setModel(getListModel()));
+        bindings.runDependingSwingCode(selectedItemProp, () -> jList.setSelectedValue(selectedItemProp.get(), true));
 
         //noinspection StringConcatenation
-        b.runDependingSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        bindings.runDependingSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
         //noinspection StringConcatenation
-        b.runDependingSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        b.runDependingSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
+        bindings.runDependingSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
+        bindings.runDependingSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
     }
 
     private void onSelectedItemInUIChanged() {

@@ -27,9 +27,8 @@ package org.abego.guitesting.swing.internal.util.widget;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
-import org.eclipse.jdt.annotation.NonNull;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -39,10 +38,10 @@ import static java.lang.Boolean.FALSE;
 public final class CheckBoxWidget implements Widget {
 
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
     private final PropField<Boolean> selectedProp =
-            propFactory.newProp(FALSE, this, "selected"); //NON-NLS
+            propService.newProp(FALSE, this, "selected"); //NON-NLS
 
     public boolean isSelected() {return getSelectedProp().get();}
 
@@ -55,7 +54,7 @@ public final class CheckBoxWidget implements Widget {
     //endregion
     //region @Prop public String text = ""
     private final PropField<String> textProp =
-            propFactory.newProp("", this, "text"); //NON-NLS
+            propService.newProp("", this, "text"); //NON-NLS
 
     public String getText() {
         return textProp.get();
@@ -85,7 +84,7 @@ public final class CheckBoxWidget implements Widget {
     }
 
     public void close() {
-        propFactory.close();
+        bindings.close();
     }
 
     //endregion
@@ -97,11 +96,12 @@ public final class CheckBoxWidget implements Widget {
 
     //endregion
     //region Binding related
+    private Bindings bindings = propService.newBindings();
+
     private void initBindings() {
-        Bindings b = propFactory.newBindings();
         // Model -> UI
-        b.runDependingSwingCode(selectedProp, () -> checkBox.setSelected(isSelected()));
-        b.runDependingSwingCode(textProp, () -> checkBox.setText(getText()));
+        bindings.runDependingSwingCode(selectedProp, () -> checkBox.setSelected(isSelected()));
+        bindings.runDependingSwingCode(textProp, () -> checkBox.setText(getText()));
         // UI -> Model
         checkBox.addItemListener(i -> updateSelectedProp());
     }

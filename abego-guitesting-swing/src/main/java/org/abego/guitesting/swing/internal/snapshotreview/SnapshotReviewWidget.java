@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
@@ -39,7 +40,6 @@ import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
@@ -74,10 +74,10 @@ import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListW
 class SnapshotReviewWidget implements Widget {
 
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     //region @Prop public @Nullable SnapshotIssue selectedIssue
-    private final PropFieldNullable<@Nullable SnapshotIssue> selectedIssue = propFactory.newPropNullable(null, this, "selectedIssue");
+    private final PropFieldNullable<@Nullable SnapshotIssue> selectedIssue = propService.newPropNullable(null, this, "selectedIssue");
 
     @Nullable
     private SnapshotIssue getSelectedIssue() {
@@ -97,10 +97,10 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region @Prop public Boolean shrinkToFit = TRUE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropField<Boolean> shrinkToFitProp = propFactory.newProp(TRUE, this, "shrinkToFit");
+    private final PropField<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
     //endregion
     //region @Prop public Integer expectedImageIndex = 0
-    private final PropField<Integer> expectedImageIndexProp = propFactory.newProp(0);
+    private final PropField<Integer> expectedImageIndexProp = propService.newProp(0);
 
     private int getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -112,7 +112,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region @Prop public String selectedIssueDescription {}
-    private final PropComputed<String> selectedIssueDescriptionProp = propFactory.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final PropComputed<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
@@ -131,7 +131,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region @Prop public @Nullable SnapshotVariant variantsInfo {}
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propFactory.newPropComputedNullable(this::getVariantsInfo);
+    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
 
     @Nullable
     private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {
@@ -243,7 +243,7 @@ class SnapshotReviewWidget implements Widget {
         expectedActualDifferenceImage.close();
         snapshotIssuesVList.close();
 
-        propFactory.close();
+        bindings.close();
     }
 
     /**
@@ -319,23 +319,24 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Binding related
+    private Bindings bindings = propService.newBindings();
+
     private void initBindings() {
-        Bindings b = propFactory.newBindings();
         snapshotIssuesVList.setListModel(remainingIssues);
-        b.bind(selectedIssue, snapshotIssuesVList.getSelectedItemProp());
+        bindings.bind(selectedIssue, snapshotIssuesVList.getSelectedItemProp());
 
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
         ignoreButton.setAction(ignoreCurrentIssueAction);
         rotateButton.setAction(rotateImageAction);
 
-        b.bind(selectedIssueDescriptionProp, selectedIssueDescriptionLabel.getTextProp());
-        b.bind(shrinkToFitProp, shrinkToFitCheckBox.getSelectedProp());
-        b.bind(selectedIssue, expectedActualDifferenceImage.getSnapshotIssueProp());
-        b.bind(shrinkToFitProp, expectedActualDifferenceImage.getShrinkToFitProp());
-        b.bind(expectedImageIndexProp, expectedActualDifferenceImage.getExpectedImageIndexProp());
-        b.bind(expectedImageIndexProp, imagesLegend.getExpectedImageIndexProp());
-        b.bind(variantsInfoProp, snapshotVariantsIndicator.getVariantsInfoProp());
+        bindings.bind(selectedIssueDescriptionProp, selectedIssueDescriptionLabel.getTextProp());
+        bindings.bind(shrinkToFitProp, shrinkToFitCheckBox.getSelectedProp());
+        bindings.bind(selectedIssue, expectedActualDifferenceImage.getSnapshotIssueProp());
+        bindings.bind(shrinkToFitProp, expectedActualDifferenceImage.getShrinkToFitProp());
+        bindings.bind(expectedImageIndexProp, expectedActualDifferenceImage.getExpectedImageIndexProp());
+        bindings.bind(expectedImageIndexProp, imagesLegend.getExpectedImageIndexProp());
+        bindings.bind(variantsInfoProp, snapshotVariantsIndicator.getVariantsInfoProp());
     }
 
     //endregion

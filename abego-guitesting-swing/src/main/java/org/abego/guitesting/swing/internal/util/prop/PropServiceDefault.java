@@ -33,10 +33,14 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
+import static org.abego.guitesting.swing.internal.util.prop.PropFieldImpl.newPropField;
 
 class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
     private final EventService eventService;
+    private final EventAPIForProp eventAPIForProp = new EventHandlingForPropImpl();
 
     private class EventHandlingForPropImpl implements EventAPIForProp {
         private final Set<EventObserver<?>> remainingObservers = new HashSet<>();
@@ -89,8 +93,67 @@ class PropServiceDefault implements PropService {
     }
 
     @Override
-    public PropFactory newProps() {
-        return PropFactoryDefault.newProps(new EventHandlingForPropImpl());
+    public EventAPIForProp getEventAPIForProp() {
+        return eventAPIForProp;
+    }
+
+    @Override
+    public <T> PropField<T> newProp(T value) {
+        return newPropField(eventAPIForProp, value, null, null);
+    }
+
+    @Override
+    public <T> PropField<T> newProp(
+            T value, Object otherSource, String otherPropertyName) {
+        return newPropField(eventAPIForProp, value, otherSource, otherPropertyName);
+    }
+
+    @Override
+    public <T> PropFieldNullable<T> newPropNullable() {
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, null);
+    }
+
+    @Override
+    public <T> PropFieldNullable<T> newPropNullable(T value) {
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, value);
+    }
+
+    @Override
+    public <T> PropFieldNullable<T> newPropNullable(
+            @Nullable T value, Object otherSource, String otherPropertyName) {
+        return PropFieldNullableImpl.newPropFieldNullable(eventAPIForProp, value, otherSource, otherPropertyName);
+    }
+
+    @Override
+    public <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedImpl.newPropComputed(eventAPIForProp, valueComputation);
+    }
+
+    @Override
+    public <T> PropComputed<T> newPropComputed(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return PropComputedImpl.newPropComputed(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
+    }
+
+    @Override
+    public <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation) {
+        return PropComputedNullableImpl.newPropComputedNullable(eventAPIForProp, valueComputation);
+    }
+
+    @Override
+    public <T> PropComputedNullable<T> newPropComputedNullable(
+            Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName) {
+        return PropComputedNullableImpl.newPropComputedNullable(eventAPIForProp, valueComputation, otherSource, otherPropertyName);
+    }
+
+    @Override
+    public Bindings newBindings() {
+        return new BindingsImpl(eventAPIForProp);
+    }
+
+    @Override
+    public void close() {
+        eventAPIForProp.close();
     }
 
 }

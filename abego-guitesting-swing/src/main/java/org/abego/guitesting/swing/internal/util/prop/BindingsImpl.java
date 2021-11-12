@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 class BindingsImpl implements Bindings {
     private final EventAPIForProp eventAPIForProp;
-    private final Set<Binding<?>> allBindings = new HashSet<>();
+    private final Set<BindingImpl<?>> allBindings = new HashSet<>();
 
     private class BindingImpl<T> implements Binding<T> {
         private final Object prop;
@@ -111,7 +111,7 @@ class BindingsImpl implements Bindings {
     public <T> Binding<T> bind(Prop<T> sourceOfTruth, Prop<T> prop) {
         //TODO can we check if the prop is already bound to a source of truth?
 
-        Binding<T> binding = new BindingImpl<>(prop, sourceOfTruth,
+        BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
         allBindings.add(binding);
@@ -122,7 +122,7 @@ class BindingsImpl implements Bindings {
     public <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop) {
         //TODO can we check if the prop is already bound to a source of truth?
 
-        Binding<T> binding = new BindingImpl<>(prop, sourceOfTruth,
+        BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
         allBindings.add(binding);
@@ -137,6 +137,15 @@ class BindingsImpl implements Bindings {
     @Override
     public void runDependingSwingCode(PropNullable<?> prop, Runnable code) {
         runDependingSwingCode_helper(prop, code);
+    }
+
+    @Override
+    public void close() {
+        // unbind all Bindings.
+        // iterate on copy as we will change allBindings while iterating
+        for(BindingImpl<?> b: allBindings.toArray(new BindingImpl[0])){
+            b.unbind();
+        }
     }
 
     private void runDependingSwingCode_helper(Object prop, Runnable code) {

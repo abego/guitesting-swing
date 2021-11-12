@@ -25,12 +25,10 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
+import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.PropFactory;
-import org.abego.guitesting.swing.internal.util.prop.PropNullable;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
@@ -45,10 +43,10 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
 
 class SnapshotVariantsIndicatorWidget implements Widget {
     //region State/Model
-    private final PropFactory propFactory = PropServices.newProps();
+    private final PropService propService = PropServices.getDefault();
     //region @Prop public @Nullable SnapshotVariant : variantsInfo
     private final PropFieldNullable<SnapshotVariant> variantsInfoProp =
-            propFactory.newPropNullable(null, this, "variantsInfo");
+            propService.newPropNullable(null, this, "variantsInfo");
 
     @Nullable
     public SnapshotVariant getVariantsInfo() {
@@ -82,7 +80,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     }
 
     public void close() {
-        propFactory.close();
+        bindings.close();
     }
 
     //endregion
@@ -113,9 +111,10 @@ class SnapshotVariantsIndicatorWidget implements Widget {
 
     //endregion
     //region Binding related
+    private Bindings bindings = propService.newBindings();
+
     private void initBindings() {
-        Bindings b = propFactory.newBindings();
-        b.runDependingSwingCode(variantsInfoProp, this::updateContent);
+        bindings.runDependingSwingCode(variantsInfoProp, this::updateContent);
     }
 
     private void updateContent() {

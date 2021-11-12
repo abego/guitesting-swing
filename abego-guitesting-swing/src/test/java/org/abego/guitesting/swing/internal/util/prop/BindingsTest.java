@@ -32,15 +32,15 @@ class BindingsTest {
 
     @Test
     void bindTo() {
-        PropFactory factory = PropServices.getDefault().newProps();
+        PropService propService = PropServices.getDefault();
 
-        PropField<Integer> propA = factory.newProp(3);
+        PropField<Integer> propA = propService.newProp(3);
         assertEquals(3, propA.get());
 
-        PropField<Integer> propB = factory.newProp(4);
+        PropField<Integer> propB = propService.newProp(4);
         assertEquals(4, propB.get());
 
-        Bindings b = new BindingsImpl(factory.getEventAPIForProp());
+        Bindings b = new BindingsImpl(propService.getEventAPIForProp());
         b.bind(propA, propB);
 
         assertEquals(3, propB.get());

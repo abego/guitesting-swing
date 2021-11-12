@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 public interface Bindings {
     interface Binding<T>{}
+
     /**
      * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
      * is set to the current value of  {@code sourceOfTruth} and updated
@@ -69,4 +70,5 @@ public interface Bindings {
     void runDependingSwingCode(Prop<?> prop, Runnable code);
     void runDependingSwingCode(PropNullable<?> prop, Runnable code);
 
+    void close();
 }
