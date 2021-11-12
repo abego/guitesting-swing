@@ -28,17 +28,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Objects;
 
-//TODO can we share code between PropFieldNullable and PropField
-class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<T> {
-
-    private @Nullable T value;
+class PropFieldNullableImpl<T> extends PropFieldBase<T> implements PropFieldNullable<T> {
 
     private PropFieldNullableImpl(EventAPIForProp eventAPIForProp,
                                   @Nullable T initialValue,
                                   @Nullable Object otherSource,
                                   @Nullable String otherPropertyName) {
-        super(eventAPIForProp, otherSource, otherPropertyName);
-        this.value = initialValue;
+        super(eventAPIForProp, initialValue, otherSource, otherPropertyName);
     }
 
     public static <T> PropFieldNullableImpl<T> newPropFieldNullable(
@@ -57,16 +53,7 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
 
     @Override
     public @Nullable T get() {
-        return value;
-    }
-
-    @Override
-    public void set(@Nullable T value) {
-        if (Objects.equals(value, this.value)) {
-            return;
-        }
-        this.value = value;
-        PropFieldNullableImpl.this.postPropertyChanged();
+        return getNullableValue();
     }
 
 }

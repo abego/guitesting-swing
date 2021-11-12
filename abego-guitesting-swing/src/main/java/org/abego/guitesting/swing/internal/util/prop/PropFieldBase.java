@@ -24,44 +24,29 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-class PropFieldImpl<T> extends PropFieldBase<T> implements PropField<T> {
+import java.util.Objects;
 
-    private PropFieldImpl(EventAPIForProp eventAPIForProp,
-                          @NonNull T initialValue,
-                          @Nullable Object otherSource,
-                          @Nullable String otherPropertyName) {
-        super(eventAPIForProp, initialValue, otherSource, otherPropertyName);
+class PropFieldBase<T> extends PropBase<T> {
+    private @Nullable T value;
+
+    protected PropFieldBase(EventAPIForProp eventAPIForProp, @Nullable T initialValue, @Nullable Object otherSource, @Nullable String otherPropertyName) {
+        super(eventAPIForProp, otherSource, otherPropertyName);
+        this.value = initialValue;
     }
 
-    public static <T> PropFieldImpl<T> newPropField(
-            EventAPIForProp eventAPIForProp,
-            @NonNull T initialValue,
-            @Nullable Object otherSource,
-            @Nullable String otherPropertyName) {
-        return new PropFieldImpl<>(eventAPIForProp, initialValue, otherSource, otherPropertyName);
-    }
-
-    public static <T> PropFieldImpl<T> newPropField(
-            EventAPIForProp eventAPIForProp,
-            @NonNull T initialValue) {
-        return new PropFieldImpl<>(eventAPIForProp, initialValue, null, null);
-    }
-
-    @Override
-    public @NonNull T get() {
-        @Nullable T v = getNullableValue();
-        if (v == null) {
-            throw new IllegalStateException("Prop has no value"); //NON-NLS
+    public void set(@Nullable T value) {
+        if (Objects.equals(value, this.value)) {
+            return;
         }
-        return v;
+        this.value = value;
+        postPropertyChanged();
     }
 
-    @Override
-    public boolean hasValue() {
-        return getNullableValue() != null;
+    protected @Nullable T getNullableValue() {
+        return value;
     }
+
 
 }
