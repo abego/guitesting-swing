@@ -24,5 +24,5 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-public interface PropComputedNullable<T> extends PropNullable<T> {
+interface PropComputedNullable<T> extends PropNullable<T> {
 }

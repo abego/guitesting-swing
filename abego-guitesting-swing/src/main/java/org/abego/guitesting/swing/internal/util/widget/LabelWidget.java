@@ -25,10 +25,9 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
-import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
-import org.abego.guitesting.swing.internal.util.prop.Prop;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -38,7 +37,7 @@ public final class LabelWidget implements Widget {
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     //region @Prop public String text = ""
-    private final PropField<String> textProp =
+    private final Prop<String> textProp =
             propService.newProp("", this, "text"); //NON-NLS
 
     public String getText() {

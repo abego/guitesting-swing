@@ -31,26 +31,26 @@ import java.util.function.Function;
 public interface PropService {
     String VALUE_PROPERTY_NAME = "value";
 
-    <T> PropField<T> newProp(T value);
+    <T> Prop<T> newProp(T value);
 
-    <T> PropField<T> newProp(
+    <T> Prop<T> newProp(
             T value, Object otherSource, String otherPropertyName);
 
-    <T> PropFieldNullable<T> newPropNullable();
+    <T> PropNullable<T> newPropNullable();
 
-    <T> PropFieldNullable<T> newPropNullable(T value);
+    <T> PropNullable<T> newPropNullable(T value);
 
-    <T> PropFieldNullable<T> newPropNullable(
+    <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName);
 
-    <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
+    <T> Prop<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
 
-    <T> PropComputed<T> newPropComputed(
+    <T> Prop<T> newPropComputed(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
 
-    <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation);
+    <T> PropNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation);
 
-    <T> PropComputedNullable<T> newPropComputedNullable(
+    <T> PropNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
 
     Bindings newBindings();

@@ -34,10 +34,10 @@ class BindingsTest {
     void bindTo() {
         PropService propService = PropServices.getDefault();
 
-        PropField<Integer> propA = propService.newProp(3);
+        Prop<Integer> propA = propService.newProp(3);
         assertEquals(3, propA.get());
 
-        PropField<Integer> propB = propService.newProp(4);
+        Prop<Integer> propB = propService.newProp(4);
         assertEquals(4, propB.get());
 
         Bindings b = propService.newBindings();

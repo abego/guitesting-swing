@@ -26,7 +26,6 @@ package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 
@@ -40,7 +39,7 @@ public final class CheckBoxWidget implements Widget {
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     //region @Prop @InheritsGetSet public Boolean selected = FALSE
-    private final PropField<Boolean> selectedProp =
+    private final Prop<Boolean> selectedProp =
             propService.newProp(FALSE, this, "selected"); //NON-NLS
 
     public boolean isSelected() {return getSelectedProp().get();}
@@ -53,7 +52,7 @@ public final class CheckBoxWidget implements Widget {
 
     //endregion
     //region @Prop public String text = ""
-    private final PropField<String> textProp =
+    private final Prop<String> textProp =
             propService.newProp("", this, "text"); //NON-NLS
 
     public String getText() {

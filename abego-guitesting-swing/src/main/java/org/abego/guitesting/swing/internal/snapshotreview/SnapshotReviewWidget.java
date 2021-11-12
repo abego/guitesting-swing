@@ -28,16 +28,14 @@ import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
-import org.abego.guitesting.swing.internal.util.prop.PropField;
+import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
-import org.abego.guitesting.swing.internal.util.prop.PropComputed;
-import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
-import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.eclipse.jdt.annotation.Nullable;
@@ -77,7 +75,7 @@ class SnapshotReviewWidget implements Widget {
     private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
     //region @Prop public @Nullable SnapshotIssue selectedIssue
-    private final PropFieldNullable<@Nullable SnapshotIssue> selectedIssue = propService.newPropNullable(null, this, "selectedIssue");
+    private final PropNullable<@Nullable SnapshotIssue> selectedIssue = propService.newPropNullable(null, this, "selectedIssue");
 
     @Nullable
     private SnapshotIssue getSelectedIssue() {
@@ -97,10 +95,10 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region @Prop public Boolean shrinkToFit = TRUE
     @SuppressWarnings("DuplicateStringLiteralInspection")
-    private final PropField<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
+    private final Prop<Boolean> shrinkToFitProp = propService.newProp(TRUE, this, "shrinkToFit");
     //endregion
     //region @Prop public Integer expectedImageIndex = 0
-    private final PropField<Integer> expectedImageIndexProp = propService.newProp(0);
+    private final Prop<Integer> expectedImageIndexProp = propService.newProp(0);
 
     private int getExpectedImageIndex() {
         return expectedImageIndexProp.get();
@@ -112,7 +110,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region @Prop public String selectedIssueDescription {}
-    private final PropComputed<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
+    private final Prop<String> selectedIssueDescriptionProp = propService.newPropComputed(this::getSelectedIssueDescription, this, "selectedIssueDescription");
 
     private String getSelectedIssueDescription(DependencyCollector dependencyCollector) {
         @Nullable
@@ -131,7 +129,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region @Prop public @Nullable SnapshotVariant variantsInfo {}
-    private final PropComputedNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
+    private final PropNullable<SnapshotVariant> variantsInfoProp = propService.newPropComputedNullable(this::getVariantsInfo);
 
     @Nullable
     private SnapshotVariant getVariantsInfo(DependencyCollector dependencyCollector) {

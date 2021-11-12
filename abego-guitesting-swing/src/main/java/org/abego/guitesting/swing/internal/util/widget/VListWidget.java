@@ -27,8 +27,7 @@ package org.abego.guitesting.swing.internal.util.widget;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
-import org.abego.guitesting.swing.internal.util.prop.PropField;
-import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
+import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.eclipse.jdt.annotation.Nullable;
@@ -62,7 +61,7 @@ public final class VListWidget<T> implements Widget {
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     //region @Prop public ListModel<T> listModel = new DefaultListModel<>()
-    private final PropField<ListModel<T>> listModelProp =
+    private final Prop<ListModel<T>> listModelProp =
             propService.newProp(new DefaultListModel<>(), this, "listModel");
 
     public ListModel<T> getListModel() {
@@ -75,7 +74,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region @Prop public Function<T, String> cellTextProvider = Objects::toString
-    private final PropField<Function<T, String>> cellTextProviderProp =
+    private final Prop<Function<T, String>> cellTextProviderProp =
             propService.newProp(Objects::toString, this, "cellTextProvider");
 
     public Function<T, String> getCellTextProvider() {
@@ -88,7 +87,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region  @Prop public String previousItemText = "Previous item"
-    private final PropField<String> previousItemTextProp =
+    private final Prop<String> previousItemTextProp =
             propService.newProp("Previous item", this, "previousItemText"); // NON-NLS NON-NLS
 
     public String getPreviousItemText() {
@@ -105,7 +104,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region @Prop public String nextItemText = "Next item"
-    private final PropField<String> nextItemTextProp =
+    private final Prop<String> nextItemTextProp =
             propService.newProp("Next item", this, "nextItemText"); //NON-NLS
 
     public String getNextItemText() {
@@ -122,7 +121,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region @Prop public String title = "Items:"
-    private final PropField<String> titleProp =
+    private final Prop<String> titleProp =
             propService.newProp("Items:", this, "title"); //NON-NLS
 
     public String getTitle() {
@@ -133,7 +132,7 @@ public final class VListWidget<T> implements Widget {
         getTitleProp().set(value);
     }
 
-    public PropField<String> getTitleProp() {
+    public Prop<String> getTitleProp() {
         return titleProp;
     }
 
@@ -181,7 +180,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region selectedItem
-    private final PropFieldNullable<T> selectedItemProp =
+    private final PropNullable<T> selectedItemProp =
             propService.newPropNullable(null, this, "selectedItem");
 
     @Nullable
@@ -193,7 +192,7 @@ public final class VListWidget<T> implements Widget {
         getSelectedItemProp().set(value);
     }
 
-    public PropFieldNullable<T> getSelectedItemProp() {
+    public PropNullable<T> getSelectedItemProp() {
         return selectedItemProp;
     }
 

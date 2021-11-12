@@ -93,11 +93,6 @@ class PropServiceDefault implements PropService {
     }
 
     @Override
-    public EventAPIForProp getEventAPIForProp() {
-        return eventAPIForProp;
-    }
-
-    @Override
     public <T> PropField<T> newProp(T value) {
         return newPropField(eventAPIForProp, value, null, null);
     }
