@@ -238,15 +238,15 @@ public final class VListWidget<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        bindings.runDependingSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
-        bindings.runDependingSwingCode(listModelProp, () -> jList.setModel(getListModel()));
-        bindings.runDependingSwingCode(selectedItemProp, () -> jList.setSelectedValue(selectedItemProp.get(), true));
+        bindings.bindSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
+        bindings.bindSwingCode(listModelProp, () -> jList.setModel(getListModel()));
+        bindings.bindSwingCode(selectedItemProp, () -> jList.setSelectedValue(selectedItemProp.get(), true));
 
         //noinspection StringConcatenation
-        bindings.runDependingSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        bindings.bindSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
         //noinspection StringConcatenation
-        bindings.runDependingSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        bindings.runDependingSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
+        bindings.bindSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
+        bindings.bindSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
     }
 
     private void onSelectedItemInUIChanged() {

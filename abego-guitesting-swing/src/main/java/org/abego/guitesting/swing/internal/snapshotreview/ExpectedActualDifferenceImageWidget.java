@@ -242,12 +242,12 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private void initBinding() {
         onComponentResized(content, e -> onContentResized());
 
-        bindings.runDependingSwingCode(shrinkToFitProp, this::updateLabelsForImages);
-        bindings.runDependingSwingCode(snapshotIssueProp, this::updateLabelsForImages);
-        bindings.runDependingSwingCode(expectedImageIndexProp, this::updateLabelsForImages);
-        bindings.runDependingSwingCode(expectedBorderColorProp, this::updateLabelsForImages);
-        bindings.runDependingSwingCode(actualBorderColorProp, this::updateLabelsForImages);
-        bindings.runDependingSwingCode(differenceBorderColorProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(shrinkToFitProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(snapshotIssueProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(expectedImageIndexProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(expectedBorderColorProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(actualBorderColorProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(differenceBorderColorProp, this::updateLabelsForImages);
     }
 
     private void onContentResized() {

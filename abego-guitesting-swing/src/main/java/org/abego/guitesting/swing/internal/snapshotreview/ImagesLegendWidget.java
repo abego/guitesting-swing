@@ -165,13 +165,13 @@ class ImagesLegendWidget implements Widget {
     private Bindings bindings = propService.newBindings();
 
     private void initBindings() {
-        bindings.runDependingSwingCode(expectedImageIndexProp, this::updateContent);
+        bindings.bindSwingCode(expectedImageIndexProp, this::updateContent);
 
-        bindings.runDependingSwingCode(expectedBorderColorProp, () ->
+        bindings.bindSwingCode(expectedBorderColorProp, () ->
                 setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor()));
-        bindings.runDependingSwingCode(actualBorderColorProp, () ->
+        bindings.bindSwingCode(actualBorderColorProp, () ->
                 setLegendLabelBorderColor(actualLabel, getActualBorderColor()));
-        bindings.runDependingSwingCode(differenceBorderColorProp, () ->
+        bindings.bindSwingCode(differenceBorderColorProp, () ->
                 setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor()));
     }
 

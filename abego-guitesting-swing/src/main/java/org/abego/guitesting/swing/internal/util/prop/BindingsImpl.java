@@ -130,12 +130,12 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public void runDependingSwingCode(Prop<?> prop, Runnable code) {
+    public void bindSwingCode(Prop<?> prop, Runnable code) {
         runDependingSwingCode_helper(prop, code);
     }
 
     @Override
-    public void runDependingSwingCode(PropNullable<?> prop, Runnable code) {
+    public void bindSwingCode(PropNullable<?> prop, Runnable code) {
         runDependingSwingCode_helper(prop, code);
     }
 

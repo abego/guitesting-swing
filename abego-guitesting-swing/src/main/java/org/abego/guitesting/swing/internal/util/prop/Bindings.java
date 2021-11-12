@@ -46,7 +46,8 @@ public interface Bindings {
     <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
 
     /**
-     * Run the {@code code} now and whenever {{@code prop} changes its value.
+     * Binds the {@code code} to {@code prop}, i.e. now the code now and
+     * whenever {{@code prop} changes its value.
      * <p>
      * The {@code code} may operate on Swing components. Therefore, all but the
      * initial run are executed in the Event Dispatch Thread. The initial run
@@ -67,8 +68,8 @@ public interface Bindings {
      * changes may result in just one code execution, covering all changes that
      * occured since the last code run.
      */
-    void runDependingSwingCode(Prop<?> prop, Runnable code);
-    void runDependingSwingCode(PropNullable<?> prop, Runnable code);
+    void bindSwingCode(Prop<?> prop, Runnable code);
+    void bindSwingCode(PropNullable<?> prop, Runnable code);
 
     void close();
 }
