@@ -194,7 +194,7 @@ public final class ImageCompare {
         int blackPixel = getPixel(Color.black);
         int[] pixelsA = getPixels(imageA);
         int[] pixelsB = getPixels(imageB);
-        int[] pixelsResult = new int[size.width * size.height];
+        int[] pixelsResult = new int[w * h];
 
         boolean imagesDiffer = false;
         for (int y = 0; y < h; y++) {
