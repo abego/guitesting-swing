@@ -53,9 +53,6 @@ public interface PropService {
     <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
 
-    //TODO: hide?
-    EventAPIForProp getEventAPIForProp();
-
     Bindings newBindings();
 
     void close();
