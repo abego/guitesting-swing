@@ -28,45 +28,15 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
-    private Prop<T> valueHolder; //TODO do we need this anymore? Embed?
 
-    private class SimpleField implements Prop<T> {
-        private @Nullable T value;
-
-        public SimpleField(T initialValue) {
-            this.value = initialValue;
-        }
-
-        @Override
-        public @NonNull T get() {
-            @Nullable T v = value;
-            if (v == null) {
-                throw new IllegalStateException("Prop has no value"); //NON-NLS
-            }
-            return v;
-        }
-
-        @Override
-        public void set(@NonNull T value) {
-            if (value.equals(this.value)) {
-                return;
-            }
-            this.value = value;
-            postPropertyChanged();
-        }
-
-        @Override
-        public boolean hasValue() {
-            return value != null;
-        }
-    }
+    private @Nullable T value;
 
     private PropFieldImpl(EventAPIForProp eventAPIForProp,
                           @NonNull T initialValue,
                           @Nullable Object otherSource,
                           @Nullable String otherPropertyName) {
         super(eventAPIForProp, otherSource, otherPropertyName);
-        valueHolder = new SimpleField(initialValue);
+        this.value = initialValue;
     }
 
     public static <T> PropFieldImpl<T> newPropField(
@@ -85,17 +55,25 @@ class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
 
     @Override
     public @NonNull T get() {
-        return valueHolder.get();
+        @Nullable T v = value;
+        if (v == null) {
+            throw new IllegalStateException("Prop has no value"); //NON-NLS
+        }
+        return v;
     }
 
     @Override
     public void set(@NonNull T value) {
-        valueHolder.set(value);
+        if (value.equals(this.value)) {
+            return;
+        }
+        this.value = value;
+        postPropertyChanged();
     }
 
     @Override
     public boolean hasValue() {
-        return valueHolder.hasValue();
+        return value != null;
     }
 
 }

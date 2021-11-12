@@ -30,36 +30,15 @@ import java.util.Objects;
 
 //TODO can we share code between PropFieldNullable and PropField
 class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<T> {
-    private PropNullable<T> valueHolder; //TODO: do we need this anymore? Embed?
 
-    private class SimpleField implements PropNullable<T> {
-        private @Nullable T value;
-
-        public SimpleField(T initialValue) {
-            this.value = initialValue;
-        }
-
-        @Override
-        public @Nullable T get() {
-            return value;
-        }
-
-        @Override
-        public void set(@Nullable T value) {
-            if (Objects.equals(value, this.value)) {
-                return;
-            }
-            this.value = value;
-            PropFieldNullableImpl.this.postPropertyChanged();
-        }
-    }
+    private @Nullable T value;
 
     private PropFieldNullableImpl(EventAPIForProp eventAPIForProp,
                                   @Nullable T initialValue,
                                   @Nullable Object otherSource,
                                   @Nullable String otherPropertyName) {
         super(eventAPIForProp, otherSource, otherPropertyName);
-        valueHolder = new SimpleField(initialValue);
+        this.value = initialValue;
     }
 
     public static <T> PropFieldNullableImpl<T> newPropFieldNullable(
@@ -67,23 +46,27 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
             @Nullable T initialValue,
             @Nullable Object otherSource,
             @Nullable String otherPropertyName) {
-        return new PropFieldNullableImpl<>(eventAPIForProp,initialValue, otherSource, otherPropertyName);
+        return new PropFieldNullableImpl<>(eventAPIForProp, initialValue, otherSource, otherPropertyName);
     }
 
     public static <T> PropFieldNullableImpl<T> newPropFieldNullable(
             EventAPIForProp eventAPIForProp,
             @Nullable T initialValue) {
-        return new PropFieldNullableImpl<>(eventAPIForProp,initialValue, null, null);
+        return new PropFieldNullableImpl<>(eventAPIForProp, initialValue, null, null);
     }
 
     @Override
     public @Nullable T get() {
-        return valueHolder.get();
+        return value;
     }
 
     @Override
     public void set(@Nullable T value) {
-        valueHolder.set(value);
+        if (Objects.equals(value, this.value)) {
+            return;
+        }
+        this.value = value;
+        PropFieldNullableImpl.this.postPropertyChanged();
     }
 
 }
