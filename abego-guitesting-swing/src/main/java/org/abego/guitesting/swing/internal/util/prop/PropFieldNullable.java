@@ -24,6 +24,5 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-//TODO: non-public or remove
-public interface PropFieldNullable<T> extends PropNullable<T> {
+interface PropFieldNullable<T> extends PropNullable<T> {
 }
