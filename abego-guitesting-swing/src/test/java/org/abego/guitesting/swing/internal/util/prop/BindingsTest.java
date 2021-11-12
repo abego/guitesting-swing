@@ -40,7 +40,7 @@ class BindingsTest {
         PropField<Integer> propB = propService.newProp(4);
         assertEquals(4, propB.get());
 
-        Bindings b = new BindingsImpl(propService.getEventAPIForProp());
+        Bindings b = propService.newBindings();
         b.bind(propA, propB);
 
         assertEquals(3, propB.get());

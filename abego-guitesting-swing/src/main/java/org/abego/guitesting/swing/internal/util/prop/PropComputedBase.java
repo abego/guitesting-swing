@@ -62,7 +62,7 @@ abstract class PropComputedBase<T> extends PropBase<T> {
 
         public void stopNotifications() {
             for (EventObserver<PropertyChanged> o : observers) {
-                eventAPIForProp.removeObserver(o);
+                removeObserver(o);
             }
         }
     }
@@ -230,7 +230,7 @@ abstract class PropComputedBase<T> extends PropBase<T> {
         return new DependencyCollector() {
             @Override
             public void dependsOnProperty(Object source, String propertyName) {
-                observers.add(eventAPIForProp.addPropertyObserver(source, propertyName, e -> dependenciesChanged()));
+                observers.add(addPropertyObserver(source, propertyName, e -> dependenciesChanged()));
             }
         };
     }

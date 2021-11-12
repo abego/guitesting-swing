@@ -24,14 +24,14 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.event.EventObserver;
+import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
-import javax.swing.SwingUtilities;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 abstract class PropBase<T> {
-    //TODO: make this private?
-    protected final EventAPIForProp eventAPIForProp;
+    private final EventAPIForProp eventAPIForProp;
     private final @Nullable Object otherSource;
     private final @Nullable String otherPropertyName;
 
@@ -43,10 +43,23 @@ abstract class PropBase<T> {
         this.otherPropertyName = otherPropertyName;
     }
 
+    EventObserver<PropertyChanged> addPropertyObserver(
+            Object source,
+            @Nullable String propertyName,
+            Consumer<PropertyChanged> listener) {
+        return eventAPIForProp.addPropertyObserver(source, propertyName, listener);
+    }
+
+    protected void removeObserver(EventObserver<PropertyChanged> o) {
+        eventAPIForProp.removeObserver(o);
+    }
+
     protected void postPropertyChanged() {
         eventAPIForProp.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {
             eventAPIForProp.postPropertyChanged(otherSource, otherPropertyName);
         }
     }
+
+
 }
