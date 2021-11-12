@@ -59,11 +59,6 @@ class PropFieldImpl<T> extends PropBase<T> implements PropField<T> {
         public boolean hasValue() {
             return value != null;
         }
-
-        @Override
-        public void runDependingSwingCode(Runnable code) {
-            PropFieldImpl.this.runDependingSwingCode(code);
-        }
     }
 
     private PropFieldImpl(EventAPIForProp eventAPIForProp,

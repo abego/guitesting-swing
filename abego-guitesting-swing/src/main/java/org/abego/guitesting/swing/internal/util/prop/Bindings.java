@@ -43,4 +43,30 @@ public interface Bindings {
      * A {@link Prop} must only be bound to one source of truth.
      */
     <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
+
+    /**
+     * Run the {@code code} now and whenever {{@code prop} changes its value.
+     * <p>
+     * The {@code code} may operate on Swing components. Therefore, all but the
+     * initial run are executed in the Event Dispatch Thread. The initial run
+     * is performed immediately, in the current thread. To be thread-safe
+     * make sure to run #runDependingSwingCode from the Event Dispatch Thread
+     * (e.g. via {@link javax.swing.SwingUtilities#invokeLater(Runnable)} or,
+     *  before the Swing components the {@code code} operates on are realized
+     * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
+     * <p>
+     * Typically this method is used to update Swing components that depend
+     * on the value of {{@code prop}. Then first run of the {@code code}, directly
+     * performed with the invocation of #runDependingSwingCode, initializes the
+     * related aspects of the Swing components (e.g. their "text"). After that
+     * the {@code code} is re-run when {{@code prop}'s value changed.<p>
+     * <p>
+     * After a change the {@code code} is executed, but there may be some delay
+     * between the change and the execution of the {@code code}. Also multiple
+     * changes may result in just one code execution, covering all changes that
+     * occured since the last code run.
+     */
+    void runDependingSwingCode(Prop<?> prop, Runnable code);
+    void runDependingSwingCode(PropNullable<?> prop, Runnable code);
+
 }

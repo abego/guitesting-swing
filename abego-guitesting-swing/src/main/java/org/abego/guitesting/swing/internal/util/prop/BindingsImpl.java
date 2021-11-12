@@ -28,8 +28,10 @@ import org.abego.event.EventObserver;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
+import javax.swing.SwingUtilities;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 class BindingsImpl implements Bindings {
@@ -42,9 +44,9 @@ class BindingsImpl implements Bindings {
         private final EventObserver<PropertyChanged> propObserver;
 
         public BindingImpl(Prop<T> prop,
-                       Prop<T> sourceOfTruth,
-                       Runnable updatePropCode,
-                       Runnable updateSourceOfTruthCode) {
+                           Prop<T> sourceOfTruth,
+                           Runnable updatePropCode,
+                           Runnable updateSourceOfTruthCode) {
             this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
@@ -54,9 +56,9 @@ class BindingsImpl implements Bindings {
         }
 
         public BindingImpl(PropNullable<T> prop,
-                       PropNullable<T> sourceOfTruth,
-                       Runnable updatePropCode,
-                       Runnable updateSourceOfTruthCode) {
+                           PropNullable<T> sourceOfTruth,
+                           Runnable updatePropCode,
+                           Runnable updateSourceOfTruthCode) {
             this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
@@ -125,5 +127,36 @@ class BindingsImpl implements Bindings {
                 () -> sourceOfTruth.set(prop.get()));
         allBindings.add(binding);
         return binding;
+    }
+
+    @Override
+    public void runDependingSwingCode(Prop<?> prop, Runnable code) {
+        runDependingSwingCode_helper(prop, code);
+    }
+
+    @Override
+    public void runDependingSwingCode(PropNullable<?> prop, Runnable code) {
+        runDependingSwingCode_helper(prop, code);
+    }
+
+    private void runDependingSwingCode_helper(Object prop, Runnable code) {
+        // the initial run, in the current thread.
+        code.run();
+
+        // some more logic to cover the "run once, even after multiple changes"
+        // feature.
+        AtomicBoolean runPending = new AtomicBoolean(false);
+        eventAPIForProp.addPropertyObserver(prop, PropService.VALUE_PROPERTY_NAME,
+                e -> {
+                    // only schedule a new run when there is not yet one pending
+                    if (!runPending.getAndSet(true)) {
+                        SwingUtilities.invokeLater(() -> {
+                            // only run the code when it is still necessary
+                            if (runPending.getAndSet(false)) {
+                                code.run();
+                            }
+                        });
+                    }
+                });
     }
 }

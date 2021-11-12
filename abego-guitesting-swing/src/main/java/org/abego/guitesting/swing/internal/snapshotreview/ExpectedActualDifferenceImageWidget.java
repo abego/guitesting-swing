@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
@@ -239,12 +240,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private void initBinding() {
         onComponentResized(content, e -> onContentResized());
 
-        shrinkToFitProp.runDependingSwingCode(this::updateLabelsForImages);
-        snapshotIssueProp.runDependingSwingCode(this::updateLabelsForImages);
-        expectedImageIndexProp.runDependingSwingCode(this::updateLabelsForImages);
-        expectedBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
-        actualBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
-        differenceBorderColorProp.runDependingSwingCode(this::updateLabelsForImages);
+        Bindings b = propFactory.newBindings();
+        b.runDependingSwingCode(shrinkToFitProp, this::updateLabelsForImages);
+        b.runDependingSwingCode(snapshotIssueProp, this::updateLabelsForImages);
+        b.runDependingSwingCode(expectedImageIndexProp, this::updateLabelsForImages);
+        b.runDependingSwingCode(expectedBorderColorProp, this::updateLabelsForImages);
+        b.runDependingSwingCode(actualBorderColorProp, this::updateLabelsForImages);
+        b.runDependingSwingCode(differenceBorderColorProp, this::updateLabelsForImages);
     }
 
     private void onContentResized() {

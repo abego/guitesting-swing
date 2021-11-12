@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
@@ -163,13 +164,14 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        expectedImageIndexProp.runDependingSwingCode(this::updateContent);
+        Bindings b = propFactory.newBindings();
+        b.runDependingSwingCode(expectedImageIndexProp, this::updateContent);
 
-        expectedBorderColorProp.runDependingSwingCode(() ->
+        b.runDependingSwingCode(expectedBorderColorProp, () ->
                 setLegendLabelBorderColor(expectedLabel, getExpectedBorderColor()));
-        actualBorderColorProp.runDependingSwingCode(() ->
+        b.runDependingSwingCode(actualBorderColorProp, () ->
                 setLegendLabelBorderColor(actualLabel, getActualBorderColor()));
-        differenceBorderColorProp.runDependingSwingCode(() ->
+        b.runDependingSwingCode(differenceBorderColorProp, () ->
                 setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor()));
     }
 

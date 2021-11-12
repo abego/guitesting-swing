@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
@@ -97,9 +98,10 @@ public final class CheckBoxWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
+        Bindings b = propFactory.newBindings();
         // Model -> UI
-        selectedProp.runDependingSwingCode(() -> checkBox.setSelected(isSelected()));
-        textProp.runDependingSwingCode(() -> checkBox.setText(getText()));
+        b.runDependingSwingCode(selectedProp, () -> checkBox.setSelected(isSelected()));
+        b.runDependingSwingCode(textProp, () -> checkBox.setText(getText()));
         // UI -> Model
         checkBox.addItemListener(i -> updateSelectedProp());
     }

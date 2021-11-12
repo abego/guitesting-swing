@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.prop.PropFactory;
@@ -82,7 +83,8 @@ public final class LabelWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        textProp.runDependingSwingCode(() -> label.setText(textProp.get()));
+        Bindings b = propFactory.newBindings();
+        b.runDependingSwingCode(textProp, () -> label.setText(textProp.get()));
         label.addPropertyChangeListener("text", e -> updateTextProp());
     }
 

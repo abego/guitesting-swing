@@ -43,27 +43,6 @@ abstract class PropBase<T> {
         this.otherPropertyName = otherPropertyName;
     }
 
-    public void runDependingSwingCode(Runnable code) {
-        // the initial run, in the current thread.
-        code.run();
-
-        // some more logic to cover the "run once, even after multiple changes"
-        // feature.
-        AtomicBoolean runPending = new AtomicBoolean(false);
-        eventAPIForProp.addPropertyObserver(this, PropService.VALUE_PROPERTY_NAME,
-                e -> {
-                    // only schedule a new run when there is not yet one pending
-                    if (!runPending.getAndSet(true)) {
-                        SwingUtilities.invokeLater(() -> {
-                            // only run the code when it is still necessary
-                            if (runPending.getAndSet(false)) {
-                                code.run();
-                            }
-                        });
-                    }
-                });
-    }
-
     protected void postPropertyChanged() {
         eventAPIForProp.postPropertyChanged(this, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         if (otherSource != null && otherPropertyName != null) {

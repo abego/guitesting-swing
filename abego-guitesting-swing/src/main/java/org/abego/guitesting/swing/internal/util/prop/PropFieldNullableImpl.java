@@ -52,11 +52,6 @@ class PropFieldNullableImpl<T> extends PropBase<T> implements PropFieldNullable<
             this.value = value;
             PropFieldNullableImpl.this.postPropertyChanged();
         }
-
-        @Override
-        public void runDependingSwingCode(Runnable code) {
-            PropFieldNullableImpl.this.runDependingSwingCode(code);
-        }
     }
 
     private PropFieldNullableImpl(EventAPIForProp eventAPIForProp,

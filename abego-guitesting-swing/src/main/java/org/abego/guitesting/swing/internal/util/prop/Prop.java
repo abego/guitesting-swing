@@ -39,5 +39,5 @@ import org.abego.event.PropertyChanged;
  * property name the name of the Prop within that container.
  */
 //TODO: don't use Var, but "inine" that interface, or just the relevant parts
-public interface Prop<T> extends Var<T>, DependingSwingCodeRunner {
+public interface Prop<T> extends Var<T> {
 }

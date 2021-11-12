@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropField;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
@@ -237,15 +238,17 @@ public final class VListWidget<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        cellTextProviderProp.runDependingSwingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
-        listModelProp.runDependingSwingCode(() -> jList.setModel(getListModel()));
-        selectedItemProp.runDependingSwingCode(()-> jList.setSelectedValue(selectedItemProp.get(), true));
+        Bindings b = propFactory.newBindings();
+
+        b.runDependingSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
+        b.runDependingSwingCode(listModelProp, () -> jList.setModel(getListModel()));
+        b.runDependingSwingCode(selectedItemProp, ()-> jList.setSelectedValue(selectedItemProp.get(), true));
 
         //noinspection StringConcatenation
-        previousItemTextProp.runDependingSwingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        b.runDependingSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
         //noinspection StringConcatenation
-        nextItemTextProp.runDependingSwingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        titleProp.runDependingSwingCode(() -> titleLabel.setText(getTitle()));
+        b.runDependingSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
+        b.runDependingSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
     }
 
     private void onSelectedItemInUIChanged() {

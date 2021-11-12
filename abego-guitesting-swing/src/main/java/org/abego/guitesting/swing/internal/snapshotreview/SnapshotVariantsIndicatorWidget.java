@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.prop.PropFieldNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
@@ -113,7 +114,8 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     //endregion
     //region Binding related
     private void initBindings() {
-        variantsInfoProp.runDependingSwingCode(this::updateContent);
+        Bindings b = propFactory.newBindings();
+        b.runDependingSwingCode(variantsInfoProp, this::updateContent);
     }
 
     private void updateContent() {
