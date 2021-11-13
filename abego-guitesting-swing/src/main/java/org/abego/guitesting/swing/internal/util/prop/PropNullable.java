@@ -26,5 +26,6 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.abego.commons.var.VarNullable;
 
-public interface PropNullable<T> extends VarNullable<T> {
+//TODO: don't use VarNullable, but "inline" that interface, or just the relevant parts
+public interface PropNullable<T> extends AnyProp, VarNullable<T> {
 }
