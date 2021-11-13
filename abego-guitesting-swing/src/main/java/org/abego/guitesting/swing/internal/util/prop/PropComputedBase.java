@@ -234,4 +234,8 @@ abstract class PropComputedBase<T> extends PropBase<T> {
             }
         };
     }
+
+    public void compute() {
+        invokeLater(this::recompute);
+    }
 }

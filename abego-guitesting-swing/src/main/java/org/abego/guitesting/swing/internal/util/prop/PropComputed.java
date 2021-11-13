@@ -24,5 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-interface PropComputed<T> extends Prop<T> {
+public interface PropComputed<T> extends Prop<T> {
+    void compute();
 }

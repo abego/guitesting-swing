@@ -27,7 +27,9 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
+import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
+import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
@@ -160,6 +162,34 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return differenceBorderColorProp;
     }
 
+    //endregion
+    //region @Prop public Color differenceBorderColor = Color.black
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private final PropComputedNullable<Dimension> imagesAreaProp =
+            propService.newPropComputedNullable(this::calcImagesArea);
+
+
+    @Nullable
+    private Dimension getImagesArea() {
+        return imagesAreaProp.get();
+    }
+
+    public PropNullable<Dimension> getImagesAreaProp() {
+        return imagesAreaProp;
+    }
+
+    private @Nullable Dimension calcImagesArea(DependencyCollector dependencyCollector) {
+        dependencyCollector.dependsOnProperty(shrinkToFitProp);
+
+        if (getShrinkToFit()) {
+            Rectangle visibleRect = content.getVisibleRect();
+            int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
+            int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+            return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
+        } else {
+            return null;
+        }
+    }
 
     //endregion
     //endregion
@@ -201,17 +231,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         return snapshotImages(issue, getImagesArea());
     }
 
-    private @Nullable Dimension getImagesArea() {
-        if (getShrinkToFit()) {
-            Rectangle visibleRect = content.getVisibleRect();
-            int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
-            int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
-            return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
-        } else {
-            return null;
-        }
-    }
-
     //endregion
     //region Style related
     private static final int BORDER_SIZE = 3;
@@ -239,22 +258,17 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private Bindings bindings = propService.newBindings();
 
     private void initBinding() {
-        onComponentResized(content, e -> onContentResized());
+        onComponentResized(content, e -> imagesAreaProp.compute());
 
-        bindings.bindSwingCode(shrinkToFitProp, this::updateLabelsForImages);
         bindings.bindSwingCode(snapshotIssueProp, this::updateLabelsForImages);
         bindings.bindSwingCode(expectedImageIndexProp, this::updateLabelsForImages);
         bindings.bindSwingCode(expectedBorderColorProp, this::updateLabelsForImages);
         bindings.bindSwingCode(actualBorderColorProp, this::updateLabelsForImages);
         bindings.bindSwingCode(differenceBorderColorProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(imagesAreaProp, this::updateLabelsForImages);
     }
 
-    private void onContentResized() {
-        if (getShrinkToFit()) {
-            updateLabelsForImages();
-        }
-    }
-
+    //TODO: can we make this "more functional", using computed props?
     private void updateLabelsForImages() {
         @Nullable SnapshotImages images = getSnapshotImages();
         if (images != null) {

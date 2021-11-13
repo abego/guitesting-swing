@@ -43,14 +43,14 @@ public interface PropService {
     <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName);
 
-    <T> Prop<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
+    <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
 
-    <T> Prop<T> newPropComputed(
+    <T> PropComputed<T> newPropComputed(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
 
-    <T> PropNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation);
+    <T> PropComputedNullable<T> newPropComputedNullable(Function<DependencyCollector, T> valueComputation);
 
-    <T> PropNullable<T> newPropComputedNullable(
+    <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
 
     Bindings newBindings();
