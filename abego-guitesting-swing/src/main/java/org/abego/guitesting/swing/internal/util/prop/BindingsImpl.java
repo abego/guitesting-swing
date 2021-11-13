@@ -130,25 +130,7 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public void bindSwingCode(Prop<?> prop, Runnable code) {
-        runDependingSwingCode_helper(prop, code);
-    }
-
-    @Override
-    public void bindSwingCode(PropNullable<?> prop, Runnable code) {
-        runDependingSwingCode_helper(prop, code);
-    }
-
-    @Override
-    public void close() {
-        // unbind all Bindings.
-        // iterate on copy as we will change allBindings while iterating
-        for(BindingImpl<?> b: allBindings.toArray(new BindingImpl[0])){
-            b.unbind();
-        }
-    }
-
-    private void runDependingSwingCode_helper(Object prop, Runnable code) {
+    public void bindSwingCode(AnyProp prop, Runnable code) {
         // the initial run, in the current thread.
         code.run();
 
@@ -168,4 +150,14 @@ class BindingsImpl implements Bindings {
                     }
                 });
     }
+
+    @Override
+    public void close() {
+        // unbind all Bindings.
+        // iterate on copy as we will change allBindings while iterating
+        for(BindingImpl<?> b: allBindings.toArray(new BindingImpl[0])){
+            b.unbind();
+        }
+    }
+
 }
