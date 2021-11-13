@@ -83,7 +83,7 @@ public final class LabelWidget implements Widget {
     private Bindings bindings = propService.newBindings();
 
     private void initBindings() {
-        bindings.bindSwingCode(textProp, () -> label.setText(textProp.get()));
+        bindings.bindSwingCode(() -> label.setText(textProp.get()), textProp);
         label.addPropertyChangeListener("text", e -> updateTextProp());
     }
 

@@ -68,7 +68,7 @@ public interface Bindings {
      * changes may result in just one code execution, covering all changes that
      * occured since the last code run.
      */
-    void bindSwingCode(AnyProp prop, Runnable code);
+    void bindSwingCode(Runnable code, AnyProp prop);
 
     void close();
 }

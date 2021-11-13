@@ -237,15 +237,15 @@ public final class VListWidget<T> implements Widget {
 
         jList.addListSelectionListener(e -> onSelectedItemInUIChanged());
 
-        bindings.bindSwingCode(cellTextProviderProp, () -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())));
-        bindings.bindSwingCode(listModelProp, () -> jList.setModel(getListModel()));
-        bindings.bindSwingCode(selectedItemProp, () -> jList.setSelectedValue(selectedItemProp.get(), true));
+        bindings.bindSwingCode(() -> jList.setCellRenderer(newListCellRenderer(getCellTextProvider())), cellTextProviderProp);
+        bindings.bindSwingCode(() -> jList.setModel(getListModel()), listModelProp);
+        bindings.bindSwingCode(() -> jList.setSelectedValue(selectedItemProp.get(), true), selectedItemProp);
 
         //noinspection StringConcatenation
-        bindings.bindSwingCode(previousItemTextProp, () -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"));
+        bindings.bindSwingCode(() -> previousItemButton.setToolTipText(getPreviousItemText() + " (↑)"), previousItemTextProp);
         //noinspection StringConcatenation
-        bindings.bindSwingCode(nextItemTextProp, () -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"));
-        bindings.bindSwingCode(titleProp, () -> titleLabel.setText(getTitle()));
+        bindings.bindSwingCode(() -> nextItemButton.setToolTipText(getNextItemText() + " (↓)"), nextItemTextProp);
+        bindings.bindSwingCode(() -> titleLabel.setText(getTitle()), titleProp);
     }
 
     private void onSelectedItemInUIChanged() {

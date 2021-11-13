@@ -260,12 +260,12 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private void initBinding() {
         onComponentResized(content, e -> imagesAreaProp.compute());
 
-        bindings.bindSwingCode(snapshotIssueProp, this::updateLabelsForImages);
-        bindings.bindSwingCode(expectedImageIndexProp, this::updateLabelsForImages);
-        bindings.bindSwingCode(expectedBorderColorProp, this::updateLabelsForImages);
-        bindings.bindSwingCode(actualBorderColorProp, this::updateLabelsForImages);
-        bindings.bindSwingCode(differenceBorderColorProp, this::updateLabelsForImages);
-        bindings.bindSwingCode(imagesAreaProp, this::updateLabelsForImages);
+        bindings.bindSwingCode(this::updateLabelsForImages, snapshotIssueProp);
+        bindings.bindSwingCode(this::updateLabelsForImages, expectedImageIndexProp);
+        bindings.bindSwingCode(this::updateLabelsForImages, expectedBorderColorProp);
+        bindings.bindSwingCode(this::updateLabelsForImages, actualBorderColorProp);
+        bindings.bindSwingCode(this::updateLabelsForImages, differenceBorderColorProp);
+        bindings.bindSwingCode(this::updateLabelsForImages, imagesAreaProp);
     }
 
     //TODO: can we make this "more functional", using computed props?

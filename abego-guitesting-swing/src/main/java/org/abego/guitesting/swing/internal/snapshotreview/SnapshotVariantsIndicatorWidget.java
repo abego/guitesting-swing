@@ -114,7 +114,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     private Bindings bindings = propService.newBindings();
 
     private void initBindings() {
-        bindings.bindSwingCode(variantsInfoProp, this::updateContent);
+        bindings.bindSwingCode(this::updateContent, variantsInfoProp);
     }
 
     private void updateContent() {

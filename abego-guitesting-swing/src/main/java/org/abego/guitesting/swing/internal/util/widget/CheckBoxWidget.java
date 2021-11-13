@@ -99,8 +99,8 @@ public final class CheckBoxWidget implements Widget {
 
     private void initBindings() {
         // Model -> UI
-        bindings.bindSwingCode(selectedProp, () -> checkBox.setSelected(isSelected()));
-        bindings.bindSwingCode(textProp, () -> checkBox.setText(getText()));
+        bindings.bindSwingCode(() -> checkBox.setSelected(isSelected()), selectedProp);
+        bindings.bindSwingCode(() -> checkBox.setText(getText()), textProp);
         // UI -> Model
         checkBox.addItemListener(i -> updateSelectedProp());
     }

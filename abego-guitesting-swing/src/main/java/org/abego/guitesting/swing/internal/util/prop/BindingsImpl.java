@@ -130,7 +130,7 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public void bindSwingCode(AnyProp prop, Runnable code) {
+    public void bindSwingCode(Runnable code, AnyProp prop) {
         // the initial run, in the current thread.
         code.run();
 
