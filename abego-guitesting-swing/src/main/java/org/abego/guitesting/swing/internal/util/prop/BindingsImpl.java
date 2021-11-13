@@ -130,32 +130,36 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public void bindSwingCode(Runnable code, AnyProp prop) {
+    public void bindSwingCode(Runnable code, AnyProp... props) {
         // the initial run, in the current thread.
         code.run();
 
         // some more logic to cover the "run once, even after multiple changes"
         // feature.
         AtomicBoolean runPending = new AtomicBoolean(false);
-        eventAPIForProp.addPropertyObserver(prop, PropService.VALUE_PROPERTY_NAME,
-                e -> {
-                    // only schedule a new run when there is not yet one pending
-                    if (!runPending.getAndSet(true)) {
-                        SwingUtilities.invokeLater(() -> {
-                            // only run the code when it is still necessary
-                            if (runPending.getAndSet(false)) {
-                                code.run();
-                            }
-                        });
+        Consumer<PropertyChanged> onPropChanged = e -> {
+            // only schedule a new run when there is not yet one pending
+            if (!runPending.getAndSet(true)) {
+                SwingUtilities.invokeLater(() -> {
+                    // only run the code when it is still necessary
+                    if (runPending.getAndSet(false)) {
+                        code.run();
                     }
                 });
+            }
+        };
+        //TODO: no support for "unbind" of bound (Swing) Code
+        for (AnyProp prop : props) {
+            eventAPIForProp.addPropertyObserver
+                    (prop, PropService.VALUE_PROPERTY_NAME, onPropChanged);
+        }
     }
 
     @Override
     public void close() {
         // unbind all Bindings.
         // iterate on copy as we will change allBindings while iterating
-        for(BindingImpl<?> b: allBindings.toArray(new BindingImpl[0])){
+        for (BindingImpl<?> b : allBindings.toArray(new BindingImpl[0])) {
             b.unbind();
         }
     }

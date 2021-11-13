@@ -46,29 +46,30 @@ public interface Bindings {
     <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
 
     /**
-     * Binds the {@code code} to {@code prop}, i.e. now the code now and
-     * whenever {{@code prop} changes its value.
+     * Binds the {@code code} to {@code props}, i.e. run the code now and
+     * whenever {@link AnyProp} in {{@code props} changes its value.
      * <p>
      * The {@code code} may operate on Swing components. Therefore, all but the
      * initial run are executed in the Event Dispatch Thread. The initial run
      * is performed immediately, in the current thread. To be thread-safe
-     * make sure to run #runDependingSwingCode from the Event Dispatch Thread
+     * make sure to run #bindSwingCode from the Event Dispatch Thread
      * (e.g. via {@link javax.swing.SwingUtilities#invokeLater(Runnable)} or,
      *  before the Swing components the {@code code} operates on are realized
      * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
      * <p>
      * Typically this method is used to update Swing components that depend
-     * on the value of {{@code prop}. Then first run of the {@code code}, directly
-     * performed with the invocation of #runDependingSwingCode, initializes the
-     * related aspects of the Swing components (e.g. their "text"). After that
-     * the {@code code} is re-run when {{@code prop}'s value changed.<p>
+     * on the values of the items in {{@code props}. The first run of the
+     * {@code code}, directly performed with the invocation of #bindSwingCode,
+     * initializes the related aspects of the Swing components (e.g. their
+     * "text"). After that the {@code code} is re-run when {{@code prop}'s
+     * value changed.<p>
      * <p>
      * After a change the {@code code} is executed, but there may be some delay
      * between the change and the execution of the {@code code}. Also multiple
      * changes may result in just one code execution, covering all changes that
      * occured since the last code run.
      */
-    void bindSwingCode(Runnable code, AnyProp prop);
+    void bindSwingCode(Runnable code, AnyProp... props);
 
     void close();
 }

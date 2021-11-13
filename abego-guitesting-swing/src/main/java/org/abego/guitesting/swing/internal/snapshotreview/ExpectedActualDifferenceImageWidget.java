@@ -194,6 +194,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //endregion
     //region Components
+    //TODO: better name
     private final JLabel[] labelsForImages =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
     private final JComponent content = new JPanel();
@@ -223,6 +224,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     private static final int MIN_IMAGE_SIZE = 16;
 
+    //TODO: make this a computed prop
     private @Nullable SnapshotImages getSnapshotImages() {
         @Nullable SnapshotIssue issue = getSnapshotIssue();
         if (issue == null) {
@@ -260,12 +262,14 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private void initBinding() {
         onComponentResized(content, e -> imagesAreaProp.compute());
 
-        bindings.bindSwingCode(this::updateLabelsForImages, snapshotIssueProp);
-        bindings.bindSwingCode(this::updateLabelsForImages, expectedImageIndexProp);
-        bindings.bindSwingCode(this::updateLabelsForImages, expectedBorderColorProp);
-        bindings.bindSwingCode(this::updateLabelsForImages, actualBorderColorProp);
-        bindings.bindSwingCode(this::updateLabelsForImages, differenceBorderColorProp);
-        bindings.bindSwingCode(this::updateLabelsForImages, imagesAreaProp);
+        //TODO: check the dependencies
+        bindings.bindSwingCode(this::updateLabelsForImages,
+                snapshotIssueProp,
+                expectedImageIndexProp,
+                expectedBorderColorProp,
+                actualBorderColorProp,
+                differenceBorderColorProp,
+                imagesAreaProp);
     }
 
     //TODO: can we make this "more functional", using computed props?
