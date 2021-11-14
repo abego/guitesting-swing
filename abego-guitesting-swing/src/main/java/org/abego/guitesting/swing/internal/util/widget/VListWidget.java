@@ -162,7 +162,7 @@ public final class VListWidget<T> implements Widget {
     private final JComponent content = new JPanel();
 
     //endregion
-    //region Construction/Closing
+    //region Construction
     private VListWidget() {
         styleComponents();
         layoutComponents();
@@ -171,10 +171,6 @@ public final class VListWidget<T> implements Widget {
 
     public static <T> VListWidget<T> vListWidget() {
         return new VListWidget<>();
-    }
-
-    public void close() {
-        bindings.close();
     }
 
     //endregion
@@ -200,6 +196,10 @@ public final class VListWidget<T> implements Widget {
     @Override
     public JComponent getContent() {
         return content;
+    }
+
+    public void close() {
+        bindings.close();
     }
 
     //endregion

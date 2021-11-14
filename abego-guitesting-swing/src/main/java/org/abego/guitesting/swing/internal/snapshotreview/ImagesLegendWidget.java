@@ -112,7 +112,7 @@ class ImagesLegendWidget implements Widget {
     private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
 
     //endregion
-    //region Construction/Closing
+    //region Construction
     private ImagesLegendWidget() {
         initBindings();
         setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor());
@@ -122,14 +122,14 @@ class ImagesLegendWidget implements Widget {
         return new ImagesLegendWidget();
     }
 
-    public void close() {
-        bindings.close();
-    }
-
     //endregion
     //region Widget related
     public JComponent getContent() {
         return content;
+    }
+
+    public void close() {
+        bindings.close();
     }
 
 

@@ -73,7 +73,7 @@ public final class CheckBoxWidget implements Widget {
     private final JCheckBox checkBox = new JCheckBox();
 
     //endregion
-    //region Construction/Closing
+    //region Construction
     private CheckBoxWidget() {
         initBindings();
     }
@@ -82,15 +82,15 @@ public final class CheckBoxWidget implements Widget {
         return new CheckBoxWidget();
     }
 
-    public void close() {
-        bindings.close();
-    }
-
     //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
         return checkBox;
+    }
+
+    public void close() {
+        bindings.close();
     }
 
     //endregion

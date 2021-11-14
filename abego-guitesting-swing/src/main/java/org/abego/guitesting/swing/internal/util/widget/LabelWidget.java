@@ -58,7 +58,7 @@ public final class LabelWidget implements Widget {
     private final JLabel label = new JLabel();
 
     //endregion
-    //region Construction/Closing
+    //region Construction
     private LabelWidget() {
         initBindings();
     }
@@ -67,15 +67,15 @@ public final class LabelWidget implements Widget {
         return new LabelWidget();
     }
 
-    public void close() {
-        bindings.close();
-    }
-
     //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
         return label;
+    }
+
+    public void close() {
+        bindings.close();
     }
 
     //endregion

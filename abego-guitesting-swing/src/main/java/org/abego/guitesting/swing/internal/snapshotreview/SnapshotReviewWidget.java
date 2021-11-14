@@ -232,17 +232,6 @@ class SnapshotReviewWidget implements Widget {
         return new SnapshotReviewWidget(issues);
     }
 
-    public void close() {
-        selectedIssueDescriptionLabel.close();
-        imagesLegend.close();
-        shrinkToFitCheckBox.close();
-        snapshotVariantsIndicator.close();
-        expectedActualDifferenceImage.close();
-        snapshotIssuesVList.close();
-
-        bindings.close();
-    }
-
     /**
      * Returns the "simple" name of the snapshot first (the part behind the last
      * '.'), followed by the package and class part, separated by a " - ".
@@ -267,6 +256,17 @@ class SnapshotReviewWidget implements Widget {
     @Override
     public JComponent getContent() {
         return content;
+    }
+
+    public void close() {
+        selectedIssueDescriptionLabel.close();
+        imagesLegend.close();
+        shrinkToFitCheckBox.close();
+        snapshotVariantsIndicator.close();
+        expectedActualDifferenceImage.close();
+        snapshotIssuesVList.close();
+
+        bindings.close();
     }
 
     //endregion

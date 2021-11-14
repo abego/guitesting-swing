@@ -214,7 +214,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private final JComponent content = new JPanel();
 
     //endregion
-    //region Construction/Closing
+    //region Construction
     public static ExpectedActualDifferenceImageWidget expectedActualDifferenceImageWidget() {
         return new ExpectedActualDifferenceImageWidget();
     }
@@ -225,15 +225,15 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         initBinding();
     }
 
-    public void close() {
-        bindings.close();
-    }
-
     //endregion
     //region Widget related
     @Override
     public JComponent getContent() {
         return content;
+    }
+
+    public void close() {
+        bindings.close();
     }
 
     private static final int MIN_IMAGE_SIZE = 16;
