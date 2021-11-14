@@ -33,8 +33,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class BindingsImpl implements Bindings {
+    private static final Logger LOGGER = Logger.getLogger(BindingsImpl.class.getName());
+
     private final EventAPIForProp eventAPIForProp;
     private final Set<BindingImpl<?>> allBindings = new HashSet<>();
 
@@ -72,7 +76,7 @@ class BindingsImpl implements Bindings {
                 removeObserver(sourceOfTruthObserver);
                 removeObserver(propObserver);
             } else {
-                //TODO: throw or Log or nothing?
+                LOGGER.log(Level.FINE, "Binding not(/no longer) bound"); //NON-NLS
             }
         }
 
