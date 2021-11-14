@@ -26,8 +26,6 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.Objects;
-
 class PropFieldNullableImpl<T> extends PropFieldBase<T> implements PropFieldNullable<T> {
 
     private PropFieldNullableImpl(EventAPIForProp eventAPIForProp,
