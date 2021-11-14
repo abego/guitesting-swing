@@ -202,7 +202,7 @@ abstract class PropComputedBase<T> extends PropBase<T> {
         // make sure to run the code in the EDT, in the same thread also
         // used be the SwingWorkers "done()" method, so the operations are
         // serialized.
-        invokeLater(()->{
+        invokeLater(() -> {
 
             if (mustRecompute) {
                 return;
@@ -227,12 +227,9 @@ abstract class PropComputedBase<T> extends PropBase<T> {
     }
 
     private DependencyCollector newRecomputeTriggeringObserversForDependencies(List<EventObserver<PropertyChanged>> observers) {
-        return new DependencyCollector() {
-            @Override
-            public void dependsOnProperty(Object source, String propertyName) {
-                observers.add(addPropertyObserver(source, propertyName, e -> dependenciesChanged()));
-            }
-        };
+        return prop -> observers.add(
+                addPropertyObserver(prop, PropService.VALUE_PROPERTY_NAME,
+                        e -> dependenciesChanged()));
     }
 
     public void compute() {

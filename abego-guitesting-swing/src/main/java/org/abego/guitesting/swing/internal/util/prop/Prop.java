@@ -42,7 +42,7 @@ import org.abego.event.PropertyChanged;
 public interface Prop<T> extends AnyProp, Var<T> {
 
     default T get(DependencyCollector collector) {
-        collector.dependsOnProperty(this);
+        collector.dependsOnProp(this);
         return get();
     }
 }
