@@ -42,6 +42,7 @@ class BindingsImpl implements Bindings {
 
     private final EventAPIForProp eventAPIForProp;
     private final Set<Binding<?>> allBindings = new HashSet<>();
+    private final Set<EventObserver<?>> observers = new HashSet<>();
 
     private class Binding<T> {
         private final Object prop;
@@ -49,9 +50,9 @@ class BindingsImpl implements Bindings {
         private final EventObserver<PropertyChanged> propObserver;
 
         public Binding(Prop<T> prop,
-                           Prop<T> sourceOfTruth,
-                           Runnable updatePropCode,
-                           Runnable updateSourceOfTruthCode) {
+                       Prop<T> sourceOfTruth,
+                       Runnable updatePropCode,
+                       Runnable updateSourceOfTruthCode) {
             this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
@@ -61,9 +62,9 @@ class BindingsImpl implements Bindings {
         }
 
         public Binding(PropNullable<T> prop,
-                           PropNullable<T> sourceOfTruth,
-                           Runnable updatePropCode,
-                           Runnable updateSourceOfTruthCode) {
+                       PropNullable<T> sourceOfTruth,
+                       Runnable updatePropCode,
+                       Runnable updateSourceOfTruthCode) {
             this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
@@ -149,20 +150,27 @@ class BindingsImpl implements Bindings {
                 });
             }
         };
-        //TODO: no support for "unbind" of bound (Swing) Code
+
         for (AnyProp prop : props) {
-            eventAPIForProp.addPropertyObserver
-                    (prop, PropService.VALUE_PROPERTY_NAME, onPropChanged);
+            EventObserver<PropertyChanged> observer =
+                    eventAPIForProp.addPropertyObserver
+                            (prop, PropService.VALUE_PROPERTY_NAME, onPropChanged);
         }
     }
 
     @Override
     public void close() {
         // unbind all Bindings.
+
         // iterate on copy as we will change allBindings while iterating
         for (Binding<?> b : allBindings.toArray(new Binding[0])) {
             b.unbind();
         }
+        // remove the bindSwingCode observers
+        for (EventObserver<?> o : observers) {
+            eventAPIForProp.removeObserver(o);
+        }
+
     }
 
 }
