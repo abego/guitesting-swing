@@ -316,7 +316,7 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Binding related
-    private Bindings bindings = propService.newBindings();
+    private final Bindings bindings = propService.newBindings();
 
     private void initBindings() {
         snapshotIssuesVList.setListModel(remainingIssues);

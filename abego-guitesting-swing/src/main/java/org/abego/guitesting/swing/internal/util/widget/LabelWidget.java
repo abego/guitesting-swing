@@ -80,7 +80,7 @@ public final class LabelWidget implements Widget {
 
     //endregion
     //region Binding related
-    private Bindings bindings = propService.newBindings();
+    private final Bindings bindings = propService.newBindings();
 
     private void initBindings() {
         bindings.bindSwingCode(() -> label.setText(textProp.get()), textProp);

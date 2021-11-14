@@ -70,7 +70,7 @@ public final class CheckBoxWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    private JCheckBox checkBox = new JCheckBox();
+    private final JCheckBox checkBox = new JCheckBox();
 
     //endregion
     //region Construction/Closing
@@ -95,7 +95,7 @@ public final class CheckBoxWidget implements Widget {
 
     //endregion
     //region Binding related
-    private Bindings bindings = propService.newBindings();
+    private final Bindings bindings = propService.newBindings();
 
     private void initBindings() {
         // Model -> UI
