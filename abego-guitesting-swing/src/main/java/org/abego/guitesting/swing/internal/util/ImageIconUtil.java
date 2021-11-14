@@ -39,7 +39,6 @@ public final class ImageIconUtil {
     public static ImageIcon iconFromResource(String name, Class<?> resourceClass) {
         URL resource = resourceClass.getResource(name);
         if (resource == null) {
-            //noinspection DuplicateStringLiteralInspection
             throw new IllegalArgumentException(
                     String.format("ImageIcon not found: %s. Looking in %s", name, resourceClass)); //NON-NLS
         }
