@@ -28,4 +28,6 @@ import javax.swing.JComponent;
 
 public interface Widget {
     JComponent getContent();
+
+    void close();
 }
