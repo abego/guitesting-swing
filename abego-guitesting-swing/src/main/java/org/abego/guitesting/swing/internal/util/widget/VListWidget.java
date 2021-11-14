@@ -215,7 +215,6 @@ public final class VListWidget<T> implements Widget {
     //region Layout related
     private void layoutComponents() {
         bordered(topBar)
-                //TODO: generalize/customize label/text
                 .left(flowLeft(DEFAULT_FLOW_GAP, 0, titleLabel)) //NON-NLS
                 .right(flowLeft(DEFAULT_FLOW_GAP, 0,
                         previousItemButton,
