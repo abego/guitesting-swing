@@ -113,7 +113,6 @@ class BindingsImpl implements Bindings {
 
     @Override
     public <T> Binding<T> bind(Prop<T> sourceOfTruth, Prop<T> prop) {
-        //TODO can we check if the prop is already bound to a source of truth?
 
         BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
@@ -124,7 +123,6 @@ class BindingsImpl implements Bindings {
 
     @Override
     public <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop) {
-        //TODO can we check if the prop is already bound to a source of truth?
 
         BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
