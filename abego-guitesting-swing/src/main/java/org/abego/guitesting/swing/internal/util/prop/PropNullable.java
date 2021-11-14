@@ -28,4 +28,8 @@ import org.abego.commons.var.VarNullable;
 
 //TODO: don't use VarNullable, but "inline" that interface, or just the relevant parts
 public interface PropNullable<T> extends AnyProp, VarNullable<T> {
+    default T get(DependencyCollector collector) {
+        collector.dependsOnProperty(this);
+        return get();
+    }
 }

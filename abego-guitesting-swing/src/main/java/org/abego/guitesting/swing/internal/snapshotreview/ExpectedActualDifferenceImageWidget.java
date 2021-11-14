@@ -72,20 +72,16 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     public Prop<Boolean> getShrinkToFitProp() {return shrinkToFitProp;}
 
     //endregion
-    //region @Prop public @Nullable SnapshotIssue snapshotIssue
+    //region @Prop private @Nullable SnapshotImages snapshotImages
     private final PropComputedNullable<SnapshotImages> snapshotImagesProp =
             propService.newPropComputedNullable(this::getSnapshotImages);
 
     private @Nullable SnapshotImages getSnapshotImages(DependencyCollector collector) {
-        //TODO: provide getters with DependencyCollector parameter
-        collector.dependsOnProperty(snapshotIssueProp);
-        @Nullable SnapshotIssue issue = getSnapshotIssue();
+        @Nullable SnapshotIssue issue = snapshotIssueProp.get(collector);
         if (issue == null) {
             return null;
         }
-        //TODO: provide getters with DependencyCollector parameter
-        collector.dependsOnProperty(getImagesAreaProp());
-        return snapshotImages(issue, getImagesArea());
+        return snapshotImages(issue, imagesAreaProp.get(collector));
     }
 
     private @Nullable SnapshotImages getSnapshotImages() {

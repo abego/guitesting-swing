@@ -40,4 +40,9 @@ import org.abego.event.PropertyChanged;
  */
 //TODO: don't use Var, but "inline" that interface, or just the relevant parts
 public interface Prop<T> extends AnyProp, Var<T> {
+
+    default T get(DependencyCollector collector) {
+        collector.dependsOnProperty(this);
+        return get();
+    }
 }
