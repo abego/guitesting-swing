@@ -24,11 +24,34 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.VarNullable;
+import org.eclipse.jdt.annotation.Nullable;
 
-//TODO: don't use VarNullable, but "inline" that interface, or just the relevant parts
-public interface PropNullable<T> extends AnyProp, VarNullable<T> {
-    default T get(DependencyCollector collector) {
+/**
+ * As {@link Prop}, but supporting {@code nullable} values.
+ */
+public interface PropNullable<T> extends AnyProp {
+    /**
+     * Return the value of the Var.
+     */
+    @Nullable T get();
+
+    /**
+     * Sets the value of the Prop to the {@code value}.
+     * <p>
+     * When the Prop is not editable setting a value may be ignored silently,
+     * or throw an Exception, depending on the implementation of the Prop.
+     */
+    void set(@Nullable T value);
+
+    /**
+     * Returns true when the Prop is editable, i.e. calling {@link #set(Object)}
+     * will change the value, and false otherwise.
+     **/
+    default boolean isEditable() {
+        return true;
+    }
+
+    default  @Nullable T get(DependencyCollector collector) {
         collector.dependsOnProp(this);
         return get();
     }

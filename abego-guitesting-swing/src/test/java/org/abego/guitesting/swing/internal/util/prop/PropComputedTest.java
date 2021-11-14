@@ -51,17 +51,17 @@ class PropComputedTest {
 
         // changing propA updates the sum
         propA.set(1);
-        gt.assertEqualsRetrying(7, sum);
+        gt.assertEqualsRetrying(7, sum::get);
 
         // changing propB updates the sum
         propB.set(2);
-        gt.assertEqualsRetrying(5, sum);
+        gt.assertEqualsRetrying(5, sum::get);
 
         // changing "extraInt" does NOT update the sum automatically.
         // We need to call compute as "extraInt" is not observed
         extraInt[0] = 3;
         sum.compute();
-        gt.assertEqualsRetrying(6, sum);
+        gt.assertEqualsRetrying(6, sum::get);
     }
 
 }

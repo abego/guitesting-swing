@@ -24,9 +24,9 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.commons.var.Var;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An object holding a value and emitting {@link PropertyChanged} events
@@ -38,8 +38,35 @@ import org.abego.event.PropertyChanged;
  * "other source" typically is the object containing the Prop object and the
  * property name the name of the Prop within that container.
  */
-//TODO: don't use Var, but "inline" that interface, or just the relevant parts
-public interface Prop<T> extends AnyProp, Var<T> {
+public interface Prop<T> extends AnyProp {
+
+    /**
+     * Return the value of the Prop.
+     */
+    @NonNull T get();
+
+    /**
+     * Sets the value of the Prop to the {@code value}.
+     * <p>
+     * When the Prop is not editable setting a value may be ignored silently,
+     * or throw an Exception, depending on the implementation of the Prop.
+     */
+    void set(@NonNull T value);
+
+    /**
+     * Returns true when the Prop has a value, and false otherwise
+     **/
+    default boolean hasValue() {
+        return true;
+    }
+
+    /**
+     * Returns true when the Prop is editable, i.e. calling {@link #set(Object)}
+     * will change the value, and false otherwise.
+     **/
+    default boolean isEditable() {
+        return true;
+    }
 
     default T get(DependencyCollector collector) {
         collector.dependsOnProp(this);
