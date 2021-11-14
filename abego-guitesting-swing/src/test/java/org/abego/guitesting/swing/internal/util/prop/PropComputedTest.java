@@ -24,36 +24,44 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.guitesting.swing.GT;
+import org.abego.guitesting.swing.GuiTesting;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BindingsTest {
+class PropComputedTest {
+    GT gt = GuiTesting.newGT();
 
     @Test
-    void bind() {
+    void compute() {
         PropService propService = PropServices.getDefault();
 
+        int[] extraInt = new int[]{2};
         Prop<Integer> propA = propService.newProp(3);
-        assertEquals(3, propA.get());
-
         Prop<Integer> propB = propService.newProp(4);
-        assertEquals(4, propB.get());
+        PropComputed<Integer> sum = propService.newPropComputed(coll -> {
+            coll.dependsOnProp(propA);
+            coll.dependsOnProp(propB);
+            return propA.get(coll) + propB.get(coll) + extraInt[0];
+        });
 
-        Bindings b = propService.newBindings();
-        b.bind(propA, propB);
+        // the sum is computed correctly
+        assertEquals(9, sum.get());
 
-        assertEquals(3, propB.get());
+        // changing propA updates the sum
+        propA.set(1);
+        gt.assertEqualsRetrying(7, sum);
 
-        propA.set(7);
+        // changing propB updates the sum
+        propB.set(2);
+        gt.assertEqualsRetrying(5, sum);
 
-        assertEquals(7, propA.get());
-        assertEquals(7, propB.get());
-
-        propB.set(8);
-
-        assertEquals(8, propA.get());
-        assertEquals(8, propB.get());
+        // changing "extraInt" does NOT update the sum automatically.
+        // We need to call compute as "extraInt" is not observed
+        extraInt[0] = 3;
+        sum.compute();
+        gt.assertEqualsRetrying(6, sum);
     }
 
 }
