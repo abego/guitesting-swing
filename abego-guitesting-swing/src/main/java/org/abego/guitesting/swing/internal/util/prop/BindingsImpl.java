@@ -37,17 +37,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class BindingsImpl implements Bindings {
+
     private static final Logger LOGGER = Logger.getLogger(BindingsImpl.class.getName());
 
     private final EventAPIForProp eventAPIForProp;
-    private final Set<BindingImpl<?>> allBindings = new HashSet<>();
+    private final Set<Binding<?>> allBindings = new HashSet<>();
 
-    private class BindingImpl<T> implements Binding<T> {
+    private class Binding<T> {
         private final Object prop;
         private final EventObserver<PropertyChanged> sourceOfTruthObserver;
         private final EventObserver<PropertyChanged> propObserver;
 
-        public BindingImpl(Prop<T> prop,
+        public Binding(Prop<T> prop,
                            Prop<T> sourceOfTruth,
                            Runnable updatePropCode,
                            Runnable updateSourceOfTruthCode) {
@@ -59,7 +60,7 @@ class BindingsImpl implements Bindings {
             prop.set(sourceOfTruth.get());
         }
 
-        public BindingImpl(PropNullable<T> prop,
+        public Binding(PropNullable<T> prop,
                            PropNullable<T> sourceOfTruth,
                            Runnable updatePropCode,
                            Runnable updateSourceOfTruthCode) {
@@ -112,23 +113,21 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public <T> Binding<T> bind(Prop<T> sourceOfTruth, Prop<T> prop) {
+    public <T> void bind(Prop<T> sourceOfTruth, Prop<T> prop) {
 
-        BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
+        Binding<T> binding = new Binding<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
         allBindings.add(binding);
-        return binding;
     }
 
     @Override
-    public <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop) {
+    public <T> void bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop) {
 
-        BindingImpl<T> binding = new BindingImpl<>(prop, sourceOfTruth,
+        Binding<T> binding = new Binding<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
         allBindings.add(binding);
-        return binding;
     }
 
     @Override
@@ -161,7 +160,7 @@ class BindingsImpl implements Bindings {
     public void close() {
         // unbind all Bindings.
         // iterate on copy as we will change allBindings while iterating
-        for (BindingImpl<?> b : allBindings.toArray(new BindingImpl[0])) {
+        for (Binding<?> b : allBindings.toArray(new Binding[0])) {
             b.unbind();
         }
     }

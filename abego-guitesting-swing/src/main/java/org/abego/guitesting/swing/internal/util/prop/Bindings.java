@@ -25,7 +25,14 @@
 package org.abego.guitesting.swing.internal.util.prop;
 
 public interface Bindings {
-    interface Binding<T>{}
+    /**
+     * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
+     * is set to the current value of  {@code sourceOfTruth} and updated
+     * whenever {@code sourceOfTruth} changes.
+     * <p>
+     * A {@link Prop} must only be bound to one source of truth.
+     */
+    <T> void bind(Prop<T> sourceOfTruth, Prop<T> prop);
 
     /**
      * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
@@ -34,16 +41,7 @@ public interface Bindings {
      * <p>
      * A {@link Prop} must only be bound to one source of truth.
      */
-    <T> Binding<T> bind(Prop<T> sourceOfTruth, Prop<T> prop);
-
-    /**
-     * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
-     * is set to the current value of  {@code sourceOfTruth} and updated
-     * whenever {@code sourceOfTruth} changes.
-     * <p>
-     * A {@link Prop} must only be bound to one source of truth.
-     */
-    <T> Binding<T> bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
+    <T> void bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
 
     /**
      * Binds the {@code code} to {@code props}, i.e. run the code now and
