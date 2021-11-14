@@ -211,8 +211,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    //TODO: better name
-    private final JLabel[] labelsForImages =
+    private final JLabel[] contentLabels =
             new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
     private final JComponent content = new JPanel();
 
@@ -241,6 +240,30 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     private static final int MIN_IMAGE_SIZE = 16;
 
+    private void updateContentLabels() {
+        @Nullable SnapshotImages images = getSnapshotImages();
+        if (images != null) {
+            setIconAndLinedBorder(
+                    contentLabels[(getExpectedImageIndex()) % 3],
+                    images.getExpectedImage(),
+                    getExpectedBorderColor());
+            setIconAndLinedBorder(
+                    contentLabels[(getExpectedImageIndex() + 1) % 3],
+                    images.getActualImage(),
+                    getActualBorderColor());
+            setIconAndLinedBorder(
+                    contentLabels[(getExpectedImageIndex() + 2) % 3],
+                    images.getDifferenceImage(),
+                    getDifferenceBorderColor());
+        }
+        SwingUtil.setVisible(images != null, contentLabels);
+    }
+
+    private static void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
+        label.setIcon(icon);
+        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
+    }
+
     //endregion
     //region Style related
     private static final int BORDER_SIZE = 3;
@@ -251,17 +274,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         content.setBorder(null);
     }
 
-    //TODO abstract this to some "setStyle" with style defined similar to CSS
-    private static void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
-        label.setIcon(icon);
-        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
-    }
-
     //endregion Style
     //region Layout related
     private void layoutComponents() {
         content.setLayout(new FlowLayout(FlowLayout.LEADING));
-        addAll(content, labelsForImages);
+        addAll(content, contentLabels);
     }
 
     //endregion
@@ -271,8 +288,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private void initBinding() {
         onComponentResized(content, e -> imagesAreaProp.compute());
 
-        //TODO: check the dependencies
-        bindings.bindSwingCode(this::updateLabelsForImages,
+        bindings.bindSwingCode(this::updateContentLabels,
                 snapshotImagesProp,
                 expectedImageIndexProp,
                 expectedBorderColorProp,
@@ -280,24 +296,5 @@ class ExpectedActualDifferenceImageWidget implements Widget {
                 differenceBorderColorProp);
     }
 
-    //TODO: can we make this "more functional", using computed props?
-    private void updateLabelsForImages() {
-        @Nullable SnapshotImages images = getSnapshotImages();
-        if (images != null) {
-            setIconAndLinedBorder(
-                    labelsForImages[(getExpectedImageIndex()) % 3],
-                    images.getExpectedImage(),
-                    getExpectedBorderColor());
-            setIconAndLinedBorder(
-                    labelsForImages[(getExpectedImageIndex() + 1) % 3],
-                    images.getActualImage(),
-                    getActualBorderColor());
-            setIconAndLinedBorder(
-                    labelsForImages[(getExpectedImageIndex() + 2) % 3],
-                    images.getDifferenceImage(),
-                    getDifferenceBorderColor());
-        }
-        SwingUtil.setVisible(images != null, labelsForImages);
-    }
     //endregion
 }
