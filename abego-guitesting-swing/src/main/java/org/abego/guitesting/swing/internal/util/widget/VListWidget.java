@@ -141,7 +141,6 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region Actions
-    //TODO customizes/generalize the actionn titles/texts
     private final Action previousItemAction = SwingUtil.newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
     private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Resources.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
 
