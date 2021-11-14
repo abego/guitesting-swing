@@ -181,7 +181,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public Color differenceBorderColor = Color.black
-    @SuppressWarnings("DuplicateStringLiteralInspection")
     private final PropComputedNullable<Dimension> imagesAreaProp =
             propService.newPropComputedNullable(this::calcImagesArea);
 
@@ -196,9 +195,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private @Nullable Dimension calcImagesArea(DependencyCollector dependencyCollector) {
-        dependencyCollector.dependsOnProperty(shrinkToFitProp);
 
-        if (getShrinkToFit()) {
+        if (shrinkToFitProp.get(dependencyCollector)) {
             Rectangle visibleRect = content.getVisibleRect();
             int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
             int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;

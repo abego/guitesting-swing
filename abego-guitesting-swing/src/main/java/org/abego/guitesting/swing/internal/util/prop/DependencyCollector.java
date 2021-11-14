@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 public interface DependencyCollector {
 
+    //TODO: do we need this?
     default void dependsOnProperty(Object source, String propertyName) {throw new UnsupportedOperationException();}
 
     default void dependsOnProperty(AnyProp prop) {

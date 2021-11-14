@@ -88,8 +88,7 @@ class SnapshotReviewWidget implements Widget {
 
     @Nullable
     private SnapshotIssue getSelectedIssue(DependencyCollector dependencyCollector) {
-        dependencyCollector.dependsOnProperty(selectedIssue);
-        return selectedIssue.get();
+        return selectedIssue.get(dependencyCollector);
     }
 
     //endregion
