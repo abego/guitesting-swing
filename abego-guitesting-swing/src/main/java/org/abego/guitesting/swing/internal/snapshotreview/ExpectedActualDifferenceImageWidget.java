@@ -243,7 +243,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         content.setBorder(null);
     }
 
-    private void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
+    //TODO abstract this to some "setStyle" with style defined similar to CSS
+    private static void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
         label.setIcon(icon);
         label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
     }
@@ -265,11 +266,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         //TODO: check the dependencies
         bindings.bindSwingCode(this::updateLabelsForImages,
                 snapshotIssueProp,
+                imagesAreaProp,
                 expectedImageIndexProp,
                 expectedBorderColorProp,
                 actualBorderColorProp,
-                differenceBorderColorProp,
-                imagesAreaProp);
+                differenceBorderColorProp);
     }
 
     //TODO: can we make this "more functional", using computed props?
