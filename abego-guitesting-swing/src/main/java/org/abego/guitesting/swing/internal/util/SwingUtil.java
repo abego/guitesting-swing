@@ -234,10 +234,6 @@ public final class SwingUtil {
         return jScrollPane;
     }
 
-    public static JScrollPane scrolling(JComponent component) {
-        return scrolling(component, c -> {});
-    }
-
     public static JScrollPane scrollingNoBorder(JComponent component) {
         return scrolling(component, c -> c.setBorder(null));
     }
