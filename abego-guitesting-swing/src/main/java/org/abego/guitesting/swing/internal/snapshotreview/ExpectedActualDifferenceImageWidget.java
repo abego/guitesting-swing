@@ -73,6 +73,27 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region @Prop public @Nullable SnapshotIssue snapshotIssue
+    private final PropComputedNullable<SnapshotImages> snapshotImagesProp =
+            propService.newPropComputedNullable(this::getSnapshotImages);
+
+    private @Nullable SnapshotImages getSnapshotImages(DependencyCollector collector) {
+        //TODO: provide getters with DependencyCollector parameter
+        collector.dependsOnProperty(snapshotIssueProp);
+        @Nullable SnapshotIssue issue = getSnapshotIssue();
+        if (issue == null) {
+            return null;
+        }
+        //TODO: provide getters with DependencyCollector parameter
+        collector.dependsOnProperty(getImagesAreaProp());
+        return snapshotImages(issue, getImagesArea());
+    }
+
+    private @Nullable SnapshotImages getSnapshotImages() {
+        return snapshotImagesProp.get();
+    }
+    //endregion
+
+    //region @Prop public @Nullable SnapshotIssue snapshotIssue
     private final PropNullable<SnapshotIssue> snapshotIssueProp =
             propService.newPropNullable(null, this, "snapshotIssue");
 
@@ -224,15 +245,6 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     private static final int MIN_IMAGE_SIZE = 16;
 
-    //TODO: make this a computed prop
-    private @Nullable SnapshotImages getSnapshotImages() {
-        @Nullable SnapshotIssue issue = getSnapshotIssue();
-        if (issue == null) {
-            return null;
-        }
-        return snapshotImages(issue, getImagesArea());
-    }
-
     //endregion
     //region Style related
     private static final int BORDER_SIZE = 3;
@@ -265,8 +277,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
         //TODO: check the dependencies
         bindings.bindSwingCode(this::updateLabelsForImages,
-                snapshotIssueProp,
-                imagesAreaProp,
+                snapshotImagesProp,
                 expectedImageIndexProp,
                 expectedBorderColorProp,
                 actualBorderColorProp,
