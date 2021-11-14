@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
+import org.abego.commons.seq.SeqUtil;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
@@ -36,7 +37,6 @@ import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
-import org.abego.guitesting.swing.internal.util.SeqUtil2;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -138,7 +138,7 @@ class SnapshotReviewWidget implements Widget {
         }
 
         //noinspection CallToSuspiciousStringMethod
-        Seq<SnapshotIssue> variants = SeqUtil2.newSeq(remainingIssues.elements())
+        Seq<SnapshotIssue> variants = SeqUtil.newSeq(remainingIssues.elements())
                 .filter(i -> i.getSnapshotName().equals(issue.getSnapshotName()));
         return snapshotVariant(issue, variants);
     }
