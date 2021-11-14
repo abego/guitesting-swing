@@ -30,8 +30,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Consumer;
 
-//TODO: do we really need this, or should we just use the abego-event API
-// (actually we are already refering to "EventService" in the prop API)
 interface EventAPIForProp {
     EventObserver<PropertyChanged> addPropertyObserver(
             Object source,

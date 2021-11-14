@@ -84,17 +84,8 @@ public final class LabelWidget implements Widget {
 
     private void initBindings() {
         bindings.bindSwingCode(() -> label.setText(textProp.get()), textProp);
-        label.addPropertyChangeListener("text", e -> updateTextProp());
-    }
-
-
-    private void updateTextProp() {
-        String text = label.getText();
-        //TODO: do we need the equals check, or should this do the setter?
-        //noinspection CallToSuspiciousStringMethod
-        if (!(textProp.get().equals(text))) {
-            textProp.set(text);
-        }
+        label.addPropertyChangeListener(
+                "text", e -> textProp.set(label.getText()));
     }
 
     //endregion
