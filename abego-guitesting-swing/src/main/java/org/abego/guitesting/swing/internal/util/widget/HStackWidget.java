@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 
 public final class HStackWidget implements Widget {
+    //TODO: for now use FlowLayout. But: for HStack we always want only ONE row
     private final JPanel content =
             new JPanel(new FlowLayout(FlowLayout.LEADING));
 
