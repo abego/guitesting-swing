@@ -24,38 +24,45 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.JFrame;
-import java.awt.Container;
-import java.util.function.Consumer;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.FlowLayout;
 
-import static org.abego.commons.swing.WindowUtil.onWindowClosed;
+public final class HStackWidget implements Widget {
+    private final JPanel content =
+            new JPanel(new FlowLayout(FlowLayout.LEADING));
 
-public final class WidgetUtil {
-    WidgetUtil() {
-        throw new UnsupportedOperationException("Must not instantiate");
+    private HStackWidget() {
+        styleComponents();
     }
 
-    public static JFrame showWidgetInJFrame(
-            Widget widget,
-            String title,
-            String name,
-            Consumer<JFrame> preShowCode) {
-
-        JFrame frame = new JFrame(title); //NON-NLS
-
-        frame.setName(name);
-        frame.setContentPane(widget.getContent());
-        onWindowClosed(frame, e-> widget.close());
-
-        preShowCode.accept(frame);
-        frame.setVisible(true);
-
-        return frame;
+    private void styleComponents() {
+        content.setOpaque(true);
+        content.setBackground(Color.white);
+        content.setBorder(null);
     }
 
-    public static void setVisible(boolean flag, Widget... widgets) {
+    public static HStackWidget hStackWidget() {
+        return new HStackWidget();
+    }
+
+    @Override
+    public JComponent getContent() {
+        return content;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    public void add(Widget widget) {
+        content.add(widget.getContent());
+    }
+
+    public void addAll(Widget... widgets) {
         for (Widget w: widgets) {
-            w.getContent().setVisible(flag);
+            add(w);
         }
     }
 }

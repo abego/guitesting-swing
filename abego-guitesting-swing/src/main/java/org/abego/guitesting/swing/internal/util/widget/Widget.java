@@ -25,9 +25,15 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import javax.swing.JComponent;
+import java.awt.Rectangle;
 
 public interface Widget {
     JComponent getContent();
 
     void close();
+
+    default Rectangle getVisibleRect() {
+        return getContent().getVisibleRect();
+    }
+
 }

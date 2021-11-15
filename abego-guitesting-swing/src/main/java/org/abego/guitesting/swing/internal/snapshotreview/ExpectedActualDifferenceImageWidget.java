@@ -33,6 +33,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.ImageWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
@@ -40,16 +41,15 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
+import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 
@@ -197,7 +197,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private @Nullable Dimension calcImagesArea(DependencyCollector dependencyCollector) {
 
         if (shrinkToFitProp.get(dependencyCollector)) {
-            Rectangle visibleRect = content.getVisibleRect();
+            Rectangle visibleRect = contentWidget.getVisibleRect();
             int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
             int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
             return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
@@ -211,7 +211,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Components
     private final ImageWidget[] imageWidgets =
             new ImageWidget[]{new ImageWidget(), new ImageWidget(), new ImageWidget()};
-    private final JComponent content = new JPanel();
+    private final HStackWidget contentWidget = hStackWidget();
 
     //endregion
     //region Construction
@@ -220,8 +220,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private ExpectedActualDifferenceImageWidget() {
-        styleComponents();
-        layoutComponents();
+        contentWidget.addAll(imageWidgets);
         initBinding();
     }
 
@@ -229,7 +228,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Widget related
     @Override
     public JComponent getContent() {
-        return content;
+        return contentWidget.getContent();
     }
 
     public void close() {
@@ -266,26 +265,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //region Style related
     private static final int BORDER_SIZE = 3;
-
-    private void styleComponents() {
-        content.setOpaque(true);
-        content.setBackground(Color.white);
-        content.setBorder(null);
-    }
-
     //endregion Style
-    //region Layout related
-    private void layoutComponents() {
-        content.setLayout(new FlowLayout(FlowLayout.LEADING));
-        WidgetUtil.addAll(content, imageWidgets);
-    }
-
-    //endregion
     //region Binding related
     private final Bindings bindings = propService.newBindings();
 
     private void initBinding() {
-        onComponentResized(content, e -> imagesAreaProp.compute());
+        onComponentResized(contentWidget.getContent(),
+                e -> imagesAreaProp.compute());
 
         bindings.bindSwingCode(this::updateContentLabels,
                 snapshotImagesProp,
