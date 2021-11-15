@@ -134,6 +134,8 @@ class ImagesLegendWidget implements Widget {
 
 
     private void updateContent() {
+        //TODO: make this class and ExpectedActualDifferenceImageWidget use
+        // same approach to define and update the content
         content.removeAll();
         content.add(labels[(3 - getExpectedImageIndex()) % 3].getContent());
         content.add(labels[(4 - getExpectedImageIndex()) % 3].getContent());
