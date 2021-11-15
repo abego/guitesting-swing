@@ -24,44 +24,28 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.JFrame;
-import java.awt.Container;
-import java.util.function.Consumer;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.border.Border;
 
-import static org.abego.commons.swing.WindowUtil.onWindowClosed;
+public class ImageWidget implements Widget {
+    private final JLabel content = new JLabel();
 
-public final class WidgetUtil {
-    WidgetUtil() {
-        throw new UnsupportedOperationException("Must not instantiate");
+    @Override
+    public JComponent getContent() {
+        return content;
     }
 
-    public static JFrame showWidgetInJFrame(
-            Widget widget,
-            String title,
-            String name,
-            Consumer<JFrame> preShowCode) {
-
-        JFrame frame = new JFrame(title); //NON-NLS
-
-        frame.setName(name);
-        frame.setContentPane(widget.getContent());
-        onWindowClosed(frame, e-> widget.close());
-
-        preShowCode.accept(frame);
-        frame.setVisible(true);
-
-        return frame;
+    @Override
+    public void close() {
     }
 
-    public static void setVisible(boolean flag, Widget... widgets) {
-        for (Widget w: widgets) {
-            w.getContent().setVisible(flag);
-        }
+    public void setImage(ImageIcon icon) {
+        content.setIcon(icon);
     }
 
-    public static void addAll(Container component, Widget... iconWidgets) {
-        for (Widget w: iconWidgets) {
-            component.add(w.getContent());
-        }
+    public void setBorder(Border border) {
+        content.setBorder(border);
     }
 }

@@ -33,12 +33,13 @@ import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.ImageWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
+import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -48,7 +49,6 @@ import java.awt.Rectangle;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
@@ -209,8 +209,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    private final JLabel[] contentLabels =
-            new JLabel[]{new JLabel(), new JLabel(), new JLabel()};
+    private final ImageWidget[] imageWidgets =
+            new ImageWidget[]{new ImageWidget(), new ImageWidget(), new ImageWidget()};
     private final JComponent content = new JPanel();
 
     //endregion
@@ -242,24 +242,25 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         @Nullable SnapshotImages images = getSnapshotImages();
         if (images != null) {
             setIconAndLinedBorder(
-                    contentLabels[(getExpectedImageIndex()) % 3],
+                    imageWidgets[(getExpectedImageIndex()) % 3],
                     images.getExpectedImage(),
                     getExpectedBorderColor());
             setIconAndLinedBorder(
-                    contentLabels[(getExpectedImageIndex() + 1) % 3],
+                    imageWidgets[(getExpectedImageIndex() + 1) % 3],
                     images.getActualImage(),
                     getActualBorderColor());
             setIconAndLinedBorder(
-                    contentLabels[(getExpectedImageIndex() + 2) % 3],
+                    imageWidgets[(getExpectedImageIndex() + 2) % 3],
                     images.getDifferenceImage(),
                     getDifferenceBorderColor());
         }
-        SwingUtil.setVisible(images != null, contentLabels);
+
+        WidgetUtil.setVisible(images != null, imageWidgets);
     }
 
-    private static void setIconAndLinedBorder(JLabel label, ImageIcon icon, Color borderColor) {
-        label.setIcon(icon);
-        label.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
+    private static void setIconAndLinedBorder(ImageWidget imageWidget, ImageIcon icon, Color borderColor) {
+        imageWidget.setImage(icon);
+        imageWidget.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
     }
 
     //endregion
@@ -276,7 +277,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Layout related
     private void layoutComponents() {
         content.setLayout(new FlowLayout(FlowLayout.LEADING));
-        addAll(content, contentLabels);
+        WidgetUtil.addAll(content, imageWidgets);
     }
 
     //endregion
