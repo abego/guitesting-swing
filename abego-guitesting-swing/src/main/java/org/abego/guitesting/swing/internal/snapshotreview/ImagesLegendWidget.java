@@ -28,10 +28,10 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -103,10 +103,10 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    private final JLabel expectedLabel = legendLabel(" Expected ");//NON-NLS
-    private final JLabel actualLabel = legendLabel(" Actual ");//NON-NLS
-    private final JLabel differenceLabel = legendLabel(" Difference ");//NON-NLS
-    private final JLabel[] labels = new JLabel[]{
+    private final LabelWidget expectedLabel = legendLabel(" Expected ");//NON-NLS
+    private final LabelWidget actualLabel = legendLabel(" Actual ");//NON-NLS
+    private final LabelWidget differenceLabel = legendLabel(" Difference ");//NON-NLS
+    private final LabelWidget[] labels = new LabelWidget[]{
             expectedLabel, actualLabel, differenceLabel
     };
     private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
@@ -135,18 +135,19 @@ class ImagesLegendWidget implements Widget {
 
     private void updateContent() {
         content.removeAll();
-        content.add(labels[(3 - getExpectedImageIndex()) % 3]);
-        content.add(labels[(4 - getExpectedImageIndex()) % 3]);
-        content.add(labels[(5 - getExpectedImageIndex()) % 3]);
+        content.add(labels[(3 - getExpectedImageIndex()) % 3].getContent());
+        content.add(labels[(4 - getExpectedImageIndex()) % 3].getContent());
+        content.add(labels[(5 - getExpectedImageIndex()) % 3].getContent());
         content.validate();
     }
 
-    private static JLabel legendLabel(String title) {
-        JLabel label = new JLabel(title);
-        label.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
-        label.setForeground(Color.GRAY);
+    private static LabelWidget legendLabel(String title) {
+        LabelWidget label = LabelWidget.labelWidget();
+        label.setText(title);
+        label.getContent().setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 12));
+        label.getContent().setForeground(Color.GRAY);
         //noinspection StringConcatenation
-        label.setToolTipText(
+        label.getContent().setToolTipText(
                 title.trim() + " images (see below) have a border in this color and are located at this position in the sequence."); //NON-NLS
         return label;
     }
@@ -155,8 +156,8 @@ class ImagesLegendWidget implements Widget {
     //region Style related
     private static final int LEGEND_BORDER_SIZE = 2;
 
-    private static void setLegendLabelBorderColor(JLabel label, Color color) {
-        label.setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
+    private static void setLegendLabelBorderColor(LabelWidget label, Color color) {
+        label.getContent().setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
     }
 
     //endregion
