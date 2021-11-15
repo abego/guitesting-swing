@@ -29,12 +29,11 @@ import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.SnapshotReview;
+import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
 
 import javax.swing.JFrame;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static org.abego.commons.swing.WindowUtil.onWindowClosed;
 
 public class SnapshotReviewImpl implements SnapshotReview {
 
@@ -54,16 +53,13 @@ public class SnapshotReviewImpl implements SnapshotReview {
     //region Commands
     @Override
     public void showIssues(Consumer<JFrame> framePreShowCode) {
-
         Seq<SnapshotIssue> issues = getSnapshotIssues();
         SnapshotReviewWidget widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
         //noinspection StringConcatenation
-        JFrame frame = new JFrame("Snapshot Review (" + issues.size() + " issues)"); //NON-NLS
-        frame.setName(SNAPSHOT_REVIEW_FRAME_NAME);
-        frame.setContentPane(widget.getContent());
-        onWindowClosed(frame, e->widget.close());
-        framePreShowCode.accept(frame);
-        frame.setVisible(true);
+        String title = "Snapshot Review (" + issues.size() + " issues)";
+
+        WidgetUtil.showWidgetInJFrame(
+                widget, title, SNAPSHOT_REVIEW_FRAME_NAME, framePreShowCode);
     }
 
     private Seq<SnapshotIssue> getSnapshotIssues() {
