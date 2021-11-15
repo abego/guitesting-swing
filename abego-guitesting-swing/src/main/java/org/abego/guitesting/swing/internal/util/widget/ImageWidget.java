@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-public class ImageWidget implements Widget {
+public final class ImageWidget implements Widget {
     private final JLabel content = new JLabel();
 
     @Override
