@@ -40,6 +40,8 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -102,7 +104,6 @@ public final class SwingUtil {
                 text, accelerator, description, null, action);
     }
     //endregion
-
     //region Icon related
     public static ImageIcon icon(File file) {
         try {
@@ -116,13 +117,11 @@ public final class SwingUtil {
         return new ImageIcon(url);
     }
     //endregion
-
     //region Border related
     public static Border lineBorder(Color borderColor, int thickness) {
         return BorderFactory.createLineBorder(borderColor, thickness);
     }
     //endregion
-
     //region Component related
     public static void setVisible(boolean value, Component... components) {
         for (Component component : components) {
@@ -141,7 +140,6 @@ public final class SwingUtil {
         });
     }
     //endregion
-
     //region Container related
     public static void addAll(Container container, Component... components) {
         for (Component c : components) {
@@ -149,8 +147,26 @@ public final class SwingUtil {
         }
     }
     //endregion
-
     //region JComponent related
+    public static void onJComponentBecomesVisible(JComponent component, Runnable code) {
+        component.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                code.run();
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+
+            }
+        });
+    }
+
     public static void handleAccelerator(JComponent component, Action action) {
         Object accelerator = action.getValue(Action.ACCELERATOR_KEY);
         if (accelerator instanceof KeyStroke) {
@@ -161,7 +177,6 @@ public final class SwingUtil {
         }
     }
     //endregion
-
     //region JLabel related
     public static JLabel label(String text, Consumer<JLabel> initCode) {
         JLabel label = new JLabel(text);
@@ -177,13 +192,11 @@ public final class SwingUtil {
         return new JLabel();
     }
     //endregion
-
     //region JButton related
     public static JButton toolbarButton() {
         return JToolbarButton.newJToolbarButton();
     }
     //endregion
-
     //region JList related
     public static <T> DefaultListModel<T> newDefaultListModel(Iterable<T> items) {
         DefaultListModel<T> listModel = new DefaultListModel<>();
@@ -226,7 +239,6 @@ public final class SwingUtil {
         }
     }
     //endregion
-
     //region JScrollPane related
     public static JScrollPane scrolling(JComponent component, Consumer<JScrollPane> initCode) {
         JScrollPane jScrollPane = new JScrollPane(component);
@@ -238,7 +250,6 @@ public final class SwingUtil {
         return scrolling(component, c -> c.setBorder(null));
     }
     //endregion
-
     //region Special JComponents
     public static JComponent separatorBar() {
         JPanel jPanel = new JPanel(null);
@@ -249,7 +260,6 @@ public final class SwingUtil {
         return jPanel;
     }
     //endregion
-
     //region Layout related
     public static JComponent flow(int align, int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
         JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));

@@ -49,7 +49,6 @@ import javax.swing.KeyStroke;
 import java.awt.Color;
 
 import static java.lang.Boolean.TRUE;
-import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
@@ -58,6 +57,7 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariant
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
 import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
@@ -216,16 +216,14 @@ class SnapshotReviewWidget implements Widget {
         layoutComponents();
         initBindings();
 
-        // More initialization
-        invokeLater(() -> {
-            // make the first item of the "remainingIssues" the "selected issue"
-            if (!remainingIssues.isEmpty()) {
-                setSelectedIssue(remainingIssues.get(0));
-            }
+        // make the first item of the "remainingIssues" the "selected issue"
+        if (!remainingIssues.isEmpty()) {
+            setSelectedIssue(remainingIssues.get(0));
+        }
 
-            // make sure we have a focus
-            shrinkToFitCheckBox.getContent().requestFocusInWindow();
-        });
+        // make sure we have a focus (when the widget is displayed)
+        onJComponentBecomesVisible(content,
+                ()-> shrinkToFitCheckBox.getContent().requestFocusInWindow());
     }
 
     public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
