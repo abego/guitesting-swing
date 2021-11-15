@@ -32,6 +32,7 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
+import org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
@@ -42,7 +43,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -52,6 +52,7 @@ import static java.lang.Boolean.TRUE;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
+import static org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget.toolbarButtonWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.snapshotVariant;
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
@@ -66,7 +67,6 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListWidget;
 
 class SnapshotReviewWidget implements Widget {
@@ -195,11 +195,11 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Components
     private final LabelWidget selectedIssueDescriptionLabel = labelWidget();
-    private final JButton overwriteButton = toolbarButton();
-    private final JButton addAlternativeButton = toolbarButton();
-    private final JButton ignoreButton = toolbarButton();
+    private final ToolbarButtonWidget overwriteButton = toolbarButtonWidget();
+    private final ToolbarButtonWidget addAlternativeButton = toolbarButtonWidget();
+    private final ToolbarButtonWidget ignoreButton = toolbarButtonWidget();
     private final ImagesLegendWidget imagesLegend = imagesLegendWidget();
-    private final JButton rotateButton = toolbarButton();
+    private final ToolbarButtonWidget rotateButton = toolbarButtonWidget();
     private final CheckBoxWidget shrinkToFitCheckBox = checkBoxWidget();
     private final SnapshotVariantsIndicatorWidget snapshotVariantsIndicator = variantsIndicatorWidget();
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImage
@@ -223,7 +223,7 @@ class SnapshotReviewWidget implements Widget {
 
         // make sure we have a focus (when the widget is displayed)
         onJComponentBecomesVisible(content,
-                ()-> shrinkToFitCheckBox.getContent().requestFocusInWindow());
+                () -> shrinkToFitCheckBox.getContent().requestFocusInWindow());
     }
 
     public static SnapshotReviewWidget snapshotReviewWidget(Seq<SnapshotIssue> issues) {
@@ -297,12 +297,12 @@ class SnapshotReviewWidget implements Widget {
                 .top(bordered()
                         .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel.getContent()))
                         .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
-                                overwriteButton,
-                                addAlternativeButton,
-                                ignoreButton,
+                                overwriteButton.getContent(),
+                                addAlternativeButton.getContent(),
+                                ignoreButton.getContent(),
                                 separatorBar(),
                                 imagesLegend.getContent(),
-                                rotateButton,
+                                rotateButton.getContent(),
                                 separatorBar(),
                                 shrinkToFitCheckBox.getContent(),
                                 separatorBar()))
