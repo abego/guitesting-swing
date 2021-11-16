@@ -29,22 +29,22 @@ import org.abego.commons.seq.SeqUtil;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
+import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
-import org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget;
-import org.abego.guitesting.swing.internal.util.widget.VListWidget;
-import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
+import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.BorderedWidget;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
+import org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget;
+import org.abego.guitesting.swing.internal.util.widget.VListWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
-import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.Color;
 
@@ -52,21 +52,21 @@ import static java.lang.Boolean.TRUE;
 import static org.abego.commons.io.FileUtil.toFile;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
-import static org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget.toolbarButtonWidget;
-import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.snapshotVariant;
+import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
-import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
-import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
-import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
+import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
+import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
+import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
+import static org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget.toolbarButtonWidget;
 import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListWidget;
 
 class SnapshotReviewWidget implements Widget {
@@ -205,7 +205,7 @@ class SnapshotReviewWidget implements Widget {
     private final ExpectedActualDifferenceImageWidget expectedActualDifferenceImage
             = expectedActualDifferenceImageWidget();
     private final VListWidget<SnapshotIssue> snapshotIssuesVList = vListWidget();
-    private final JComponent content = new JPanel();
+    private final BorderedWidget contentWidget = borderedWidget();
 
     //endregion
     //region Construction
@@ -222,7 +222,7 @@ class SnapshotReviewWidget implements Widget {
         }
 
         // make sure we have a focus (when the widget is displayed)
-        onJComponentBecomesVisible(content,
+        onJComponentBecomesVisible(contentWidget.getContent(),
                 () -> shrinkToFitCheckBox.getContent().requestFocusInWindow());
     }
 
@@ -253,7 +253,7 @@ class SnapshotReviewWidget implements Widget {
     //region Widget related
     @Override
     public JComponent getContent() {
-        return content;
+        return contentWidget.getContent();
     }
 
     public void close() {
@@ -293,8 +293,8 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Layout related
     private void layoutComponents() {
-        bordered(content)
-                .top(bordered()
+        contentWidget
+                .top(borderedWidget()
                         .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel.getContent()))
                         .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
                                 overwriteButton.getContent(),
@@ -305,11 +305,10 @@ class SnapshotReviewWidget implements Widget {
                                 rotateButton.getContent(),
                                 separatorBar(),
                                 shrinkToFitCheckBox.getContent(),
-                                separatorBar()))
-                        .component())
-                .left(snapshotVariantsIndicator.getContent())
+                                separatorBar())))
+                .left(snapshotVariantsIndicator)
                 .center(scrollingNoBorder(expectedActualDifferenceImage.getContent()))
-                .bottom(snapshotIssuesVList.getContent());
+                .bottom(snapshotIssuesVList);
     }
 
     //endregion
