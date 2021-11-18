@@ -28,6 +28,7 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 
@@ -36,8 +37,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 import static javax.swing.BorderFactory.createLineBorder;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
+import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ImagesLegendWidget implements Widget {
 
@@ -109,7 +109,7 @@ class ImagesLegendWidget implements Widget {
     private final LabelWidget[] labels = new LabelWidget[]{
             expectedLabel, actualLabel, differenceLabel
     };
-    private final JComponent content = flowLeft(DEFAULT_FLOW_GAP, 0);
+    private final HStackWidget contentWiget = hStackWidget();
 
     //endregion
     //region Construction
@@ -125,7 +125,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region Widget related
     public JComponent getContent() {
-        return content;
+        return contentWiget.getContent();
     }
 
     public void close() {
@@ -136,6 +136,8 @@ class ImagesLegendWidget implements Widget {
     private void updateContent() {
         //TODO: make this class and ExpectedActualDifferenceImageWidget use
         // same approach to define and update the content
+        JComponent content = contentWiget.getContent();
+        //TODO make this part of HStackWidget?
         content.removeAll();
         content.add(labels[(3 - getExpectedImageIndex()) % 3].getContent());
         content.add(labels[(4 - getExpectedImageIndex()) % 3].getContent());
