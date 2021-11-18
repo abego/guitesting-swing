@@ -201,6 +201,8 @@ public class BoxStyle {
         return new Factory();
     }
 
+    //TODO: no dependency to JComponent in BoxStyle (is more generic)
+    //  (BoxBorder knows about both JComponent and BoxStyle)
     public void applyTo(JComponent component) {
         component.setBorder(boxBorder(top, right, bottom, left));
     }

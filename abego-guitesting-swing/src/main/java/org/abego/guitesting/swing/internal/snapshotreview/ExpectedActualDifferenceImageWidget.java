@@ -49,6 +49,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.style;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
@@ -198,8 +199,16 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
         if (shrinkToFitProp.get(dependencyCollector)) {
             Rectangle visibleRect = contentWidget.getVisibleRect();
+            // from the full avaiable visible rect calculate how large is
+            // the area available for the images. To do so we need to subtract
+            // - the border around the images (of size BORDER_SIZE),
+            // - the space between an (bordered) image and the image right to it,
+            // - the extra "padding" around the (bordered) images.
             int w = visibleRect.width - 4 * SwingUtil.DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
             int h = visibleRect.height - 2 * SwingUtil.DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+
+            // to avoid weird effects make sure the dimension is not below
+            // a certain size (MIN_IMAGE_SIZE each side)
             return new Dimension(max(MIN_IMAGE_SIZE, w), max(MIN_IMAGE_SIZE, h));
         } else {
             return null;
@@ -220,7 +229,11 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private ExpectedActualDifferenceImageWidget() {
+        // layout
         contentWidget.addAll(imageWidgets);
+        // style
+        style().padding(SwingUtil.DEFAULT_FLOW_GAP, 0).applyTo(contentWidget.getContent());
+        // bindings
         initBinding();
     }
 

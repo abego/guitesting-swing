@@ -24,28 +24,27 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 
-public final class HStackWidget implements Widget {
-    //TODO: for now use FlowLayout as an approximation of an HStack
-    private final JPanel content =
-            new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+import java.awt.Dimension;
 
-    private HStackWidget() {
-        styleComponents();
+import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
+
+public final class ToolbarSeparatorWidget implements Widget {
+    private final JPanel content = new JPanel(null);
+
+    private ToolbarSeparatorWidget() {
+        content.setPreferredSize(new Dimension(1, 22));
+        content.setBackground(LIGHTER_GRAY);
+        content.setOpaque(true);
     }
 
-    private void styleComponents() {
-        content.setOpaque(false);
-        content.setBorder(null);
-    }
-
-    public static HStackWidget hStackWidget(Widget... widgets) {
-        HStackWidget hStackWidget = new HStackWidget();
-        hStackWidget.addAll(widgets);
-        return hStackWidget;
+    public static ToolbarSeparatorWidget toolbarSeparatorWidget() {
+        return new ToolbarSeparatorWidget();
     }
 
     @Override
@@ -55,15 +54,5 @@ public final class HStackWidget implements Widget {
 
     @Override
     public void close() {
-    }
-
-    public void add(Widget widget) {
-        content.add(widget.getContent());
-    }
-
-    public void addAll(Widget... widgets) {
-        for (Widget w: widgets) {
-            add(w);
-        }
     }
 }

@@ -36,6 +36,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.widget.BorderedWidget;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
+import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget;
 import org.abego.guitesting.swing.internal.util.widget.VListWidget;
@@ -56,17 +57,19 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariant
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
 import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeftWithBottomLine;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.separatorBar;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.style;
 import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
+import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
 import static org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget.toolbarButtonWidget;
+import static org.abego.guitesting.swing.internal.util.widget.ToolbarSeparatorWidget.toolbarSeparatorWidget;
 import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListWidget;
 
 class SnapshotReviewWidget implements Widget {
@@ -212,8 +215,8 @@ class SnapshotReviewWidget implements Widget {
     private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
         remainingIssues = newDefaultListModel(
                 issues.sortedBy(SnapshotIssue::getLabel));
-        styleComponents();
         layoutComponents();
+        styleComponents();
         initBindings();
 
         // make the first item of the "remainingIssues" the "selected issue"
@@ -274,6 +277,8 @@ class SnapshotReviewWidget implements Widget {
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
 
     private void styleComponents() {
+        //TODO review this method: is this all "layout..."? Or more "init..."?
+
         imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
         imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
         imagesLegend.setDifferenceBorderColor(DIFFERENCE_BORDER_COLOR);
@@ -288,24 +293,33 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setTitle("Issues:"); //NON-NLS
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
+
+        style().padding(5, 0)
+                .borderBottom(1, SOLID, LIGHTER_GRAY).applyTo(titleBar.getContent());
+        style().borderBottom(1, SOLID, LIGHTER_GRAY).applyTo(toolbar.getContent());
     }
 
     //endregion
     //region Layout related
+    private HStackWidget titleBar = hStackWidget();
+    private HStackWidget toolbar = hStackWidget();
+
     private void layoutComponents() {
+        titleBar.add(selectedIssueDescriptionLabel);
+        toolbar.addAll(
+                overwriteButton,
+                addAlternativeButton,
+                ignoreButton,
+                toolbarSeparatorWidget(),
+                imagesLegend,
+                rotateButton,
+                toolbarSeparatorWidget(),
+                shrinkToFitCheckBox,
+                toolbarSeparatorWidget());
         contentWidget
                 .top(borderedWidget()
-                        .top(flowLeftWithBottomLine(selectedIssueDescriptionLabel.getContent()))
-                        .bottom(flowLeftWithBottomLine(DEFAULT_FLOW_GAP, 0,
-                                overwriteButton.getContent(),
-                                addAlternativeButton.getContent(),
-                                ignoreButton.getContent(),
-                                separatorBar(),
-                                imagesLegend.getContent(),
-                                rotateButton.getContent(),
-                                separatorBar(),
-                                shrinkToFitCheckBox.getContent(),
-                                separatorBar())))
+                        .top(titleBar)
+                        .bottom(toolbar))
                 .left(snapshotVariantsIndicator)
                 .center(scrollingNoBorder(expectedActualDifferenceImage.getContent()))
                 .bottom(snapshotIssuesVList);
