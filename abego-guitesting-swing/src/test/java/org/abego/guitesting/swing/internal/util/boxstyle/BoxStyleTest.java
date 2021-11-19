@@ -40,7 +40,7 @@ import static java.awt.Color.ORANGE;
 import static java.awt.Color.PINK;
 import static java.awt.Color.WHITE;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
-import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.BorderStyle.SOLID;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.setBoxStyle;
 

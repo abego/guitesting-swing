@@ -24,20 +24,20 @@
 
 package org.abego.guitesting.swing.internal.util.boxstyle;
 
-import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style;
+import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.BorderStyle;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Color;
 import java.util.Objects;
 
 public final class SideInfo {
-    final int border ;
-    final Style style;
+    final int border;
+    final BorderStyle style;
     final @Nullable Color color;
     final int padding;
     final int margin;
 
-    private SideInfo(int border, Style style, @Nullable Color color, int padding, int margin) {
+    private SideInfo(int border, BorderStyle style, @Nullable Color color, int padding, int margin) {
         this.border = border;
         this.style = style;
         this.color = color;
@@ -50,7 +50,7 @@ public final class SideInfo {
     }
 
     private SideInfo() {
-        this(0, Style.NONE, null, 0, 0);
+        this(0, BorderStyle.NONE, null, 0, 0);
     }
 
     static SideInfo sideInfo(OneSide oneSide) {
@@ -65,7 +65,7 @@ public final class SideInfo {
         return border;
     }
 
-    public Style getStyle() {
+    public BorderStyle getStyle() {
         return style;
     }
 

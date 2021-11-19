@@ -25,8 +25,6 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.internal.util.SwingUtil;
-import org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -187,13 +185,12 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private final PropComputedNullable<Dimension> imagesAreaProp =
             propService.newPropComputedNullable(this::calcImagesArea);
 
-
     @Nullable
     private Dimension getImagesArea() {
         return imagesAreaProp.get();
     }
 
-    public PropNullable<Dimension> getImagesAreaProp() {
+    public PropComputedNullable<Dimension> getImagesAreaProp() {
         return imagesAreaProp;
     }
 
@@ -275,7 +272,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     private static void setIconAndLinedBorder(ImageWidget imageWidget, ImageIcon icon, Color borderColor) {
         imageWidget.setImage(icon);
-        imageWidget.setBorder(SwingUtil.lineBorder(borderColor, BORDER_SIZE));
+        imageWidget.setBoxStyle(newBoxStyle().border(BORDER_SIZE, borderColor));
     }
 
     //endregion
@@ -287,7 +284,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     private void initBinding() {
         onComponentResized(contentWidget.getContent(),
-                e -> imagesAreaProp.compute());
+                e -> getImagesAreaProp().compute());
 
         bindings.bindSwingCode(this::updateContentLabels,
                 snapshotImagesProp,

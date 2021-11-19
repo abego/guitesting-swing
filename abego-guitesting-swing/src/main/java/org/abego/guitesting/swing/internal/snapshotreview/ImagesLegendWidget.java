@@ -36,7 +36,7 @@ import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Font;
 
-import static javax.swing.BorderFactory.createLineBorder;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ImagesLegendWidget implements Widget {
@@ -161,7 +161,7 @@ class ImagesLegendWidget implements Widget {
     private static final int LEGEND_BORDER_SIZE = 2;
 
     private static void setLegendLabelBorderColor(LabelWidget label, Color color) {
-        label.getContent().setBorder(createLineBorder(color, LEGEND_BORDER_SIZE));
+        label.setBoxStyle(newBoxStyle().border(LEGEND_BORDER_SIZE, color));
     }
 
     //endregion

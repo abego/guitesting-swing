@@ -27,7 +27,6 @@ package org.abego.guitesting.swing.internal.util.widget;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.border.Border;
 
 public final class ImageWidget implements Widget {
     private final JLabel content = new JLabel();
@@ -43,9 +42,5 @@ public final class ImageWidget implements Widget {
 
     public void setImage(ImageIcon icon) {
         content.setIcon(icon);
-    }
-
-    public void setBorder(Border border) {
-        content.setBorder(border);
     }
 }

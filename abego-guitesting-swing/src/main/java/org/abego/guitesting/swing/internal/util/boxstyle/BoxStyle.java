@@ -32,7 +32,7 @@ import java.awt.Font;
 import static org.abego.guitesting.swing.internal.util.boxstyle.OneSide.oneSide;
 import static org.abego.guitesting.swing.internal.util.boxstyle.SideInfo.sideInfo;
 
-public class BoxStyle {
+public final class BoxStyle {
     //TODO: provide a method that returns only the attributes with non-default
     //  values, or that are not explicitly set to the default value, e.g. as
     //  a list of (key,value) pairs, with the keys as the string in CSS naming
@@ -49,7 +49,7 @@ public class BoxStyle {
     private final @Nullable Color color;
     private final @Nullable Font font;
 
-    public enum Style {
+    public enum BorderStyle {
         NONE,
         SOLID
     }
@@ -85,7 +85,7 @@ public class BoxStyle {
             return this;
         }
 
-        public Factory border(int size, Style style, Color color) {
+        public Factory border(int size, BorderStyle style, Color color) {
             borderTop(size, style, color);
             borderRight(size, style, color);
             borderBottom(size, style, color);
@@ -93,32 +93,52 @@ public class BoxStyle {
             return this;
         }
 
-        public Factory borderTop(int size, Style style, Color color) {
+        public Factory border(int size, Color color) {
+            return border(size, BorderStyle.SOLID, color);
+        }
+
+        public Factory borderTop(int size, BorderStyle style, Color color) {
             top.border = size;
             top.style = style;
             top.color = color;
             return this;
         }
 
-        public Factory borderRight(int size, Style style, Color color) {
+        public Factory borderTop(int size, Color color) {
+            return borderTop(size, BorderStyle.SOLID, color);
+        }
+
+        public Factory borderRight(int size, BorderStyle style, Color color) {
             right.border = size;
             right.style = style;
             right.color = color;
             return this;
         }
 
-        public Factory borderBottom(int size, Style style, Color color) {
+        public Factory borderRight(int size, Color color) {
+            return borderRight(size, BorderStyle.SOLID, color);
+        }
+
+        public Factory borderBottom(int size, BorderStyle style, Color color) {
             bottom.border = size;
             bottom.style = style;
             bottom.color = color;
             return this;
         }
 
-        public Factory borderLeft(int size, Style style, Color color) {
+        public Factory borderBottom(int size, Color color) {
+            return borderBottom(size, BorderStyle.SOLID, color);
+        }
+
+        public Factory borderLeft(int size, BorderStyle style, Color color) {
             left.border = size;
             left.style = style;
             left.color = color;
             return this;
+        }
+
+        public Factory borderLeft(int size, Color color) {
+            return borderLeft(size, BorderStyle.SOLID, color);
         }
 
         public Factory marginTop(int size) {

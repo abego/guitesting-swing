@@ -32,7 +32,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
 
-import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.BorderStyle.SOLID;
 
 
 final class BoxBorder extends EmptyBorder {

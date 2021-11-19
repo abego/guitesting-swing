@@ -24,14 +24,14 @@
 
 package org.abego.guitesting.swing.internal.util.boxstyle;
 
-import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style;
+import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.BorderStyle;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Color;
 
-class OneSide {
+final class OneSide {
     int border = 0;
-    Style style = Style.NONE;
+    BorderStyle style = BorderStyle.NONE;
     @Nullable Color color = null;
     int padding = 0;
     int margin = 0;
