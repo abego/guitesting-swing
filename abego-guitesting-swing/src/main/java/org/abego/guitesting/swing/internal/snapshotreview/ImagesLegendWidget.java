@@ -43,7 +43,7 @@ class ImagesLegendWidget implements Widget {
 
     //region State/Model
     private final PropService propService = PropServices.getDefault();
-    //region @Prop public Integer expectedImageIndex = 0
+    //region prop expectedImageIndex: Integer
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Integer> expectedImageIndexProp =
             propService.newProp(0, this, "expectedImageIndex");
@@ -62,7 +62,7 @@ class ImagesLegendWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color expectedBorderColor = Color.green
+    //region prop expectedBorderColor: Color = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> expectedBorderColorProp = propService.newProp(Color.green, this, "expectedBorderColor");
 
@@ -75,7 +75,7 @@ class ImagesLegendWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color actualBorderColor = Color.red
+    //region prop actualBorderColor: Color = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> actualBorderColorProp = propService.newProp(Color.red, this, "actualBorderColor");
 
@@ -88,7 +88,7 @@ class ImagesLegendWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color differenceBorderColor = Color.black
+    //region prop differenceBorderColor: Color  = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> differenceBorderColorProp = propService.newProp(Color.black, this, "differenceBorderColor");
 
@@ -131,7 +131,6 @@ class ImagesLegendWidget implements Widget {
     public void close() {
         bindings.close();
     }
-
 
     private void updateContent() {
         //TODO: make this class and ExpectedActualDifferenceImageWidget use
