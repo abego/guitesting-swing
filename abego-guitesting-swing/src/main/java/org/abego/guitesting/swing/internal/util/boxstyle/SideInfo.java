@@ -28,15 +28,16 @@ import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Color;
+import java.util.Objects;
 
-class OneSideValue {
+public final class SideInfo {
     final int border ;
     final Style style;
     final @Nullable Color color;
     final int padding;
     final int margin;
 
-    private OneSideValue(int border, Style style, @Nullable Color color, int padding, int margin) {
+    private SideInfo(int border, Style style, @Nullable Color color, int padding, int margin) {
         this.border = border;
         this.style = style;
         this.color = color;
@@ -44,19 +45,52 @@ class OneSideValue {
         this.margin = margin;
     }
 
-    private OneSideValue(OneSide oneSide) {
+    private SideInfo(OneSide oneSide) {
         this(oneSide.border, oneSide.style, oneSide.color, oneSide.padding, oneSide.margin);
     }
 
-    private OneSideValue() {
+    private SideInfo() {
         this(0, Style.NONE, null, 0, 0);
     }
 
-    public static OneSideValue oneSideValue(OneSide oneSide) {
-        return new OneSideValue(oneSide);
+    static SideInfo sideInfo(OneSide oneSide) {
+        return new SideInfo(oneSide);
     }
 
     public int totalSize() {
         return border + padding + margin;
+    }
+
+    public int getBorder() {
+        return border;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public int getPadding() {
+        return padding;
+    }
+
+    public int getMargin() {
+        return margin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SideInfo sideInfo = (SideInfo) o;
+        return border == sideInfo.border && padding == sideInfo.padding && margin == sideInfo.margin && style == sideInfo.style && Objects.equals(color, sideInfo.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(border, style, color, padding, margin);
     }
 }

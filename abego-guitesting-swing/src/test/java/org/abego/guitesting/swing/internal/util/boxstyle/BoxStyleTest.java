@@ -41,13 +41,14 @@ import static java.awt.Color.PINK;
 import static java.awt.Color.WHITE;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
-import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.style;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
+import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.applyStyle;
 
 class BoxStyleTest {
     private GT gt = GuiTesting.newGT();
 
     @Test
-    void smoketest() {
+    void applyStyleOK() {
         JPanel content = new JPanel();
         content.setBackground(WHITE);
         content.setPreferredSize(new Dimension(69, 33));
@@ -56,15 +57,13 @@ class BoxStyleTest {
         panel.setBackground(LIGHTER_GRAY);
         panel.add(content);
 
-        style()
+        applyStyle(panel, newBoxStyle()
                 .borderTop(1, SOLID, BLACK)
                 .borderLeft(5, SOLID, PINK)
                 .borderBottom(3, SOLID, ORANGE)
                 .borderRight(8, SOLID, GREEN)
                 .margin(3, 5, 2, 1)
-                .padding(2, 4, 6, 8)
-
-                .applyTo(panel);
+                .padding(2, 4, 6, 8));
 
         JFrame f = gt.showInFrameTitled("BoxStyle", panel);
         gt.waitUntilScreenshotMatchesSnapshot(panel);

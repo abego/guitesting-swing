@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util.boxstyle;
+package org.abego.guitesting.swing.internal.util.boxstyle.swing;
+
+import org.abego.guitesting.swing.internal.util.boxstyle.SideInfo;
 
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
@@ -34,12 +36,12 @@ import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.S
 
 
 final class BoxBorder extends EmptyBorder {
-    private OneSideValue top;
-    private OneSideValue left;
-    private OneSideValue bottom;
-    private OneSideValue right;
+    private SideInfo top;
+    private SideInfo left;
+    private SideInfo bottom;
+    private SideInfo right;
 
-    private BoxBorder(OneSideValue top, OneSideValue right, OneSideValue bottom, OneSideValue left) {
+    private BoxBorder(SideInfo top, SideInfo right, SideInfo bottom, SideInfo left) {
         super(top.totalSize(), left.totalSize(), bottom.totalSize(), right.totalSize());
         this.top = top;
         this.left = left;
@@ -47,7 +49,7 @@ final class BoxBorder extends EmptyBorder {
         this.right = right;
     }
 
-    static BoxBorder boxBorder(OneSideValue top, OneSideValue right, OneSideValue bottom, OneSideValue left) {
+    static BoxBorder boxBorder(SideInfo top, SideInfo right, SideInfo bottom, SideInfo left) {
         return new BoxBorder(top, right, bottom, left);
     }
 
@@ -58,21 +60,21 @@ final class BoxBorder extends EmptyBorder {
 
         // drow the border in this order: left, right, top, bottom
         // this way the horizontal lines "overwrite" the vertical lines
-        if (left.color != null && left.style == SOLID) {
-            g.setColor(left.color);
-            g.fillRect(left.margin, top.margin, left.border, height - top.margin - bottom.margin);
+        if (left.getColor() != null && left.getStyle() == SOLID) {
+            g.setColor(left.getColor());
+            g.fillRect(left.getMargin(), top.getMargin(), left.getBorder(), height - top.getMargin() - bottom.getMargin());
         }
-        if (right.color != null && right.style == SOLID) {
-            g.setColor(right.color);
-            g.fillRect(width - right.margin-right.border, top.margin, right.border, height - top.margin - bottom.margin);
+        if (right.getColor() != null && right.getStyle() == SOLID) {
+            g.setColor(right.getColor());
+            g.fillRect(width - right.getMargin()-right.getBorder(), top.getMargin(), right.getBorder(), height - top.getMargin() - bottom.getMargin());
         }
-        if (top.color != null && top.style == SOLID) {
-            g.setColor(top.color);
-            g.fillRect(left.margin, top.margin, width - left.margin - right.margin, top.border);
+        if (top.getColor() != null && top.getStyle() == SOLID) {
+            g.setColor(top.getColor());
+            g.fillRect(left.getMargin(), top.getMargin(), width - left.getMargin() - right.getMargin(), top.getBorder());
         }
-        if (bottom.color != null && bottom.style == SOLID) {
-            g.setColor(bottom.color);
-            g.fillRect(left.margin, height - bottom.margin - bottom.border, width - left.margin - right.margin, bottom.border);
+        if (bottom.getColor() != null && bottom.getStyle() == SOLID) {
+            g.setColor(bottom.getColor());
+            g.fillRect(left.getMargin(), height - bottom.getMargin() - bottom.getBorder(), width - left.getMargin() - right.getMargin(), bottom.getBorder());
         }
         g.translate(-x, -y);
         g.setColor(oldColor);

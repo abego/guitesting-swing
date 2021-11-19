@@ -24,20 +24,21 @@
 
 package org.abego.guitesting.swing.internal.util.boxstyle;
 
-import javax.swing.JComponent;
+import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Color;
 
-import static org.abego.guitesting.swing.internal.util.boxstyle.BoxBorder.boxBorder;
 import static org.abego.guitesting.swing.internal.util.boxstyle.OneSide.oneSide;
-import static org.abego.guitesting.swing.internal.util.boxstyle.OneSideValue.oneSideValue;
+import static org.abego.guitesting.swing.internal.util.boxstyle.SideInfo.sideInfo;
 
 public class BoxStyle {
 
-    private final OneSideValue top;
-    private final OneSideValue right;
-    private final OneSideValue bottom;
-    private final OneSideValue left;
+    private final SideInfo top;
+    private final SideInfo right;
+    private final SideInfo bottom;
+    private final SideInfo left;
+    private final @Nullable Color background;
+    private final @Nullable Color color;
 
     public enum Style {
         NONE,
@@ -50,15 +51,23 @@ public class BoxStyle {
         private OneSide right = oneSide();
         private OneSide bottom = oneSide();
         private OneSide left = oneSide();
+        private @Nullable Color background;
+        private @Nullable Color color;
 
         private Factory() {}
 
         public BoxStyle create() {
-            return new BoxStyle(top, right, bottom, left);
+            return new BoxStyle(top, right, bottom, left, background, color);
         }
 
-        public void applyTo(JComponent component) {
-            create().applyTo(component);
+        public Factory background(Color color) {
+            this.background = color;
+            return this;
+        }
+
+        public Factory color(Color color) {
+            this.color = color;
+            return this;
         }
 
         public Factory border(int size, Style style, Color color) {
@@ -190,20 +199,44 @@ public class BoxStyle {
         }
     }
 
-    private BoxStyle(OneSide top, OneSide right, OneSide bottom, OneSide left) {
-        this.top = oneSideValue(top);
-        this.left = oneSideValue(left);
-        this.bottom = oneSideValue(bottom);
-        this.right = oneSideValue(right);
+    private BoxStyle(OneSide top, OneSide right, OneSide bottom, OneSide left, @Nullable Color background, @Nullable Color color) {
+        this.top = sideInfo(top);
+        this.left = sideInfo(left);
+        this.bottom = sideInfo(bottom);
+        this.right = sideInfo(right);
+        this.background = background;
+        this.color = color;
     }
 
-    public static Factory style() {
+    public static Factory newBoxStyle() {
         return new Factory();
     }
 
-    //TODO: no dependency to JComponent in BoxStyle (is more generic)
-    //  (BoxBorder knows about both JComponent and BoxStyle)
-    public void applyTo(JComponent component) {
-        component.setBorder(boxBorder(top, right, bottom, left));
+    @Nullable
+    public Color getBackground() {
+        return background;
     }
+
+    @Nullable
+    public Color getColor() {
+        return color;
+    }
+
+    public SideInfo getTop() {
+        return top;
+    }
+
+    public SideInfo getRight() {
+        return right;
+    }
+
+    public SideInfo getBottom() {
+        return bottom;
+    }
+
+    public SideInfo getLeft() {
+        return left;
+    }
+
+
 }

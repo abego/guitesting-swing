@@ -63,7 +63,8 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListM
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
-import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.style;
+import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
+import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.applyStyle;
 import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
@@ -294,9 +295,11 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
-        style().padding(5, 0)
-                .borderBottom(1, SOLID, LIGHTER_GRAY).applyTo(titleBar.getContent());
-        style().borderBottom(1, SOLID, LIGHTER_GRAY).applyTo(toolbar.getContent());
+        applyStyle(titleBar.getContent(), newBoxStyle()
+                .padding(5, 0)
+                .borderBottom(1, SOLID, LIGHTER_GRAY));
+        applyStyle(toolbar.getContent(), newBoxStyle()
+                .borderBottom(1, SOLID, LIGHTER_GRAY));
     }
 
     //endregion
