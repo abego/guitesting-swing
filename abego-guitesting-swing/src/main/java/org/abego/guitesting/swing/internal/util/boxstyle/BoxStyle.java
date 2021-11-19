@@ -41,6 +41,21 @@ public final class BoxStyle {
     //  approach we would have to set all attributes of all theses objects,
     //  even if most of them are the same as their already set default value.
 
+    //TODO: try different approach: any attribute is optional/Nullable.
+    //  The target defines the defaults for null-value attributes.
+    //  When assigning a BoxStyle bs to a target t only those BoxStyle
+    //  attributes of t are modified that are non-null in bs.
+    //  E.g. initially set border color and size of a component to 2 and red.
+    //  Later create BoxStyle instances that only define the border color.
+    //  Assigning these new instances to the component will only change the
+    //  border color, but the size will be left unchanged to 2.
+    //  (see ImagesLegendWidget for a possible application of this behaviour)
+
+    // TODO:
+    //  This "nullable" approach can also used to implement some "inherit"
+    //  behaviour: when an attribute is not defined find the first BoxStyle "in
+    //  the inheritance" that defines the attribute and use it (if defined)
+
     private final SideInfo top;
     private final SideInfo right;
     private final SideInfo bottom;
@@ -294,6 +309,4 @@ public final class BoxStyle {
     public SideInfo getLeft() {
         return left;
     }
-
-
 }
