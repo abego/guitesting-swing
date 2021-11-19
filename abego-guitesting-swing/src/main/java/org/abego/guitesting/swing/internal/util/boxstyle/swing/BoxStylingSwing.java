@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 
 import java.awt.Color;
 
+import static java.awt.Transparency.BITMASK;
 import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxBorder.boxBorder;
 
 public class BoxStylingSwing {
@@ -44,8 +45,11 @@ public class BoxStylingSwing {
         }
 
         @Nullable Color bg = style.getBackground();
-        if (bg != null) {
+        if (bg != null && bg.getTransparency() != BITMASK) {
+            component.setOpaque(true);
             component.setBackground(bg);
+        } else {
+            component.setOpaque(false);
         }
     }
 
