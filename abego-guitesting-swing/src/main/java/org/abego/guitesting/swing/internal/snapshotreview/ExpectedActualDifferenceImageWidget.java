@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
+import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -38,7 +39,6 @@ import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,16 +47,25 @@ import java.awt.Rectangle;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 
+    /**
+     * the GAP between an (bordered) image and the image right to it.
+     */
+    private final static int GAP = 5;
+
+    /**
+     * the extra PADDING around the (bordered) images
+     */
+    private final static int PADDING = 5;
+
     //region State/Model
     private final PropService propService = PropServices.getDefault();
-    //region @Prop public Boolean shrinkToFit = FALSE
+    //region prop shrinkToFit: Boolean
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp =
             propService.newProp(FALSE, this, "shrinkToFit");
@@ -73,24 +82,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     public Prop<Boolean> getShrinkToFitProp() {return shrinkToFitProp;}
 
     //endregion
-    //region @Prop private @Nullable SnapshotImages snapshotImages
-    private final PropComputedNullable<SnapshotImages> snapshotImagesProp =
-            propService.newPropComputedNullable(this::getSnapshotImages);
-
-    private @Nullable SnapshotImages getSnapshotImages(DependencyCollector collector) {
-        @Nullable SnapshotIssue issue = snapshotIssueProp.get(collector);
-        if (issue == null) {
-            return null;
-        }
-        return snapshotImages(issue, imagesAreaProp.get(collector));
-    }
-
-    private @Nullable SnapshotImages getSnapshotImages() {
-        return snapshotImagesProp.get();
-    }
-    //endregion
-
-    //region @Prop public @Nullable SnapshotIssue snapshotIssue
+    //region prop snapshotIssue: SnapshotIssue?
     private final PropNullable<SnapshotIssue> snapshotIssueProp =
             propService.newPropNullable(null, this, "snapshotIssue");
 
@@ -108,7 +100,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Integer expectedImageIndex = 0
+    //region prop expectedImageIndex: Integer
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Integer> expectedImageIndexProp =
             propService.newProp(0, this, "expectedImageIndex");
@@ -127,7 +119,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color expectedBorderColor = Color.green
+    //region prop expectedBorderColor: Color = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> expectedBorderColorProp =
             propService.newProp(Color.green, this, "expectedBorderColor");
@@ -145,7 +137,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color actualBorderColor = Color.red
+    //region prop actualBorderColorColor: Color = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> actualBorderColorProp =
             propService.newProp(Color.red, this, "actualBorderColor");
@@ -163,7 +155,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color differenceBorderColor = Color.black
+    //region prop differenceBorderColor: Color = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> differenceBorderColorProp =
             propService.newProp(Color.black, this, "differenceBorderColor");
@@ -181,9 +173,9 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region @Prop public Color differenceBorderColor = Color.black
+    //region prop imagesArea: Dimension {calcImagesArea()}
     private final PropComputedNullable<Dimension> imagesAreaProp =
-            propService.newPropComputedNullable(this::calcImagesArea);
+            propService.newPropComputedNullable(this::calcImagesArea,this, "imagesArea");
 
     @Nullable
     private Dimension getImagesArea() {
@@ -201,10 +193,10 @@ class ExpectedActualDifferenceImageWidget implements Widget {
             // from the full avaiable visible rect calculate how large is
             // the area available for the images. To do so we need to subtract
             // - the border around the images (of size BORDER_SIZE),
-            // - the space between an (bordered) image and the image right to it,
-            // - the extra "padding" around the (bordered) images.
-            int w = visibleRect.width - 4 * DEFAULT_FLOW_GAP - 6 * BORDER_SIZE;
-            int h = visibleRect.height - 2 * DEFAULT_FLOW_GAP - 2 * BORDER_SIZE;
+            // - the extra PADDING around the (bordered) images,
+            // - the GAP between an (bordered) image and the image right to it.
+            int w = visibleRect.width - 2 * PADDING - 2 * GAP - 6 * BORDER_SIZE;
+            int h = visibleRect.height - 2 * PADDING - 2 * BORDER_SIZE;
 
             // to avoid weird effects make sure the dimension is not below
             // a certain size (MIN_IMAGE_SIZE each side)
@@ -214,6 +206,22 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         }
     }
 
+    //endregion
+    //region private prop snapshotImages : SnapshotImages?
+    private final PropComputedNullable<SnapshotImages> snapshotImagesProp =
+            propService.newPropComputedNullable(this::getSnapshotImages);
+
+    private @Nullable SnapshotImages getSnapshotImages(DependencyCollector collector) {
+        @Nullable SnapshotIssue issue = snapshotIssueProp.get(collector);
+        if (issue == null) {
+            return null;
+        }
+        return snapshotImages(issue, imagesAreaProp.get(collector));
+    }
+
+    private @Nullable SnapshotImages getSnapshotImages() {
+        return snapshotImagesProp.get();
+    }
     //endregion
     //endregion
     //region Components
@@ -228,13 +236,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private ExpectedActualDifferenceImageWidget() {
-        // layout
-        contentWidget.addAll(imageWidgets);
-        // style
-        contentWidget.setBoxStyle(newBoxStyle()
-                .padding(DEFAULT_FLOW_GAP, 0));
-        // bindings
+        layoutComponents();
+        styleComponents();
         initBinding();
+    }
+
+    private void layoutComponents() {
+        contentWidget.addAll(imageWidgets);
     }
 
     //endregion
@@ -249,35 +257,38 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private static final int MIN_IMAGE_SIZE = 16;
+    private static final int BORDER_SIZE = 3;
 
-    private void updateContentLabels() {
+    private void updateImageWidgets() {
         @Nullable SnapshotImages images = getSnapshotImages();
         if (images != null) {
-            setIconAndLinedBorder(
-                    imageWidgets[(getExpectedImageIndex()) % 3],
-                    images.getExpectedImage(),
-                    getExpectedBorderColor());
-            setIconAndLinedBorder(
-                    imageWidgets[(getExpectedImageIndex() + 1) % 3],
-                    images.getActualImage(),
-                    getActualBorderColor());
-            setIconAndLinedBorder(
-                    imageWidgets[(getExpectedImageIndex() + 2) % 3],
-                    images.getDifferenceImage(),
-                    getDifferenceBorderColor());
+            ImageWidget expected = imageWidgets[(getExpectedImageIndex()) % 3];
+            expected.setImage(images.getExpectedImage());
+            expected.setBoxStyle(borderWithColor(getExpectedBorderColor()));
+
+            ImageWidget actual = imageWidgets[(getExpectedImageIndex() + 1) % 3];
+            actual.setImage(images.getActualImage());
+            actual.setBoxStyle(borderWithColor(getActualBorderColor()));
+
+            ImageWidget diff = imageWidgets[(getExpectedImageIndex() + 2) % 3];
+            diff.setImage(images.getDifferenceImage());
+            diff.setBoxStyle(borderWithColor(getDifferenceBorderColor()));
         }
 
         WidgetUtil.setVisible(images != null, imageWidgets);
     }
 
-    private static void setIconAndLinedBorder(ImageWidget imageWidget, ImageIcon icon, Color borderColor) {
-        imageWidget.setImage(icon);
-        imageWidget.setBoxStyle(newBoxStyle().border(BORDER_SIZE, borderColor));
+    private static BoxStyle.Factory borderWithColor(Color color) {
+        return newBoxStyle().border(BORDER_SIZE, color);
     }
 
     //endregion
     //region Style related
-    private static final int BORDER_SIZE = 3;
+    private void styleComponents() {
+        contentWidget.setBoxStyle(newBoxStyle()
+                .padding(GAP, 0));
+    }
+
     //endregion Style
     //region Binding related
     private final Bindings bindings = propService.newBindings();
@@ -286,7 +297,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         onComponentResized(contentWidget.getContent(),
                 e -> getImagesAreaProp().compute());
 
-        bindings.bindSwingCode(this::updateContentLabels,
+        bindings.bindSwingCode(this::updateImageWidgets,
                 snapshotImagesProp,
                 expectedImageIndexProp,
                 expectedBorderColorProp,
