@@ -39,7 +39,6 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import java.awt.Color;
@@ -52,12 +51,10 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.ListCellRendererForTextProvider.newListCellRendererForTextProvider;
 
@@ -260,25 +257,5 @@ public final class SwingUtil {
 
         return jPanel;
     }
-    //endregion
-    //region Layout related
-    //TODO: do we need this? or use HStackWidget?
-
-    public static JComponent flow(int align, int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
-        JPanel result = new JPanel(new FlowLayout(align, hgap, vgap));
-        result.setOpaque(false);
-        initCode.accept(result);
-        addAll(result, components);
-        return result;
-    }
-
-    public static JComponent flowLeft(int hgap, int vgap, Consumer<JComponent> initCode, Component... components) {
-        return flow(FlowLayout.LEADING, hgap, vgap, initCode, components);
-    }
-
-    public static JComponent flowLeft(int hgap, int vgap, Component... components) {
-        return flowLeft(hgap, vgap, p -> {}, components);
-    }
-
     //endregion
 }

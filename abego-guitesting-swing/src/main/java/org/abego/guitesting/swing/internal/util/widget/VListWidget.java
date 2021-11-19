@@ -42,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -49,8 +51,8 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
+import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.flowLeft;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
@@ -213,12 +215,18 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region Layout related
+    private static JComponent hGroup(Component... components) {
+        JPanel result = new JPanel(new FlowLayout(FlowLayout.LEADING, DEFAULT_FLOW_GAP, 0));
+        result.setOpaque(false);
+        addAll(result, components);
+        return result;
+    }
+
     private void layoutComponents() {
+        //TODO: looks like this could use "toolbarButtons"?!
         bordered(topBar)
-                .left(flowLeft(DEFAULT_FLOW_GAP, 0, titleLabel)) //NON-NLS
-                .right(flowLeft(DEFAULT_FLOW_GAP, 0,
-                        previousItemButton,
-                        nextItemButton));
+                .left(hGroup(titleLabel))
+                .right(hGroup(previousItemButton, nextItemButton));
 
         bordered(content)
                 .top(topBar)
