@@ -223,10 +223,19 @@ public final class BoxStyle {
             bottom.padding = size;
             return this;
         }
+        public Factory paddingTopBottom(int size) {
+            paddingTop(size);
+            return paddingBottom(size);
+        }
 
         public Factory paddingLeft(int size) {
             left.padding = size;
             return this;
+        }
+
+        public Factory paddingLeftRight(int size) {
+            paddingLeft(size);
+            return paddingRight(size);
         }
 
         public Factory padding(int size) {

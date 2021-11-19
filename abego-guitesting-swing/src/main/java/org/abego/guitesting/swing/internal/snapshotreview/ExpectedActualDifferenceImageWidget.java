@@ -33,6 +33,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropComputedNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.BorderedWidget;
 import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.ImageWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
@@ -49,19 +50,10 @@ import static java.lang.Math.max;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.snapshotImages;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
+import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
-
-    /**
-     * the GAP between an (bordered) image and the image right to it.
-     */
-    private final static int GAP = 5;
-
-    /**
-     * the extra PADDING around the (bordered) images
-     */
-    private final static int PADDING = 5;
 
     //region State/Model
     private final PropService propService = PropServices.getDefault();
@@ -227,7 +219,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Components
     private final ImageWidget[] imageWidgets =
             new ImageWidget[]{new ImageWidget(), new ImageWidget(), new ImageWidget()};
-    private final HStackWidget contentWidget = hStackWidget();
+    private final HStackWidget threeImages = hStackWidget();
+    private final BorderedWidget contentWidget = borderedWidget();
 
     //endregion
     //region Construction
@@ -242,7 +235,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     private void layoutComponents() {
-        contentWidget.addAll(imageWidgets);
+        threeImages.setItems(imageWidgets);
+        contentWidget.center(threeImages);
     }
 
     //endregion
@@ -284,9 +278,20 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //endregion
     //region Style related
+    /**
+     * the GAP between an (bordered) image and the image right to it.
+     */
+    private final static int GAP = 5;
+
+    /**
+     * the extra PADDING around the (bordered) images
+     */
+    private final static int PADDING = 5;
+
     private void styleComponents() {
-        contentWidget.setBoxStyle(newBoxStyle()
-                .padding(GAP, 0));
+        threeImages.setBoxStyle(newBoxStyle()
+                .padding(PADDING)
+                .background(Color.WHITE));
     }
 
     //endregion Style

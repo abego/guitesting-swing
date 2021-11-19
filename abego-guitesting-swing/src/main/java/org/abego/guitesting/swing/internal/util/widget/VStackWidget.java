@@ -24,22 +24,19 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Collection;
 
 import static java.awt.GridBagConstraints.REMAINDER;
 
-public final class VStackWidget implements Widget {
-    private final JComponent content = new JPanel(new GridBagLayout());
+public class VStackWidget implements Widget {
+    protected final JComponent content = new JPanel(new GridBagLayout());
 
-    private VStackWidget() {
+    protected VStackWidget() {
         styleComponents();
     }
 
@@ -50,7 +47,7 @@ public final class VStackWidget implements Widget {
 
     public static VStackWidget vStackWidget(Widget... widgets) {
         VStackWidget newWidget = new VStackWidget();
-        newWidget.addAll(widgets);
+        newWidget.setItems(widgets);
         return newWidget;
     }
 
@@ -63,25 +60,49 @@ public final class VStackWidget implements Widget {
     public void close() {
     }
 
-    public void addAll(Collection<Widget> widgets) {
-        addAll(widgets.toArray(new Widget[0]));
+    public void setItems(Collection<Widget> widgets) {
+        setItems(widgets.toArray(new Widget[0]));
     }
 
-    public void addAll(Widget... widgets) {
+    public void setItems(Widget... widgets) {
         content.removeAll();
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridwidth = REMAINDER;
-        for (Widget w : widgets) {
-            content.add(w.getContent(),constraints);
+        int n = widgets.length;
+
+        // add all but the last item (use the same constraints))
+        GridBagConstraints constraints = getItemConstraints();
+        for (int i = 0; i < n - 1; i++) {
+            content.add(widgets[i].getContent(), constraints);
         }
-        // add an extra element as a filler taking all remaining extra space
-        // (adding a JLabel is fine as it takes no space when text is empty)a
-        constraints.weighty = 1;
-        content.add(new JLabel(), constraints);
+        // add the last item (may need special constraints)
+        if (n > 0) {
+            content.add(widgets[n - 1].getContent(), getLastItemConstraints());
+        }
+
+        // add extra elements as a filler taking all remaining extra space
+        addFillers();
 
         // We need to do an explicit repaint as in certain settings areas are
-        // not atomatically repainted when the widgets "shrinks", occupies
-        // less space as before
+        // not atomatically repainted when the widgets "shrinks", i.e. occupies
+        // less space as before.
         content.repaint();
+        content.revalidate();
     }
+
+    protected GridBagConstraints getItemConstraints() {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridwidth = REMAINDER;
+        return constraints;
+    }
+
+    protected GridBagConstraints getLastItemConstraints() {
+        return getItemConstraints();
+    }
+
+    protected void addFillers() {
+        // (adding a JLabel is fine as it takes no space when text is empty)
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.weighty = 1;
+        content.add(new JLabel(), constraints);
+    }
+
 }

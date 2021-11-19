@@ -24,48 +24,46 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.FlowLayout;
+import javax.swing.JLabel;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
-public final class HStackWidget implements Widget {
-    //TODO: for now use FlowLayout as an approximation of an HStack
-    //TODO: Rewrite. See VStackWidget
-    private final JPanel content =
-            new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-
-    private HStackWidget() {
-        styleComponents();
-    }
-
-    private void styleComponents() {
-        content.setOpaque(false);
-        content.setBorder(null);
-    }
+public class HStackWidget extends VStackWidget {
 
     public static HStackWidget hStackWidget(Widget... widgets) {
-        HStackWidget hStackWidget = new HStackWidget();
-        hStackWidget.addAll(widgets);
-        return hStackWidget;
+        HStackWidget newWidget = new HStackWidget();
+        newWidget.setItems(widgets);
+        return newWidget;
     }
 
     @Override
-    public JComponent getContent() {
-        return content;
+    protected GridBagConstraints getItemConstraints() {
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        //TODO: make hard-coded "5" the "spacing" attribute
+        gridBagConstraints.insets = new Insets(0,0,0,5);
+        return gridBagConstraints;
     }
 
     @Override
-    public void close() {
+    protected GridBagConstraints getLastItemConstraints() {
+        return new GridBagConstraints();
     }
 
-    //TODO: remove this? see VStackWidget
-    public void add(Widget widget) {
-        content.add(widget.getContent());
+    protected void addFillers() {
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        // add a filler to fill all space right to the last item
+        // (adding a JLabel is fine as it takes no space when text is empty)
+        constraints.weightx = 1;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        content.add(new JLabel(), constraints);
+
+        // add a filler to fill all space belowo the items
+        constraints.weighty = 1;
+        content.add(new JLabel(), constraints);
     }
 
-    public void addAll(Widget... widgets) {
-        for (Widget w: widgets) {
-            add(w);
-        }
-    }
+
+
+
 }

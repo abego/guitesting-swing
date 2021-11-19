@@ -294,10 +294,13 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
+        imagesLegend.setBoxStyle(newBoxStyle()
+                .paddingLeftRight(5));
         titleBar.setBoxStyle(newBoxStyle()
-                .padding(5, 0)
+                .padding(5)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
         toolbar.setBoxStyle(newBoxStyle()
+                .paddingLeftRight(5)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
     }
 
@@ -307,8 +310,8 @@ class SnapshotReviewWidget implements Widget {
     private HStackWidget toolbar = hStackWidget();
 
     private void layoutComponents() {
-        titleBar.add(selectedIssueDescriptionLabel);
-        toolbar.addAll(
+        titleBar.setItems(selectedIssueDescriptionLabel);
+        toolbar.setItems(
                 overwriteButton,
                 addAlternativeButton,
                 ignoreButton,

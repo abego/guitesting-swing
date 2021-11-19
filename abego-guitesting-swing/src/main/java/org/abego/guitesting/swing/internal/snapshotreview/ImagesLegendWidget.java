@@ -35,6 +35,8 @@ import org.abego.guitesting.swing.internal.util.widget.Widget;
 import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
@@ -109,7 +111,7 @@ class ImagesLegendWidget implements Widget {
     private final LabelWidget[] labels = new LabelWidget[]{
             expectedLabel, actualLabel, differenceLabel
     };
-    private final HStackWidget contentWiget = hStackWidget();
+    private final HStackWidget contentWidget = hStackWidget();
 
     //endregion
     //region Construction
@@ -125,7 +127,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region Widget related
     public JComponent getContent() {
-        return contentWiget.getContent();
+        return contentWidget.getContent();
     }
 
     public void close() {
@@ -135,13 +137,11 @@ class ImagesLegendWidget implements Widget {
     private void updateContent() {
         //TODO: make this class and ExpectedActualDifferenceImageWidget use
         // same approach to define and update the content
-        JComponent content = contentWiget.getContent();
-        //TODO make this part of HStackWidget?
-        content.removeAll();
-        content.add(labels[(3 - getExpectedImageIndex()) % 3].getContent());
-        content.add(labels[(4 - getExpectedImageIndex()) % 3].getContent());
-        content.add(labels[(5 - getExpectedImageIndex()) % 3].getContent());
-        content.validate();
+        List<Widget> items = new ArrayList<>();
+        items.add(labels[(3 - getExpectedImageIndex()) % 3]);
+        items.add(labels[(4 - getExpectedImageIndex()) % 3]);
+        items.add(labels[(5 - getExpectedImageIndex()) % 3]);
+        contentWidget.setItems(items);
     }
 
     private static LabelWidget legendLabel(String title) {

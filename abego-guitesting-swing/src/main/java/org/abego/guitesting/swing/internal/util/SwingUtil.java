@@ -247,6 +247,7 @@ public final class SwingUtil {
     public static JScrollPane scrollingNoBorder(JComponent component) {
         return scrolling(component, c -> c.setBorder(null));
     }
+
     //endregion
     //region Special JComponents
     public static JComponent separatorBar() {

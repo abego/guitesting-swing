@@ -133,7 +133,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
                 label.setBoxStyle(BULLET_STYLE);
                 items.add(label);
             }
-            contentWidget.addAll(items);
+            contentWidget.setItems(items);
         }
     }
     //endregion
