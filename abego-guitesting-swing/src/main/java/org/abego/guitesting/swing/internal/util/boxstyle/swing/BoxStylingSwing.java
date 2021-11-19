@@ -40,12 +40,12 @@ public class BoxStylingSwing {
         component.setBorder(boxBorder(style.getTop(),
                 style.getRight(), style.getBottom(), style.getLeft()));
 
-        @Nullable Color color = style.getColor();
+        @Nullable Color color = style.getColorOrNull();
         if (color != null) {
             component.setForeground(color);
         }
 
-        @Nullable Color bg = style.getBackground();
+        @Nullable Color bg = style.getBackgroundOrNull();
         if (bg != null && bg.getTransparency() != BITMASK) {
             component.setOpaque(true);
             component.setBackground(bg);
@@ -53,9 +53,14 @@ public class BoxStylingSwing {
             component.setOpaque(false);
         }
 
-        @Nullable Font font = style.getFont();
+        @Nullable Font font = style.getFontOrNull();
         if (font != null) {
             component.setFont(font);
+        }
+
+        @Nullable Boolean visible = style.getVisibleOrNull();
+        if (visible != null) {
+            component.setVisible(visible);
         }
     }
 
