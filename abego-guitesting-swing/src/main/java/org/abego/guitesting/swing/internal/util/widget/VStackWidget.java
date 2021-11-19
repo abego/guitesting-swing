@@ -24,17 +24,22 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Collection;
 
-public final class HStackWidget implements Widget {
-    //TODO: for now use FlowLayout as an approximation of an HStack
-    //TODO: Rewrite. See VStackWidget
-    private final JPanel content =
-            new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+import static java.awt.GridBagConstraints.REMAINDER;
 
-    private HStackWidget() {
+public final class VStackWidget implements Widget {
+    private final JComponent content = new JPanel(new GridBagLayout());
+
+    private VStackWidget() {
         styleComponents();
     }
 
@@ -43,10 +48,10 @@ public final class HStackWidget implements Widget {
         content.setBorder(null);
     }
 
-    public static HStackWidget hStackWidget(Widget... widgets) {
-        HStackWidget hStackWidget = new HStackWidget();
-        hStackWidget.addAll(widgets);
-        return hStackWidget;
+    public static VStackWidget vStackWidget(Widget... widgets) {
+        VStackWidget newWidget = new VStackWidget();
+        newWidget.addAll(widgets);
+        return newWidget;
     }
 
     @Override
@@ -58,14 +63,25 @@ public final class HStackWidget implements Widget {
     public void close() {
     }
 
-    //TODO: remove this? see VStackWidget
-    public void add(Widget widget) {
-        content.add(widget.getContent());
+    public void addAll(Collection<Widget> widgets) {
+        addAll(widgets.toArray(new Widget[0]));
     }
 
     public void addAll(Widget... widgets) {
-        for (Widget w: widgets) {
-            add(w);
+        content.removeAll();
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridwidth = REMAINDER;
+        for (Widget w : widgets) {
+            content.add(w.getContent(),constraints);
         }
+        // add an extra element as a filler taking all remaining extra space
+        // (adding a JLabel is fine as it takes no space when text is empty)a
+        constraints.weighty = 1;
+        content.add(new JLabel(), constraints);
+
+        // We need to do an explicit repaint as in certain settings areas are
+        // not atomatically repainted when the widgets "shrinks", occupies
+        // less space as before
+        content.repaint();
     }
 }

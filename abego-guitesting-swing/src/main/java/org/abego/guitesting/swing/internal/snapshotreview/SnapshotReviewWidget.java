@@ -28,6 +28,7 @@ import org.abego.commons.seq.Seq;
 import org.abego.commons.seq.SeqUtil;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -64,7 +65,6 @@ import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBec
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
-import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.applyStyle;
 import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
@@ -295,10 +295,10 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
-        applyStyle(titleBar.getContent(), newBoxStyle()
+        titleBar.setBoxStyle(newBoxStyle()
                 .padding(5, 0)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
-        applyStyle(toolbar.getContent(), newBoxStyle()
+        toolbar.setBoxStyle(newBoxStyle()
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
     }
 

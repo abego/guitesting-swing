@@ -24,22 +24,25 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
+import org.abego.guitesting.swing.internal.util.widget.VStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
 import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.label;
+import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
+import static org.abego.guitesting.swing.internal.util.widget.VStackWidget.vStackWidget;
 
 class SnapshotVariantsIndicatorWidget implements Widget {
     //region State/Model
@@ -65,7 +68,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    private final JComponent content = new JPanel();
+    private final VStackWidget contentWidget = vStackWidget();
 
     //endregion
     //region Construction
@@ -83,7 +86,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     //region Widget related
     @Override
     public JComponent getContent() {
-        return content;
+        return contentWidget.getContent();
     }
 
     public void close() {
@@ -94,19 +97,20 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     //region Style related
     private static final int BULLET_SIZE = 24;
     private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
+    private static final BoxStyle BULLET_STYLE = BoxStyle.newBoxStyle().font(BULLET_FONT).create();
 
     private void styleComponents() {
-        content.setOpaque(true);
-        content.setBackground(Color.white);
+        contentWidget.setBoxStyle(BoxStyle.newBoxStyle()
+                .background(Color.WHITE));
     }
 
     //endregion
     //region Layout related
     private void layoutComponents() {
-        content.setLayout(new FlowLayout(FlowLayout.LEADING, DEFAULT_FLOW_GAP, 0));
-        // make the panel so small only one bullet fits into the row,
-        // so the bullets are stacked vertically
-        content.setPreferredSize(new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
+        // give the widget a fixed preferred width so the indicator does not
+        // collapse when there are no items in the list.
+        contentWidget.getContent().setPreferredSize(
+                new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
     }
 
     //endregion
@@ -118,17 +122,18 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     }
 
     private void updateContent() {
-        content.removeAll();
         @Nullable SnapshotVariant info = getVariantsInfo();
         if (info != null) {
             int n = info.getVariantsCount();
             int sel = info.getVariantsIndex();
+            List<Widget> items = new ArrayList<>();
             for (int i = 0; n > 1 && i < n; i++) {
-                content.add(
-                        label(i == sel ? "●" : "○", c -> c.setFont(BULLET_FONT)));
+                LabelWidget label = labelWidget();
+                label.setText(i == sel ? "●" : "○");
+                label.setBoxStyle(BULLET_STYLE);
+                items.add(label);
             }
-            content.repaint();
-            content.revalidate();
+            contentWidget.addAll(items);
         }
     }
     //endregion

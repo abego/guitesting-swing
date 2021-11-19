@@ -24,6 +24,9 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
+import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle;
+import org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing;
+
 import javax.swing.JComponent;
 import java.awt.Rectangle;
 
@@ -36,4 +39,11 @@ public interface Widget {
         return getContent().getVisibleRect();
     }
 
+    default void setBoxStyle(BoxStyle style) {
+        BoxStylingSwing.setBoxStyle(getContent(), style);
+    }
+
+    default void setBoxStyle(BoxStyle.Factory styleFactory) {
+        BoxStylingSwing.setBoxStyle(getContent(), styleFactory);
+    }
 }

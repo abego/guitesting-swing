@@ -30,12 +30,13 @@ import org.eclipse.jdt.annotation.Nullable;
 import javax.swing.JComponent;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import static java.awt.Transparency.BITMASK;
 import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxBorder.boxBorder;
 
 public class BoxStylingSwing {
-    public static void applyStyle(JComponent component, BoxStyle style) {
+    public static void setBoxStyle(JComponent component, BoxStyle style) {
         component.setBorder(boxBorder(style.getTop(),
                 style.getRight(), style.getBottom(), style.getLeft()));
 
@@ -51,9 +52,14 @@ public class BoxStylingSwing {
         } else {
             component.setOpaque(false);
         }
+
+        @Nullable Font font = style.getFont();
+        if (font != null) {
+            component.setFont(font);
+        }
     }
 
-    public static void applyStyle(JComponent component, BoxStyle.Factory styleFactory) {
-        applyStyle(component, styleFactory.create());
+    public static void setBoxStyle(JComponent component, BoxStyle.Factory styleFactory) {
+        setBoxStyle(component, styleFactory.create());
     }
 }

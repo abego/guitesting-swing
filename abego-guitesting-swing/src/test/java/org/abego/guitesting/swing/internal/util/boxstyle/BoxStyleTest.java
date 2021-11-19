@@ -42,13 +42,14 @@ import static java.awt.Color.WHITE;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.Style.SOLID;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
-import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.applyStyle;
+import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.setBoxStyle;
 
+//TODO: move to ...Swing
 class BoxStyleTest {
     private GT gt = GuiTesting.newGT();
 
     @Test
-    void applyStyleOK() {
+    void setBoxStyleOK() {
         JPanel content = new JPanel();
         content.setBackground(WHITE);
         content.setPreferredSize(new Dimension(69, 33));
@@ -57,7 +58,7 @@ class BoxStyleTest {
         panel.setBackground(LIGHTER_GRAY);
         panel.add(content);
 
-        applyStyle(panel, newBoxStyle()
+        setBoxStyle(panel, newBoxStyle()
                 .borderTop(1, SOLID, BLACK)
                 .borderLeft(5, SOLID, PINK)
                 .borderBottom(3, SOLID, ORANGE)

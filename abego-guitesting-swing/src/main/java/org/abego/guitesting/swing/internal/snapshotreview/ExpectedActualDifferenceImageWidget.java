@@ -26,6 +26,7 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.internal.util.SwingUtil;
+import org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.DependencyCollector;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
@@ -51,7 +52,6 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
-import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxStylingSwing.applyStyle;
 import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
@@ -234,7 +234,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
         // layout
         contentWidget.addAll(imageWidgets);
         // style
-        applyStyle(contentWidget.getContent(), newBoxStyle()
+        contentWidget.setBoxStyle(newBoxStyle()
                 .padding(DEFAULT_FLOW_GAP, 0));
         // bindings
         initBinding();

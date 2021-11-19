@@ -27,6 +27,7 @@ package org.abego.guitesting.swing.internal.util.boxstyle;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import static org.abego.guitesting.swing.internal.util.boxstyle.OneSide.oneSide;
 import static org.abego.guitesting.swing.internal.util.boxstyle.SideInfo.sideInfo;
@@ -46,6 +47,7 @@ public class BoxStyle {
     private final SideInfo left;
     private final @Nullable Color background;
     private final @Nullable Color color;
+    private final @Nullable Font font;
 
     public enum Style {
         NONE,
@@ -60,11 +62,12 @@ public class BoxStyle {
         private final OneSide left = oneSide();
         private @Nullable Color background;
         private @Nullable Color color;
+        private @Nullable Font font;
 
         private Factory() {}
 
         public BoxStyle create() {
-            return new BoxStyle(top, right, bottom, left, background, color);
+            return new BoxStyle(top, right, bottom, left, background, color, font);
         }
 
         public Factory background(Color color) {
@@ -74,6 +77,11 @@ public class BoxStyle {
 
         public Factory color(Color color) {
             this.color = color;
+            return this;
+        }
+
+        public Factory font(Font font) {
+            this.font = font;
             return this;
         }
 
@@ -206,13 +214,16 @@ public class BoxStyle {
         }
     }
 
-    private BoxStyle(OneSide top, OneSide right, OneSide bottom, OneSide left, @Nullable Color background, @Nullable Color color) {
+    private BoxStyle(OneSide top, OneSide right, OneSide bottom, OneSide left,
+                     @Nullable Color background, @Nullable Color color,
+                     @Nullable Font font) {
         this.top = sideInfo(top);
         this.left = sideInfo(left);
         this.bottom = sideInfo(bottom);
         this.right = sideInfo(right);
         this.background = background;
         this.color = color;
+        this.font = font;
     }
 
     public static Factory newBoxStyle() {
@@ -227,6 +238,11 @@ public class BoxStyle {
     @Nullable
     public Color getColor() {
         return color;
+    }
+
+    @Nullable
+    public Font getFont() {
+        return font;
     }
 
     public SideInfo getTop() {
