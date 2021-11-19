@@ -32,6 +32,13 @@ import static org.abego.guitesting.swing.internal.util.boxstyle.OneSide.oneSide;
 import static org.abego.guitesting.swing.internal.util.boxstyle.SideInfo.sideInfo;
 
 public class BoxStyle {
+    //TODO: provide a method that returns only the attributes with non-default
+    //  values, or that are not explicitly set to the default value, e.g. as
+    //  a list of (key,value) pairs, with the keys as the string in CSS naming
+    //  convention. This may be useful when working on large objects with many
+    //  styles, with only few of the attributes customized. With the current
+    //  approach we would have to set all attributes of all theses objects,
+    //  even if most of them are the same as their already set default value.
 
     private final SideInfo top;
     private final SideInfo right;
@@ -47,10 +54,10 @@ public class BoxStyle {
 
     //TODO: generate code
     public static final class Factory {
-        private OneSide top = oneSide();
-        private OneSide right = oneSide();
-        private OneSide bottom = oneSide();
-        private OneSide left = oneSide();
+        private final OneSide top = oneSide();
+        private final OneSide right = oneSide();
+        private final OneSide bottom = oneSide();
+        private final OneSide left = oneSide();
         private @Nullable Color background;
         private @Nullable Color color;
 
