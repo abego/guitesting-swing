@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
-public class HStackWidget extends VStackWidget {
+public class HStackWidget extends HVStackWidget {
 
     public static HStackWidget hStackWidget(Widget... widgets) {
         HStackWidget newWidget = new HStackWidget();

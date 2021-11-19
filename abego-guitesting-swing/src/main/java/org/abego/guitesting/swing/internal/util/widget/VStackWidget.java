@@ -24,68 +24,19 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.Collection;
 
 import static java.awt.GridBagConstraints.REMAINDER;
 
-public class VStackWidget implements Widget {
-    protected final JComponent content = new JPanel(new GridBagLayout());
-
-    protected VStackWidget() {
-        styleComponents();
-    }
-
-    private void styleComponents() {
-        content.setOpaque(false);
-        content.setBorder(null);
+public class VStackWidget extends HVStackWidget {
+    private VStackWidget() {
     }
 
     public static VStackWidget vStackWidget(Widget... widgets) {
         VStackWidget newWidget = new VStackWidget();
         newWidget.setItems(widgets);
         return newWidget;
-    }
-
-    @Override
-    public JComponent getContent() {
-        return content;
-    }
-
-    @Override
-    public void close() {
-    }
-
-    public void setItems(Collection<Widget> widgets) {
-        setItems(widgets.toArray(new Widget[0]));
-    }
-
-    public void setItems(Widget... widgets) {
-        content.removeAll();
-        int n = widgets.length;
-
-        // add all but the last item (use the same constraints))
-        GridBagConstraints constraints = getItemConstraints();
-        for (int i = 0; i < n - 1; i++) {
-            content.add(widgets[i].getContent(), constraints);
-        }
-        // add the last item (may need special constraints)
-        if (n > 0) {
-            content.add(widgets[n - 1].getContent(), getLastItemConstraints());
-        }
-
-        // add extra elements as a filler taking all remaining extra space
-        addFillers();
-
-        // We need to do an explicit repaint as in certain settings areas are
-        // not atomatically repainted when the widgets "shrinks", i.e. occupies
-        // less space as before.
-        content.repaint();
-        content.revalidate();
     }
 
     protected GridBagConstraints getItemConstraints() {
