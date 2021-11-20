@@ -22,47 +22,31 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.internal.util.widget;
+package org.abego.guitesting.swing.internal.util;
 
-import org.abego.guitesting.swing.internal.util.KeyStrokeUtil;
+import org.abego.commons.lang.exception.MustNotInstantiateException;
+import org.abego.guitesting.swing.internal.GuiTestingUtil;
 
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
 
-import static javax.swing.Action.ACCELERATOR_KEY;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
-
-public final class ToolbarButtonWidget implements Widget {
-    private final JButton content = toolbarButton();
-
-    private ToolbarButtonWidget() {}
-
-    public static ToolbarButtonWidget toolbarButtonWidget() {
-        return new ToolbarButtonWidget();
+public final class KeyStrokeUtil {
+    KeyStrokeUtil() {
+        throw new MustNotInstantiateException();
     }
 
-    @Override
-    public JComponent getContent() {
-        return content;
-    }
-
-    @Override
-    public void close() {
-    }
-
-    public void setAction(Action action) {
-        content.setAction(action);
-
-        Object k = action.getValue(ACCELERATOR_KEY);
-        if (k instanceof KeyStroke) {
-            KeyStroke keyStroke = (KeyStroke) k;
-            String aText = KeyStrokeUtil.acceleratorText(keyStroke);
-            if (!aText.isEmpty()) {
-                content.setToolTipText(String.format("%s [%s]", //NON-NLS
-                        content.getToolTipText(), aText));
+    public static String acceleratorText(KeyStroke keyStroke) {
+        String acceleratorText = "";
+        int modifiers = keyStroke.getModifiers();
+        if (modifiers > 0) {
+            acceleratorText = KeyEvent.getModifiersExText(modifiers);
+            if (!GuiTestingUtil.isMacOS()) {
+                acceleratorText += "+";
             }
         }
+        acceleratorText += KeyEvent.getKeyText(keyStroke.getKeyCode());
+        return acceleratorText;
     }
+
+
 }
