@@ -36,7 +36,12 @@ import java.awt.Font;
 import static java.awt.Transparency.BITMASK;
 import static org.abego.guitesting.swing.internal.util.boxstyle.swing.BoxBorder.boxBorder;
 
-public class BoxStylingSwing {
+public final class BoxStylingSwing {
+
+    BoxStylingSwing() {
+        throw new MustNotInstantiateException();
+    }
+
     public static void setBoxStyle(JComponent component, BoxStyle style) {
         component.setBorder(boxBorder(style.getTop(),
                 style.getRight(), style.getBottom(), style.getLeft()));
