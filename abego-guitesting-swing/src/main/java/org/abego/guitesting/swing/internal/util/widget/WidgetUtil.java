@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 import javax.swing.JFrame;
-import java.awt.Container;
+import javax.swing.SwingUtilities;
 import java.util.function.Consumer;
 
 import static org.abego.commons.swing.WindowUtil.onWindowClosed;
@@ -46,16 +46,16 @@ public final class WidgetUtil {
 
         frame.setName(name);
         frame.setContentPane(widget.getContent());
-        onWindowClosed(frame, e-> widget.close());
+        onWindowClosed(frame, e -> widget.close());
 
         preShowCode.accept(frame);
-        frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
 
         return frame;
     }
 
     public static void setVisible(boolean flag, Widget... widgets) {
-        for (Widget w: widgets) {
+        for (Widget w : widgets) {
             w.getContent().setVisible(flag);
         }
     }
