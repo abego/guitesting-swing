@@ -56,7 +56,11 @@ final class HStackWidgetImpl extends HVStackWidget implements HStackWidget {
         constraints.gridwidth = GridBagConstraints.REMAINDER;
         content.add(new JLabel(), constraints);
 
-        // add a filler to fill all space belowo the items
+        //TODO: no filling to the bottom. Container must control this.
+        //  Possibly we have to take care for preferred size etc to make this
+        //  work.
+
+        // add a filler to fill all space below the items
         constraints.weighty = 1;
         content.add(new JLabel(), constraints);
     }
