@@ -30,23 +30,25 @@ import java.awt.Insets;
 
 public class HStackWidget extends HVStackWidget {
 
-    public static HStackWidget hStackWidget(Widget... widgets) {
-        HStackWidget newWidget = new HStackWidget();
+    private HStackWidget(int spacing) {
+        super(spacing);
+    }
+
+    public static HStackWidget hStackWidget(int spacing, Widget... widgets) {
+        HStackWidget newWidget = new HStackWidget(spacing);
         newWidget.setItems(widgets);
         return newWidget;
+    }
+
+    public static HStackWidget hStackWidget(Widget... widgets) {
+        return hStackWidget(DEFAULT_SPACING, widgets);
     }
 
     @Override
     protected GridBagConstraints getItemConstraints() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        //TODO: make hard-coded "5" the "spacing" attribute
-        gridBagConstraints.insets = new Insets(0,0,0,5);
+        gridBagConstraints.insets = new Insets(0, 0, 0, getSpacing());
         return gridBagConstraints;
-    }
-
-    @Override
-    protected GridBagConstraints getLastItemConstraints() {
-        return new GridBagConstraints();
     }
 
     protected void addFillers() {
@@ -62,8 +64,6 @@ public class HStackWidget extends HVStackWidget {
         constraints.weighty = 1;
         content.add(new JLabel(), constraints);
     }
-
-
 
 
 }

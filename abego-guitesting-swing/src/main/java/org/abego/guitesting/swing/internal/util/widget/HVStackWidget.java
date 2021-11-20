@@ -30,14 +30,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Collection;
 
- abstract class HVStackWidget implements Widget {
+abstract class HVStackWidget implements Widget {
+    public static final int DEFAULT_SPACING = 0;
+
+    private Widget[] widgets = new Widget[0];
+
     protected final JComponent content = new JPanel(new GridBagLayout());
+    private int spacing = 0;
 
     abstract protected GridBagConstraints getItemConstraints();
-    abstract protected GridBagConstraints getLastItemConstraints();
+
     abstract protected void addFillers();
 
-    protected HVStackWidget() {
+    protected HVStackWidget(int spacing) {
+        this.spacing = spacing;
         styleComponents();
     }
 
@@ -55,11 +61,28 @@ import java.util.Collection;
     public void close() {
     }
 
+    public int getSpacing() {
+        return spacing;
+    }
+
+    public void setSpacing(int value) {
+        if (spacing != value) {
+            this.spacing = value;
+            updateContent();
+        }
+    }
+
     public void setItems(Collection<Widget> widgets) {
         setItems(widgets.toArray(new Widget[0]));
     }
 
     public void setItems(Widget... widgets) {
+        this.widgets = widgets;
+
+        updateContent();
+    }
+
+    private void updateContent() {
         content.removeAll();
         int n = widgets.length;
 
@@ -83,4 +106,7 @@ import java.util.Collection;
         content.revalidate();
     }
 
+    protected GridBagConstraints getLastItemConstraints() {
+        return new GridBagConstraints();
+    }
 }

@@ -289,6 +289,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private final static int PADDING = 5;
 
     private void styleComponents() {
+        threeImages.setSpacing(GAP);
         threeImages.setBoxStyle(newBoxStyle()
                 .padding(PADDING)
                 .background(Color.WHITE));

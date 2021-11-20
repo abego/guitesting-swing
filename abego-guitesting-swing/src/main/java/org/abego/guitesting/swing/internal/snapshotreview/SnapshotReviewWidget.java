@@ -74,6 +74,8 @@ import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListW
 
 class SnapshotReviewWidget implements Widget {
 
+    private static final int TOOLBAR_SPACING = 5;
+    public static final int TOOLBAR_PADDING = 5;
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
@@ -295,19 +297,20 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
         imagesLegend.setBoxStyle(newBoxStyle()
-                .paddingLeftRight(5));
+                .paddingLeftRight(TOOLBAR_PADDING));
         titleBar.setBoxStyle(newBoxStyle()
-                .padding(5)
+                .padding(TOOLBAR_PADDING)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
         toolbar.setBoxStyle(newBoxStyle()
-                .paddingLeftRight(5)
+                .paddingLeftRight(TOOLBAR_PADDING)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
+        toolbar.setSpacing(TOOLBAR_SPACING);
     }
 
     //endregion
     //region Layout related
-    private HStackWidget titleBar = hStackWidget();
-    private HStackWidget toolbar = hStackWidget();
+    private final HStackWidget titleBar = hStackWidget();
+    private final HStackWidget toolbar = hStackWidget();
 
     private void layoutComponents() {
         titleBar.setItems(selectedIssueDescriptionLabel);

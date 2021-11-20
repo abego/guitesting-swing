@@ -43,6 +43,8 @@ import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStac
 
 class ImagesLegendWidget implements Widget {
 
+    private static final int GAP = 5;
+
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     //region prop expectedImageIndex: Integer
@@ -116,6 +118,7 @@ class ImagesLegendWidget implements Widget {
     //endregion
     //region Construction
     private ImagesLegendWidget() {
+        contentWidget.setSpacing(GAP);
         initBindings();
         setLegendLabelBorderColor(differenceLabel, getDifferenceBorderColor());
     }
