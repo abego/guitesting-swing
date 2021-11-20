@@ -299,7 +299,6 @@ class SnapshotReviewWidget implements Widget {
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
 
     private void styleComponents() {
-        //TODO review this method: is this all "layout..."? Or more "init..."?
 
         imagesLegend.setExpectedBorderColor(EXPECTED_BORDER_COLOR);
         imagesLegend.setActualBorderColor(ACTUAL_BORDER_COLOR);
@@ -316,6 +315,8 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
+        selectedIssueDescriptionLabel.setBoxStyle(newBoxStyle()
+                        .paddingLeftRight(5));
         imagesLegend.setBoxStyle(newBoxStyle()
                 .paddingLeftRight(TOOLBAR_PADDING));
         titleBar.setBoxStyle(newBoxStyle()
