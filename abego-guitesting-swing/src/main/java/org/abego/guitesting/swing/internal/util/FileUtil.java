@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -60,5 +62,21 @@ public class FileUtil {
     public static void emptyFile(File file) {
         ensureDirectoryExists(file.getParentFile());
         org.abego.commons.io.FileUtil.writeText(file,"");
+    }
+
+    /**
+     * Checks the file paths in {@code filePaths} and returns the absolute path
+     * to the first existing directory found, or returns {@code null}, when
+     * none of the paths in {@code filePaths} specifies an existing directory.
+     */
+    @Nullable
+    public static String findExistingDirectory(String[] filePaths) {
+        for (String path : filePaths) {
+            File dir = new File(path);
+            if (dir.isDirectory()) {
+                return dir.getAbsolutePath();
+            }
+        }
+        return null;
     }
 }
