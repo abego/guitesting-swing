@@ -40,10 +40,6 @@ final class HStackWidgetImpl extends HVStackWidget implements HStackWidget {
         return newWidget;
     }
 
-    public static HStackWidgetImpl hStackWidget(Widget... widgets) {
-        return hStackWidget(DEFAULT_SPACING, widgets);
-    }
-
     @Override
     protected GridBagConstraints getItemConstraints() {
         GridBagConstraints gridBagConstraints = new GridBagConstraints();

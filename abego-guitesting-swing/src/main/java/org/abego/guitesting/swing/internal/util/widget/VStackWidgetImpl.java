@@ -41,10 +41,6 @@ class VStackWidgetImpl extends HVStackWidget implements VStackWidget {
         return newWidget;
     }
 
-    public static VStackWidgetImpl vStackWidget(Widget... widgets) {
-        return vStackWidget(DEFAULT_SPACING,widgets);
-    }
-
     protected GridBagConstraints getItemConstraints() {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(0, 0, getSpacing(), 0);
