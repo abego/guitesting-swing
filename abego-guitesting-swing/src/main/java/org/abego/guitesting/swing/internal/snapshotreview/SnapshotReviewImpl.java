@@ -25,8 +25,6 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
-import org.abego.guitesting.swing.GT;
-import org.abego.guitesting.swing.GuiTesting;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 import org.abego.guitesting.swing.SnapshotReview;
 import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
@@ -66,12 +64,4 @@ public class SnapshotReviewImpl implements SnapshotReview {
         return issuesSupplier.get();
     }
     //endregion
-    //region main
-    public static void main(String[] args) {
-        GT gt = GuiTesting.newGT();
-
-        gt.newSnapshotReview().showIssues();
-    }
-    //endregion
-
 }
