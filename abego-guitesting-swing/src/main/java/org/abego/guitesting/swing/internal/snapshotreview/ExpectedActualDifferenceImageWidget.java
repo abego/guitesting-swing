@@ -34,6 +34,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.widget.BorderedWidget;
+import org.abego.guitesting.swing.internal.util.widget.GUIKitForSwing;
 import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.ImageWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
@@ -51,7 +52,6 @@ import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotImages.
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onComponentResized;
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
-import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ExpectedActualDifferenceImageWidget implements Widget {
 
@@ -219,7 +219,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //region Components
     private final ImageWidget[] imageWidgets =
             new ImageWidget[]{new ImageWidget(), new ImageWidget(), new ImageWidget()};
-    private final HStackWidget threeImages = hStackWidget();
+    private final HStackWidget threeImages = GUIKitForSwing.getDefault().hStackWidget();
     private final BorderedWidget contentWidget = borderedWidget();
 
     //endregion

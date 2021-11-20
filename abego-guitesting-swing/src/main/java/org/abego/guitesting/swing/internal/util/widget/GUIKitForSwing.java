@@ -24,5 +24,10 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-public interface HStackWidget extends StackWidget {
+public class GUIKitForSwing {
+    private static GUIKit DEFAULT = new GUIKitForSwingImpl();
+
+    public static GUIKit getDefault() {
+        return DEFAULT;
+    }
 }

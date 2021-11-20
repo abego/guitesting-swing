@@ -24,5 +24,14 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-public interface HStackWidget extends StackWidget {
+import java.util.Collection;
+
+public interface StackWidget extends Widget{
+    void setItems(Collection<Widget> widgets);
+
+    void setItems(Widget... widgets);
+
+    int getSpacing();
+
+    void setSpacing(int value);
 }

@@ -36,6 +36,7 @@ import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
 import org.abego.guitesting.swing.internal.util.widget.BorderedWidget;
 import org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget;
+import org.abego.guitesting.swing.internal.util.widget.GUIKitForSwing;
 import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget;
@@ -66,7 +67,6 @@ import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.BorderS
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
 import static org.abego.guitesting.swing.internal.util.widget.BorderedWidget.borderedWidget;
 import static org.abego.guitesting.swing.internal.util.widget.CheckBoxWidget.checkBoxWidget;
-import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
 import static org.abego.guitesting.swing.internal.util.widget.ToolbarButtonWidget.toolbarButtonWidget;
 import static org.abego.guitesting.swing.internal.util.widget.ToolbarSeparatorWidget.toolbarSeparatorWidget;
@@ -309,8 +309,8 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Layout related
-    private final HStackWidget titleBar = hStackWidget();
-    private final HStackWidget toolbar = hStackWidget();
+    private final HStackWidget titleBar = GUIKitForSwing.getDefault().hStackWidget();
+    private final HStackWidget toolbar = GUIKitForSwing.getDefault().hStackWidget();
 
     private void layoutComponents() {
         titleBar.setItems(selectedIssueDescriptionLabel);

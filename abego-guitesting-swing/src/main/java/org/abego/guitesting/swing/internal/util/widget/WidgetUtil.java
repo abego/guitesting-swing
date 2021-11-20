@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 
 import static org.abego.commons.swing.WindowUtil.onWindowClosed;
 
+//TODO: do we need this public?
 public final class WidgetUtil {
     WidgetUtil() {
         throw new UnsupportedOperationException("Must not instantiate");

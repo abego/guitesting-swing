@@ -24,46 +24,5 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import static java.awt.GridBagConstraints.REMAINDER;
-
-public class VStackWidget extends HVStackWidget {
-    private VStackWidget(int spacing) {
-        super(spacing);
-    }
-
-    public static VStackWidget vStackWidget(int spacing, Widget... widgets) {
-        VStackWidget newWidget = new VStackWidget(spacing);
-        newWidget.setItems(widgets);
-        return newWidget;
-    }
-
-    public static VStackWidget vStackWidget(Widget... widgets) {
-        return vStackWidget(DEFAULT_SPACING,widgets);
-    }
-
-    protected GridBagConstraints getItemConstraints() {
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(0, 0, getSpacing(), 0);
-        constraints.gridwidth = REMAINDER;
-        return constraints;
-    }
-
-    @Override
-    protected GridBagConstraints getLastItemConstraints() {
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridwidth = REMAINDER;
-        return constraints;
-    }
-
-    protected void addFillers() {
-        // (adding a JLabel is fine as it takes no space when text is empty)
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.weighty = 1;
-        content.add(new JLabel(), constraints);
-    }
-
+public interface VStackWidget extends StackWidget {
 }

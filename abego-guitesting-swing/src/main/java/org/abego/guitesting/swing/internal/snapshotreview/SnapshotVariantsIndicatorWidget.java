@@ -29,6 +29,7 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.GUIKitForSwing;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.VStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
@@ -42,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.abego.guitesting.swing.internal.util.widget.LabelWidget.labelWidget;
-import static org.abego.guitesting.swing.internal.util.widget.VStackWidget.vStackWidget;
 
 class SnapshotVariantsIndicatorWidget implements Widget {
     //region State/Model
@@ -68,7 +68,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
     //endregion
     //endregion
     //region Components
-    private final VStackWidget contentWidget = vStackWidget();
+    private final VStackWidget contentWidget = GUIKitForSwing.getDefault().vStackWidget();
 
     //endregion
     //region Construction

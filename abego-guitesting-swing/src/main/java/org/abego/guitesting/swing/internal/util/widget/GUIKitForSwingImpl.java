@@ -24,5 +24,15 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-public interface HStackWidget extends StackWidget {
+class GUIKitForSwingImpl implements GUIKit {
+
+    @Override
+    public HStackWidget hStackWidget(int spacing, Widget... widgets) {
+        return HStackWidgetImpl.hStackWidget(spacing, widgets);
+    }
+
+    @Override
+    public VStackWidget vStackWidget(int spacing, Widget... widgets) {
+        return VStackWidgetImpl.vStackWidget(spacing, widgets);
+    }
 }

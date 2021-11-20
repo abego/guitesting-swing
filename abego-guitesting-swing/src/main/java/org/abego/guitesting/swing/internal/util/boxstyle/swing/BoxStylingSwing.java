@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util.boxstyle.swing;
 
+import org.abego.commons.lang.exception.MustNotInstantiateException;
 import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle;
 import org.eclipse.jdt.annotation.Nullable;
 

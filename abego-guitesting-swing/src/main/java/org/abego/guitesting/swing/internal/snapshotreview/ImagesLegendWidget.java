@@ -28,6 +28,7 @@ import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.Prop;
 import org.abego.guitesting.swing.internal.util.prop.PropService;
 import org.abego.guitesting.swing.internal.util.prop.PropServices;
+import org.abego.guitesting.swing.internal.util.widget.GUIKitForSwing;
 import org.abego.guitesting.swing.internal.util.widget.HStackWidget;
 import org.abego.guitesting.swing.internal.util.widget.LabelWidget;
 import org.abego.guitesting.swing.internal.util.widget.Widget;
@@ -39,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle.newBoxStyle;
-import static org.abego.guitesting.swing.internal.util.widget.HStackWidget.hStackWidget;
 
 class ImagesLegendWidget implements Widget {
 
@@ -113,7 +113,7 @@ class ImagesLegendWidget implements Widget {
     private final LabelWidget[] labels = new LabelWidget[]{
             expectedLabel, actualLabel, differenceLabel
     };
-    private final HStackWidget contentWidget = hStackWidget();
+    private final HStackWidget contentWidget = GUIKitForSwing.getDefault().hStackWidget();
 
     //endregion
     //region Construction
