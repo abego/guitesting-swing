@@ -37,12 +37,12 @@ import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
-import org.abego.guitesting.swing.SnapshotReview;
+import org.abego.guitesting.swing.SnapshotReviewService;
 import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
-import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewImpl;
+import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewServices;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.function.Executable;
 
@@ -588,12 +588,13 @@ public final class GTImpl implements GT {
     }
 
     // ======================================================================
-    // SnapshotReview
+    // SnapshotReviewService
     // ======================================================================
 
     @Override
-    public SnapshotReview newSnapshotReview() {
-        return SnapshotReviewImpl.newSnapshotReview(this::getSnapshotIssues);
+    public SnapshotReviewService newSnapshotReviewService() {
+        return SnapshotReviewServices.newSnapshotReviewService(
+                this::getSnapshotIssues);
     }
 
     // ======================================================================

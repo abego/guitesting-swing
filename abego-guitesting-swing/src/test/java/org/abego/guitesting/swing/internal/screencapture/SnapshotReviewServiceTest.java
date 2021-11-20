@@ -27,7 +27,7 @@ package org.abego.guitesting.swing.internal.screencapture;
 import org.abego.commons.io.FileUtil;
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
-import org.abego.guitesting.swing.SnapshotReview;
+import org.abego.guitesting.swing.SnapshotReviewService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,13 +37,13 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import static org.abego.guitesting.swing.SnapshotReview.SNAPSHOT_REVIEW_FRAME_NAME;
+import static org.abego.guitesting.swing.SnapshotReviewService.SNAPSHOT_REVIEW_FRAME_NAME;
 import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT;
 import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final class SnapshotReviewTest {
+final class SnapshotReviewServiceTest {
     @Test
     void showIssuesSnapshotReview(@TempDir File tempDir) {
         File reportsDir = mkdirs(tempDir, "reports");
@@ -72,8 +72,8 @@ final class SnapshotReviewTest {
         gtForReview.setSnapshotReportDirectory(reportsDir);
         gtForReview.setTestResourcesDirectory(testResourcesDir);
 
-        SnapshotReview review = gtForReview.newSnapshotReview();
-        review.showIssues(frame -> frame.setSize(800, 360));
+        SnapshotReviewService review = gtForReview.newSnapshotReviewService();
+        review.showSnapshotReviewFrame(frame -> frame.setSize(800, 360));
 
         GT gt = GuiTesting.newGT();
         // move the mouse out of way

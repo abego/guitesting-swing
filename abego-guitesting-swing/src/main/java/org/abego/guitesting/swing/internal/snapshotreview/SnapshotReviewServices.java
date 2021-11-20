@@ -22,38 +22,18 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.app;
+package org.abego.guitesting.swing.internal.snapshotreview;
 
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
+import org.abego.commons.seq.Seq;
+import org.abego.guitesting.swing.ScreenCaptureSupport;
+import org.abego.guitesting.swing.SnapshotReviewService;
 
-import java.awt.Font;
+import java.util.function.Supplier;
 
-import static org.abego.guitesting.swing.internal.snapshotreview.app.SnapshotReviewApp.newSnapshotReviewApp;
+public class SnapshotReviewServices {
 
-public class GuiTestingSwingApp {
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-            newSnapshotReviewApp(args).run();
-
-        } catch (Exception e) {
-            showInErrorDialog(e);
-        }
+    public static SnapshotReviewService newSnapshotReviewService(
+            Supplier<Seq<ScreenCaptureSupport.SnapshotIssue>> issuesSupplier) {
+        return SnapshotReviewServiceImpl.newSnapshotReview(issuesSupplier);
     }
-
-    private static void showInErrorDialog(Exception e) {
-        JTextArea textArea = new JTextArea();
-        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        textArea.setOpaque(false);
-        textArea.setText(
-                String.format("Fatal error. Application will end.\n\nDetails\n=======\n\n%s\n", //NON-NLS
-                        e.getMessage()));
-        textArea.setEditable(false);
-        JOptionPane.showMessageDialog(null, textArea);
-    }
-
 }

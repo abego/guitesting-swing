@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package org.abego.guitesting.swing.app;
+package org.abego.guitesting.swing.internal.snapshotreview.app;
 
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
@@ -101,7 +101,7 @@ public class SnapshotReviewApp {
                     String.format("Reports directory not found: %s", //NON-NLS
                             getSnapshotReportDirectory().getAbsolutePath()));
         }
-        gt.newSnapshotReview().showIssues();
+        gt.newSnapshotReviewService().showSnapshotReviewFrame();
     }
 
     private File getTestResourcesDirectory() {

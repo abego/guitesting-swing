@@ -26,31 +26,31 @@ package org.abego.guitesting.swing.internal.snapshotreview;
 
 import org.abego.commons.seq.Seq;
 import org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import org.abego.guitesting.swing.SnapshotReview;
+import org.abego.guitesting.swing.SnapshotReviewService;
 import org.abego.guitesting.swing.internal.util.widget.WidgetUtil;
 
 import javax.swing.JFrame;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class SnapshotReviewImpl implements SnapshotReview {
+final class SnapshotReviewServiceImpl implements SnapshotReviewService {
 
     //region State
     private final Supplier<Seq<SnapshotIssue>> issuesSupplier;
     //endregion
     //region Construction
-    private SnapshotReviewImpl(Supplier<Seq<SnapshotIssue>> issuesSupplier) {
+    private SnapshotReviewServiceImpl(Supplier<Seq<SnapshotIssue>> issuesSupplier) {
         this.issuesSupplier = issuesSupplier;
     }
 
-    public static SnapshotReview newSnapshotReview(
+    public static SnapshotReviewService newSnapshotReview(
             Supplier<Seq<SnapshotIssue>> issuesSupplier) {
-        return new SnapshotReviewImpl(issuesSupplier);
+        return new SnapshotReviewServiceImpl(issuesSupplier);
     }
     //endregion
     //region Commands
     @Override
-    public void showIssues(Consumer<JFrame> framePreShowCode) {
+    public void showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode) {
         Seq<SnapshotIssue> issues = getSnapshotIssues();
         SnapshotReviewWidget widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
         //noinspection StringConcatenation

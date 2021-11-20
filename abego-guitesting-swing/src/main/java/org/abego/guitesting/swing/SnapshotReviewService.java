@@ -28,12 +28,12 @@ import javax.swing.JFrame;
 import java.awt.Frame;
 import java.util.function.Consumer;
 
-public interface SnapshotReview {
+public interface SnapshotReviewService {
     String SNAPSHOT_REVIEW_FRAME_NAME = "snapshot-review-frame"; //NON-NLS
 
-    default void showIssues() {
-        showIssues(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));
+    default void showSnapshotReviewFrame() {
+        showSnapshotReviewFrame(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));
     }
 
-    void showIssues(Consumer<JFrame> framePreShowCode);
+    void showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode);
 }
