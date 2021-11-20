@@ -79,6 +79,8 @@ class SnapshotReviewWidget implements Widget {
 
     private static final int TOOLBAR_SPACING = 5;
     public static final int TOOLBAR_PADDING = 5;
+    private static final int TITLEBAR_PADDING_TB = 2;
+    private static final int TITLEBAR_PADDING_LR = 5;
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
@@ -317,7 +319,7 @@ class SnapshotReviewWidget implements Widget {
         imagesLegend.setBoxStyle(newBoxStyle()
                 .paddingLeftRight(TOOLBAR_PADDING));
         titleBar.setBoxStyle(newBoxStyle()
-                .padding(TOOLBAR_PADDING)
+                .padding(TITLEBAR_PADDING_TB, TITLEBAR_PADDING_LR)
                 .borderBottom(1, SOLID, LIGHTER_GRAY));
         toolbar.setBoxStyle(newBoxStyle()
                 .paddingLeftRight(TOOLBAR_PADDING)
