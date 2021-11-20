@@ -49,6 +49,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 
 import static java.lang.Boolean.TRUE;
 import static org.abego.commons.io.FileUtil.toFile;
@@ -151,10 +154,24 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //endregion
     //region Actions
+    private final Action copyDescriptionAction = newAction("Copy Description to Clipboard", KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Resources.copyIcon(), e -> copyDescription()); //NON-NLS
     private final Action addAlternativeSnapshotAction = newAction("Make Actual an Alternative (A)", KeyStroke.getKeyStroke("A"), Resources.alternativeIcon(), e -> addAlternativeSnapshot()); //NON-NLS
     private final Action ignoreCurrentIssueAction = newAction("Ignore Issue (Esc)", KeyStroke.getKeyStroke("ESCAPE"), Resources.ignoreIcon(), e -> ignoreCurrentIssue()); //NON-NLS
     private final Action overwriteSnapshotAction = newAction("Overwrite Expected (O)", KeyStroke.getKeyStroke("O"), Resources.overwriteIcon(), e -> overwriteSnapshot()); //NON-NLS
     private final Action rotateImageAction = newAction("Rotate Images (→)", KeyStroke.getKeyStroke("RIGHT"), Resources.rotateRightIcon(), e -> rotateImages()); //NON-NLS;
+
+    private void copyDescription() {
+        @Nullable SnapshotIssue currentIssue = getSelectedIssue();
+        if (currentIssue != null) {
+            String text = selectedIssueDescriptionProp.get();
+            Toolkit.getDefaultToolkit()
+                    .getSystemClipboard()
+                    .setContents(
+                            new StringSelection(text),
+                            null
+                    );
+        }
+    }
 
     private void overwriteSnapshot() {
         @Nullable SnapshotIssue currentIssue = getSelectedIssue();
@@ -200,6 +217,7 @@ class SnapshotReviewWidget implements Widget {
     //endregion
     //region Components
     private final LabelWidget selectedIssueDescriptionLabel = labelWidget();
+    private final ToolbarButtonWidget copyDescriptionButton = toolbarButtonWidget();
     private final ToolbarButtonWidget overwriteButton = toolbarButtonWidget();
     private final ToolbarButtonWidget addAlternativeButton = toolbarButtonWidget();
     private final ToolbarButtonWidget ignoreButton = toolbarButtonWidget();
@@ -313,7 +331,7 @@ class SnapshotReviewWidget implements Widget {
     private final HStackWidget toolbar = GUIKitForSwing.getDefault().hStackWidget();
 
     private void layoutComponents() {
-        titleBar.setItems(selectedIssueDescriptionLabel);
+        titleBar.setItems(copyDescriptionButton, selectedIssueDescriptionLabel);
         toolbar.setItems(
                 overwriteButton,
                 addAlternativeButton,
@@ -341,6 +359,7 @@ class SnapshotReviewWidget implements Widget {
         snapshotIssuesVList.setListModel(remainingIssues);
         bindings.bind(selectedIssue, snapshotIssuesVList.getSelectedItemProp());
 
+        copyDescriptionButton.setAction(copyDescriptionAction);
         overwriteButton.setAction(overwriteSnapshotAction);
         addAlternativeButton.setAction(addAlternativeSnapshotAction);
         ignoreButton.setAction(ignoreCurrentIssueAction);

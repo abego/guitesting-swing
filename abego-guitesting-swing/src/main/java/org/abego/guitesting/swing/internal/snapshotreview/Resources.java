@@ -32,6 +32,10 @@ import javax.swing.ImageIcon;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 class Resources {
+    public static ImageIcon copyIcon() {
+        return iconFromResource("copy-16.png"); //NON-NLS
+    }
+
     public static ImageIcon overwriteIcon() {
         return iconFromResource("overwrite2-16.png"); //NON-NLS
     }
