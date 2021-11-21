@@ -28,7 +28,7 @@ import org.abego.commons.lang.exception.MustNotInstantiateException;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -191,7 +191,9 @@ public final class SwingUtil {
     //endregion
     //region JButton related
     public static JButton toolbarButton() {
-        return JToolbarButton.newJToolbarButton();
+        JToolbarButton jToolbarButton = JToolbarButton.newJToolbarButton();
+        jToolbarButton.setOpaque(false);
+        return jToolbarButton;
     }
     //endregion
     //region JList related
