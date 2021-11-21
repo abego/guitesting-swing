@@ -77,10 +77,6 @@ import static org.abego.guitesting.swing.internal.util.widget.VListWidget.vListW
 
 class SnapshotReviewWidget implements Widget {
 
-    private static final int TOOLBAR_SPACING = 5;
-    public static final int TOOLBAR_PADDING = 5;
-    private static final int TITLEBAR_PADDING_TB = 2;
-    private static final int TITLEBAR_PADDING_LR = 5;
     //region State/Model
     private final PropService propService = PropServices.getDefault();
     private final DefaultListModel<SnapshotIssue> remainingIssues;
@@ -294,6 +290,11 @@ class SnapshotReviewWidget implements Widget {
 
     //endregion
     //region Style related
+    private static final int TOOLBAR_SPACING = 5;
+    private static final int TOOLBAR_PADDING = 5;
+    private static final int TITLEBAR_PADDING_TB = 2;
+    private static final int TITLEBAR_PADDING_LR = 5;
+
     private static final Color EXPECTED_BORDER_COLOR = new Color(0x59A869);
     private static final Color ACTUAL_BORDER_COLOR = new Color(0xC64D3F);
     private static final Color DIFFERENCE_BORDER_COLOR = new Color(0x6E6E6E);
