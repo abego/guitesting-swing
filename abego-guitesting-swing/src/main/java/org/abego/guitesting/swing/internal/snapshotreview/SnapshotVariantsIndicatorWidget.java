@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.snapshotreview;
 
+import org.abego.guitesting.swing.internal.GuiTestingUtil;
 import org.abego.guitesting.swing.internal.util.boxstyle.BoxStyle;
 import org.abego.guitesting.swing.internal.util.prop.Bindings;
 import org.abego.guitesting.swing.internal.util.prop.PropNullable;
@@ -95,9 +96,14 @@ class SnapshotVariantsIndicatorWidget implements Widget {
 
     //endregion
     //region Style related
-    private static final int BULLET_SIZE = 24;
-    private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, BULLET_SIZE);
+    private static final int BULLET_SIZE_MAC = 24;
+    private static final int BULLET_SIZE_OTHER = 16;
+    private static final Font BULLET_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, getBulletSize());
     private static final BoxStyle BULLET_STYLE = BoxStyle.newBoxStyle().font(BULLET_FONT).create();
+
+    private static final int getBulletSize() {
+        return GuiTestingUtil.isMacOS() ? BULLET_SIZE_MAC : BULLET_SIZE_OTHER;
+    }
 
     private void styleComponents() {
         contentWidget.setBoxStyle(BoxStyle.newBoxStyle()
@@ -110,7 +116,7 @@ class SnapshotVariantsIndicatorWidget implements Widget {
         // give the widget a fixed preferred width so the indicator does not
         // collapse when there are no items in the list.
         contentWidget.getContent().setPreferredSize(
-                new Dimension(BULLET_SIZE, Integer.MAX_VALUE));
+                new Dimension(getBulletSize(), Integer.MAX_VALUE));
     }
 
     //endregion
