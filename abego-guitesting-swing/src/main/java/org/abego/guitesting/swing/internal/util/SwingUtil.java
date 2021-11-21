@@ -28,7 +28,7 @@ import org.abego.commons.lang.exception.MustNotInstantiateException;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.DefaaultListModel;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
