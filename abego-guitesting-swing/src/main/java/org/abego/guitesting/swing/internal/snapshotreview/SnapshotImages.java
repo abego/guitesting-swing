@@ -33,9 +33,9 @@ import java.util.Objects;
 
 import static java.lang.Math.max;
 import static org.abego.commons.io.FileUtil.toFile;
+import static org.abego.commons.swing.DimensionUtil.shrinkToFitFactor;
+import static org.abego.commons.swing.ImageIconUtil.icon;
 import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
-import static org.abego.guitesting.swing.internal.util.DimensionUtil.shrinkToFitFactor;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 /**
  * Provides the images of a {@link SnapshotIssue} ("expected", "actual",

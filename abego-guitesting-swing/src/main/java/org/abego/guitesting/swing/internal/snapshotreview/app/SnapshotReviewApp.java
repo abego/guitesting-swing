@@ -26,12 +26,13 @@ package org.abego.guitesting.swing.internal.snapshotreview.app;
 
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
-import org.abego.guitesting.swing.internal.util.FileUtil;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.abego.commons.io.FileUtil.findExistingDirectory;
 
 public class SnapshotReviewApp {
     private static final Logger LOGGER = Logger.getLogger(SnapshotReviewApp.class.getName());
@@ -61,7 +62,7 @@ public class SnapshotReviewApp {
         // testResourcesDirectoryOptions exists. If yes, use it.
         if (testResourcesDirectory == null && !getTestResourcesDirectory().isDirectory()) {
             testResourcesDirectory =
-                    FileUtil.findExistingDirectory(testResourcesDirectoryOptions);
+                    findExistingDirectory(testResourcesDirectoryOptions);
         }
 
         if (testResourcesDirectory != null) {
@@ -73,7 +74,7 @@ public class SnapshotReviewApp {
         // testResourcesDirectoryOptions exists. If yes, use it.
         if (snapshotReportDirectory == null && !getSnapshotReportDirectory().isDirectory()) {
             snapshotReportDirectory =
-                    FileUtil.findExistingDirectory(snapshotReportDirectoryOptions);
+                    findExistingDirectory(snapshotReportDirectoryOptions);
         }
         if (snapshotReportDirectory != null) {
             gt.setSnapshotReportDirectory(new File(snapshotReportDirectory));

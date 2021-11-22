@@ -37,9 +37,10 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
+import static org.abego.commons.io.FileUtil.emptyFile;
+import static org.abego.commons.io.FileUtil.mkdirs;
 import static org.abego.guitesting.swing.SnapshotReviewService.SNAPSHOT_REVIEW_FRAME_NAME;
 import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT;
-import static org.abego.guitesting.swing.internal.util.FileUtil.mkdirs;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,9 +64,9 @@ final class SnapshotReviewServiceTest {
                 "org.abego.guitesting.swing.GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot-expectedImage@0.png");
 
         // fill the testResources directory (with dummy file)
-        org.abego.guitesting.swing.internal.util.FileUtil.emptyFile(new File(myResourcesDir,
+        emptyFile(new File(myResourcesDir,
                 "GTTest.waitUntilScreenshotMatchesImage_timeout-snapshot@0.png"));
-        org.abego.guitesting.swing.internal.util.FileUtil.emptyFile(new File(myResourcesDir,
+        emptyFile(new File(myResourcesDir,
                 "GTTest.waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot-snapshot@0.png"));
 
         GT gtForReview = GuiTesting.newGT();

@@ -25,11 +25,10 @@
 package org.abego.guitesting.swing.internal.snapshotreview;
 
 
-import org.abego.guitesting.swing.internal.util.ImageIconUtil;
+import org.abego.commons.swing.ImageIconUtil;
 
 import javax.swing.ImageIcon;
 
-import static org.abego.guitesting.swing.internal.util.SwingUtil.icon;
 
 class Resources {
     public static ImageIcon copyIcon() {

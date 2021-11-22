@@ -24,14 +24,13 @@
 
 package org.abego.guitesting.swing.internal.util.widget;
 
-import org.abego.guitesting.swing.internal.util.KeyStrokeUtil;
-
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import static javax.swing.Action.ACCELERATOR_KEY;
+import static org.abego.commons.swing.KeyStrokeUtil.acceleratorText;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
 
 public final class ToolbarButtonWidget implements Widget {
@@ -58,7 +57,7 @@ public final class ToolbarButtonWidget implements Widget {
         Object k = action.getValue(ACCELERATOR_KEY);
         if (k instanceof KeyStroke) {
             KeyStroke keyStroke = (KeyStroke) k;
-            String aText = KeyStrokeUtil.acceleratorText(keyStroke);
+            String aText = acceleratorText(keyStroke);
             if (!aText.isEmpty()) {
                 content.setToolTipText(String.format("%s [%s]", //NON-NLS
                         content.getToolTipText(), aText));

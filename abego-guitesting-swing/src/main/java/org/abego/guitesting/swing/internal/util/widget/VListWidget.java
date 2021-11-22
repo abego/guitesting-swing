@@ -49,11 +49,11 @@ import java.util.function.Function;
 
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.abego.commons.lang.IntUtil.limit;
+import static org.abego.commons.swing.ActionUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.Bordered.bordered;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.DEFAULT_FLOW_GAP;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.addAll;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.ensureSelectionIsVisible;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newListCellRenderer;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.toolbarButton;
@@ -143,7 +143,7 @@ public final class VListWidget<T> implements Widget {
 
     //endregion
     //region Actions
-    private final Action previousItemAction = SwingUtil.newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
+    private final Action previousItemAction = newAction("", KeyStroke.getKeyStroke("UP"), Resources.previousItemIcon(), e -> selectPreviousItem()); //NON-NLS
     private final Action nextItemAction = newAction("", KeyStroke.getKeyStroke("DOWN"), Resources.nextItemIcon(), e -> selectNextItem()); //NON-NLS;
 
     private void selectPreviousItem() {

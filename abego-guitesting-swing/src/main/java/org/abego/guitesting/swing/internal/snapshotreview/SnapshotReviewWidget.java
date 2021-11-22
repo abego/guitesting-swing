@@ -54,14 +54,14 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 
 import static java.lang.Boolean.TRUE;
+import static org.abego.commons.io.FileUtil.copyFile;
 import static org.abego.commons.io.FileUtil.toFile;
+import static org.abego.commons.swing.ActionUtil.newAction;
 import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualDifferenceImageWidget.expectedActualDifferenceImageWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.snapshotVariant;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
-import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
-import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newDefaultListModel;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.onJComponentBecomesVisible;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.scrollingNoBorder;

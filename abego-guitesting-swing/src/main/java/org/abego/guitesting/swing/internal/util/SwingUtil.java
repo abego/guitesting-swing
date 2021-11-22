@@ -25,11 +25,11 @@
 package org.abego.guitesting.swing.internal.util;
 
 import org.abego.commons.lang.exception.MustNotInstantiateException;
+import org.abego.commons.swing.event.ComponentListenerAdapter;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -47,9 +47,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -65,54 +62,6 @@ public final class SwingUtil {
         throw new MustNotInstantiateException();
     }
 
-    //region Action related
-    public static Action newAction(
-            String text,
-            KeyStroke accelerator,
-            String description,
-            ImageIcon smallIcon,
-            Consumer<ActionEvent> action) {
-        return ActionWithEventHandler.newAction(
-                text, accelerator, description, smallIcon, action);
-    }
-
-    public static Action newAction(
-            String text, KeyStroke accelerator, Consumer<ActionEvent> action) {
-        return ActionWithEventHandler.newAction(
-                text, accelerator, text, null, action);
-    }
-
-    public static Action newAction(
-            String text,
-            KeyStroke accelerator,
-            ImageIcon smallIcon,
-            Consumer<ActionEvent> action) {
-        return ActionWithEventHandler.newAction(
-                text, accelerator, text, smallIcon, action);
-    }
-
-    public static Action newAction(
-            String text,
-            KeyStroke accelerator,
-            String description,
-            Consumer<ActionEvent> action) {
-        return ActionWithEventHandler.newAction(
-                text, accelerator, description, null, action);
-    }
-    //endregion
-    //region Icon related
-    public static ImageIcon icon(File file) {
-        try {
-            return icon(file.toPath().toUri().toURL());
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public static ImageIcon icon(URL url) {
-        return new ImageIcon(url);
-    }
-    //endregion
     //region Border related
     public static Border lineBorder(Color borderColor, int thickness) {
         return BorderFactory.createLineBorder(borderColor, thickness);

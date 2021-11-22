@@ -25,7 +25,7 @@
 package org.abego.guitesting.swing.internal.util.widget;
 
 
-import org.abego.guitesting.swing.internal.util.ImageIconUtil;
+import org.abego.commons.swing.ImageIconUtil;
 
 import javax.swing.ImageIcon;
 
