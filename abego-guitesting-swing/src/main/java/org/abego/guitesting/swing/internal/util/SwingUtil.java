@@ -62,18 +62,7 @@ public final class SwingUtil {
         throw new MustNotInstantiateException();
     }
 
-    //region Border related
-    public static Border lineBorder(Color borderColor, int thickness) {
-        return BorderFactory.createLineBorder(borderColor, thickness);
-    }
-    //endregion
     //region Component related
-    public static void setVisible(boolean value, Component... components) {
-        for (Component component : components) {
-            component.setVisible(value);
-        }
-    }
-
     public static void onComponentResized(
             Component component, Consumer<ComponentEvent> callback) {
 
@@ -129,13 +118,6 @@ public final class SwingUtil {
         return label;
     }
 
-    public static JLabel label(String text) {
-        return label(text, l -> {});
-    }
-
-    public static JLabel label() {
-        return new JLabel();
-    }
     //endregion
     //region JButton related
     public static JButton toolbarButton() {
@@ -198,15 +180,5 @@ public final class SwingUtil {
         return scrolling(component, c -> c.setBorder(null));
     }
 
-    //endregion
-    //region Special JComponents
-    public static JComponent separatorBar() {
-        JPanel jPanel = new JPanel(null);
-        jPanel.setPreferredSize(new Dimension(1, 22));
-        jPanel.setBackground(LIGHTER_GRAY);
-        jPanel.setOpaque(true);
-
-        return jPanel;
-    }
     //endregion
 }
