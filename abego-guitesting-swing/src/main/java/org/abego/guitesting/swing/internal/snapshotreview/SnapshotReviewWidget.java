@@ -59,7 +59,6 @@ import static org.abego.guitesting.swing.internal.snapshotreview.ExpectedActualD
 import static org.abego.guitesting.swing.internal.snapshotreview.ImagesLegendWidget.imagesLegendWidget;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantImpl.snapshotVariant;
 import static org.abego.guitesting.swing.internal.snapshotreview.SnapshotVariantsIndicatorWidget.variantsIndicatorWidget;
-import static org.abego.guitesting.swing.internal.util.BorderUtil.borderTopLighterGray;
 import static org.abego.guitesting.swing.internal.util.FileUtil.copyFile;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.LIGHTER_GRAY;
 import static org.abego.guitesting.swing.internal.util.SwingUtil.newAction;
@@ -311,13 +310,14 @@ class SnapshotReviewWidget implements Widget {
         shrinkToFitCheckBox.setText("Shrink to Fit"); //NON-NLS
 
         snapshotIssuesVList.setCellTextProvider(SnapshotReviewWidget::labelWithLastPartFirst);
-        snapshotIssuesVList.getContent().setBorder(borderTopLighterGray());
         snapshotIssuesVList.setTitle("Issues:"); //NON-NLS
         snapshotIssuesVList.setPreviousItemText("Previous issue"); //NON-NLS
         snapshotIssuesVList.setNextItemText("Next issue"); //NON-NLS
 
+        snapshotIssuesVList.setBoxStyle(newBoxStyle()
+                .borderTop(1, LIGHTER_GRAY));
         selectedIssueDescriptionLabel.setBoxStyle(newBoxStyle()
-                        .paddingLeftRight(5));
+                .paddingLeftRight(5));
         imagesLegend.setBoxStyle(newBoxStyle()
                 .paddingLeftRight(TOOLBAR_PADDING));
         titleBar.setBoxStyle(newBoxStyle()
