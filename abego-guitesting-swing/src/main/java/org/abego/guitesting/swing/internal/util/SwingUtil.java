@@ -31,7 +31,6 @@ import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -107,14 +106,6 @@ public final class SwingUtil {
             component.getActionMap().put(key, action);
         }
     }
-    //endregion
-    //region JLabel related
-    public static JLabel label(String text, Consumer<JLabel> initCode) {
-        JLabel label = new JLabel(text);
-        initCode.accept(label);
-        return label;
-    }
-
     //endregion
     //region JButton related
     public static JButton toolbarButton() {
