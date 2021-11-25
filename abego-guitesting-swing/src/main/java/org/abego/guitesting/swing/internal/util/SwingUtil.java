@@ -78,25 +78,6 @@ public final class SwingUtil {
     }
     //endregion
     //region JComponent related
-    public static void onJComponentBecomesVisible(JComponent component, Runnable code) {
-        component.addAncestorListener(new AncestorListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                code.run();
-            }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) {
-
-            }
-        });
-    }
-
     public static void handleAccelerator(JComponent component, Action action) {
         Object accelerator = action.getValue(Action.ACCELERATOR_KEY);
         if (accelerator instanceof KeyStroke) {
