@@ -31,11 +31,11 @@ import java.awt.Color;
 import java.util.Objects;
 
 public final class SideInfo {
-    final int border;
-    final BorderStyle style;
-    final @Nullable Color color;
-    final int padding;
-    final int margin;
+    private final int border;
+    private final BorderStyle style;
+    private final @Nullable Color color;
+    private final int padding;
+    private final int margin;
 
     private SideInfo(int border, BorderStyle style, @Nullable Color color, int padding, int margin) {
         this.border = border;
