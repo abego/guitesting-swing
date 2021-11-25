@@ -37,13 +37,14 @@ import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
 import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
-import org.abego.guitesting.swing.SnapshotReview;
+import org.abego.guitesting.swing.SnapshotReviewService;
 import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
-import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewImpl;
+import org.abego.guitesting.swing.internal.snapshotreview.SnapshotReviewServices;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.jupiter.api.function.Executable;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -65,6 +66,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.OptionalLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -86,6 +89,7 @@ import static org.abego.guitesting.swing.internal.WaitForIdleSupportImpl.newWait
 import static org.abego.guitesting.swing.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.swing.internal.WindowSupportImpl.newWindowSupport;
 import static org.abego.guitesting.swing.internal.screencapture.ScreenCaptureSupportImpl.newScreenCaptureSupport;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public final class GTImpl implements GT {
 
@@ -426,13 +430,13 @@ public final class GTImpl implements GT {
     }
 
     @Override
-    public String getTestResourcesDirectoryPath() {
-        return screenCaptureSupport.getTestResourcesDirectoryPath();
+    public File getTestResourcesDirectory() {
+        return screenCaptureSupport.getTestResourcesDirectory();
     }
 
     @Override
-    public void setTestResourcesDirectoryPath(String path) {
-        screenCaptureSupport.setTestResourcesDirectoryPath(path);
+    public void setTestResourcesDirectory(File directory) {
+        screenCaptureSupport.setTestResourcesDirectory(directory);
     }
 
     @Override
@@ -467,19 +471,31 @@ public final class GTImpl implements GT {
     @Override
     public void waitUntilAllMenuRelatedScreenshotsMatchSnapshot(
             JMenuBar menubar, String snapshotName) {
-        //noinspection StringConcatenation
-        waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar"); //NON-NLS
 
-        withAltKeyPressedRun(() -> {
-            //noinspection StringConcatenation
-            waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"); //NON-NLS
-            for (int i = 0; i < menubar.getMenuCount(); i++) {
-                JMenu menu = menubar.getMenu(i);
-                //noinspection StringConcatenation
-                String menuSnapshotName = snapshotName + "-menu-" + i; //NON-NLS
-                waitUntilMenuScreenshotsMatchSnapshot(menu, menuSnapshotName);
-            }
-        });
+        List<Executable> allTests = new ArrayList<>();
+
+        //noinspection StringConcatenation
+        allTests.add(() ->
+                waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar")); //NON-NLS
+
+        //noinspection StringConcatenation
+        allTests.add(() -> withAltKeyPressedRun(() ->
+                waitUntilScreenshotMatchesSnapshot(menubar, snapshotName + "-menubar-mnemonics"))); //NON-NLS
+
+        for (int i = 0; i < menubar.getMenuCount(); i++) {
+            int index = i;
+            allTests.add(() -> waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(menubar, snapshotName, index));
+        }
+
+        assertAll(allTests);
+    }
+
+    private void waitUntilMenuScreenshotWithAltKeyMatchesSnapshotItems(
+            JMenuBar menubar, String snapshotName, int index) {
+        //noinspection StringConcatenation
+        withAltKeyPressedRun(() ->
+                waitUntilMenuScreenshotsMatchSnapshot(
+                        menubar.getMenu(index), snapshotName + "-menu-" + index));//NON-NLS
     }
 
     @Override
@@ -504,18 +520,27 @@ public final class GTImpl implements GT {
 
     private void waitUntilMenuScreenshotsMatchSnapshot(
             JMenu menu, String menuSnapshotName) {
-        waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName);
+        List<Executable> allTests = new ArrayList<>();
+
+        allTests.add(() -> waitUntilPopupMenuScreenshotMatchesSnapshot(menu, menuSnapshotName));
         for (int i = 0; i < menu.getItemCount(); i++) {
-            JMenuItem menuItem = menu.getItem(i);
-            if (menuItem instanceof JMenu) {
-                JMenu subMenu = (JMenu) menuItem;
-                menu.setPopupMenuVisible(true);
-                try {
-                    //noinspection StringConcatenation
-                    waitUntilMenuScreenshotsMatchSnapshot(subMenu, menuSnapshotName + "." + i);
-                } finally {
-                    menu.setPopupMenuVisible(false);
-                }
+            int index = i;
+            allTests.add(() -> waitUntilMenuScreenshotMatchSnapshotHelper(
+                    menu, menuSnapshotName, index));
+        }
+        assertAll(allTests);
+    }
+
+    private void waitUntilMenuScreenshotMatchSnapshotHelper(JMenu menu, String menuSnapshotName, int i) {
+        JMenuItem menuItem = menu.getItem(i);
+        if (menuItem instanceof JMenu) {
+            JMenu subMenu = (JMenu) menuItem;
+            menu.setPopupMenuVisible(true);
+            try {
+                //noinspection StringConcatenation
+                waitUntilMenuScreenshotsMatchSnapshot(subMenu, menuSnapshotName + "." + i);
+            } finally {
+                menu.setPopupMenuVisible(false);
             }
         }
     }
@@ -548,7 +573,7 @@ public final class GTImpl implements GT {
 
 
     @Override
-    public Seq<? extends SnapshotIssue> getSnapshotIssues() {
+    public Seq<SnapshotIssue> getSnapshotIssues() {
         return screenCaptureSupport.getSnapshotIssues();
     }
 
@@ -563,12 +588,13 @@ public final class GTImpl implements GT {
     }
 
     // ======================================================================
-    // SnapshotReview
+    // SnapshotReviewService
     // ======================================================================
 
     @Override
-    public SnapshotReview newSnapshotReview() {
-        return SnapshotReviewImpl.newSnapshotReview(this);
+    public SnapshotReviewService newSnapshotReviewService() {
+        return SnapshotReviewServices.newSnapshotReviewService(
+                this::getSnapshotIssues);
     }
 
     // ======================================================================

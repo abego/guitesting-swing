@@ -39,7 +39,7 @@ gt.type(", please!");
 // Verify if the text field really contains the expected text.
 gt.assertEqualsRetrying("Your name, please!", input::getText);
 
-// When we are done with our tests we can ask GT to cleanup
+// When we are done with our tests we can ask GT to clean up
 // (This will dispose open windows etc.)
 gt.cleanup();
 ```

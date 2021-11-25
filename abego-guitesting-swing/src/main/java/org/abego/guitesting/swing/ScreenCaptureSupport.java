@@ -153,7 +153,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     /**
      * Returns the difference between {@code imageA} and {@code imageB} as an
-     * an image with {@link Color#black} pixels marking the parts of that differ
+     * image with {@link Color#black} pixels marking the parts of that differ
      * in both images or only exist in one of them.
      *
      * <p>The parts that don't differ are transparent white.</p>
@@ -256,24 +256,46 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      */
     void setDelayBeforeNewSnapshot(Duration duration);
 
+
     /**
-     * Returns the path to the test resources directory, relative to the
-     * Maven project directory.
+     * Returns the test resources directory
      *
+     * @return the test resources directory
+     */
+    File getTestResourcesDirectory();
+
+    /**
+     * Returns the path to the test resources directory
+     *
+     * @deprecated use {@link #getTestResourcesDirectory()} instead
      * @return the path to the test resources directory
      */
-    String getTestResourcesDirectoryPath();
+    @Deprecated
+    default String getTestResourcesDirectoryPath() {
+        return getTestResourcesDirectory().getPath();
+    }
 
     /**
-     * Sets the path to the test resources directory to {@code path}.
+     * Sets the directory with the test resources to {@code directory}.
      *
-     * @param path the new path to the test resources directory (relative to the
-     *             Maven project directory)
+     * @param directory the new test resources directory
      */
-    void setTestResourcesDirectoryPath(String path);
+    void setTestResourcesDirectory(File directory);
+    
+    /**
+     * Sets the path to the directory with test resources to {@code path}.
+     *
+     * @deprecated use {@link #setTestResourcesDirectory(File)} instead
+     * @param path the new path to the directory with the test resources
+     *             (relative to the Maven project directory)
+     */
+    @Deprecated
+    default void setTestResourcesDirectoryPath(String path) {
+        setTestResourcesDirectory(new File(path));
+    }
 
     /**
-     * Returns the absolute name of the snapshot the will be created in that
+     * Returns the absolute name of the snapshot that will be created in the
      * current context, taking `name` and the calling method(s) into account.
      *
      * <p>
@@ -467,7 +489,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
         return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
     }
 
-    default Seq<? extends SnapshotIssue> getSnapshotIssues() {
+    default Seq<SnapshotIssue> getSnapshotIssues() {
         return SeqUtil.emptySeq();
     }
 

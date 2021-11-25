@@ -36,8 +36,8 @@ public interface EDTSupport {
      * Runs the {@code runnable} in the Event Dispatch Thread (EDT) and
      * waits until the runnable is finished.
      * <p>
-     * The method may also called from within the EventDispatchThread. In that
-     * case the runnable runs immediately.
+     * The method may also be called from within the Event Dispatch Thread.
+     * In that case the runnable runs immediately.
      *
      * @param runnable the {@link Runnable} to run in the Event Dispatch Thread.
      */
@@ -48,8 +48,8 @@ public interface EDTSupport {
      * Event Dispatch Thread (EDT) (using action.actionPerformed) and
      * waits until the actionListener is finished.
      * <p>
-     * The method may also called from within the EventDispatchThread. In that
-     * case the actionListener runs immediately.
+     * The method may also be called from within the Event Dispatch Thread.
+     * In that case the runnable runs immediately.
      *
      * @param actionListener the {@link ActionListener} to run in the Event
      *                       Dispatch Thread.
@@ -64,8 +64,8 @@ public interface EDTSupport {
      * {@link ActionEvent#ACTION_PERFORMED} event and
      * waits until the actionListener is finished.
      * <p>
-     * The method may also called from within the EventDispatchThread. In that
-     * case the actionListener runs immediately.
+     * The method may also be called from within the Event Dispatch Thread.
+     * In that case the runnable runs immediately.
      *
      * @param actionListener the {@link ActionListener} to run in the Event
      *                       Dispatch Thread.

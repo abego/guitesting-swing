@@ -94,9 +94,10 @@
         <sonar.scm.provider>git</sonar.scm.provider>
 
         <!-- version infos -->
-        <abego-commons-base.version>0.11.0</abego-commons-base.version>
-        <abego-commons-test.version>0.11.0</abego-commons-test.version>
-        <abego-commons-swing.version>0.11.0</abego-commons-swing.version>
+        <abego-commons-base.version>0.12.0-SNAPSHOT</abego-commons-base.version>
+        <abego-commons-test.version>0.12.0-SNAPSHOT</abego-commons-test.version>
+        <abego-commons-swing.version>0.12.0-SNAPSHOT</abego-commons-swing.version>
+        <abego-event-swing.version>0.1.1-SNAPSHOT</abego-event-swing.version>
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <junit-platform-surefire-provider.version>1.1.0</junit-platform-surefire-provider.version>
@@ -108,6 +109,40 @@
         <org.eclipse.jdt.annotation.version>2.2.300</org.eclipse.jdt.annotation.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>stage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -181,31 +216,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven-gpg-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus-staging-maven-plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
 

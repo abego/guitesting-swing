@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing.internal.util;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,16 +34,22 @@ import java.awt.Component;
 import java.util.function.Function;
 
 final class ListCellRendererForTextProvider<T> extends DefaultListCellRenderer {
-    private final Class<T> valueType;
-    private final Function<T, String> textProvider;
+    private final @Nullable Class<T> valueType;
+    private final Function<@Nullable T, String> textProvider;
 
-    private ListCellRendererForTextProvider(Class<T> valueType, Function<T, String> textProvider) {
+    private ListCellRendererForTextProvider(@Nullable Class<T> valueType, Function<@Nullable T, String> textProvider) {
         this.valueType = valueType;
         this.textProvider = textProvider;
     }
+
     public static <T, L extends ListCellRenderer<T>> L newListCellRendererForTextProvider(Class<T> valueType, Function<T, String> textProvider) {
         //noinspection unchecked
         return (L) new ListCellRendererForTextProvider<>(valueType, textProvider);
+    }
+
+    public static <T, L extends ListCellRenderer<T>> L newListCellRendererForTextProvider(Function<T, String> textProvider) {
+        //noinspection unchecked
+        return (L) new ListCellRendererForTextProvider<>(null, textProvider);
     }
 
     @Override
@@ -54,7 +62,7 @@ final class ListCellRendererForTextProvider<T> extends DefaultListCellRenderer {
 
         JLabel listCellRendererComponent =
                 (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if (valueType.isInstance(value)) {
+        if (valueType == null || valueType.isInstance(value)) {
             //noinspection unchecked
             listCellRendererComponent.setText(textProvider.apply((T) value));
         }

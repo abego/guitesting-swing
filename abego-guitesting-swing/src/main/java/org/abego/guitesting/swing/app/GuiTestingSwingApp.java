@@ -30,7 +30,7 @@ import javax.swing.UIManager;
 
 import java.awt.Font;
 
-import static org.abego.guitesting.swing.app.SnapshotReviewApp.newSnapshotReviewApp;
+import static org.abego.guitesting.swing.internal.snapshotreview.app.SnapshotReviewApp.newSnapshotReviewApp;
 
 public class GuiTestingSwingApp {
 
@@ -55,6 +55,5 @@ public class GuiTestingSwingApp {
         textArea.setEditable(false);
         JOptionPane.showMessageDialog(null, textArea);
     }
-
 
 }

@@ -2301,7 +2301,7 @@ public class GTTest {
         assertEquals(Color.black, new Color(image.getRGB(50, 50)));
 
         // The other color we cannot directly compare as createScreenCapture
-        // does not always reproduces the "native" colors. So we just check
+        // does not always reproduce the "native" colors. So we just check
         // the "color-ish"
         assertTrue(isBlueish(new Color(image.getRGB(90, 90))));
         assertTrue(isGreenish(new Color(image.getRGB(20, 90))));
@@ -2473,13 +2473,16 @@ public class GTTest {
     Stream<DynamicTest> waitUntilScreenshotMatchesSnapshot_TestFactory() {
         return Stream.of("foo", "bar", "baz")
                 .map(text -> DynamicTest.dynamicTest(text, () -> {
-                    openSampleWindow(text);
+                    try {
+                        openSampleWindow(text);
 
-                    JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
+                        JTextField tf = gt.waitForComponentNamed(JTextField.class, "input");
 
-                    String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
-                    gt.waitUntilScreenshotMatchesSnapshot(tf, name);
-                    gt.cleanup();
+                        String name = "/org/abego/guitesting/swing/GTTest.waitUntilScreenshotMatchesSnapshot_TestFactory-" + text;
+                        gt.waitUntilScreenshotMatchesSnapshot(tf, name);
+                    } finally {
+                        gt.cleanup();
+                    }
                 }));
     }
 

@@ -89,6 +89,7 @@ public class ImageCompareTest {
 
     private static BufferedImage readResourceImage(String name) {
         try {
+            //noinspection ConstantConditions
             return ImageIO.read(ImageCompareTest.class.getResource(
                     "/org/abego/guitesting/swing/" + name));
         } catch (IOException e) {

@@ -103,7 +103,7 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
         // E.g. the Event queue may be empty but the EventThread may still be busy
         // processing the last Event just grabbed from the queue. To make the
         // "waitForIdle" more reliable we want to wait until we are fairly sure the
-        // EventThread is not busy. Therefore we add an own event now and wait until
+        // EventThread is not busy. Therefore, we add an own event now and wait until
         // this event is processed. Then all "previous" events are also processed.
         AtomicBoolean done = new AtomicBoolean(false);
         SwingUtilities.invokeLater(() -> done.set(true));

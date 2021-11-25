@@ -71,7 +71,7 @@ public final class GuiTestingUtil {
     /**
      * Return the bounds of the screen.
      * <p>
-     * (On mac OS the returned rectangle does not contain the menubar)
+     * (On macOS the returned rectangle does not contain the menubar)
      */
     static Rectangle screenBounds() {
         GraphicsEnvironment env = getLocalGraphicsEnvironment();

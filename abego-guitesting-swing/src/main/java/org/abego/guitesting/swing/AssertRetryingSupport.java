@@ -66,7 +66,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * <p>
  * The "assert...Retrying" methods (like
  * {@link #assertEqualsRetrying(Object, Supplier)} or
- * {@link #assertTrueRetrying(BooleanSupplier)} are implemented this way.
+ * {@link #assertTrueRetrying(BooleanSupplier)}) are implemented this way.
  */
 public interface AssertRetryingSupport extends TimeoutSupplier {
     @Timeoutable

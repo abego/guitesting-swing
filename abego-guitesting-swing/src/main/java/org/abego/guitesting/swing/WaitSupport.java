@@ -64,7 +64,7 @@ public interface WaitSupport extends TimeoutSupplier, WaitUntilFunction {
      * <p>
      * <em>(This operation does not timeout.)</em>
      *
-     * @param milliSeconds the duration to wait (in milli seconds)
+     * @param milliSeconds the duration to wait (in milliseconds)
      */
     default void waitForMillis(long milliSeconds) {
         waitFor(Duration.ofMillis(milliSeconds));

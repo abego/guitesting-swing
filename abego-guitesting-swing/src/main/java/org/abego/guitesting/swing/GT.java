@@ -274,7 +274,7 @@ public interface GT extends
                 menubar, getSnapshotName(null));
     }
 
-    SnapshotReview newSnapshotReview();
+    SnapshotReviewService newSnapshotReviewService();
 
     // ======================================================================
     // Reset
@@ -357,6 +357,7 @@ public interface GT extends
      *
      * @return this object as EDTSupport
      */
+    @SuppressWarnings("GrazieInspection")
     default EDTSupport _edt() {
         return this;
     }
