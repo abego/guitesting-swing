@@ -254,6 +254,8 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     private static final int BORDER_SIZE = 3;
 
     private void updateImageWidgets() {
+        //TODO: make this class and ImagesLegendWidget use
+        // same approach to define and update the content
         @Nullable SnapshotImages images = getSnapshotImages();
         if (images != null) {
             ImageWidget expected = imageWidgets[(getExpectedImageIndex()) % 3];
