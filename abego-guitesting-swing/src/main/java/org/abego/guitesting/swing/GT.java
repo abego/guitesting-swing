@@ -25,6 +25,7 @@
 package org.abego.guitesting.swing;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.polling.PollingService;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.test.AssertRetryingService;
 import org.abego.commons.timeout.TimeoutService;
@@ -113,7 +114,7 @@ public interface GT extends
         FocusSupport,
         KeyboardSupport,
         MouseSupport,
-        PollingSupport,
+        PollingService,
         RobotAPI,
         ScreenCaptureSupport,
         TimeoutService,
@@ -403,9 +404,9 @@ public interface GT extends
     /**
      * Provides access to "polling" methods.
      *
-     * @return this object as PollingSupport
+     * @return this object as PollingService
      */
-    default PollingSupport _poll() {
+    default PollingService _poll() {
         return this;
     }
 

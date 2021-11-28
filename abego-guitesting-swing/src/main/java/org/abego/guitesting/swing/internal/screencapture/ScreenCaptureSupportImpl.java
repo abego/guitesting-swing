@@ -25,10 +25,10 @@
 package org.abego.guitesting.swing.internal.screencapture;
 
 import org.abego.commons.io.FileUtil;
+import org.abego.commons.polling.PollingService;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.timeout.TimeoutUncheckedException;
 import org.abego.guitesting.swing.GuiTestingException;
-import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.internal.GuiTestingUtil;
@@ -70,7 +70,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private static final String TEST_RESOURCES_DIRECTORY_PATH_DEFAULT = "src/test/resources"; //NON-NLS
     private final Robot robot;
-    private final PollingSupport pollingSupport;
+    private final PollingService pollingService;
     private final WaitSupport waitSupport;
     private File snapshotReportDirectory = new File("target/guitesting-reports");
     private boolean generateSnapshotIfMissing = true;
@@ -80,15 +80,15 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private int imageDifferenceTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
 
     private ScreenCaptureSupportImpl(
-            Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
+            Robot robot, PollingService pollingService, WaitSupport waitSupport) {
         this.robot = robot;
-        this.pollingSupport = pollingSupport;
+        this.pollingService = pollingService;
         this.waitSupport = waitSupport;
     }
 
     public static ScreenCaptureSupport newScreenCaptureSupport(
-            Robot robot, PollingSupport pollingSupport, WaitSupport waitSupport) {
-        return new ScreenCaptureSupportImpl(robot, pollingSupport, waitSupport);
+            Robot robot, PollingService pollingService, WaitSupport waitSupport) {
+        return new ScreenCaptureSupportImpl(robot, pollingService, waitSupport);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
     @Override
     public Duration timeout() {
-        return pollingSupport.timeout();
+        return pollingService.timeout();
     }
 
     @Override
@@ -309,7 +309,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         CaptureScreenAndCompare csc = new CaptureScreenAndCompare(
                 component, rectangle, expectedImages);
         try {
-            return pollingSupport.poll(
+            return pollingService.poll(
                     csc::capture,
                     csc::imageMatchesAnyExpectedImage);
         } catch (TimeoutUncheckedException e) {

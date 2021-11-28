@@ -25,8 +25,11 @@
 package org.abego.guitesting.swing.internal;
 
 import org.abego.commons.blackboard.Blackboard;
+import org.abego.commons.polling.PollingService;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.test.AssertRetryingService;
+import org.abego.commons.timeout.Timeout;
+import org.abego.commons.timeout.TimeoutService;
 import org.abego.guitesting.swing.ComponentBaseSupport;
 import org.abego.guitesting.swing.DialogAndFrameSupport;
 import org.abego.guitesting.swing.EDTSupport;
@@ -35,10 +38,8 @@ import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.MouseSupport;
-import org.abego.guitesting.swing.PollingSupport;
 import org.abego.guitesting.swing.ScreenCaptureSupport;
 import org.abego.guitesting.swing.SnapshotReviewService;
-import org.abego.guitesting.swing.TimeoutSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 import org.abego.guitesting.swing.WaitSupport;
 import org.abego.guitesting.swing.WindowBaseSupport;
@@ -77,6 +78,7 @@ import static java.util.Objects.requireNonNull;
 import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
 import static org.abego.commons.lang.LongUtil.parseLong;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
+import static org.abego.commons.polling.Polling.newPollingService;
 import static org.abego.commons.test.AssertRetrying.newAssertRetryingService;
 import static org.abego.guitesting.swing.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.swing.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
@@ -84,7 +86,6 @@ import static org.abego.guitesting.swing.internal.EDTSupportImpl.newEDTSupport;
 import static org.abego.guitesting.swing.internal.FocusSupportImpl.newFocusSupport;
 import static org.abego.guitesting.swing.internal.KeyboardSupportImpl.newKeyboardSupport;
 import static org.abego.guitesting.swing.internal.MouseSupportImpl.newMouseSupport;
-import static org.abego.guitesting.swing.internal.PollingSupportImpl.newPollingSupport;
 import static org.abego.guitesting.swing.internal.WaitForIdleSupportImpl.newWaitForIdleSupport;
 import static org.abego.guitesting.swing.internal.WaitSupportImpl.newWaitSupport;
 import static org.abego.guitesting.swing.internal.WindowSupportImpl.newWindowSupport;
@@ -96,19 +97,19 @@ public final class GTImpl implements GT {
     private static final String COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE = "Could not create Robot instance"; //NON-NLS
     private final Robot robot = newRobot();
     private final Blackboard<Object> blackboard = newBlackboardDefault();
-    private final TimeoutSupport timeoutSupport = TimeoutSupportImpl.newTimeoutSupport();
-    private final WaitSupport waitSupport = newWaitSupport(timeoutSupport);
-    private final AssertRetryingService assertRetryingService = newAssertRetryingService(timeoutSupport);
+    private final TimeoutService timeoutService = Timeout.newTimeoutService();
+    private final WaitSupport waitSupport = newWaitSupport(timeoutService);
+    private final AssertRetryingService assertRetryingService = newAssertRetryingService(timeoutService);
     private final DialogAndFrameSupport dialogAndFrameSupport = newDialogAndFrameSupport();
     private final EDTSupport edtSupport = newEDTSupport();
     private final WaitForIdleSupport waitForIdleSupport = newWaitForIdleSupport(robot);
     private final KeyboardSupport keyboardSupport = newKeyboardSupport(robot, waitForIdleSupport);
     private final MouseSupport mouseSupport = newMouseSupport(robot, waitForIdleSupport);
-    private final PollingSupport pollingSupport = newPollingSupport(timeoutSupport);
+    private final PollingService pollingService = newPollingService(timeoutService);
     private final WindowBaseSupport windowSupport = newWindowSupport();
     private final ComponentBaseSupport componentSupport = newComponentSupport(windowSupport::allWindows);
-    private final FocusSupport focusSupport = newFocusSupport(timeoutSupport, waitSupport, keyboardSupport);
-    private final ScreenCaptureSupport screenCaptureSupport = newScreenCaptureSupport(robot, pollingSupport, waitSupport);
+    private final FocusSupport focusSupport = newFocusSupport(timeoutService, waitSupport, keyboardSupport);
+    private final ScreenCaptureSupport screenCaptureSupport = newScreenCaptureSupport(robot, pollingService, waitSupport);
 
     private GTImpl() {
     }
@@ -302,12 +303,12 @@ public final class GTImpl implements GT {
 
     @Override
     public <T> T poll(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout) {
-        return pollingSupport.poll(functionToPoll, isResult, timeout);
+        return pollingService.poll(functionToPoll, isResult, timeout);
     }
 
     @Override
     public <T> T pollNoFail(Supplier<T> functionToPoll, Predicate<T> isResult, Duration timeout) {
-        return pollingSupport.pollNoFail(functionToPoll, isResult, timeout);
+        return pollingService.pollNoFail(functionToPoll, isResult, timeout);
     }
 
     // ======================================================================
@@ -603,28 +604,28 @@ public final class GTImpl implements GT {
 
     @Override
     public Duration initialTimeout() {
-        return timeoutSupport.initialTimeout();
+        return timeoutService.initialTimeout();
     }
 
     @Override
     public void setInitialTimeout(Duration duration) {
-        timeoutSupport.setInitialTimeout(duration);
+        timeoutService.setInitialTimeout(duration);
     }
 
     @Override
     public void setTimeout(Duration duration) {
-        timeoutSupport.setTimeout(duration);
+        timeoutService.setTimeout(duration);
     }
 
     @Override
     public void runWithTimeout(Duration timeoutDuration, Runnable runnable) {
 
-        timeoutSupport.runWithTimeout(timeoutDuration, runnable);
+        timeoutService.runWithTimeout(timeoutDuration, runnable);
     }
 
     @Override
     public Duration timeout() {
-        return timeoutSupport.timeout();
+        return timeoutService.timeout();
     }
 
     // ======================================================================
@@ -663,7 +664,7 @@ public final class GTImpl implements GT {
     @Override
     public void reset() {
         waitForIdle();
-        setTimeout(initialTimeout());
+        resetTimeout();
         blackboard().clear();
         releaseAllKeys();
     }
