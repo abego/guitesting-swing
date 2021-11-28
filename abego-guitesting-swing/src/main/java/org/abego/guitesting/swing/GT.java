@@ -27,6 +27,7 @@ package org.abego.guitesting.swing;
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
 import org.abego.commons.test.AssertRetryingService;
+import org.abego.commons.timeout.TimeoutService;
 import org.abego.commons.timeout.Timeoutable;
 import org.opentest4j.AssertionFailedError;
 
@@ -115,7 +116,7 @@ public interface GT extends
         PollingSupport,
         RobotAPI,
         ScreenCaptureSupport,
-        TimeoutSupport,
+        TimeoutService,
         WaitForIdleSupport,
         WaitSupport,
         WindowSupport {
@@ -429,9 +430,9 @@ public interface GT extends
     /**
      * Provides access to timeout related methods.
      *
-     * @return this object as TimeoutSupport
+     * @return this object as TimeoutService
      */
-    default TimeoutSupport _timeout() {
+    default TimeoutService _timeout() {
         return this;
     }
 
