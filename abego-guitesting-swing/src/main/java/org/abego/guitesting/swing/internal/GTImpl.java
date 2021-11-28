@@ -26,7 +26,7 @@ package org.abego.guitesting.swing.internal;
 
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
-import org.abego.guitesting.swing.AssertRetryingSupport;
+import org.abego.commons.test.AssertRetryingService;
 import org.abego.guitesting.swing.ComponentBaseSupport;
 import org.abego.guitesting.swing.DialogAndFrameSupport;
 import org.abego.guitesting.swing.EDTSupport;
@@ -77,7 +77,7 @@ import static java.util.Objects.requireNonNull;
 import static org.abego.commons.blackboard.BlackboardDefault.newBlackboardDefault;
 import static org.abego.commons.lang.LongUtil.parseLong;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
-import static org.abego.guitesting.swing.internal.AssertRetryingSupportImpl.newAssertRetryingSupport;
+import static org.abego.commons.test.AssertRetrying.newAssertRetryingService;
 import static org.abego.guitesting.swing.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.swing.internal.DialogAndFrameSupportImpl.newDialogAndFrameSupport;
 import static org.abego.guitesting.swing.internal.EDTSupportImpl.newEDTSupport;
@@ -98,7 +98,7 @@ public final class GTImpl implements GT {
     private final Blackboard<Object> blackboard = newBlackboardDefault();
     private final TimeoutSupport timeoutSupport = TimeoutSupportImpl.newTimeoutSupport();
     private final WaitSupport waitSupport = newWaitSupport(timeoutSupport);
-    private final AssertRetryingSupport assertRetryingSupport = newAssertRetryingSupport(timeoutSupport);
+    private final AssertRetryingService assertRetryingService = newAssertRetryingService(timeoutSupport);
     private final DialogAndFrameSupport dialogAndFrameSupport = newDialogAndFrameSupport();
     private final EDTSupport edtSupport = newEDTSupport();
     private final WaitForIdleSupport waitForIdleSupport = newWaitForIdleSupport(robot);
@@ -126,12 +126,12 @@ public final class GTImpl implements GT {
     }
 
     // ======================================================================
-    // AssertRetryingSupport
+    // AssertRetryingService
     // ======================================================================
 
     @Override
     public <T> void assertEqualsRetrying(T expected, Supplier<T> actualSupplier, @Nullable String message) {
-        assertRetryingSupport.assertEqualsRetrying(
+        assertRetryingService.assertEqualsRetrying(
                 expected, actualSupplier, message);
     }
 

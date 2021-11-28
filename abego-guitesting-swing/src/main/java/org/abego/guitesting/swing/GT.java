@@ -26,6 +26,7 @@ package org.abego.guitesting.swing;
 
 import org.abego.commons.blackboard.Blackboard;
 import org.abego.commons.seq.Seq;
+import org.abego.commons.test.AssertRetryingService;
 import org.abego.commons.timeout.Timeoutable;
 import org.opentest4j.AssertionFailedError;
 
@@ -103,7 +104,7 @@ import static org.abego.commons.lang.ThrowableUtil.messageOrClassName;
  * </pre>
  */
 public interface GT extends
-        AssertRetryingSupport,
+        AssertRetryingService,
         ComponentSupport,
         DebugSupport,
         DialogAndFrameSupport,
@@ -319,9 +320,9 @@ public interface GT extends
     /**
      * Provides access to "assert...Retrying" methods.
      *
-     * @return this object as AssertRetryingSupport
+     * @return this object as AssertRetryingService
      */
-    default AssertRetryingSupport _assert() {
+    default AssertRetryingService _assert() {
         return this;
     }
 
