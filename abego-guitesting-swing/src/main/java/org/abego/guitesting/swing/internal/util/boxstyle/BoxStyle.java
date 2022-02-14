@@ -63,7 +63,6 @@ public final class BoxStyle {
     private final @Nullable Color background;
     private final @Nullable Color color;
     private final @Nullable Font font;
-    private final @Nullable Boolean visible;
 
     public enum BorderStyle {
         NONE,
@@ -79,12 +78,11 @@ public final class BoxStyle {
         private @Nullable Color background;
         private @Nullable Color color;
         private @Nullable Font font;
-        private @Nullable Boolean visible;
 
         private Factory() {}
 
         public BoxStyle create() {
-            return new BoxStyle(top, right, bottom, left, background, color, font, visible);
+            return new BoxStyle(top, right, bottom, left, background, color, font);
         }
 
         public Factory background(Color color) {
@@ -99,11 +97,6 @@ public final class BoxStyle {
 
         public Factory font(Font font) {
             this.font = font;
-            return this;
-        }
-
-        public Factory visible(boolean value) {
-            this.visible = value;
             return this;
         }
 
@@ -267,8 +260,7 @@ public final class BoxStyle {
 
     private BoxStyle(OneSide top, OneSide right, OneSide bottom, OneSide left,
                      @Nullable Color background, @Nullable Color color,
-                     @Nullable Font font,
-                     @Nullable Boolean visible) {
+                     @Nullable Font font) {
         this.top = sideInfo(top);
         this.left = sideInfo(left);
         this.bottom = sideInfo(bottom);
@@ -276,7 +268,6 @@ public final class BoxStyle {
         this.background = background;
         this.color = color;
         this.font = font;
-        this.visible = visible;
     }
 
     public static Factory newBoxStyle() {
@@ -296,14 +287,6 @@ public final class BoxStyle {
     @Nullable
     public Font getFontOrNull() {
         return font;
-    }
-
-    //TODO: should this really be part of BoxStyle. May be wrong, as this
-    //  property actually affects the component itself (may hide it), and not
-    //  the area "around" the component.
-    @Nullable
-    public Boolean getVisibleOrNull() {
-        return visible;
     }
 
     public SideInfo getTop() {

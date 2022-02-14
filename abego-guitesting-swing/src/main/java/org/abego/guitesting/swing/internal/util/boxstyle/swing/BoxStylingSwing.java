@@ -63,11 +63,6 @@ public final class BoxStylingSwing {
         if (font != null) {
             component.setFont(font);
         }
-
-        @Nullable Boolean visible = style.getVisibleOrNull();
-        if (visible != null) {
-            component.setVisible(visible);
-        }
     }
 
     public static void setBoxStyle(JComponent component, BoxStyle.Factory styleFactory) {
