@@ -298,6 +298,9 @@ public final class BoxStyle {
         return font;
     }
 
+    //TODO: should this really be part of BoxStyle. May be wrong, as this
+    //  property actually affects the component itself (may hide it), and not
+    //  the area "around" the component.
     @Nullable
     public Boolean getVisibleOrNull() {
         return visible;
