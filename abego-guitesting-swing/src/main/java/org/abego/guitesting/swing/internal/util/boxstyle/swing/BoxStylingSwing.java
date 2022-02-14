@@ -42,6 +42,14 @@ public final class BoxStylingSwing {
         throw new MustNotInstantiateException();
     }
 
+    /**
+     * Style the {@code component} according to the given {@code style}.
+     * <p>
+     * Calling this method will overwrite the border of the component.
+     *
+     * @param component the JComponent to style
+     * @param style the BoxStyle to apply to the component
+     */
     public static void setBoxStyle(JComponent component, BoxStyle style) {
         component.setBorder(boxBorder(style.getTop(),
                 style.getRight(), style.getBottom(), style.getLeft()));
@@ -65,6 +73,16 @@ public final class BoxStylingSwing {
         }
     }
 
+    /**
+     * Style the {@code component} according to the style defined by the given
+     * {@code styleFactory}.
+     * <p>
+     * Calling this method will overwrite the border of the component.
+     *
+     * @param component the JComponent to style
+     * @param styleFactory calling this styleFactory's {@code create()} method
+     *                     returns the BoxStyle to apply to the component
+     */
     public static void setBoxStyle(JComponent component, BoxStyle.Factory styleFactory) {
         setBoxStyle(component, styleFactory.create());
     }
