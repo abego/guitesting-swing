@@ -29,16 +29,9 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.SwingUtilities;
 import java.awt.Robot;
-import java.awt.Toolkit;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.abego.commons.lang.ObjectUtil.ignore;
-import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
-
 final class WaitForIdleSupportImpl implements WaitForIdleSupport {
-    private static @Nullable Runnable realSyncRunnable = null;
     private final Robot robot;
 
     private WaitForIdleSupportImpl(Robot robot) {
@@ -49,52 +42,10 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
         return new WaitForIdleSupportImpl(robot);
     }
 
-    private static void realSync() {
-        // The SunToolkit provides a method "realSync" that can increase
-        // the reliability of "waitForIdle" because it checks for additional
-        // queues, not just the event queue. E.g. the actual rendering of an
-        // image may be buffered. So if possible, use this method.
-
-        // As the SunToolkit may not be available in all runtime environments
-        // we need to use reflection.
-        if (realSyncRunnable == null) {
-            realSyncRunnable = sunToolkitReadSyncAsRunnableOrNull();
-
-            if (realSyncRunnable == null) {
-                realSyncRunnable = () -> {}; // do nothing by default
-            }
-        }
-
-        runIfNotNull(realSyncRunnable);
-    }
-
     private static void runIfNotNull(@Nullable Runnable runnable) {
         if (runnable != null) {
             runnable.run();
         }
-    }
-
-    @Nullable
-    private static Runnable sunToolkitReadSyncAsRunnableOrNull() {
-        try {
-            Toolkit toolkit = Toolkit.getDefaultToolkit();
-
-            Class<?> sunToolkitClass = Class.forName("sun.awt.SunToolkit");
-            if (sunToolkitClass.isInstance(toolkit)) {
-                Method m = sunToolkitClass.getMethod("realSync");
-
-                return () -> {
-                    try {
-                        m.invoke(toolkit);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw newUncheckedException(e);
-                    }
-                };
-            }
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            ignore(e);
-        }
-        return null;
     }
 
     @Override
@@ -109,7 +60,20 @@ final class WaitForIdleSupportImpl implements WaitForIdleSupport {
         SwingUtilities.invokeLater(() -> done.set(true));
 
         robot.waitForIdle();
-        realSync();
+        // HISTORIC NOTE:
+        // This method used to also call "realSync" as the original
+        // implementation of Robot.waitForIdle() did not wait for "low level"
+        // events, like "paint". Calling "realSync" was intended to wait for
+        // such low level events, i.e. platform queues being processed and
+        // emptied.
+        //
+        // However realSync sometimes did not return.
+        //
+        // This is a problem already reported by others.
+        //
+        // In JDK9 the implementation of Robot.waitForIdle was changed, making
+        // it more reliable. Therefore we now rely on Robot.waitForIdle and no
+        // longer coll realSync.
 
         while (!done.get()) {
             try {
