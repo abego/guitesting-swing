@@ -32,8 +32,25 @@ public class PropServices {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Returns the default {@link PropService}.
+     * <p>
+     * <p>The default {@link PropService} using the default {@link EventService}
+     * ({@link EventServices#getDefault()}). For more details
+     * see {@link #newPropService(EventService)}.
+     */
     public static PropService getDefault() {
         return PropServiceDefault.getDefault();
+    }
+
+    /**
+     * Create a new {@link PropService}, using the default {@link EventService}
+     * ({@link EventServices#getDefault()}).
+     * <p>
+     * For details see {@link #newPropService(EventService)}.
+     */
+    public static PropService newPropService() {
+        return PropServiceDefault.newPropService(EventServices.getDefault());
     }
 
     /**
@@ -43,13 +60,13 @@ public class PropServices {
      * working. With {@link PropServices#getDefault()} the default
      * {@link EventService} ({@link EventServices#getDefault()}) is used. When
      * you want to create a new PropService that uses a different EventService
-     * use this {@link #newPropService(EventService)} method.
+     * use this newPropService(EventService) method.
      * <p>
      * Make sure to use the same EventService olso with other objects working
      * on Prop instances created with the PropService. Especially be aware of
      * the fact that events never leave an EventService. E.g. an observer
      * created by the default EventService will not be informed when events
-     * are posted by a different EventService.
+     * are posted to a different EventService.
      */
     public static PropService newPropService(EventService eventService) {
         return PropServiceDefault.newPropService(eventService);
