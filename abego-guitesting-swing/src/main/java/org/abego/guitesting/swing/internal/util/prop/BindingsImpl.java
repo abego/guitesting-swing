@@ -45,7 +45,6 @@ class BindingsImpl implements Bindings {
     private final Set<EventObserver<?>> observers = new HashSet<>();
 
     private class Binding<T> {
-        private final Object prop;
         private final EventObserver<PropertyChanged> sourceOfTruthObserver;
         private final EventObserver<PropertyChanged> propObserver;
 
@@ -53,24 +52,22 @@ class BindingsImpl implements Bindings {
                        Prop<T> sourceOfTruth,
                        Runnable updatePropCode,
                        Runnable updateSourceOfTruthCode) {
-            this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
             this.propObserver = addPropertyObserver(prop,
                     e -> updateSourceOfTruthCode.run());
-            prop.set(sourceOfTruth.get());
+            updatePropCode.run();
         }
 
         public Binding(PropNullable<T> prop,
                        PropNullable<T> sourceOfTruth,
                        Runnable updatePropCode,
                        Runnable updateSourceOfTruthCode) {
-            this.prop = prop;
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
                     e -> updatePropCode.run());
             this.propObserver = addPropertyObserver(prop,
                     e -> updateSourceOfTruthCode.run());
-            prop.set(sourceOfTruth.get());
+            updatePropCode.run();
         }
 
         public void unbind() {
@@ -102,10 +99,6 @@ class BindingsImpl implements Bindings {
 
         protected void removeObserver(EventObserver<?> observer) {
             eventAPIForProp.removeObserver(observer);
-        }
-
-        protected void sourceOfTruthChanged() {
-            eventAPIForProp.postPropertyChanged(prop, PropService.VALUE_PROPERTY_NAME); //NON-NLS
         }
     }
 
