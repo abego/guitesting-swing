@@ -57,7 +57,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
 
     //region State/Model
     private final PropService propService = PropServices.getDefault();
-    //region prop shrinkToFit: Boolean
+    //region public prop shrinkToFit: Boolean
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Boolean> shrinkToFitProp =
             propService.newProp(FALSE, this, "shrinkToFit");
@@ -74,7 +74,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     public Prop<Boolean> getShrinkToFitProp() {return shrinkToFitProp;}
 
     //endregion
-    //region prop snapshotIssue: SnapshotIssue?
+    //region public prop snapshotIssue: SnapshotIssue?
     private final PropNullable<SnapshotIssue> snapshotIssueProp =
             propService.newPropNullable(null, this, "snapshotIssue");
 
@@ -92,7 +92,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop expectedImageIndex: Integer
+    //region public prop expectedImageIndex: Integer
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Integer> expectedImageIndexProp =
             propService.newProp(0, this, "expectedImageIndex");
@@ -111,7 +111,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop expectedBorderColor: Color = Color.green
+    //region public prop expectedBorderColor: Color = Color.green
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> expectedBorderColorProp =
             propService.newProp(Color.green, this, "expectedBorderColor");
@@ -129,7 +129,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop actualBorderColorColor: Color = Color.red
+    //region public prop actualBorderColorColor: Color = Color.red
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> actualBorderColorProp =
             propService.newProp(Color.red, this, "actualBorderColor");
@@ -147,7 +147,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop differenceBorderColor: Color = Color.black
+    //region public prop differenceBorderColor: Color = Color.black
     @SuppressWarnings("DuplicateStringLiteralInspection")
     private final Prop<Color> differenceBorderColorProp =
             propService.newProp(Color.black, this, "differenceBorderColor");
@@ -165,7 +165,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop imagesArea: Dimension {calcImagesArea()}
+    //region public prop imagesArea: Dimension {calcImagesArea()}
     private final PropComputedNullable<Dimension> imagesAreaProp =
             propService.newPropComputedNullable(this::calcImagesArea,this, "imagesArea");
 
@@ -199,7 +199,13 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region private prop snapshotImages : SnapshotImages?
+    //region prop snapshotImages : SnapshotImages? {snapshotImages(snapshotIssue?, imageArea)}
+    // TODO: Remark regarding missing `public`: props are private by default
+    //
+    // TODO: Remark regarding `snapshotImages(snapshotIssue?, imageArea)`: the
+    //  method `snapshotImages` is only called when snapshotIssue is not null,
+    //  otherwise the expression evaluates to `null`
+
     private final PropComputedNullable<SnapshotImages> snapshotImagesProp =
             propService.newPropComputedNullable(this::getSnapshotImages);
 
@@ -217,10 +223,19 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     //endregion
     //endregion
     //region Components
+
+    //region prop imageWidgets : ImageWidget[3]
     private final ImageWidget[] imageWidgets =
             new ImageWidget[]{new ImageWidget(), new ImageWidget(), new ImageWidget()};
+    //endregion
+    //region prop threeImages : HStackWidget
+    // TODO: General rule: GUIKitForSwing.getDefault().hStackWidget() initializes HStackWidget fields
     private final HStackWidget threeImages = GUIKitForSwing.getDefault().hStackWidget();
+    //endregion
+    //region prop contentWidget : BorderedWidget
+    // TODO: General rule: borderedWidget() initializes BorderedWidget fields
     private final BorderedWidget contentWidget = borderedWidget();
+    //endregion
 
     //endregion
     //region Construction

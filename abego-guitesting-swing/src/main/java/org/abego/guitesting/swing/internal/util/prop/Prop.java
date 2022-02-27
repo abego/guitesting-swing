@@ -24,13 +24,14 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.event.EventServices;
+import org.abego.event.EventService;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An object holding a value and emitting {@link PropertyChanged} events
- * when its value changed (via {@link EventServices} default).
+ * when its value changed (via a {@link EventService} defined by this Prop's
+ * {@link PropService}).
  * <p>
  * The source of the PropertyChanged event will be the Prop object
  * and the property name "value". In addition, a second PropertyChanged event

@@ -72,14 +72,14 @@ public interface Bindings {
      * is performed immediately, in the current thread. To be thread-safe
      * make sure to run #bindSwingCode from the Event Dispatch Thread
      * (e.g. via {@link javax.swing.SwingUtilities#invokeLater(Runnable)} or,
-     *  before the Swing components the {@code code} operates on are realized
+     * before the Swing components the {@code code} operates on are realized
      * (http://www.javapractices.com/topic/TopicAction.do?Id=153).
      * <p>
      * Typically this method is used to update Swing components that depend
-     * on the values of the items in {{@code props}. The first run of the
+     * on the values of the items in {@code props}. The first run of the
      * {@code code}, directly performed with the invocation of #bindSwingCode,
      * initializes the related aspects of the Swing components (e.g. their
-     * "text"). After that the {@code code} is re-run when {{@code prop}'s
+     * "text"). After that the {@code code} is re-run when {@code prop}'s
      * value changed.<p>
      * <p>
      * After a change the {@code code} is executed, but there may be some delay

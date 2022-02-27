@@ -49,7 +49,7 @@ abstract class PropComputedBase<T> extends PropBase<T> {
      * changed.
      * <p>
      * Immedidately before re-computation the observers must be removed to
-     * ensure they no additional re-computations.
+     * ensure they trigger no additional re-computations.
      */
     private class Result {
         final T value;

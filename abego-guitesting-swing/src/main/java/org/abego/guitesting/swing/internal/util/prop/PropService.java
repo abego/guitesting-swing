@@ -34,6 +34,7 @@ public interface PropService {
     String VALUE_PROPERTY_NAME = "value";
     Duration PSEUDO_PROP_RECHECK_PERIOD_DEFAULT = Duration.ofMillis(50);
 
+    //region Prop/PropNullable
     <T> Prop<T> newProp(T value);
 
     <T> Prop<T> newProp(
@@ -45,7 +46,8 @@ public interface PropService {
 
     <T> PropNullable<T> newPropNullable(
             @Nullable T value, Object otherSource, String otherPropertyName);
-
+    //endregion
+    //region PropComputed/PropComputedNullable
     <T> PropComputed<T> newPropComputed(Function<DependencyCollector, T> valueComputation);
 
     <T> PropComputed<T> newPropComputed(
@@ -67,6 +69,8 @@ public interface PropService {
     //endregion
     //region Bindings
     Bindings newBindings();
-
+    //endregion
+    //region Closing
     void close();
+    //endregion
 }
