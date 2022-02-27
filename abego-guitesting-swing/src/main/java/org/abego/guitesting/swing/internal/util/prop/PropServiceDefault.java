@@ -186,6 +186,11 @@ class PropServiceDefault implements PropService {
     }
 
     @Override
+    public EventService getEventService() {
+        return eventService;
+    }
+
+    @Override
     public void close() {
         eventAPIForProp.close();
     }

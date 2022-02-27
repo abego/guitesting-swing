@@ -50,7 +50,7 @@ class PseudoPropTest {
 
         // We also log how often the sum changed.
         int[] sumChangeCount = new int[]{0};
-        EventServices.getDefault().addObserver(PropertyChanged.class, sum,
+        propService.getEventService().addObserver(PropertyChanged.class, sum,
                 e -> sumChangeCount[0] = sumChangeCount[0] + 1);
 
         // Check the initial value

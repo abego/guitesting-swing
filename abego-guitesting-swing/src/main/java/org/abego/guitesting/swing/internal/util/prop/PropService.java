@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.event.EventService;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.time.Duration;
@@ -69,6 +70,9 @@ public interface PropService {
     //endregion
     //region Bindings
     Bindings newBindings();
+    //endregion
+    //region EventService
+    EventService getEventService();
     //endregion
     //region Closing
     void close();
