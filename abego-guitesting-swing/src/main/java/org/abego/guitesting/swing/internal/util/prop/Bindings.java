@@ -105,5 +105,38 @@ public interface Bindings {
      */
     void bindSwingCode(Runnable code, AnyProp... props);
 
+    /**
+     * Returns {@code true} when the Bindings are currently running "update
+     * code", {@code false} otherwise.
+     * <p>
+     * This function can be used to check if the currently executed code
+     * is part of a "Binding update" or not. This can be useful when some
+     * code may be executed by Bindings or from some other way. A typical
+     * scenario is the following:
+     * <p>
+     * We want to bind the text of a JTextField `tf` to a String Prop `text`.
+     * Changing `text` should update `tf`'s text. Therefore, we use the
+     * standard "Bindings.bindSwingCode" API. To support the other
+     * direction, i.e. the user's edits in `tf` update the Prop `text`, we
+     * add a DocumentListener to `tf`, containing code like this:
+     * <pre>
+     * text.set(tf.getText());
+     * </pre>
+     * However this code is also triggered when `tf`'s text is changed
+     * through the bind mechanism. This way we may introduce a cycle in
+     * the update procedure.
+     * <p>
+     * To avoid this problem we could write the code in the DocumentListener
+     * like this:
+     * <pre>
+     * if (!bindings.isUpdating()) {
+     *     text.set(tf.getText());
+     * }
+     * </pre>
+     * This way the textfield will update the Prop `text` only when it is not
+     * currently in a update itself.
+     */
+    boolean isUpdating();
+
     void close();
 }

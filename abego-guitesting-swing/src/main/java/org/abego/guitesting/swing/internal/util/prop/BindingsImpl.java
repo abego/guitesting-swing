@@ -39,41 +39,43 @@ import java.util.logging.Logger;
 class BindingsImpl implements Bindings {
 
     private static final Logger LOGGER = Logger.getLogger(BindingsImpl.class.getName());
+    private static final ThreadLocal<Integer> updateCount = ThreadLocal.withInitial(() -> 0);
 
     private final EventAPIForProp eventAPIForProp;
     private final Set<Binding<?>> allBindings = new HashSet<>();
+    private final Set<EventObserver<?>> observers = new HashSet<>();
 
     private class Binding<T> {
         private final EventObserver<PropertyChanged> sourceOfTruthObserver;
         private final @Nullable EventObserver<PropertyChanged> propObserver;
 
-        public Binding(Prop<T> prop,
-                       Prop<T> sourceOfTruth,
-                       Runnable updatePropCode,
-                       Runnable updateSourceOfTruthCode) {
+        private Binding(Prop<T> prop,
+                        Prop<T> sourceOfTruth,
+                        Runnable updatePropCode,
+                        Runnable updateSourceOfTruthCode) {
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
-                    e -> updatePropCode.run());
+                    e -> runUpdate(updatePropCode));
             this.propObserver = addPropertyObserver(prop,
-                    e -> updateSourceOfTruthCode.run());
-            updatePropCode.run();
+                    e -> runUpdate(updateSourceOfTruthCode));
+            runUpdate(updatePropCode);
         }
 
-        public Binding(PropNullable<T> prop,
-                       PropNullable<T> sourceOfTruth,
-                       Runnable updatePropCode,
-                       Runnable updateSourceOfTruthCode) {
+        private Binding(PropNullable<T> prop,
+                        PropNullable<T> sourceOfTruth,
+                        Runnable updatePropCode,
+                        Runnable updateSourceOfTruthCode) {
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
-                    e -> updatePropCode.run());
+                    e -> runUpdate(updatePropCode));
             this.propObserver = addPropertyObserver(prop,
-                    e -> updateSourceOfTruthCode.run());
-            updatePropCode.run();
+                    e -> runUpdate(updateSourceOfTruthCode));
+            runUpdate(updatePropCode);
         }
 
-        public Binding(AnyProp sourceOfTruth, Runnable updateCode) {
+        private Binding(AnyProp sourceOfTruth, Runnable updateCode) {
             this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
-                    e -> updateCode.run());
+                    e -> runUpdate(updateCode));
             this.propObserver = null;
-            updateCode.run();
+            runUpdate(updateCode);
         }
 
         public void unbind() {
@@ -96,18 +98,30 @@ class BindingsImpl implements Bindings {
             return eventAPIForProp.addPropertyObserver(source, listener);
         }
 
-        protected EventObserver<PropertyChanged> addPropertyObserver(
-                Object source,
-                @Nullable String propertyName,
-                // no extra condition (just the property name),
-                // use defaultDispatcher,
-                Consumer<PropertyChanged> listener) {
-            return eventAPIForProp.addPropertyObserver(source, propertyName, listener);
-        }
-
         protected void removeObserver(EventObserver<?> observer) {
             eventAPIForProp.removeObserver(observer);
         }
+    }
+
+    private <T> void addBinding(Prop<T> prop,
+                                Prop<T> sourceOfTruth,
+                                Runnable updatePropCode,
+                                Runnable updateSourceOfTruthCode) {
+        allBindings.add(
+                new Binding<>(prop, sourceOfTruth, updatePropCode, updateSourceOfTruthCode));
+    }
+
+    private <T> void addBinding(PropNullable<T> prop,
+                                PropNullable<T> sourceOfTruth,
+                                Runnable updatePropCode,
+                                Runnable updateSourceOfTruthCode) {
+        allBindings.add(
+                new Binding<>(prop, sourceOfTruth, updatePropCode, updateSourceOfTruthCode));
+    }
+
+    private <T> void addBinding(AnyProp sourceOfTruth, Runnable updateCode) {
+        allBindings.add(
+                new Binding<T>(sourceOfTruth, updateCode));
     }
 
     public BindingsImpl(EventAPIForProp eventAPIForProp) {
@@ -117,78 +131,80 @@ class BindingsImpl implements Bindings {
     @Override
     public <T> void bind(Prop<T> sourceOfTruth, Prop<T> prop) {
 
-        Binding<T> binding = new Binding<>(prop, sourceOfTruth,
+        addBinding(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
-        allBindings.add(binding);
     }
 
     @Override
     public <T> void bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop) {
 
-        Binding<T> binding = new Binding<>(prop, sourceOfTruth,
+        addBinding(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
-        allBindings.add(binding);
     }
 
     @Override
     public <T> void bind(Prop<T> prop, Consumer<T> consumer) {
-        Binding<T> binding =
-                new Binding<>(prop, () -> consumer.accept(prop.get()));
-        allBindings.add(binding);
+        addBinding(prop, () -> consumer.accept(prop.get()));
     }
 
     @Override
     public <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
-        Binding<T> binding =
-                new Binding<T>(prop, () -> consumer.accept(prop.get()));
-        allBindings.add(binding);
+        addBinding(prop, () -> consumer.accept(prop.get()));
     }
 
     @Override
     public <T> void bindSwingCode(Prop<T> prop, Consumer<T> consumer) {
-        //TODO: use the SwingDispatchers of the Event module?
-        Binding<T> binding =
-                new Binding<>(prop, () -> consumer.accept(prop.get()));
-        allBindings.add(binding);
+        bindSwingCode(() -> consumer.accept(prop.get()), prop);
     }
 
     @Override
     public <T> void bindSwingCode(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
-        //TODO: use the SwingDispatchers of the Event module?
-        Binding<T> binding =
-                new Binding<T>(prop, () -> consumer.accept(prop.get()));
-        allBindings.add(binding);
+        bindSwingCode(() -> consumer.accept(prop.get()), prop);
     }
 
     @Override
     public void bindSwingCode(Runnable code, AnyProp... props) {
-        //TODO: cannot we use the SwingDispatchers of the Event module?
-
         // the initial run, in the current thread.
-        code.run();
+        runUpdate(code);
 
+        Consumer<PropertyChanged> onPropChanged = newInEDTUpdater(code);
+
+        for (AnyProp prop : props) {
+            observers.add(eventAPIForProp.addPropertyObserver
+                    (prop, PropService.VALUE_PROPERTY_NAME, onPropChanged));
+        }
+    }
+
+    private void runUpdate(Runnable runnable) {
+        updateCount.set(updateCount.get() + 1);
+        try {
+            runnable.run();
+        } finally {
+            updateCount.set(updateCount.get() - 1);
+        }
+    }
+
+    public boolean isUpdating() {
+        return updateCount.get() > 0;
+    }
+
+    private Consumer<PropertyChanged> newInEDTUpdater(Runnable code) {
         // some more logic to cover the "run once, even after multiple changes"
         // feature.
         AtomicBoolean runPending = new AtomicBoolean(false);
-        Consumer<PropertyChanged> onPropChanged = e -> {
+        return e -> {
             // only schedule a new run when there is not yet one pending
             if (!runPending.getAndSet(true)) {
                 SwingUtilities.invokeLater(() -> {
                     // only run the code when it is still necessary
                     if (runPending.getAndSet(false)) {
-                        code.run();
+                        runUpdate(code);
                     }
                 });
             }
         };
-
-        for (AnyProp prop : props) {
-            EventObserver<PropertyChanged> observer =
-                    eventAPIForProp.addPropertyObserver
-                            (prop, PropService.VALUE_PROPERTY_NAME, onPropChanged);
-        }
     }
 
     @Override
@@ -198,6 +214,10 @@ class BindingsImpl implements Bindings {
         // iterate on copy as we will change allBindings while iterating
         for (Binding<?> b : allBindings.toArray(new Binding[0])) {
             b.unbind();
+        }
+        // remove the bindSwingCode observers
+        for (EventObserver<?> o : observers) {
+            eventAPIForProp.removeObserver(o);
         }
     }
 

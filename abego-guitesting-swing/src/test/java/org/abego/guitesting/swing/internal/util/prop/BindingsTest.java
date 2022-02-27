@@ -24,11 +24,18 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.abego.commons.lang.StringUtil;
+import org.abego.commons.swing.event.DocumentAdapter;
+import org.abego.guitesting.swing.GT;
+import org.abego.guitesting.swing.GuiTesting;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BindingsTest {
 
@@ -37,13 +44,13 @@ class BindingsTest {
         PropService propService = PropServices.getDefault();
 
         Prop<Integer> propA = propService.newProp(3);
-        assertEquals(3, propA.get());
-
         Prop<Integer> propB = propService.newProp(4);
+
+        assertEquals(3, propA.get());
         assertEquals(4, propB.get());
 
-        Integer[] consumerOutput= new Integer[1];
-        Consumer<Integer> consumer = i->{ consumerOutput[0] = i;};
+        Integer[] consumerOutput = new Integer[1];
+        Consumer<Integer> consumer = i -> {consumerOutput[0] = i;};
 
         Bindings b = propService.newBindings();
         b.bind(propA, propB);
@@ -63,4 +70,59 @@ class BindingsTest {
         assertEquals(8, consumerOutput[0]);
     }
 
+    @Test
+    void isUpdating() {
+        // See JavaDoc of Bindings#isUpdating() for details
+
+        GT gt = GuiTesting.newGT();
+        PropService propService = PropServices.getDefault();
+        Bindings bindings = propService.newBindings();
+
+        JTextField tf = new JTextField();
+        tf.setColumns(20);
+
+        StringBuilder textFieldLog = new StringBuilder();
+        Prop<String> text = propService.newProp("foo");
+        bindings.bindSwingCode(text, tf::setText);
+
+        tf.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            public void someUpdate(DocumentEvent e) {
+
+                boolean isUpdating = bindings.isUpdating();
+                String msg = "- " + StringUtil.singleQuoted(tf.getText())
+                        + (isUpdating ? " [isUpdating]" : "");
+                textFieldLog.append(msg + "\n");
+
+                if (!bindings.isUpdating()) {
+                    text.set(tf.getText());
+                }
+            }
+        });
+
+        // Show the text field in a window
+        SwingUtilities.invokeLater(() -> gt.showInFrame(tf));
+        gt.waitForComponent(JTextField.class);
+
+        // after binding the text field text it should hold the prop's value
+        gt.assertEqualsRetrying("foo", tf::getText);
+
+        // changing the prop should update the text field text
+        text.set("bar");
+
+        gt.assertEqualsRetrying("bar", tf::getText);
+
+        gt.clickLeft(tf);
+        gt.type("baz");
+        gt.assertEqualsRetrying("barbaz", tf::getText);
+        gt.assertEqualsRetrying("barbaz", text::get);
+
+        gt.assertEqualsRetrying("" +
+                "- '' [isUpdating]\n" +
+                "- 'bar' [isUpdating]\n" +
+                "- 'barbaz'\n" +
+                "- '' [isUpdating]\n" +
+                "- 'barbaz' [isUpdating]\n",
+                textFieldLog::toString);
+    }
 }
