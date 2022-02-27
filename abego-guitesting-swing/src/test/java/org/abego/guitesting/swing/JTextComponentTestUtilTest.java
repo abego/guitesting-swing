@@ -53,6 +53,7 @@ class JTextComponentTestUtilTest {
         textArea.setText("foo bar \nbaz qux");
         gt.showInFrame(new JScrollPane(textArea), new Point(50, 50), new Dimension(200, 100));
 
+        gt.waitUntilScreenshotMatchesSnapshot(textArea);
         JTextComponentTestUtil.clickAtOffset(textArea, 5, gt);
 
         assertEquals(5, textArea.getSelectionStart());
