@@ -30,18 +30,18 @@ import java.util.function.Consumer;
 
 public interface Bindings {
     /**
-     * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
-     * is set to the current value of  {@code sourceOfTruth} and updated
-     * whenever {@code sourceOfTruth} changes.
+     * Binds {@code prop} and {@code sourceOfTruth} to each other, i.e.
+     * {@code prop} is set to the current value of {@code sourceOfTruth} and
+     * each value is updated whenever the other value changes.
      * <p>
      * A {@link Prop} must only be bound to one source of truth.
      */
     <T> void bind(Prop<T> sourceOfTruth, Prop<T> prop);
 
     /**
-     * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
-     * is set to the current value of  {@code sourceOfTruth} and updated
-     * whenever {@code sourceOfTruth} changes.
+     * Binds {@code prop} and {@code sourceOfTruth} to each other, i.e.
+     * {@code prop} is set to the current value of {@code sourceOfTruth} and
+     * each value is updated whenever the other value changes.
      * <p>
      * A {@link Prop} must only be bound to one source of truth.
      */
@@ -53,7 +53,7 @@ public interface Bindings {
      * of {@code prop} and called again with {@code prop}'s value whenever
      * the value changes.
      */
-    <T> void bind(Prop<T> prop, Consumer<T> consumer);
+    <T> void bindTo(Consumer<T> consumer, Prop<T> prop);
 
     /**
      * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
@@ -61,7 +61,7 @@ public interface Bindings {
      * of {@code prop} and called again with {@code prop}'s value whenever
      * the value changes.
      */
-    <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer);
+    <T> void bindTo(Consumer<@Nullable T> consumer, PropNullable<T> prop);
 
     /**
      * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
@@ -69,7 +69,7 @@ public interface Bindings {
      * of {@code prop} and called again (from the EventDispatchThread)
      * with {@code prop}'s value whenever the value changes.
      */
-    <T> void bindSwingCode(Prop<T> prop, Consumer<T> consumer);
+    <T> void bindSwingCodeTo(Consumer<T> consumer, Prop<T> prop);
 
     /**
      * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
@@ -77,7 +77,7 @@ public interface Bindings {
      * of {@code prop} and called again  (from the EventDispatchThread)
      * with {@code prop}'s value whenever the value changes.
      */
-    <T> void bindSwingCode(PropNullable<T> prop, Consumer<@Nullable T> consumer);
+    <T> void bindSwingCodeTo(Consumer<@Nullable T> consumer, PropNullable<T> prop);
 
     /**
      * Binds the {@code code} to {@code props}, i.e. run the code now and

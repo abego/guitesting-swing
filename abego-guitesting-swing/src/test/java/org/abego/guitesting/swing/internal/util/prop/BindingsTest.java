@@ -54,7 +54,7 @@ class BindingsTest {
 
         Bindings b = propService.newBindings();
         b.bind(propA, propB);
-        b.bind(propA, consumer);
+        b.bindTo(consumer, propA);
 
         assertEquals(3, propB.get());
         assertEquals(3, consumerOutput[0]);
@@ -83,7 +83,7 @@ class BindingsTest {
 
         StringBuilder textFieldLog = new StringBuilder();
         Prop<String> text = propService.newProp("foo");
-        bindings.bindSwingCode(text, tf::setText);
+        bindings.bindSwingCodeTo(tf::setText, text);
 
         tf.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override

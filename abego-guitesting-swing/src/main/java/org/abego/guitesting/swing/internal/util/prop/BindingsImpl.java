@@ -145,22 +145,22 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
-    public <T> void bind(Prop<T> prop, Consumer<T> consumer) {
+    public <T> void bindTo(Consumer<T> consumer, Prop<T> prop) {
         addBinding(prop, () -> consumer.accept(prop.get()));
     }
 
     @Override
-    public <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
+    public <T> void bindTo(Consumer<@Nullable T> consumer, PropNullable<T> prop) {
         addBinding(prop, () -> consumer.accept(prop.get()));
     }
 
     @Override
-    public <T> void bindSwingCode(Prop<T> prop, Consumer<T> consumer) {
+    public <T> void bindSwingCodeTo(Consumer<T> consumer, Prop<T> prop) {
         bindSwingCode(() -> consumer.accept(prop.get()), prop);
     }
 
     @Override
-    public <T> void bindSwingCode(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
+    public <T> void bindSwingCodeTo(Consumer<@Nullable T> consumer, PropNullable<T> prop) {
         bindSwingCode(() -> consumer.accept(prop.get()), prop);
     }
 
