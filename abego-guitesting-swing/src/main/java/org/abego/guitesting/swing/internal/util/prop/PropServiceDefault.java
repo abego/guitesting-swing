@@ -30,10 +30,13 @@ import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.eclipse.jdt.annotation.Nullable;
 
+import javax.swing.Timer;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.abego.guitesting.swing.internal.util.prop.PropFieldImpl.newPropField;
 
@@ -41,6 +44,11 @@ class PropServiceDefault implements PropService {
     private static final PropService DEFAULT_INSTANCE = newPropService(EventServices.getDefault());
     private final EventService eventService;
     private final EventAPIForProp eventAPIForProp = new EventHandlingForPropImpl();
+    private Prop<Long> pseudoPropRecheckCount = newProp(0L);
+    private Duration pseudoPropRecheckPeriod = PSEUDO_PROP_RECHECK_PERIOD_DEFAULT;
+    private Timer pseudoPropRecheckTimer = new Timer((int) pseudoPropRecheckPeriod.toMillis(), a -> {
+        pseudoPropRecheckCount.set(pseudoPropRecheckCount.get() + 1);
+    });
 
     private class EventHandlingForPropImpl implements EventAPIForProp {
         private final Set<EventObserver<?>> remainingObservers = new HashSet<>();
@@ -142,6 +150,37 @@ class PropServiceDefault implements PropService {
     }
 
     @Override
+    public <T> PropComputed<T> newPseudoProp(Supplier<T> valueComputation) {
+        ensurePseudoPropTimerIsRunning();
+        return newPropComputed(dc -> {
+            dc.dependsOnProp(pseudoPropRecheckCount);
+            return valueComputation.get();
+        });
+    }
+
+    @Override
+    public <T> PropComputedNullable<T> newPseudoPropNullable(Supplier<T> valueComputation) {
+        return newPropComputedNullable(dc -> {
+            dc.dependsOnProp(pseudoPropRecheckCount);
+            return valueComputation.get();
+        });
+    }
+
+    @Override
+    public Duration getPseudoPropRecheckPeriod() {
+        return pseudoPropRecheckPeriod;
+    }
+
+    @Override
+    public void setPseudoPropRecheckPeriod(Duration period) {
+        if (!pseudoPropRecheckPeriod.equals(period)) {
+            int t = Math.toIntExact(period.toMillis());
+            pseudoPropRecheckTimer.setInitialDelay(t);
+            pseudoPropRecheckTimer.setDelay(t);
+        }
+    }
+
+    @Override
     public Bindings newBindings() {
         return new BindingsImpl(eventAPIForProp);
     }
@@ -151,4 +190,9 @@ class PropServiceDefault implements PropService {
         eventAPIForProp.close();
     }
 
+    private void ensurePseudoPropTimerIsRunning() {
+        if (!pseudoPropRecheckTimer.isRunning()) {
+            pseudoPropRecheckTimer.start();
+        }
+    }
 }

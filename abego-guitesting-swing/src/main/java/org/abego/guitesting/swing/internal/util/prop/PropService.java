@@ -26,10 +26,13 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.time.Duration;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface PropService {
     String VALUE_PROPERTY_NAME = "value";
+    Duration PSEUDO_PROP_RECHECK_PERIOD_DEFAULT = Duration.ofMillis(50);
 
     <T> Prop<T> newProp(T value);
 
@@ -52,7 +55,17 @@ public interface PropService {
 
     <T> PropComputedNullable<T> newPropComputedNullable(
             Function<DependencyCollector, T> valueComputation, Object otherSource, String otherPropertyName);
+    //endregion
+    //region PseudoProp
+    <T> PropComputed<T> newPseudoProp(Supplier<T> valueComputation);
 
+    <T> PropComputedNullable<T> newPseudoPropNullable(Supplier<T> valueComputation);
+
+    Duration getPseudoPropRecheckPeriod();
+
+    void setPseudoPropRecheckPeriod(Duration period);
+    //endregion
+    //region Bindings
     Bindings newBindings();
 
     void close();
