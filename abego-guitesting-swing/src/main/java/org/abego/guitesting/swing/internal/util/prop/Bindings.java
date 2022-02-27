@@ -64,6 +64,22 @@ public interface Bindings {
     <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer);
 
     /**
+     * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
+     * method {@link Consumer#accept(Object)} is called with the current value
+     * of {@code prop} and called again (from the EventDispatchThread)
+     * with {@code prop}'s value whenever the value changes.
+     */
+    <T> void bindSwingCode(Prop<T> prop, Consumer<T> consumer);
+
+    /**
+     * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
+     * method {@link Consumer#accept(Object)} is called with the current value
+     * of {@code prop} and called again  (from the EventDispatchThread)
+     * with {@code prop}'s value whenever the value changes.
+     */
+    <T> void bindSwingCode(PropNullable<T> prop, Consumer<@Nullable T> consumer);
+
+    /**
      * Binds the {@code code} to {@code props}, i.e. run the code now and
      * whenever {@link AnyProp} in {{@code props} changes its value.
      * <p>

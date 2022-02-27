@@ -147,7 +147,25 @@ class BindingsImpl implements Bindings {
     }
 
     @Override
+    public <T> void bindSwingCode(Prop<T> prop, Consumer<T> consumer) {
+        //TODO: use the SwingDispatchers of the Event module?
+        Binding<T> binding =
+                new Binding<>(prop, () -> consumer.accept(prop.get()));
+        allBindings.add(binding);
+    }
+
+    @Override
+    public <T> void bindSwingCode(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
+        //TODO: use the SwingDispatchers of the Event module?
+        Binding<T> binding =
+                new Binding<T>(prop, () -> consumer.accept(prop.get()));
+        allBindings.add(binding);
+    }
+
+    @Override
     public void bindSwingCode(Runnable code, AnyProp... props) {
+        //TODO: cannot we use the SwingDispatchers of the Event module?
+
         // the initial run, in the current thread.
         code.run();
 
