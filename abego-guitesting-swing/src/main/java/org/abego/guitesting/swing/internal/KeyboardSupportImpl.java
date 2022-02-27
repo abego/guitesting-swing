@@ -52,6 +52,17 @@ final class KeyboardSupportImpl implements KeyboardSupport {
     private KeyboardSupportImpl(Robot robot, WaitForIdleSupport waitForIdleSupport) {
         this.robot = robot;
         this.waitForIdleSupport = waitForIdleSupport;
+
+        // Ensure the modifier keys are all "released".
+        // (Some cases are reported that indicate modifier keys like "shift" are
+        // considered pressed, even if not specified that way. E.g. typing the
+        // keycode VK_A resulted in an upper case "A" instead of the lower
+        // case "a".
+        // To avoid these problems werelease all modifier keys when we
+        // start/create the KeyboardSupport.)
+        keyRelease(KeyEvent.VK_SHIFT);
+        keyRelease(KeyEvent.VK_CONTROL);
+        keyRelease(KeyEvent.VK_META);
     }
 
     static KeyboardSupport newKeyboardSupport(Robot robot, WaitForIdleSupport waitForIdleSupport) {
