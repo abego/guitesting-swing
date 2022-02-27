@@ -35,7 +35,7 @@ public class PropServices {
     /**
      * Returns the default {@link PropService}.
      * <p>
-     * <p>The default {@link PropService} using the default {@link EventService}
+     * The default {@link PropService} using the default {@link EventService}
      * ({@link EventServices#getDefault()}). For more details
      * see {@link #newPropService(EventService)}.
      */

@@ -24,7 +24,6 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
-import org.abego.event.EventService;
 import org.abego.event.EventServices;
 import org.abego.event.PropertyChanged;
 import org.abego.guitesting.swing.GT;
@@ -38,25 +37,21 @@ class PseudoPropTest {
 
     @Test
     void smoketest() {
-        EventService eventService = EventServices.getDefault();
-        PropService propService = PropServices.newPropService(eventService);
-
         // set a shorter period than the default, to run the test faster
+        PropService propService = PropServices.newPropService();
         propService.setPseudoPropRecheckPeriod(Duration.ofMillis(1L));
 
         // Our test is calculating the sum of a and b using a PseudeProp sum
-        int a[] = new int[]{2};
-        int b[] = new int[]{3};
-
+        int[] a = new int[]{2};
+        int[] b = new int[]{3};
 
         PropComputed<Integer> sum =
                 propService.newPseudoProp(() -> a[0] + b[0]);
 
         // We also log how often the sum changed.
-        int sumChangeCount[] = new int[]{0};
-        eventService.addObserver(PropertyChanged.class, sum, e -> {
-            sumChangeCount[0] = sumChangeCount[0] + 1;
-        });
+        int[] sumChangeCount = new int[]{0};
+        EventServices.getDefault().addObserver(PropertyChanged.class, sum,
+                e -> sumChangeCount[0] = sumChangeCount[0] + 1);
 
         // Check the initial value
         gt.assertEqualsRetrying(0, () -> sumChangeCount[0]);
