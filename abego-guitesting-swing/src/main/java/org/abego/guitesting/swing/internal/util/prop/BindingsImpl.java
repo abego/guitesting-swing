@@ -42,7 +42,6 @@ class BindingsImpl implements Bindings {
 
     private final EventAPIForProp eventAPIForProp;
     private final Set<Binding<?>> allBindings = new HashSet<>();
-    private final Set<EventObserver<?>> observers = new HashSet<>();
 
     private class Binding<T> {
         private final EventObserver<PropertyChanged> sourceOfTruthObserver;
@@ -182,11 +181,6 @@ class BindingsImpl implements Bindings {
         for (Binding<?> b : allBindings.toArray(new Binding[0])) {
             b.unbind();
         }
-        // remove the bindSwingCode observers
-        for (EventObserver<?> o : observers) {
-            eventAPIForProp.removeObserver(o);
-        }
-
     }
 
 }
