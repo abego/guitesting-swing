@@ -46,7 +46,7 @@ class BindingsImpl implements Bindings {
 
     private class Binding<T> {
         private final EventObserver<PropertyChanged> sourceOfTruthObserver;
-        private final EventObserver<PropertyChanged> propObserver;
+        private final @Nullable EventObserver<PropertyChanged> propObserver;
 
         public Binding(Prop<T> prop,
                        Prop<T> sourceOfTruth,
@@ -70,10 +70,19 @@ class BindingsImpl implements Bindings {
             updatePropCode.run();
         }
 
+        public Binding(AnyProp sourceOfTruth, Runnable updateCode) {
+            this.sourceOfTruthObserver = addPropertyObserver(sourceOfTruth,
+                    e -> updateCode.run());
+            this.propObserver = null;
+            updateCode.run();
+        }
+
         public void unbind() {
             if (allBindings.remove(this)) {
                 removeObserver(sourceOfTruthObserver);
-                removeObserver(propObserver);
+                if (propObserver != null) {
+                    removeObserver(propObserver);
+                }
             } else {
                 LOGGER.log(Level.FINE, "Binding not(/no longer) bound"); //NON-NLS
             }
@@ -121,6 +130,20 @@ class BindingsImpl implements Bindings {
         Binding<T> binding = new Binding<>(prop, sourceOfTruth,
                 () -> prop.set(sourceOfTruth.get()),
                 () -> sourceOfTruth.set(prop.get()));
+        allBindings.add(binding);
+    }
+
+    @Override
+    public <T> void bind(Prop<T> prop, Consumer<T> consumer) {
+        Binding<T> binding =
+                new Binding<>(prop, () -> consumer.accept(prop.get()));
+        allBindings.add(binding);
+    }
+
+    @Override
+    public <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer) {
+        Binding<T> binding =
+                new Binding<T>(prop, () -> consumer.accept(prop.get()));
         allBindings.add(binding);
     }
 

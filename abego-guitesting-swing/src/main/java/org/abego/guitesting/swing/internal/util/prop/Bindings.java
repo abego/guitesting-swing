@@ -24,6 +24,10 @@
 
 package org.abego.guitesting.swing.internal.util.prop;
 
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.function.Consumer;
+
 public interface Bindings {
     /**
      * Binds the {@code prop} to the {@code sourceOfTruth}, i.e. {@code prop}
@@ -42,6 +46,22 @@ public interface Bindings {
      * A {@link Prop} must only be bound to one source of truth.
      */
     <T> void bind(PropNullable<T> sourceOfTruth, PropNullable<T> prop);
+
+    /**
+     * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
+     * method {@link Consumer#accept(Object)} is called with the current value
+     * of {@code prop} and called again with {@code prop}'s value whenever
+     * the value changes.
+     */
+    <T> void bind(Prop<T> prop, Consumer<T> consumer);
+
+    /**
+     * Binds the {@code consumer} to the {@code prop}, i.e.the {@code consumer}'s
+     * method {@link Consumer#accept(Object)} is called with the current value
+     * of {@code prop} and called again with {@code prop}'s value whenever
+     * the value changes.
+     */
+    <T> void bind(PropNullable<T> prop, Consumer<@Nullable T> consumer);
 
     /**
      * Binds the {@code code} to {@code props}, i.e. run the code now and

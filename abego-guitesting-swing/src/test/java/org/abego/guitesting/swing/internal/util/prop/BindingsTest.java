@@ -26,6 +26,8 @@ package org.abego.guitesting.swing.internal.util.prop;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Consumer;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BindingsTest {
@@ -40,20 +42,25 @@ class BindingsTest {
         Prop<Integer> propB = propService.newProp(4);
         assertEquals(4, propB.get());
 
+        Integer[] consumerOutput= new Integer[1];
+        Consumer<Integer> consumer = i->{ consumerOutput[0] = i;};
+
         Bindings b = propService.newBindings();
         b.bind(propA, propB);
+        b.bind(propA, consumer);
 
         assertEquals(3, propB.get());
+        assertEquals(3, consumerOutput[0]);
 
         propA.set(7);
 
         assertEquals(7, propA.get());
-        assertEquals(7, propB.get());
+        assertEquals(7, consumerOutput[0]);
 
         propB.set(8);
 
         assertEquals(8, propA.get());
-        assertEquals(8, propB.get());
+        assertEquals(8, consumerOutput[0]);
     }
 
 }
