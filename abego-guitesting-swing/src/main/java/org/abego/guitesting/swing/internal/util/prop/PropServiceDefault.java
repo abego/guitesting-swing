@@ -152,19 +152,37 @@ class PropServiceDefault implements PropService {
     @Override
     public <T> PropComputed<T> newPseudoProp(Supplier<T> valueComputation) {
         ensurePseudoPropTimerIsRunning();
-        return newPropComputed(dc -> {
+        PropComputed<T> result = newPropComputed(dc -> {
+            // The PseudeProp depends on the Prop `pseudoPropRecheckCount` that
+            // changes periodically. With this *fake* dependency we tell the
+            // PropComputed that the computed value may have changed and trigger
+            // a re-computation, and possibly a Propery value change for the
+            // PropComputed.
             dc.dependsOnProp(pseudoPropRecheckCount);
             return valueComputation.get();
         });
+        // we must call `get` now to setup the dependency to
+        // `pseudoPropRecheckCount` and get notified when the count changes.
+        result.get();
+        return result;
     }
 
     @Override
     public <T> PropComputedNullable<T> newPseudoPropNullable(Supplier<T> valueComputation) {
         ensurePseudoPropTimerIsRunning();
-        return newPropComputedNullable(dc -> {
+        PropComputedNullable<T> result = newPropComputedNullable(dc -> {
+            // The PseudeProp depends on the Prop `pseudoPropRecheckCount` that
+            // changes periodically. With this *fake* dependency we tell the
+            // PropComputed that the computed value may have changed and trigger
+            // a re-computation, and possibly a Propery value change for the
+            // PropComputed.
             dc.dependsOnProp(pseudoPropRecheckCount);
             return valueComputation.get();
         });
+        // we must call `get` now to setup the dependency to
+        // `pseudoPropRecheckCount` and get notified when the count changes.
+        result.get();
+        return result;
     }
 
     @Override

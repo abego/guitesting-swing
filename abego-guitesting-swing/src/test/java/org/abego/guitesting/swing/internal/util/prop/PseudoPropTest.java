@@ -55,13 +55,17 @@ class PseudoPropTest {
 
         // Check the initial value
         gt.assertEqualsRetrying(0, () -> sumChangeCount[0]);
-        gt.assertEqualsRetrying(5, sum::get);
 
-        // Change an input value.
+        // Change an input value, without having called "sum.get()" before (*).
         //
         // The PseudoProp sum should recognize the change and calculate the
         // new sum even though a and b are not "directly" observed (e.g. via
         // Prop objects).
+        //
+        // ((*) This stranging looking check refers to an earlier bug in the
+        // PseudoProp implementation: no PropertyChanged events were posted
+        // even after a value change when the PseudoProp's value was not called
+        // any time before (using prop.get()).)
 
         a[0] = 4;
         gt.assertEqualsRetrying(1, () -> sumChangeCount[0]);
@@ -98,13 +102,17 @@ class PseudoPropTest {
 
         // Check the initial value
         gt.assertEqualsRetrying(0, () -> sumChangeCount[0]);
-        gt.assertEqualsRetrying(5, sum::get);
 
-        // Change an input value.
+        // Change an input value, without having called "sum.get()" before (*).
         //
         // The PseudoProp sum should recognize the change and calculate the
         // new sum even though a and b are not "directly" observed (e.g. via
         // Prop objects).
+        //
+        // ((*) This stranging looking check refers to an earlier bug in the
+        // PseudoProp implementation: no PropertyChanged events were posted
+        // even after a value change when the PseudoProp's value was not called
+        // any time before (using prop.get()).)
 
         a[0] = 4;
         gt.assertEqualsRetrying(1, () -> sumChangeCount[0]);
