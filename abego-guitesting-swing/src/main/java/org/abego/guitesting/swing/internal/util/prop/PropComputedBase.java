@@ -38,6 +38,25 @@ import java.util.function.Function;
 import static javax.swing.SwingUtilities.invokeLater;
 
 abstract class PropComputedBase<T> extends PropBase<T> {
+    //TODO: currently the value is calculation with the first call to get.
+    //  As the dependencies of the calculations are only known after the first
+    //  calculation the PropComputed cannot trigger any PropertyChanged events
+    //  until after the first calculation. This may not be what a user expects,
+    //  E.g. a user defined a PropComputed and is not interested in the actual
+    //  value but only that the valued changed. Therefore the user observes the
+    //  PropComputed value (using EventService.addObserver). But he will not
+    //  see any events as the PropComputed does not know about the dependencies
+    //  of the calculation (without the "get" call).
+    //
+    //  This issue already led to problems with the "PseudoProp", as the
+    //  "Counter" was not observed when the PseudoProp's value was never
+    //  accessed. (6ff294cac716750adbb3c1db8d731b6a2d644fe8)
+    //
+    //  Changing to "calculate immediately" (in the background) seems to
+    //  to solve the problem. However an initial attempt failed (the "compute"
+    //  method was also removed, but used in client code (see
+    //  ExpectedActualDifferenceImageWidget). Try again later...
+
     private final Function<DependencyCollector, T> function;
     private volatile boolean isComputing = true;
     private volatile boolean mustRecompute = false;
