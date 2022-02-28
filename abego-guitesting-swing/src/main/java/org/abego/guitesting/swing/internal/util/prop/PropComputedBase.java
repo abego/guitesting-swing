@@ -152,21 +152,6 @@ abstract class PropComputedBase<T> extends PropBase<T> {
     }
 
     /**
-     * Force the computation "now".
-     * <p>
-     * By default the first computation is started with the first {@link #_get()}.
-     * If the computation is timeconsuming the first {@code get} will also take
-     * that time as it blocks until the computation is completed. To avoid this
-     * delay during the initial {@code get} one may call {@code preCompute()}
-     * some time before. This will start the computation in the background and
-     * the result may already be available for the first {@code get} that will
-     * then return without extra delay.
-     */
-    public void preCompute() {
-        currentResultComputer.ensureComputationIsStarted();
-    }
-
-    /**
      * This "getter" _get is defined to allow code reuse between the Nullable
      * and non-Nullable variants of PropComputed (the concrete class' get method
      * defines the correct Nullable type and just calls the _get method)
