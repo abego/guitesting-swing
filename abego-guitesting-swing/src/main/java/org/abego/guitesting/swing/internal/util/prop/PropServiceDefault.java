@@ -160,6 +160,7 @@ class PropServiceDefault implements PropService {
 
     @Override
     public <T> PropComputedNullable<T> newPseudoPropNullable(Supplier<T> valueComputation) {
+        ensurePseudoPropTimerIsRunning();
         return newPropComputedNullable(dc -> {
             dc.dependsOnProp(pseudoPropRecheckCount);
             return valueComputation.get();

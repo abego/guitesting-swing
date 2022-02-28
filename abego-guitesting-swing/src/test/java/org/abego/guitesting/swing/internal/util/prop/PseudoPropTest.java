@@ -36,7 +36,7 @@ class PseudoPropTest {
     GT gt = GuiTesting.newGT();
 
     @Test
-    void smoketest() {
+    void smoketest_PseudoProp_NotNull() {
         // set a shorter period than the default, to run the test faster
         PropService propService = PropServices.newPropService();
         propService.setPseudoPropRecheckPeriod(Duration.ofMillis(1L));
@@ -47,6 +47,49 @@ class PseudoPropTest {
 
         PropComputed<Integer> sum =
                 propService.newPseudoProp(() -> a[0] + b[0]);
+
+        // We also log how often the sum changed.
+        int[] sumChangeCount = new int[]{0};
+        propService.getEventService().addObserver(PropertyChanged.class, sum,
+                e -> sumChangeCount[0] = sumChangeCount[0] + 1);
+
+        // Check the initial value
+        gt.assertEqualsRetrying(0, () -> sumChangeCount[0]);
+        gt.assertEqualsRetrying(5, sum::get);
+
+        // Change an input value.
+        //
+        // The PseudoProp sum should recognize the change and calculate the
+        // new sum even though a and b are not "directly" observed (e.g. via
+        // Prop objects).
+
+        a[0] = 4;
+        gt.assertEqualsRetrying(1, () -> sumChangeCount[0]);
+        gt.assertEqualsRetrying(7, sum::get);
+
+        // Another input value change.
+        //
+        // This time the asserts are in a differnt order, to make sure the
+        // new value is provided even without explicitly waiting for the
+        // "PropertyChanged" event.
+        b[0] = 5;
+        gt.assertEqualsRetrying(9, sum::get);
+        gt.assertEqualsRetrying(2, () -> sumChangeCount[0]);
+    }
+
+
+    @Test
+    void smoketest_PseudoPropNullable() {
+        // set a shorter period than the default, to run the test faster
+        PropService propService = PropServices.newPropService();
+        propService.setPseudoPropRecheckPeriod(Duration.ofMillis(1L));
+
+        // Our test is calculating the sum of a and b using a PseudeProp sum
+        int[] a = new int[]{2};
+        int[] b = new int[]{3};
+
+        PropComputedNullable<Integer> sum =
+                propService.newPseudoPropNullable(() -> a[0] + b[0]);
 
         // We also log how often the sum changed.
         int[] sumChangeCount = new int[]{0};
