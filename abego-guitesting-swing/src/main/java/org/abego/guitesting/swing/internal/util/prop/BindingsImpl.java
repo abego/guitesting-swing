@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,6 +163,20 @@ class BindingsImpl implements Bindings {
     @Override
     public <T> void bindSwingCodeTo(Consumer<@Nullable T> consumer, PropNullable<T> prop) {
         bindSwingCode(() -> consumer.accept(prop.get()), prop);
+    }
+
+    @Override
+    public <T> void bindSwingCodeTo(Consumer<T> consumer, Supplier<T> supplier) {
+        bindSwingCodeTo(
+                consumer,
+                eventAPIForProp.getPropService().newPseudoProp(supplier));
+    }
+
+    @Override
+    public <T> void bindSwingCodeToNullable(Consumer<@Nullable T> consumer, Supplier<@Nullable T> supplier) {
+        bindSwingCodeTo(
+                consumer,
+                eventAPIForProp.getPropService().newPseudoPropNullable(supplier));
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.util.function.Consumer;
 
 //TODO: do we need this? or directly use abego.event API?
+//TODO: or: better name (e.g. "....Input", for the "SPI" of the module)?
 interface EventAPIForProp {
     EventObserver<PropertyChanged> addPropertyObserver(
             Object source,
@@ -46,6 +47,8 @@ interface EventAPIForProp {
     void removeObserver(EventObserver<?> observer);
 
     void postPropertyChanged(Object source, String propertyName);
+
+    PropService getPropService();
 
     void close();
 }

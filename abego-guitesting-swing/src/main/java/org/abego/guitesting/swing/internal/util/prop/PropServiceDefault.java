@@ -83,6 +83,10 @@ class PropServiceDefault implements PropService {
             eventService.removeAllObservers(remainingObservers);
         }
 
+        public PropService getPropService() {
+            return PropServiceDefault.this;
+        }
+
         private void checkNotClosed() {
             if (isClosed) {
                 throw new IllegalStateException("Already closed"); //NON-NLS

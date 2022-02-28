@@ -27,6 +27,7 @@ package org.abego.guitesting.swing.internal.util.prop;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface Bindings {
     /**
@@ -78,6 +79,33 @@ public interface Bindings {
      * with {@code prop}'s value whenever the value changes.
      */
     <T> void bindSwingCodeTo(Consumer<@Nullable T> consumer, PropNullable<T> prop);
+
+    /**
+     * Binds the {@code consumer} to the {@code supplier}, i.e.the
+     * {@code consumer}'s method {@link Consumer#accept(Object)} is called with
+     * the value provided by {@code supplier} and called again (from the
+     * EventDispatchThread) with {@code supplier}'s value whenever the value
+     * changes.
+     * <p>
+     * To accomplish the "update the consumer whenever the supplier's value
+     * changes" a PseudoProp for the supplier is used internally. For details
+     * see {@link PropService#newPseudoProp(Supplier)}.
+     */
+    <T> void bindSwingCodeTo(Consumer<T> consumer, Supplier<T> supplier);
+
+    /**
+     * Binds the {@code consumer} to the {@code supplier}, i.e.the
+     * {@code consumer}'s method {@link Consumer#accept(Object)} is called with
+     * the value provided by {@code supplier} and called again (from the
+     * EventDispatchThread) with {@code supplier}'s value whenever the value
+     * changes.
+     * <p>
+     * To accomplish the "update the consumer whenever the supplier's value
+     * changes" a PseudoProp for the supplier is used internally. For details
+     * see {@link PropService#newPseudoPropNullable(Supplier)}.
+     */
+    <T> void bindSwingCodeToNullable(
+            Consumer<@Nullable T> consumer, Supplier<@Nullable T> supplier);
 
     /**
      * Binds the {@code code} to {@code props}, i.e. run the code now and
