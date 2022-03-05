@@ -38,17 +38,17 @@ public interface PropNullable<T> extends AnyProp {
     /**
      * Sets the value of the Prop to the {@code value}.
      * <p>
-     * When the Prop is not editable setting a value may be ignored silently,
+     * When the Prop is readonly setting a value may be ignored silently,
      * or throw an Exception, depending on the implementation of the Prop.
      */
     void set(@Nullable T value);
 
     /**
-     * Returns true when the Prop is editable, i.e. calling {@link #set(Object)}
-     * will change the value, and false otherwise.
+     * Returns true when the Prop is readonly, i.e. calling {@link #set(Object)}
+     * will not change the value, and false otherwise.
      **/
-    default boolean isEditable() {
-        return true;
+    default boolean isReadOnly() {
+        return false;
     }
 
     default  @Nullable T get(DependencyCollector collector) {

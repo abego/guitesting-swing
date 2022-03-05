@@ -59,7 +59,7 @@ class PropComputedNullableImpl<T> extends PropComputedBase<T> implements PropCom
     }
 
     @Override
-    public boolean isEditable() {
-        return false;
+    public boolean isReadOnly() {
+        return true;
     }
 }

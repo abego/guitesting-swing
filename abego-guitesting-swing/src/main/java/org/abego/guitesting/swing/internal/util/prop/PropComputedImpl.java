@@ -61,7 +61,7 @@ final class PropComputedImpl<T> extends PropComputedBase<T> implements PropCompu
     }
 
     @Override
-    public boolean isEditable() {
-        return false;
+    public boolean isReadOnly() {
+        return true;
     }
 }
