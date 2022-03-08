@@ -24,20 +24,47 @@
 
 package org.abego.guitesting.swing;
 
-import org.abego.guitesting.swing.internal.GTImpl;
+import org.eclipse.jdt.annotation.NonNull;
+
+import java.awt.AWTException;
+import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
+
+import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
+import static org.abego.guitesting.swing.internal.GTImpl.newGTImpl;
+import static org.abego.guitesting.swing.internal.GTNoRobotImpl.newGTNoRobot;
 
 /**
  * The entry to the GuiTesting Swing library, containing the factory method for
  * {@link GT} instances, {@link #newGT()}.
  */
 public class GuiTesting {
+    private static final String COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE = "Could not create Robot instance"; //NON-NLS
 
     /**
      * Returns a new instance of {@link GT}, the main interface for GUI testing.
+     *<p>
+     * When running in a headless environment
+     * (see {@link GraphicsEnvironment#isHeadless()}) methods of the returned GT
+     * will fail with a {@link HeadlessGuiTestingException} when the operation
+     * dependents on the existance of a display, keyboard, or mouse.
      *
      * @return a new instance of {@link GT}
      */
     public static GT newGT() {
-        return GTImpl.newGT();
+        if (GraphicsEnvironment.isHeadless()) {
+            return newGTNoRobot();
+        } else {
+            return newGTImpl(newRobot());
+        }
+    }
+
+    @NonNull
+    private static Robot newRobot() {
+        try {
+            return new Robot();
+        } catch (AWTException e) {
+            throw newUncheckedException(COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE, e);
+        }
     }
 }
