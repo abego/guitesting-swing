@@ -44,40 +44,62 @@ import static org.abego.guitesting.swing.ScreenCaptureSupport.SnapshotIssue;
 final class SnapshotImages {
 
     //region State/Model
+
+    //region private prop cachedSnapshotImages: SnapshotImages?
     private static @Nullable SnapshotImages cachedSnapshotImages;
 
+    //endregion
+    //region public readonly prop issue: SnapshotIssue
     private final SnapshotIssue issue;
 
     public SnapshotIssue getIssue() {
         return issue;
     }
-
+    //endregion
+    //region public readonly prop area: Dimension?
     private final @Nullable Dimension area;
 
     public @Nullable Dimension getArea() {
         return area;
     }
-
+    //endregion
+    //region public readonly prop expectedImage: ImageIcon
     private final ImageIcon expectedImage;
 
     public ImageIcon getExpectedImage() {
         return expectedImage;
     }
-
+    //endregion
+    //region public readonly prop actualImage: ImageIcon
     private final ImageIcon actualImage;
 
     public ImageIcon getActualImage() {
         return actualImage;
     }
-
+    //endregion
+    //region public readonly prop differenceImage: ImageIcon
     private final ImageIcon differenceImage;
 
     public ImageIcon getDifferenceImage() {
         return differenceImage;
     }
-
+    //endregion
     //endregion
     //region Construction
+
+    //region public factory snapshotImages(issue: SnapshotIssue, area: Dimension?): SnapshotImages
+    public static SnapshotImages snapshotImages(
+            SnapshotIssue issue, @Nullable Dimension area) {
+        @Nullable SnapshotImages images = cachedSnapshotImages;
+        if (images != null
+                && Objects.equals(images.getIssue(), issue)
+                && Objects.equals(images.getArea(), area)) {
+            return images;
+        }
+        cachedSnapshotImages = new SnapshotImages(issue, area);
+        return cachedSnapshotImages;
+    }
+
     private SnapshotImages(
             SnapshotIssue issue,
             @Nullable Dimension area) {
@@ -105,18 +127,6 @@ final class SnapshotImages {
         }
     }
 
-    public static SnapshotImages snapshotImages(
-            SnapshotIssue issue, @Nullable Dimension area) {
-        @Nullable SnapshotImages images = cachedSnapshotImages;
-        if (images != null
-                && Objects.equals(images.getIssue(), issue)
-                && Objects.equals(images.getArea(), area)) {
-            return images;
-        }
-        cachedSnapshotImages = new SnapshotImages(issue, area);
-        return cachedSnapshotImages;
-    }
-
     private static ImageIcon scaledImageIcon(ImageIcon icon, double scaleFactor) {
         Image image = icon.getImage();
         int w = icon.getIconWidth();
@@ -137,5 +147,6 @@ final class SnapshotImages {
         }
         return new Dimension(totalWidth, maxHeight);
     }
+    //endregion
     //endregion
 }

@@ -199,7 +199,7 @@ class ExpectedActualDifferenceImageWidget implements Widget {
     }
 
     //endregion
-    //region prop snapshotImages : SnapshotImages? {snapshotImages(snapshotIssue?, imageArea)}
+    //region prop snapshotImages : SnapshotImages? {getSnapshotImages()}
     // TODO: Remark regarding missing `public`: props are private by default
     //
     // TODO: Remark regarding `snapshotImages(snapshotIssue?, imageArea)`: the
