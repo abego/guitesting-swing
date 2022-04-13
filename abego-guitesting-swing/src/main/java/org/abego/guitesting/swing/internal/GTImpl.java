@@ -283,6 +283,27 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public int getImageDifferenceIgnoredBorderSize() {
+        return screenCaptureSupport.getImageDifferenceIgnoredBorderSize();
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredBorderSize(int value) {
+        screenCaptureSupport.setImageDifferenceIgnoredBorderSize(value);
+    }
+
+    @Override
+    public int getImageDifferenceIgnoredCornerSize() {
+        return screenCaptureSupport.getImageDifferenceIgnoredCornerSize();
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredCornerSize(int value) {
+        screenCaptureSupport.setImageDifferenceIgnoredCornerSize(value);
+
+    }
+
+    @Override
     public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
         return screenCaptureSupport.imageDifference(imageA, imageB);
     }

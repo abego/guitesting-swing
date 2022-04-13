@@ -248,6 +248,26 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public int getImageDifferenceIgnoredBorderSize() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredBorderSize(int value) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public int getImageDifferenceIgnoredCornerSize() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredCornerSize(int value) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
     public ImageDifference imageDifference(BufferedImage imageA, BufferedImage imageB) {
         throw new HeadlessGuiTestingException();
     }

@@ -140,6 +140,14 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      */
     void setImageDifferenceTolerancePercentage(int value);
 
+    int getImageDifferenceIgnoredBorderSize();
+
+    void setImageDifferenceIgnoredBorderSize(int value);
+
+    int getImageDifferenceIgnoredCornerSize();
+
+    void setImageDifferenceIgnoredCornerSize(int value);
+
     /**
      * Returns the difference between {@code imageA} and {@code imageB} as an
      * {@link ImageDifference} object.
@@ -281,7 +289,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param directory the new test resources directory
      */
     void setTestResourcesDirectory(File directory);
-    
+
     /**
      * Sets the path to the directory with test resources to {@code path}.
      *

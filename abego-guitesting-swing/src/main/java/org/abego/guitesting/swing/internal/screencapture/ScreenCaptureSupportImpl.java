@@ -77,7 +77,9 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     private boolean useInnerJFrameBounds = false;
     private Duration delayBeforeNewSnapshot = DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT;
     private File testResourcesDirectory = new File(TEST_RESOURCES_DIRECTORY_PATH_DEFAULT);
-    private int imageDifferenceTolerancePercentage = ImageCompare.TOLERANCE_PERCENTAGE_DEFAULT;
+    private int imageDifferenceTolerancePercentage = 0;
+    private int imageDifferenceIgnoredBorderSize = 0;
+    private int imageDifferenceIgnoredCornerSize = 0;
 
     private ScreenCaptureSupportImpl(
             Robot robot, PollingService pollingService, WaitSupport waitSupport) {
@@ -139,6 +141,26 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public void setImageDifferenceTolerancePercentage(int value) {
         imageDifferenceTolerancePercentage = value;
+    }
+
+    @Override
+    public int getImageDifferenceIgnoredBorderSize() {
+        return imageDifferenceIgnoredBorderSize;
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredBorderSize(int value) {
+        imageDifferenceIgnoredBorderSize = value;
+    }
+
+    @Override
+    public int getImageDifferenceIgnoredCornerSize() {
+        return imageDifferenceIgnoredCornerSize;
+    }
+
+    @Override
+    public void setImageDifferenceIgnoredCornerSize(int value) {
+        imageDifferenceIgnoredCornerSize = value;
     }
 
     @Override
@@ -327,7 +349,22 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     }
 
     private ImageCompare newImageCompare() {
-        return ImageCompare.newImageCompare(imageDifferenceTolerancePercentage);
+        return ImageCompare.newImageCompare(new ImageCompare.Options() {
+            @Override
+            public int getTolerancePercentage() {
+                return imageDifferenceTolerancePercentage;
+            }
+
+            @Override
+            public int getIgnoredBorderSize() {
+                return imageDifferenceIgnoredBorderSize;
+            }
+
+            @Override
+            public int getIgnoredCornerSize() {
+                return imageDifferenceIgnoredCornerSize;
+            }
+        });
     }
 
     @Override

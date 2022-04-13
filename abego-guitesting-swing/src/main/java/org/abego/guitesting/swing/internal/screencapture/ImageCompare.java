@@ -35,36 +35,43 @@ import java.awt.image.PixelGrabber;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.getSize;
 
 public final class ImageCompare {
-    static final int TOLERANCE_PERCENTAGE_DEFAULT = 0;
-    private static final ImageCompare DEFAULT_COMPARE =
-            new ImageCompare(TOLERANCE_PERCENTAGE_DEFAULT);
+    private static final ImageCompare.Options DEFAULT_COMPARE_OPTIONS = new Options() {};
+    private static final ImageCompare DEFAULT_COMPARE = newImageCompare(DEFAULT_COMPARE_OPTIONS);
+
+    public interface Options {
+        default int getTolerancePercentage() {return 0;}
+
+        default int getIgnoredBorderSize() {return 0;}
+
+        default int getIgnoredCornerSize() {return 0;}
+    }
 
     private final int tolerancePercentage;
+    private final int ignoredBorderSize;
+    private final int ignoredCornerSize;
 
-    private ImageCompare(int tolerancePercentage) {
-        this.tolerancePercentage = tolerancePercentage;
+    private ImageCompare(Options options) {
+        this.tolerancePercentage = options.getTolerancePercentage();
+        this.ignoredBorderSize = options.getIgnoredBorderSize();
+        this.ignoredCornerSize = options.getIgnoredCornerSize();
     }
 
     public static ImageCompare newImageCompare() {
-        return newImageCompare(TOLERANCE_PERCENTAGE_DEFAULT);
+        return DEFAULT_COMPARE;
     }
 
-    public static ImageCompare newImageCompare(int tolerancePercentage) {
-        // For compares with the default tolerance we reuse the DEFAULT_COMPARE.
-        // In the other cases we create a new instance each time.
-        return tolerancePercentage == TOLERANCE_PERCENTAGE_DEFAULT
-                ? DEFAULT_COMPARE
-                : new ImageCompare(tolerancePercentage);
+    public static ImageCompare newImageCompare(Options options) {
+        return new ImageCompare(options);
     }
 
     public static boolean imagesAreEqual(
             BufferedImage imageA, BufferedImage imageB) {
-        return imagesAreEqual(imageA, imageB, TOLERANCE_PERCENTAGE_DEFAULT);
+        return imagesAreEqual(imageA, imageB, DEFAULT_COMPARE_OPTIONS);
     }
 
     public static boolean imagesAreEqual(
-            BufferedImage imageA, BufferedImage imageB, int tolerancePercentage) {
-        return newImageCompare(tolerancePercentage).differenceMask(imageA, imageB) == null;
+            BufferedImage imageA, BufferedImage imageB, Options options) {
+        return newImageCompare(options).differenceMask(imageA, imageB) == null;
     }
 
     /**
@@ -133,7 +140,7 @@ public final class ImageCompare {
         if (greenDiff < 0) greenDiff = -greenDiff;
         if (blueDiff < 0) blueDiff = -blueDiff;
 
-        int totalDiff = redDiff+greenDiff+blueDiff;
+        int totalDiff = redDiff + greenDiff + blueDiff;
 
         // return a 0 percentage only when there are really no differences,
         // otherwise a number between 1 and 100.
@@ -204,7 +211,8 @@ public final class ImageCompare {
                 boolean hasPixelB = x < sizeB.width && y < sizeB.height;
                 int pixelA = hasPixelA ? pixelsA[y * sizeA.width + x] : 0;
                 int pixelB = hasPixelB ? pixelsB[y * sizeB.width + x] : 0;
-                if (hasPixelA && hasPixelB && arePixelsSimilar(pixelA,pixelB)) {
+                if (isIgnoredPixel(x, y, sizeA, sizeB) ||
+                        (hasPixelA && hasPixelB && arePixelsSimilar(pixelA, pixelB))) {
                     color = whiteTransparentPixel;
                 } else {
                     imagesDiffer = true;
@@ -216,6 +224,45 @@ public final class ImageCompare {
 
         return imagesDiffer ? getImageFromPixels(pixelsResult, w, h) : null;
     }
+
+    private boolean isIgnoredPixel(int x, int y, Dimension sizeA, Dimension sizeB) {
+        // check for ignored border pixels
+        if (ignoredBorderSize > 0 && (
+                (x < ignoredBorderSize) || // left border
+                        (y < ignoredBorderSize) || // top border
+                        (x >= sizeA.width - ignoredBorderSize) ||  // right border of A
+                        (x >= sizeB.width - ignoredBorderSize) ||  // right border of B
+                        (y >= sizeA.height - ignoredBorderSize) ||  // bottom border of A
+                        (y >= sizeB.height - ignoredBorderSize))) {  // bottom border of B
+            return true;
+        }
+
+        // check for ignored corner pixels
+        if (ignoredCornerSize > 0) {
+            int rightA = sizeA.width - ignoredCornerSize;
+            int rightB = sizeB.width - ignoredCornerSize;
+            int bottomA = sizeA.height - ignoredCornerSize;
+            int bottomB = sizeB.height - ignoredCornerSize;
+            return (x < ignoredBorderSize) || // left border
+                    (y < ignoredBorderSize) || // top border
+                    (x >= sizeA.width - ignoredBorderSize) ||  // right border of A
+                    (x >= sizeB.width - ignoredBorderSize) ||  // right border of B
+                    (y >= sizeA.width - ignoredBorderSize) ||  // right border of A
+                    (y >= sizeB.width - ignoredBorderSize) ||  // right border of B
+                    (x < ignoredCornerSize && y < ignoredCornerSize) || // top left corner
+                    (x >= rightA && y < ignoredCornerSize) || // top right corner of A
+                    (x >= rightB && y < ignoredCornerSize) || // top right corner of B
+                    (x < ignoredCornerSize && y >= bottomA) || // bottom left corner of A
+                    (x < ignoredCornerSize && y >= bottomB) || // bottom left corner of B
+                    (x >= rightA && y >= bottomA) || // bottom right corner of A
+                    (x >= rightB && y >= bottomB) // bottom right corner of B
+                    ;
+        }
+
+        return false;
+
+    }
+
 
     /**
      * Returns a new image of transparent white pixels with the same size as
