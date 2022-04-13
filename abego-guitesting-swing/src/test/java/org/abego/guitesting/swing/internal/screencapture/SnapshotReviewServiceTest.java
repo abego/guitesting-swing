@@ -77,6 +77,12 @@ final class SnapshotReviewServiceTest {
         review.showSnapshotReviewFrame(frame -> frame.setSize(800, 360));
 
         GT gt = GuiTesting.newGT();
+        // more configuration for "modern" windows with round corners and
+        // translucent border
+        //TODO: extract as helper code?
+        gt.setImageDifferenceIgnoredBorderSize(1);
+        gt.setImageDifferenceIgnoredCornerSize(10);
+
         // move the mouse out of way
         // (e.g. to avoid it is over a toolbar button and "hover highlights" it)
         gt.mouseMove(new Point(0, 0));
