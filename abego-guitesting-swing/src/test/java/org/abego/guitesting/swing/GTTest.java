@@ -2430,6 +2430,10 @@ public class GTTest {
         JFrame frame = MyGT.showFrameWithColors();
         gt.setGenerateSnapshotIfMissing(true);
 
+        // colors may vary slightly (e.g. between macOS versions)
+        gt.setImageDifferenceTolerancePercentage(10);
+
+
         BufferedImage actualImage =
                 gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
 
