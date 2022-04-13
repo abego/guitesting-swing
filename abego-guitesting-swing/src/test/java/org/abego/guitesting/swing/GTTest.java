@@ -2573,6 +2573,10 @@ public class GTTest {
 
         JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
         JMenu menu = menubar.getMenu(0);
+
+        // more tolerant diff because of translucent menus
+        gt.setImageDifferenceTolerancePercentage(10);
+
         gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
     }
 
@@ -2626,6 +2630,10 @@ public class GTTest {
 
         JMenuBar menubar = gt.waitForComponent(JMenuBar.class);
         JMenu menu = menubar.getMenu(2);
+
+        // more tolerant diff because of translucent menus
+        gt.setImageDifferenceTolerancePercentage(10);
+
         gt.waitUntilPopupMenuScreenshotMatchesSnapshot(menu);
     }
 
