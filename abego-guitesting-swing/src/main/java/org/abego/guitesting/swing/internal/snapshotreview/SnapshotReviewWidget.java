@@ -232,7 +232,8 @@ class SnapshotReviewWidget implements Widget {
     //region Construction
     private SnapshotReviewWidget(Seq<SnapshotIssue> issues) {
         remainingIssues = newDefaultListModel(
-                issues.sortedBy(SnapshotIssue::getLabel));
+                issues.sortedBy( // snapshotName and index
+                        si -> si.getSnapshotName() +" - " + si.getIndex()));
         layoutComponents();
         styleComponents();
         initBindings();
