@@ -358,6 +358,11 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public void resetScreenCaptureSupport() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
     public void waitForIdle() {
         throw new HeadlessGuiTestingException();
     }

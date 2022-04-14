@@ -505,6 +505,8 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     void setSnapshotReportDirectory(File directory);
 
+    void resetScreenCaptureSupport();
+
     /**
      * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
      */

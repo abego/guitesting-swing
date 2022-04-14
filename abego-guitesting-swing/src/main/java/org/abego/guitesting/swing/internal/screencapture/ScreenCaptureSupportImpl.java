@@ -382,6 +382,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         snapshotReportDirectory = directory;
     }
 
+    @Override
+    public void resetScreenCaptureSupport() {
+        setImageDifferenceIgnoredBorderSize(0);
+        setImageDifferenceIgnoredCornerSize(0);
+        setImageDifferenceTolerancePercentage(0);
+    }
+
     private BufferedImage captureAndWriteInitialSnapshotImage(
             Component component, @Nullable Rectangle rectangle,
             File imageFile) {

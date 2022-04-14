@@ -501,6 +501,11 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
         screenCaptureSupport.setSnapshotReportDirectory(directory);
     }
 
+    @Override
+    public void resetScreenCaptureSupport() {
+        screenCaptureSupport.resetScreenCaptureSupport();
+    }
+
     // ======================================================================
     // SnapshotReviewService
     // ======================================================================
