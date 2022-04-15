@@ -89,6 +89,8 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
         this.componentSupport = newComponentSupport(windowSupport::allWindows);
         this.focusSupport = newFocusSupport(this, this, keyboardSupport);
         this.screenCaptureSupport = newScreenCaptureSupport(robot, this, this);
+
+        resetMouse();
     }
 
     public static GT newGTImpl(Robot robot) {

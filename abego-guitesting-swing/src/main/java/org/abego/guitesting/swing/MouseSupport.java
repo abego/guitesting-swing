@@ -44,7 +44,7 @@ public interface MouseSupport extends BasicMouseSupport {
     /**
      * Moves the mouse pointer to (0,0).
      * <p>
-     * Typically used to move the mouse "out of the way", e.g. to avoid the
+     * Typically, used to move the mouse "out of the way", e.g. to avoid the
      * mouse is over a toolbar button and "hover highlights" it or the mouse
      * pointer is included in a screenshot/snapshot.
      */
