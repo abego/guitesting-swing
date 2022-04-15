@@ -543,6 +543,8 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     public void reset() {
         waitForIdle();
         super.reset();
+        resetMouse();
+        resetScreenCaptureSupport();
         releaseAllKeys();
     }
 

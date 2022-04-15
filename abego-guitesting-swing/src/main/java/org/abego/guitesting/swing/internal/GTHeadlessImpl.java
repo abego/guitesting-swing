@@ -207,8 +207,6 @@ abstract class GTHeadlessImpl implements GT {
     public void reset() {
         resetTimeout();
         blackboard().clear();
-        resetMouse();
-        resetScreenCaptureSupport();
     }
 
     @Override
