@@ -67,14 +67,8 @@ class BoxStyleTest {
                 .padding(2, 4, 6, 8));
 
         JFrame f = gt.showInFrameTitled("BoxStyle", panel);
-        // more configuration for "modern" windows with round corners and
-        // translucent border
-        //TODO: extract as helper code?
-        gt.setImageDifferenceIgnoredBorderSize(1);
-        gt.setImageDifferenceIgnoredCornerSize(10);
-        // colors may vary slightly (e.g. between macOS versions)
-        gt.setImageDifferenceTolerancePercentage(10);
 
+        gt.makeScreenshotMatchingTolerant();
         gt.waitUntilScreenshotMatchesSnapshot(panel);
     }
 }

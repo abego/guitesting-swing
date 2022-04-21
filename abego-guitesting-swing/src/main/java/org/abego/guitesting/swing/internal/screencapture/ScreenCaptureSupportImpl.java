@@ -389,6 +389,13 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         setImageDifferenceTolerancePercentage(0);
     }
 
+    @Override
+    public void makeScreenshotMatchingTolerant() {
+        setImageDifferenceIgnoredBorderSize(1);
+        setImageDifferenceIgnoredCornerSize(10);
+        setImageDifferenceTolerancePercentage(10);
+    }
+
     private BufferedImage captureAndWriteInitialSnapshotImage(
             Component component, @Nullable Rectangle rectangle,
             File imageFile) {

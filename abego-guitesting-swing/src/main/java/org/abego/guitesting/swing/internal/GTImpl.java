@@ -504,6 +504,11 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public void makeScreenshotMatchingTolerant() {
+        screenCaptureSupport.makeScreenshotMatchingTolerant();
+    }
+
+    @Override
     public void resetScreenCaptureSupport() {
         screenCaptureSupport.resetScreenCaptureSupport();
     }

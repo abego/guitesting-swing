@@ -505,6 +505,19 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     void setSnapshotReportDirectory(File directory);
 
+    /**
+     * Makes subsequent "waitUntilScreenshotMatches..." calls more tolerant by
+     * setting "mageDifferenceIgnoredBorderSize",
+     * "ImageDifferenceIgnoredCornerSize" and "ImageDifferenceTolerancePercentage"
+     * to appropriate values.
+     * <p>
+     * This covers cases, e.g. like screenshots of "modern" windows with round
+     * corners and translucent borders.
+     * <p>
+     * Use {@link #resetScreenCaptureSupport()} to reset to default behaviour.
+     */
+    void makeScreenshotMatchingTolerant();
+
     void resetScreenCaptureSupport();
 
     /**

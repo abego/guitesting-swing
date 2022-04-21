@@ -49,7 +49,7 @@ public interface MouseSupport extends BasicMouseSupport {
      * pointer is included in a screenshot/snapshot.
      */
     default void resetMouse() {
-        mouseMove(new Point(0, 0));
+        mouseMove(0, 0);
     }
 
     /**
