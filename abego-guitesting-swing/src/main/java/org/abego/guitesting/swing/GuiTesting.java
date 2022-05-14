@@ -24,6 +24,7 @@
 
 package org.abego.guitesting.swing;
 
+import org.abego.guitesting.swing.app.GuiTestingSwingApp;
 import org.eclipse.jdt.annotation.NonNull;
 
 import java.awt.AWTException;
@@ -57,6 +58,10 @@ public class GuiTesting {
         } else {
             return newGTImpl(newRobot());
         }
+    }
+
+    public static void startSnapshotReview(String... args) {
+        GuiTestingSwingApp.main(args);
     }
 
     @NonNull
