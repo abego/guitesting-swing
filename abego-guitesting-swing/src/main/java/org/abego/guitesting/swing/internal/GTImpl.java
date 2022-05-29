@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
+import static javax.swing.SwingUtilities.invokeAndWait;
 import static org.abego.guitesting.swing.internal.ComponentSupportImpl.newComponentSupport;
 import static org.abego.guitesting.swing.internal.FocusSupportImpl.newFocusSupport;
 import static org.abego.guitesting.swing.internal.KeyboardSupportImpl.newKeyboardSupport;
@@ -558,7 +559,11 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     @Override
     public void cleanup() {
         super.cleanup();
-        disposeAllWindows();
+        try {
+            invokeAndWait(this::disposeAllWindows);
+        } catch (Exception e) {
+            throw new GuiTestingException("Error during cleanup", e);
+        }
     }
 
     private void disposeAllWindows() {
