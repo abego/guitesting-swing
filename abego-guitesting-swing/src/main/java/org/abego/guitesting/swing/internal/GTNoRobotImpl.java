@@ -33,6 +33,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.KeyStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -144,6 +145,16 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
 
     @Override
     public void type(String text) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void type(KeyStroke keyStroke) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void typeKey(String keyStrokeString) {
         throw new HeadlessGuiTestingException();
     }
 

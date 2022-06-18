@@ -43,6 +43,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -150,6 +151,16 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     @Override
     public void type(String text) {
         keyboardSupport.type(text);
+    }
+
+    @Override
+    public void type(KeyStroke keyStroke) {
+        keyboardSupport.type(keyStroke);
+    }
+
+    @Override
+    public void typeKey(String keyStrokeString) {
+        keyboardSupport.typeKey(keyStrokeString);
     }
 
     @Override

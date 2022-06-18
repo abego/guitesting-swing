@@ -24,6 +24,8 @@
 
 package org.abego.guitesting.swing;
 
+import javax.swing.KeyStroke;
+
 /**
  * Operations on the keyboard, like typing text or individual keys.
  */
@@ -35,6 +37,24 @@ public interface KeyboardSupport extends BasicKeyboardSupport {
      * @param text the text to type
      */
     void type(String text);
+
+    /**
+     * Types the given {@code keyStroke}.
+     *
+     * @param keyStroke the KeyStroke to type
+     */
+    void type(KeyStroke keyStroke);
+
+    /**
+     * Types the given Keystroke defined by {@code keyStrokeString}, in the
+     * format as defined for {@link KeyStroke#getKeyStroke(String)}.
+     * <p>
+     * Throws an exception when {@code keyStrokeString} is not valid.
+     *
+     * @param keyStrokeString the KeyStroke to type, as defined for
+     * {@link KeyStroke#getKeyStroke(String)}
+     */
+    void typeKey(String keyStrokeString);
 
     /**
      * Types the key with the given {@code keycode}.

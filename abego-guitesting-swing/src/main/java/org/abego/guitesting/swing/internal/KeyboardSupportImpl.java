@@ -24,9 +24,11 @@
 
 package org.abego.guitesting.swing.internal;
 
+import org.abego.guitesting.swing.GuiTestingException;
 import org.abego.guitesting.swing.KeyboardSupport;
 import org.abego.guitesting.swing.WaitForIdleSupport;
 
+import javax.swing.KeyStroke;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -34,7 +36,14 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.IntConsumer;
 
+import static java.awt.event.InputEvent.ALT_DOWN_MASK;
+import static java.awt.event.InputEvent.ALT_GRAPH_DOWN_MASK;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.InputEvent.META_DOWN_MASK;
+import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
+import static javax.swing.KeyStroke.getKeyStroke;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.isMacOS;
 
 final class KeyboardSupportImpl implements KeyboardSupport {
@@ -86,6 +95,56 @@ final class KeyboardSupportImpl implements KeyboardSupport {
         keyRelease(shortCutCode);
 
         waitForIdle();
+    }
+
+    @Override
+    public void type(KeyStroke keyStroke) {
+        waitForIdle();
+
+        int modifiers = keyStroke.getModifiers();
+        pressModifiers(modifiers);
+        waitForIdle();
+        typeKeycode(keyStroke.getKeyCode());
+        waitForIdle();
+        releaseModifiers(modifiers);
+        waitForIdle();
+    }
+
+    @Override
+    public void typeKey(String keyStrokeString) {
+        KeyStroke keyStroke = getKeyStroke(keyStrokeString);
+        if (keyStroke == null) {
+            throw new GuiTestingException(
+                    String.format("'%s' is not a valid key stroke. See javax.swing.KeyStroke.getKeyStroke(java.lang.String) for details.", //NON-NLS
+                            keyStrokeString));
+        }
+        type(keyStroke);
+    }
+
+    private void pressModifiers(int modifiers) {
+        withKeyCodesOfModifiersDo(modifiers, this::keyPress);
+    }
+
+    private void releaseModifiers(int modifiers) {
+        withKeyCodesOfModifiersDo(modifiers, this::keyRelease);
+    }
+
+    private static void withKeyCodesOfModifiersDo(int modifiers, IntConsumer block) {
+        if ((modifiers & SHIFT_DOWN_MASK) != 0) {
+            block.accept(KeyEvent.VK_SHIFT);
+        }
+        if ((modifiers & CTRL_DOWN_MASK) != 0) {
+            block.accept(KeyEvent.VK_CONTROL);
+        }
+        if ((modifiers & META_DOWN_MASK) != 0) {
+            block.accept(KeyEvent.VK_META);
+        }
+        if ((modifiers & ALT_DOWN_MASK) != 0) {
+            block.accept(KeyEvent.VK_ALT);
+        }
+        if ((modifiers & ALT_GRAPH_DOWN_MASK) != 0) {
+            block.accept(KeyEvent.VK_ALT_GRAPH);
+        }
     }
 
     @Override
