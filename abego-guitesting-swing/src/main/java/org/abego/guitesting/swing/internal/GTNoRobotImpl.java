@@ -224,6 +224,11 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public String getSnapshotNameDefault() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
     public boolean getUseInnerJFrameBounds() {
         throw new HeadlessGuiTestingException();
     }

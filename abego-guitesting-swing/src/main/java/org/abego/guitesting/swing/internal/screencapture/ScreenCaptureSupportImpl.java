@@ -65,6 +65,7 @@ import static org.abego.guitesting.swing.internal.screencapture.SnapshotIssueSup
 public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     static final String SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT = "images"; //NON-NLS
     static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
+    private static final String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
     @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -91,6 +92,11 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     public static ScreenCaptureSupport newScreenCaptureSupport(
             Robot robot, PollingService pollingService, WaitSupport waitSupport) {
         return new ScreenCaptureSupportImpl(robot, pollingService, waitSupport);
+    }
+
+    @Override
+    public String getSnapshotNameDefault() {
+        return SNAPSHOT_NAME_DEFAULT;
     }
 
     @Override
@@ -258,26 +264,21 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         testResourcesDirectory = directory;
     }
 
-    private static String resolveSnapshotName(
+    private String resolveSnapshotName(
             @Nullable String snapshotName, String calleeName) {
         // absolute snapshot names are used "as is"
         if (snapshotName != null && snapshotName.startsWith("/")) {
             return snapshotName;
         }
 
-        // when no "absolute" snapshot name is given derive the name from
-        // the method (and class) calling the snapshotting method
-        if (snapshotName == null) {
-            snapshotName = SNAPSHOT_NAME_DEFAULT;
-        }
-
-        // When no absolute snapshot name is given use the test class and
-        // test method name as prefix to the (relative) snapshot name.
+        // when no snapshot name is given or the snapshot name is not
+        // absolute derive the name from the method (and class) calling the
+        // snapshotting method
         StackTraceElement method = getNameDefiningCall(calleeName);
         return String.format("/%s.%s-%s",  //NON-NLS
                 method.getClassName().replaceAll("\\.", "/"),
                 method.getMethodName(),
-                snapshotName);
+                snapshotName != null ? snapshotName : getSnapshotNameDefault());
     }
 
     @Override
@@ -493,7 +494,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
                 getTestResourcesDirectory()).findSnapshotIssues();
     }
 
-    static class SnapshotInfo {
+    class SnapshotInfo {
 
         /**
          * The (absolute) snapshot name, with "/" as delimiters
@@ -512,7 +513,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
             this.urlToTestClass = urlToTestClass(calleeName);
         }
 
-        private static URL urlToTestClass(String calleeName) {
+        private URL urlToTestClass(String calleeName) {
             StackTraceElement method = getNameDefiningCall(calleeName);
             Class<?> type = GuiTestingUtil.getClass(method);
             return Objects.requireNonNull(type.getResource(""));

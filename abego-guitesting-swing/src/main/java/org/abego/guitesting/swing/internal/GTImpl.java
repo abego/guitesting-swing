@@ -262,6 +262,11 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     // ======================================================================
 
     @Override
+    public String getSnapshotNameDefault() {
+        return screenCaptureSupport.getSnapshotNameDefault();
+    }
+
+    @Override
     public boolean getUseInnerJFrameBounds() {
         return screenCaptureSupport.getUseInnerJFrameBounds();
     }

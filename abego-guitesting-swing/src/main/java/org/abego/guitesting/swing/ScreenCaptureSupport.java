@@ -44,9 +44,12 @@ import java.time.Duration;
  * Support for screen captures/screenshots of the screen or {@link Component}s.
  */
 public interface ScreenCaptureSupport extends TimeoutSupplier {
-    //TODO: make this a default method, not a constant?
-    String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
-
+    /**
+     * Returns the snapshot name to use when no name is explicitly specified.
+     *
+     * @return the snapshot name to use when no name is explicitly specified.
+     */
+    String getSnapshotNameDefault();
 
     /**
      * Returns true when the "inner" bounds of a JFrame should be used when
@@ -343,12 +346,12 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     BufferedImage[] getImagesOfSnapshot(String name);
 
     /**
-     * Returns the images of the snapshot {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT}
+     * Returns the images of the snapshot {@link ScreenCaptureSupport#getSnapshotNameDefault()}
      *
-     * @return the images of the snapshot {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT}
+     * @return the images of the snapshot {@link ScreenCaptureSupport#getSnapshotNameDefault()}
      */
     default BufferedImage[] getImagesOfSnapshot() {
-        return getImagesOfSnapshot(SNAPSHOT_NAME_DEFAULT);
+        return getImagesOfSnapshot(getSnapshotNameDefault());
     }
 
 
@@ -395,7 +398,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * Waits until the screenshot of the {@code component}, or of the
      * {@code rectangle} of the {@code component}, if {@code rectangle} is not {@code null},
      * matches one of the images defined for the snapshot named
-     * {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT},
+     * {@link ScreenCaptureSupport#getSnapshotNameDefault()},
      * and returns the image.
      *
      *
@@ -429,7 +432,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
             Component component,
             @Nullable Rectangle rectangle)
             throws GuiTestingException {
-        return waitUntilScreenshotMatchesSnapshot(component, rectangle, SNAPSHOT_NAME_DEFAULT);
+        return waitUntilScreenshotMatchesSnapshot(component, rectangle, getSnapshotNameDefault());
     }
 
     /**
@@ -469,7 +472,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Waits until the screenshot of the {@code component}
      * matches one of the images defined for
-     * the snapshot  named {@link ScreenCaptureSupport#SNAPSHOT_NAME_DEFAULT},
+     * the snapshot  named {@link ScreenCaptureSupport#getSnapshotNameDefault()},
      * and returns the image.
      *
      * <p>When the snapshot does not yet have images the behaviour depends on
@@ -494,7 +497,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     @Timeoutable
     default BufferedImage waitUntilScreenshotMatchesSnapshot(Component component)
             throws GuiTestingException {
-        return waitUntilScreenshotMatchesSnapshot(component, SNAPSHOT_NAME_DEFAULT);
+        return waitUntilScreenshotMatchesSnapshot(component, getSnapshotNameDefault());
     }
 
     default Seq<SnapshotIssue> getSnapshotIssues() {
