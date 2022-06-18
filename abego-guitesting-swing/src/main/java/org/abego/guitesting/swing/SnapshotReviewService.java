@@ -31,9 +31,11 @@ import java.util.function.Consumer;
 public interface SnapshotReviewService {
     String SNAPSHOT_REVIEW_FRAME_NAME = "snapshot-review-frame"; //NON-NLS
 
-    default void showSnapshotReviewFrame() {
-        showSnapshotReviewFrame(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));
+    default JFrame showSnapshotReviewFrame() {
+        return showSnapshotReviewFrame(frame -> frame.setExtendedState(Frame.MAXIMIZED_BOTH));
     }
 
-    void showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode);
+    JFrame showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode);
+
+    boolean hasSnapshotIssues();
 }

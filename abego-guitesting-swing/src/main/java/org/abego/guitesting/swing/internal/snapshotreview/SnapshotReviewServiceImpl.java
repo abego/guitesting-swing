@@ -50,14 +50,19 @@ final class SnapshotReviewServiceImpl implements SnapshotReviewService {
     //endregion
     //region Commands
     @Override
-    public void showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode) {
+    public JFrame showSnapshotReviewFrame(Consumer<JFrame> framePreShowCode) {
         Seq<SnapshotIssue> issues = getSnapshotIssues();
         SnapshotReviewWidget widget = SnapshotReviewWidget.snapshotReviewWidget(issues);
         //noinspection StringConcatenation
         String title = "Snapshot Review (" + issues.size() + " issues)";
 
-        WidgetUtil.showWidgetInJFrame(
+        return WidgetUtil.showWidgetInJFrame(
                 widget, title, SNAPSHOT_REVIEW_FRAME_NAME, framePreShowCode);
+    }
+
+    @Override
+    public boolean hasSnapshotIssues() {
+        return !getSnapshotIssues().isEmpty();
     }
 
     private Seq<SnapshotIssue> getSnapshotIssues() {

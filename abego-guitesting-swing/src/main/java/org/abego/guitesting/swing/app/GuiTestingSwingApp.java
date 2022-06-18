@@ -24,23 +24,27 @@
 
 package org.abego.guitesting.swing.app;
 
+import org.abego.commons.lang.ThrowableUtil;
+import org.abego.guitesting.swing.GuiTesting;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
 
 import java.awt.Font;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import static org.abego.guitesting.swing.internal.snapshotreview.app.SnapshotReviewApp.newSnapshotReviewApp;
+import static java.util.logging.Logger.getLogger;
 
 public class GuiTestingSwingApp {
+    private static final Logger LOGGER = getLogger(GuiTestingSwingApp.class.getName());
 
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-            newSnapshotReviewApp(args).run();
+            GuiTesting.reviewSnapshotIssues(args);
 
         } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, e, () -> "GuiTestingSwingApp.main failed"); //NON-NLS
             showInErrorDialog(e);
         }
     }
@@ -51,7 +55,7 @@ public class GuiTestingSwingApp {
         textArea.setOpaque(false);
         textArea.setText(
                 String.format("Fatal error. Application will end.\n\nDetails\n=======\n\n%s\n", //NON-NLS
-                        e.getMessage()));
+                        ThrowableUtil.allMessagesOrClassName(e)));
         textArea.setEditable(false);
         JOptionPane.showMessageDialog(null, textArea);
     }

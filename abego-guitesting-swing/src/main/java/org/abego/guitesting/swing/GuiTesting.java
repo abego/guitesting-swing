@@ -24,27 +24,33 @@
 
 package org.abego.guitesting.swing;
 
-import org.abego.guitesting.swing.app.GuiTestingSwingApp;
+import org.abego.guitesting.swing.internal.snapshotreview.app.SnapshotReviewApp;
 import org.eclipse.jdt.annotation.NonNull;
 
+import javax.swing.UIManager;
 import java.awt.AWTException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import static java.util.logging.Logger.getLogger;
 import static org.abego.commons.lang.exception.UncheckedException.newUncheckedException;
 import static org.abego.guitesting.swing.internal.GTImpl.newGTImpl;
 import static org.abego.guitesting.swing.internal.GTNoRobotImpl.newGTNoRobot;
+import static org.abego.guitesting.swing.internal.snapshotreview.app.SnapshotReviewApp.newSnapshotReviewApp;
 
 /**
  * The entry to the GuiTesting Swing library, containing the factory method for
  * {@link GT} instances, {@link #newGT()}.
  */
 public class GuiTesting {
+    private static final Logger LOGGER = getLogger(GuiTesting.class.getName());
     private static final String COULD_NOT_CREATE_ROBOT_INSTANCE_MESSAGE = "Could not create Robot instance"; //NON-NLS
 
     /**
      * Returns a new instance of {@link GT}, the main interface for GUI testing.
-     *<p>
+     * <p>
      * When running in a headless environment
      * (see {@link GraphicsEnvironment#isHeadless()}) methods of the returned GT
      * will fail with a {@link HeadlessGuiTestingException} when the operation
@@ -60,8 +66,34 @@ public class GuiTesting {
         }
     }
 
-    public static void startSnapshotReview(String... args) {
-        GuiTestingSwingApp.main(args);
+    /**
+     * Opens the "Snapshot Review" window to review the snapshot issues stored
+     * in the snapshot report directory and waits until the window is closed.
+     * <p>
+     * Two optional arguments may be used to configure the review:
+     * <ol>
+     *     <li>testResourcesDirectory</li>
+     *     <li>snapshotReportDirectory</li>
+     * </ol>
+     * <p>
+     * When no snapshot issues are found the method returns immediately.
+     */
+    public static void reviewSnapshotIssues(String... args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+            SnapshotReviewApp snapshotReviewApp = newSnapshotReviewApp(args);
+            if (snapshotReviewApp.hasSnapshotIssues()) {
+                snapshotReviewApp.runAndWait();
+            } else {
+                LOGGER.log(Level.INFO,
+                        String.format("No snapshot issues found in '%s'", //NON-NLS
+                                snapshotReviewApp.getSnapshotReportDirectory().getAbsolutePath()));
+            }
+        } catch (Exception e) {
+            throw new GuiTestingException(
+                    "Error when starting the Snapshot Review app.", e); //NON-NLS
+        }
     }
 
     @NonNull

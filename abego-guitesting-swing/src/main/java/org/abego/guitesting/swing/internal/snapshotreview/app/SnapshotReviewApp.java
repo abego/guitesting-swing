@@ -26,8 +26,13 @@ package org.abego.guitesting.swing.internal.snapshotreview.app;
 
 import org.abego.guitesting.swing.GT;
 import org.abego.guitesting.swing.GuiTesting;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import javax.swing.JFrame;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +57,7 @@ public class SnapshotReviewApp {
     };
     private final GT gt = GuiTesting.newGT();
 
-    private SnapshotReviewApp(String[] args) {
+    private SnapshotReviewApp(String... args) {
         int argc = args.length;
         @Nullable String testResourcesDirectory = argc > 0 ? args[0] : null;
         @Nullable String snapshotReportDirectory = argc > 1 ? args[1] : null;
@@ -87,11 +92,51 @@ public class SnapshotReviewApp {
                         getSnapshotReportDirectory().getAbsolutePath()});
     }
 
-    public static SnapshotReviewApp newSnapshotReviewApp(String[] args) {
+    /**
+     * Returns a new SnapshotReviewApp.
+     * <p>
+     * Two optional arguments may be used to configure the SnapshotReviewApp:
+     * <ol>
+     *     <li>testResourcesDirectory</li>
+     *     <li>snapshotReportDirectory</li>
+     * </ol>
+     */
+    public static SnapshotReviewApp newSnapshotReviewApp(String... args) {
         return new SnapshotReviewApp(args);
     }
 
     public void run() {
+        showSnapshotReviewFrame();
+    }
+
+    public void runAndWait() {
+        JFrame frame = showSnapshotReviewFrame();
+
+        // wait until the review window is closed
+        waitUntilWindowIsClosed(frame);
+    }
+
+    private static void waitUntilWindowIsClosed(Window window) {
+        Object lock = new Object();
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                synchronized (lock) {
+                    lock.notify();
+                }
+            }
+        });
+        synchronized (lock) {
+            try {
+                lock.wait();
+            } catch (InterruptedException e) {
+                // nothing to do
+            }
+        }
+    }
+
+    @NonNull
+    private JFrame showSnapshotReviewFrame() {
         if (!getTestResourcesDirectory().isDirectory()) {
             throw new IllegalArgumentException(
                     String.format("Test resource directory not found: %s", //NON-NLS
@@ -102,14 +147,18 @@ public class SnapshotReviewApp {
                     String.format("Reports directory not found: %s", //NON-NLS
                             getSnapshotReportDirectory().getAbsolutePath()));
         }
-        gt.newSnapshotReviewService().showSnapshotReviewFrame();
+        return gt.newSnapshotReviewService().showSnapshotReviewFrame();
     }
 
     private File getTestResourcesDirectory() {
         return gt.getTestResourcesDirectory();
     }
 
-    private File getSnapshotReportDirectory() {
+    public File getSnapshotReportDirectory() {
         return gt.getSnapshotReportDirectory();
+    }
+
+    public boolean hasSnapshotIssues() {
+        return gt.newSnapshotReviewService().hasSnapshotIssues();
     }
 }
