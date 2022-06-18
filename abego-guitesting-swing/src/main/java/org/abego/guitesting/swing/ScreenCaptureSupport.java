@@ -510,7 +510,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     /**
      * Makes subsequent "waitUntilScreenshotMatches..." calls more tolerant by
-     * setting "mageDifferenceIgnoredBorderSize",
+     * setting "ImageDifferenceIgnoredBorderSize",
      * "ImageDifferenceIgnoredCornerSize" and "ImageDifferenceTolerancePercentage"
      * to appropriate values.
      * <p>
@@ -521,6 +521,13 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      */
     void makeScreenshotMatchingTolerant();
 
+    /**
+     * Resets  "ImageDifferenceIgnoredBorderSize",
+     * "ImageDifferenceIgnoredCornerSize" and "ImageDifferenceTolerancePercentage"
+     * to its default values.
+     * <p>
+     * See also {@link #makeScreenshotMatchingTolerant()}
+     */
     void resetScreenCaptureSupport();
 
     /**
