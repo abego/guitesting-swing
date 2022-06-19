@@ -2462,6 +2462,24 @@ public class GTTest {
         }
     }
 
+    @Test
+    void waitUntilScreenshotMatchesSnapshot_unmatchedScreenshot_withReview() {
+        JFrame frame = MyGT.showFrameWithColors();
+        gt.setTimeout(Duration.ofSeconds(3));
+
+        assertEquals(1, gt.getImagesOfSnapshot().length);
+
+        // Not using assertThrows here but the "old" technique
+        // to make sure the proper method name is used for the snapshot
+        try {
+            gt.waitUntilScreenshotMatchesSnapshot(frame.getContentPane());
+            fail("Exception expected");
+
+        } catch (AssertionFailedError error) {
+            assertIsUnmatchedScreenshotError(error);
+        }
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"foo", "bar", "baz"})
     void waitUntilScreenshotMatchesSnapshot_parameterizedTest(String text) {

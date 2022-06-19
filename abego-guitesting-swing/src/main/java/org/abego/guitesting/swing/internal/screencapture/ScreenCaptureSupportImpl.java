@@ -37,6 +37,7 @@ import org.opentest4j.AssertionFailedError;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -332,8 +333,35 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         SnapshotInfo info = new SnapshotInfo(
                 snapshotName, "waitUntilScreenshotMatchesSnapshot", getTestResourcesDirectory());
 
-        rectangle = adjustRectangleForScreenCapture(component, rectangle);
+        @Nullable Rectangle adjustedRectangle = adjustRectangleForScreenCapture(component, rectangle);
 
+        while (true) {
+            try {
+                return tryWaitUntilScreenshotMatchedSnapshot(component, info, adjustedRectangle);
+
+            } catch (UnmatchedScreenSnapshotAssertionFailedError error) {
+
+                Object[] options = {
+                        "Yes, please start the review.",
+                        "No, make the test fail."};
+                int n = JOptionPane.showOptionDialog(null,
+                        "No matching screen snapshot found. Do you want to review the screenshot and retry?",
+                        "Unmatched screen snapshot",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]);
+                if (n == 0) {
+                    System.out.println("OPEN THE REVIEW APP");
+                } else {
+                    throw error;
+                }
+            }
+        }
+    }
+
+    private BufferedImage tryWaitUntilScreenshotMatchedSnapshot(Component component, SnapshotInfo info, @Nullable Rectangle rectangle) {
         BufferedImage[] snapshotImages = info.getImagesOfSnapshot();
         // Calculate the file we would use to store a new screenshot image,
         // e.g. if no existing snapshot image matches the current screenshot.
@@ -380,8 +408,7 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
 
             File report = writeUnmatchedScreenshotReport(
                     actualImage, expectedImages, e, snapshotInfo, newImageFile);
-            throw new AssertionFailedError(
-                    String.format("Screenshot does not match expected image (Timeout).\nFor details see:\n- %s", report.getAbsolutePath()), e); //NON-NLS
+            throw new UnmatchedScreenSnapshotAssertionFailedError(e, report); //NON-NLS
         }
     }
 
