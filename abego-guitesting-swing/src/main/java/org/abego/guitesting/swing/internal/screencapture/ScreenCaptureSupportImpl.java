@@ -54,6 +54,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.abego.commons.io.FileUtil.findExistingDirectory;
 import static org.abego.commons.lang.StringUtil.replaceRange;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.checkIsPngFilename;
 import static org.abego.guitesting.swing.internal.GuiTestingUtil.getNameDefiningCall;
@@ -66,6 +67,20 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     static final String SCREENSHOT_IMAGES_DIRECTORY_NAME_DEFAULT = "images"; //NON-NLS
     static final String SNAP_SHOTS_DIRECTORY_NAME = "/snap-shots"; //NON-NLS
     private static final String SNAPSHOT_NAME_DEFAULT = "snapshot"; //NON-NLS
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private static final File[] testResourcesDirectoryCandidates = new File[]{
+            new File("src/test/resources"), //NON-NLS
+            new File("test_resources"), //NON-NLS
+            new File("test_src/resources"), //NON-NLS
+            new File("../src/test/resources"), //NON-NLS
+            new File("../test_resources"), //NON-NLS
+            new File("../test_src/resources"), //NON-NLS
+    };
+    @SuppressWarnings("DuplicateStringLiteralInspection")
+    private static final File[] snapshotReportDirectoryCandidates = new File[]{
+            new File("target/guitesting-reports"), //NON-NLS
+            new File("../target/guitesting-reports"), //NON-NLS
+    };
     private static final Logger LOGGER = getLogger(ScreenCaptureSupportImpl.class.getName());
     private static final Duration DELAY_BEFORE_NEW_SNAPSHOT_DEFAULT = Duration.ofSeconds(1);
     @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -264,6 +279,27 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
         testResourcesDirectory = directory;
     }
 
+    @Override
+    public File[] getTestResourcesDirectoryCandidatesDefault() {
+        return testResourcesDirectoryCandidates;
+    }
+
+    @Override
+    public void adjustTestResourcesDirectory(
+            @Nullable File directory, File[] directoryCandidates) {
+        // When no testResourcesDirectory is explicitly specified
+        // and {@code gt}'s current one does not exist check if one of the
+        // testResourcesDirectoryOptions exists. If yes, use it.
+        if (directory == null && !getTestResourcesDirectory().isDirectory()) {
+            directory =
+                    findExistingDirectory(directoryCandidates);
+        }
+
+        if (directory != null) {
+            setTestResourcesDirectory(directory);
+        }
+    }
+
     private String resolveSnapshotName(
             @Nullable String snapshotName, String calleeName) {
         // absolute snapshot names are used "as is"
@@ -381,6 +417,25 @@ public class ScreenCaptureSupportImpl implements ScreenCaptureSupport {
     @Override
     public void setSnapshotReportDirectory(File directory) {
         snapshotReportDirectory = directory;
+    }
+
+    @Override
+    public File[] getSnapshotReportDirectoryCandidatesDefault() {
+        return snapshotReportDirectoryCandidates;
+    }
+
+    @Override
+    public void adjustSnapshotReportDirectory(
+            @Nullable File directory,
+            File[] directoryCandidates) {
+
+        if (directory == null && !getSnapshotReportDirectory().isDirectory()) {
+            directory =
+                    findExistingDirectory(directoryCandidates);
+        }
+        if (directory != null) {
+            setSnapshotReportDirectory(directory);
+        }
     }
 
     @Override

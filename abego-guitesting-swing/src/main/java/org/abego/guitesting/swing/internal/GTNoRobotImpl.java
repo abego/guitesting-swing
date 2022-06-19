@@ -349,6 +349,16 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public File[] getTestResourcesDirectoryCandidatesDefault() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void adjustTestResourcesDirectory(@Nullable File directory, File[] directoryCandidates) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
     public String getSnapshotName(@Nullable String name) {
         throw new HeadlessGuiTestingException();
     }
@@ -370,6 +380,16 @@ public class GTNoRobotImpl extends GTHeadlessImpl implements GT {
 
     @Override
     public void setSnapshotReportDirectory(File directory) {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public File[] getSnapshotReportDirectoryCandidatesDefault() {
+        throw new HeadlessGuiTestingException();
+    }
+
+    @Override
+    public void adjustSnapshotReportDirectory(@Nullable File directory, File[] directoryCandidates) {
         throw new HeadlessGuiTestingException();
     }
 

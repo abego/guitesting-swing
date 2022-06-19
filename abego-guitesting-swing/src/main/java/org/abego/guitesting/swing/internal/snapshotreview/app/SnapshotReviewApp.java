@@ -41,49 +41,15 @@ import static org.abego.commons.io.FileUtil.findExistingDirectory;
 
 public class SnapshotReviewApp {
     private static final Logger LOGGER = Logger.getLogger(SnapshotReviewApp.class.getName());
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    private static final String[] testResourcesDirectoryOptions = new String[]{
-            "src/test/resources", //NON-NLS
-            "test_resources", //NON-NLS
-            "test_src/resources", //NON-NLS
-            "../src/test/resources", //NON-NLS
-            "../test_resources", //NON-NLS
-            "../test_src/resources", //NON-NLS
-    };
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-    private static final String[] snapshotReportDirectoryOptions = new String[]{
-            "target/guitesting-reports", //NON-NLS
-            "../target/guitesting-reports", //NON-NLS
-    };
     private final GT gt = GuiTesting.newGT();
 
     private SnapshotReviewApp(String... args) {
         int argc = args.length;
-        @Nullable String testResourcesDirectory = argc > 0 ? args[0] : null;
-        @Nullable String snapshotReportDirectory = argc > 1 ? args[1] : null;
+        @Nullable File testResourcesDirectory = argc > 0 ? new File(args[0]) : null;
+        @Nullable File snapshotReportDirectory = argc > 1 ? new File(args[1]) : null;
 
-        // When no testResourcesDirectory is explicitly specified in the
-        // arguments and the default one does not exist check if one of the
-        // testResourcesDirectoryOptions exists. If yes, use it.
-        if (testResourcesDirectory == null && !getTestResourcesDirectory().isDirectory()) {
-            testResourcesDirectory =
-                    findExistingDirectory(testResourcesDirectoryOptions);
-        }
-
-        if (testResourcesDirectory != null) {
-            gt.setTestResourcesDirectory(new File(testResourcesDirectory));
-        }
-
-        // When no snapshotReportDirectory is explicitly specified in the
-        // arguments and the default one does not exist check if one of the
-        // testResourcesDirectoryOptions exists. If yes, use it.
-        if (snapshotReportDirectory == null && !getSnapshotReportDirectory().isDirectory()) {
-            snapshotReportDirectory =
-                    findExistingDirectory(snapshotReportDirectoryOptions);
-        }
-        if (snapshotReportDirectory != null) {
-            gt.setSnapshotReportDirectory(new File(snapshotReportDirectory));
-        }
+        gt.adjustTestResourcesDirectory(testResourcesDirectory);
+        gt.adjustSnapshotReportDirectory(snapshotReportDirectory);
 
         LOGGER.log(Level.INFO,
                 "SnapshotReviewApp(testResourcesDirectoryPath={0};SnapshotReportDirectory={1})", //NON-NLS

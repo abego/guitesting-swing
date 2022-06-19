@@ -373,6 +373,16 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     }
 
     @Override
+    public File[] getTestResourcesDirectoryCandidatesDefault() {
+        return screenCaptureSupport.getTestResourcesDirectoryCandidatesDefault();
+    }
+
+    @Override
+    public void adjustTestResourcesDirectory(@Nullable File directory, File[] directoryCandidates) {
+        screenCaptureSupport.adjustTestResourcesDirectory(directory, directoryCandidates);
+    }
+
+    @Override
     public String getSnapshotName(@Nullable String name) {
         return screenCaptureSupport.getSnapshotName(name);
     }
@@ -518,6 +528,16 @@ public final class GTImpl extends GTHeadlessImpl implements GT {
     @Override
     public void setSnapshotReportDirectory(File directory) {
         screenCaptureSupport.setSnapshotReportDirectory(directory);
+    }
+
+    @Override
+    public File[] getSnapshotReportDirectoryCandidatesDefault() {
+        return screenCaptureSupport.getSnapshotReportDirectoryCandidatesDefault();
+    }
+
+    @Override
+    public void adjustSnapshotReportDirectory(@Nullable File directory, File[] directoryCandidates) {
+        screenCaptureSupport.adjustSnapshotReportDirectory(directory, directoryCandidates);
     }
 
     @Override

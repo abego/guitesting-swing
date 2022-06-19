@@ -171,7 +171,7 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      *
      * @param imageA an {@link Image} to compare with the other
      * @param imageB an {@link Image} to compare with the other
-     * @return the difference between {@code imageA} and {@code imageB} as an
+     * @return the difference between {@code imageA} and {@code imageB} as
      * an {@link Image} with {@link Color#black} pixels marking the parts of that differ
      * in both images or only exist in one of them
      */
@@ -278,8 +278,8 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
     /**
      * Returns the path to the test resources directory
      *
-     * @deprecated use {@link #getTestResourcesDirectory()} instead
      * @return the path to the test resources directory
+     * @deprecated use {@link #getTestResourcesDirectory()} instead
      */
     @Deprecated
     default String getTestResourcesDirectoryPath() {
@@ -292,6 +292,39 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      * @param directory the new test resources directory
      */
     void setTestResourcesDirectory(File directory);
+
+    File[] getTestResourcesDirectoryCandidatesDefault();
+
+    /**
+     * Adjusts this object's testResourcesDirectory according to
+     * {@code directory} and {@code directoryCandidates}
+     * <p>
+     * The following procedure is used:
+     * <ul>
+     *     <li>When {@code directory} is not {@code null} it becomes
+     *     this object's testResourcesDirectory, otherwise</li>
+     *     <li>when this object's testResourcesDirectory is a <b>not</b> directory
+     *     the first file from {@code directoryCandidates} that is
+     *     a directory becomes this object's testResourcesDirectory (if such
+     *     file exists), otherwise
+     *     </li>
+     *     <li>when no file from {@code directoryCandidates} is a
+     *     directory or this object's testResourcesDirectory is a directory
+     *     this object's testResourcesDirectory is not changed.</li>
+     * </ul>
+     */
+    void adjustTestResourcesDirectory(
+            @Nullable File directory, File[] directoryCandidates);
+
+    /**
+     * Adjusts this object's testResourcesDirectory according to
+     * {@code directory} and {@link #getTestResourcesDirectoryCandidatesDefault()}.
+     * <p>
+     * For details see {@link #adjustSnapshotReportDirectory(File, File[])}.
+     */
+    default void adjustTestResourcesDirectory(@Nullable File directory) {
+        adjustTestResourcesDirectory(directory, getTestResourcesDirectoryCandidatesDefault());
+    }
 
     /**
      * Sets the path to the directory with test resources to {@code path}.
@@ -508,6 +541,39 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
 
     void setSnapshotReportDirectory(File directory);
 
+    File[] getSnapshotReportDirectoryCandidatesDefault();
+
+    /**
+     * Adjusts this object's snapshotReportDirectory according to
+     * {@code directory} and {@code directoryCandidates}
+     * <p>
+     * The following procedure is used:
+     * <ul>
+     *     <li>When {@code directory} is not {@code null} it becomes
+     *     this object's snapshotReportDirectory, otherwise</li>
+     *     <li>when this object's snapshotReportDirectory is a <b>not</b> directory
+     *     the first file from {@code directoryCandidates} that is
+     *     a directory becomes this object's snapshotReportDirectory (if such
+     *     file exists), otherwise
+     *     </li>
+     *     <li>when no file from {@code directoryCandidates} is a
+     *     directory or this object's snapshotReportDirectory is a directory
+     *     this object's snapshotReportDirectory is not changed.</li>
+     * </ul>
+     */
+    void adjustSnapshotReportDirectory(
+            @Nullable File directory, File[] directoryCandidates);
+
+    /**
+     * Adjusts this object's snapshotReportDirectory according to
+     * {@code directory} and {@link #getSnapshotReportDirectoryCandidatesDefault()}
+     * <p>
+     * For details see {@link #adjustSnapshotReportDirectory(File, File[])}
+     */
+    default void adjustSnapshotReportDirectory(@Nullable File directory) {
+        adjustSnapshotReportDirectory(directory, getSnapshotReportDirectoryCandidatesDefault());
+    }
+
     /**
      * Makes subsequent "waitUntilScreenshotMatches..." calls more tolerant by
      * setting "ImageDifferenceIgnoredBorderSize",
@@ -530,63 +596,63 @@ public interface ScreenCaptureSupport extends TimeoutSupplier {
      */
     void resetScreenCaptureSupport();
 
+/**
+ * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
+ */
+interface ImageDifference {
+
     /**
-     * The difference between two {@link Image}s ({@code imageA} and {@code imageB}).
+     * Returns {@code true} when the images don't match, i.e. there are
+     * differences between the images, {@code false} otherwise.
+     *
+     * @return {@code true} when the images don't match, i.e. there are
+     * differences between the images, {@code false} otherwise
      */
-    interface ImageDifference {
 
-        /**
-         * Returns {@code true} when the images don't match, i.e. there are
-         * differences between the images, {@code false} otherwise.
-         *
-         * @return {@code true} when the images don't match, i.e. there are
-         * differences between the images, {@code false} otherwise
-         */
+    boolean imagesAreDifferent();
 
-        boolean imagesAreDifferent();
+    /**
+     * Returns the first image of the comparison.
+     *
+     * @return the first image of the comparison
+     */
+    BufferedImage getImageA();
 
-        /**
-         * Returns the first image of the comparison.
-         *
-         * @return the first image of the comparison
-         */
-        BufferedImage getImageA();
+    /**
+     * Returns the second image of the comparison.
+     *
+     * @return the second image of the comparison
+     */
+    BufferedImage getImageB();
 
-        /**
-         * Returns the second image of the comparison.
-         *
-         * @return the second image of the comparison
-         */
-        BufferedImage getImageB();
+    /**
+     * Returns an image marking the differences between imageA and imageB
+     * with {@link Color#black} pixels on a (transparent) white canvas.
+     *
+     * <p>The images are compared pixel by pixel and all pixel that are not
+     * similar or that only exist in one image are marked {@link Color#black}.</p>
+     *
+     * @return an image marking the differences between imageA and imageB
+     * with {@link Color#black} pixels on a (transparent) white canvas
+     */
+    BufferedImage getDifferenceMask();
+}
 
-        /**
-         * Returns an image marking the differences between imageA and imageB
-         * with {@link Color#black} pixels on a (transparent) white canvas.
-         *
-         * <p>The images are compared pixel by pixel and all pixel that are not
-         * similar or that only exist in one image are marked {@link Color#black}.</p>
-         *
-         * @return an image marking the differences between imageA and imageB
-         * with {@link Color#black} pixels on a (transparent) white canvas
-         */
-        BufferedImage getDifferenceMask();
-    }
+interface SnapshotIssue {
+    String getSnapshotName();
 
-    interface SnapshotIssue {
-        String getSnapshotName();
+    int getIndex();
 
-        int getIndex();
+    String getLabel();
 
-        String getLabel();
+    URL getActualImage();
 
-        URL getActualImage();
+    URL getExpectedImage();
 
-        URL getExpectedImage();
+    URL getDifferenceImage();
 
-        URL getDifferenceImage();
+    URL getOverwriteURL();
 
-        URL getOverwriteURL();
-
-        URL getAddAlternativeURL();
-    }
+    URL getAddAlternativeURL();
+}
 }
