@@ -102,7 +102,7 @@ misc/setartifactversion "abego-guitesting" "$version" "abego-guitesting-swing/po
 # --- Do the Git stuff  ---------------------------------------------------
 echo "Pushing changes to Git server..."
 git add .
-git commit -m "Release ${version}"
+git commit -m "build: release ${version}"
 git tag "v${version}" # tag the commit as `vx.y.z` (e.g. "`v0.10.0`")
 git push origin "v${version}" #o push the changes to the Git server, incl. tag.
 
@@ -111,7 +111,7 @@ echo "Prepare for next development iteration..."
 misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "pom.xml"
 misc/setartifactversion "abego-guitesting" "${nextVersion}-SNAPSHOT" "abego-guitesting-swing/pom.xml"
 git add .
-git commit -m "Prepare for next development iteration"
+git commit -m "build: prepare for next development iteration"
 git push origin
 
 # --- Deploying to Maven Central ------------------------------------------
