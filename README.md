@@ -78,6 +78,11 @@ You may check out the source code from the
 
 ## Known Issues
 
+- In order to run guitesting-swing in semeru-18 (IBM's version of the JDK 18)
+  and probably other newer JREs, 
+  the option `--add-opens=java.desktop/sun.awt=ALL-UNNAMED` should be added to the 
+  jvm arguments when launching tests from this kit. This prevents an exception about 
+  exports from `sun.awt` to unnamed modules. _(Thanks to [dmcennis](https://github.com/dmcennis) for this hint.)_
 - Does not yet work well on Travis CI etc. (Help greatly appreciated!)
 
 ## Links
